@@ -1,11 +1,12 @@
-# Makes setting up a shared folder for virtual machines a bit easier #
+# Misc usability improvements #
 
-A metapackage, that creates a folder /mnt/shared with chmod 777, adds a group
-"vboxsf", adds user "user" to group "vboxsf".
+Creates user "user" if it does not already exist.
 
-Currently only helps using shared folders with VirtualBox a bit easier (as in
-requiring fewer manual steps from the user). Might in future make use of other
-virtual machine's shared folders easier.
+Adds user "user" to group libvirt as well as to group kvm.
+
+Ships a file /etc/sudoers.d/user-passwordless that contains comments and
+"#user   ALL=(ALL:ALL) NOPASSWD:ALL". Lets user "user" easily run all
+commands without password. Disabled (out commented) by default.
 
 (This package description has been [automatically](https://github.com/Whonix/whonix-developer-meta-files/blob/master/debug-steps/packaging-helper-script) extracted and mirrored from `debian/control`.)
 
