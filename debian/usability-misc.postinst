@@ -37,8 +37,17 @@ case "$1" in
          true 'Not creating user "user", because it user already exists.'
       fi
 
-      addgroup user libvirt >/dev/null
+      ## {{ Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
+      # Add the kvm group unless it's already there
+      if ! getent group kvm >/dev/null; then
+         addgroup --quiet --system kvm || true
+      fi
+      ## }} Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
+
       addgroup user kvm >/dev/null
+
+      ## TODO: Necessary?
+      #addgroup user libvirt >/dev/null
 
       true "INFO: End configuring $DPKG_MAINTSCRIPT_PACKAGE."
 
