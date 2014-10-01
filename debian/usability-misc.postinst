@@ -44,10 +44,14 @@ case "$1" in
       fi
       ## }} Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
 
-      addgroup user kvm >/dev/null
+      ## {{ Taken from libvirt-bin.postinst.
+      if ! getent group libvirt >/dev/null; then
+         addgroup --system libvirt
+      fi
+      ## }} Taken from libvirt-bin.postinst.
 
-      ## TODO: Necessary?
-      #addgroup user libvirt >/dev/null
+      addgroup user kvm >/dev/null
+      addgroup user libvirt >/dev/null
 
       true "INFO: End configuring $DPKG_MAINTSCRIPT_PACKAGE."
 
