@@ -37,6 +37,12 @@ case "$1" in
          true 'Not creating user "user", because it user already exists.'
       fi
 
+      if [ ! -f "/var/lib/usability-misc/do_once/mkdir_home_user_Downloads" ]; then
+         sudo -u user mkdir "/home/user/Downloads"
+         mkdir --parents "/var/lib/usability-misc/do_once"
+         touch "/var/lib/usability-misc/do_once/mkdir_home_user_Downloads"
+      fi
+
       ## {{ Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
       # Add the kvm group unless it's already there
       if ! getent group kvm >/dev/null; then
