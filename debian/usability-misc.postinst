@@ -38,13 +38,17 @@ case "$1" in
       fi
 
       if [ ! -f "/var/lib/usability-misc/do_once/mkdir_home_user_Downloads" ]; then
-         sudo -u user mkdir "/home/user/Downloads"
+         if [ ! -d "/home/user/Downloads" ]; then
+            sudo -u user mkdir "/home/user/Downloads"
+         fi
          mkdir --parents "/var/lib/usability-misc/do_once"
          touch "/var/lib/usability-misc/do_once/mkdir_home_user_Downloads"
       fi
 
       if [ ! -f "/var/lib/usability-misc/do_once/mkdir_home_user_Pictures" ]; then
-         sudo -u user mkdir "/home/user/Pictures"
+         if [ ! -d "/home/user/Pictures" ]; then
+            sudo -u user mkdir "/home/user/Pictures"
+         fi
          mkdir --parents "/var/lib/usability-misc/do_once"
          touch "/var/lib/usability-misc/do_once/mkdir_home_user_Pictures"
       fi
