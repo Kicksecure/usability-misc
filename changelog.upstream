@@ -1,0 +1,102 @@
+commit ab508e9ebb3b0e3d8e3cc12ba2b2cc3031ed4667
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Feb 4 00:40:56 2015 +0000
+
+    updated makefile generic to version 1.3
+
+commit d2ff7175950a790198a213f7842071b87663eebb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Feb 3 23:58:57 2015 +0000
+
+    Added creation of upstream changelog to debian/rules
+
+commit a286bc550260a1b394e119455051d3cc626190ea
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jan 7 19:34:58 2015 +0000
+
+    bumped compat from 8 to 9
+
+commit d13df03e271be56fc4488141e48bb61d561a5820
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Dec 18 13:43:02 2014 +0000
+
+    fix
+
+commit 424eb9d5d1c62b8461360fb6f6cef2927ffb163d
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Dec 18 13:40:30 2014 +0000
+
+    cleanup
+
+commit a254e24efe919e1f0da5812d45b8b4585cb8c2d1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Dec 5 19:01:22 2014 +0000
+
+    updated generic makefile
+
+commit 892439eb8d996c3990de9598ffed0746940165a1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Oct 28 22:35:32 2014 +0000
+
+    makefile: refactoring, avoid using IFS
+
+commit 75fbb8637b0d253c6d09855c1d290eaefdaebfd8
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Oct 25 01:58:54 2014 +0000
+
+    makefile:
+    - make debdist; make undebdist
+    - cleanup
+    - refactoring
+
+commit 3720efb83fb61acdfa136ec60322db1509b253a3
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 23 22:43:05 2014 +0000
+
+    makefile:
+    - new target "make undist", which deletes the upstream tarball
+    - $DISTDIR variable for make (un)dist, which defaults to ".." and can be used to create upstream tarballs in arbitrary locations
+    - refactoring, all function names and global variables now start with "make_" to make the script `source`ing friendly
+    - made `source`able
+
+commit cf71fa981c9b1db5a6080ee128199b3debe3aee9
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Oct 13 12:36:58 2014 +0000
+
+    readme
+
+commit 46bf55fb4a8557503226fe471d2830d86ae256f1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Oct 3 20:36:38 2014 +0000
+
+    create once /home/user/Pictures
+
+commit ea231d9979a4a2f4b90ab5b93c620bd0b9895544
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Oct 1 21:48:24 2014 +0000
+
+    create once /home/user/Downloads
+
+commit 9922ffe103082c6d5b1ec899b6d43ea54758262b
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Oct 1 21:23:37 2014 +0000
+
+    also add user "user" to group "libvirt"
+
+commit 82beb10bb5b1a825f3139c0229b4135d90bbd403
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Sep 29 15:29:02 2014 +0000
+
+    fix
+
+commit c67277d622ee39936cc13d5043e7a25d49743b59
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 25 21:53:44 2014 +0000
+
+    updated readme
+
+commit 829858b4395fd7f3c3a1abaf52b60b29f4b75c85
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 25 21:51:06 2014 +0000
+
+    initial implementation
