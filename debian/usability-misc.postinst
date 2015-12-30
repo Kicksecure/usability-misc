@@ -77,6 +77,10 @@ case "$1" in
       ;;
 esac
 
+if [ -d /run/systemd/system ] ; then
+        systemd-tmpfiles --create /usr/lib/tmpfiles.d/50_openvpn_unpriv.conf >/dev/null || true
+fi
+
 true "INFO: debhelper beginning here."
 
 #DEBHELPER#
