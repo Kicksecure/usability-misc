@@ -7,4 +7,4 @@
 ## This only works if you enable the sudoers exception in configuration file
 ## /etc/sudoers.d/tunnel_unpriv.
 
-exec /bin/ip "$@"
+sudo exec /bin/ip "$@"
