@@ -3,4 +3,5 @@
 ## See the file COPYING for copying conditions.
 
 #tunnel ALL=(ALL) NOPASSWD: /bin/ip
+#tunnel ALL=(ALL) NOPASSWD: /usr/sbin/openvpn *
 #Defaults:tunnel !requiretty
