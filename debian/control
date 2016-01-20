@@ -18,6 +18,8 @@ Depends: sudo, ${misc:Depends}
 Description: Misc usability improvements
  Creates user "user" if it does not already exist.
  .
+ Creates folders /home/user/Downloads and /home/user/Pictures.
+ .
  Adds user "user" to group libvirt as well as to group kvm.
  .
  Ships a file /etc/sudoers.d/user-passwordless that contains comments and
