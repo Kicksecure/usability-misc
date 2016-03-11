@@ -20,22 +20,25 @@ case "$1" in
    configure)
       true "INFO: Configuring $DPKG_MAINTSCRIPT_PACKAGE..."
 
-      ## Check if user "user" already exist.
-      ret="0"
-      id user || { ret="$?" ; true; };
-      if [ ! "$ret" = "0" ]; then
-         echo 'INFO: Creating user "user"...'
-         ## setting password of user user to changeme
-         ##
-         ## How this password was created:
-         ## sudo apt-get install whois
-         ## mkpasswd
-         ## changeme
-         ## Resulted in: aTayYxVyw5kDo
-         useradd --password aTayYxVyw5kDo --user-group --create-home --shell /bin/bash user
-      else
-         true 'Not creating user "user", because it user already exists.'
-      fi
+      user_account_list="user tunnel"
+
+      for user_account in $user_account_list ; do
+         if ! id "$user_account" >/dev/null 2>&1 ; then
+            if command -v qubesdb-read >/dev/null 2>&1 ; then
+               password=""
+            else
+               ## setting password of user $user_account to changeme
+               ##
+               ## How this password was created:
+               ## sudo apt-get install whois
+               ## mkpasswd
+               ## changeme
+               ## Resulted in: aTayYxVyw5kDo
+               password="aTayYxVyw5kDo"
+            fi
+            useradd --create-home --password "$password" --user-group --shell /bin/bash "$user_account"
+         fi
+      done
 
       if [ ! -f "/var/lib/usability-misc/do_once/mkdir_home_user_Downloads" ]; then
          if [ ! -d "/home/user/Downloads" ]; then
