@@ -17,8 +17,5 @@ ip_unpriv(8) -- wrapper to run `ip` as unprivileged user
 ## SYNOPSIS
 `ip_unpriv` [option]s
 
-## DESCRIPTION
-Builds mediate time by asking three https servers from three different pools.
-
 ## AUTHOR
 This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
