@@ -27,3 +27,5 @@ Description: Misc usability improvements
  commands without password. Disabled (out commented) by default.
  .
  Simplifies running OpenVPN as unprivileged user.
+ .
+ Ships a FoxyProxy add-on configuration file for use with Tor Browser
