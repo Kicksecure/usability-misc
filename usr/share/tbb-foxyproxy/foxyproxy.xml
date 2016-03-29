@@ -25,7 +25,10 @@
         <match enabled="true" name="I2P Router console" pattern="^https?://.*:[0-9]?7657/.*$" isRegEx="true" isBlackList="false" isMultiLine="false" caseSensitive="false" fromSubscription="false"/>
         <match enabled="true" name="Tahoe-LAFS WebUI" pattern="^http://127.0.0.1:34(56|60)/.*$" isRegEx="true" isBlackList="false" isMultiLine="false" caseSensitive="false" fromSubscription="false"/>
         <match enabled="true" name="Freenet" pattern="http://127.0.0.1:8888/*" isRegEx="false" isBlackList="false" isMultiLine="false" caseSensitive="false" fromSubscription="false"/>
+        <match enabled="true" name="Syncthing WebUI" pattern="http://*127.0.0.1:8384/*" isRegEx="false" isBlackList="false" isMultiLine="false" caseSensitive="false" fromSubscription="false"/>
         <match enabled="true" name="Twister WebUI" pattern="http://*127.0.0.1:28332/*" isRegEx="false" isBlackList="false" isMultiLine="false" caseSensitive="false" fromSubscription="false"/>
+        <match enabled="true" name="YaCy WebUI" pattern="http://*127.0.0.1:8090/*" isRegEx="false" isBlackList="false" isMultiLine="false" caseSensitive="false" fromSubscription="false"/>
+        <match enabled="true" name="ZeroNet WebUI" pattern="http://*127.0.0.1:43110/*" isRegEx="false" isBlackList="false" isMultiLine="false" caseSensitive="false" fromSubscription="false"/>
       </matches>
       <manualconf host="" port="" socksversion="5" isSocks="false" username="" password="" domain=""/>
     </proxy>
