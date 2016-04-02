@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -x
+set -e
+
+sudo apt-get update
+sudo apt-get install --yes git git-mediawiki github-backup
+
+mkdir --parents ~/whonix_backup/adrelanos
+cd ~/whonix_backup/adrelanos
+github-backup adrelanos || true
+
+mkdir --parents ~/whonix_backup/whonix
+cd ~/whonix_backup/whonix
+github-backup Whonix || true
+
+mkdir --parents ~/whonix_backup/WhonixBOT
+cd ~/whonix_backup/WhonixBOT
+github-backup WhonixBOT || true
+
+mkdir --parents ~/whonix_backup
+cd ~/whonix_backup
+git clone mediawiki::https://www.whonix.org/w || true
+cd ~/whonix_backup/w
+git fetch
+
+true "END"
