@@ -1,3 +1,220 @@
+commit ddef42a5b383c82d107c00aac22c1836004a8158
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Apr 2 18:22:40 2016 +0000
+
+    implemented Whonix website and source code backup utility
+    
+    /usr/bin/whonix-dev-backup
+    
+    https://phabricator.whonix.org/T159
+
+commit 9312d64c321d21a98a5637f5b823a407c89d8a63
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Apr 2 14:41:45 2016 +0000
+
+    renamed:    usr/share/tbb-foxyproxy/foxyproxy.xml -> usr/share/usability-misc/tbb-foxyproxy/foxyproxy.xml
+
+commit d9873413065e35ad051ff19962ed4917cba5d886
+Merge: a6c3922 8757ddf
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Apr 2 14:38:14 2016 +0000
+
+    Merge remote-tracking branch 'origin/master'
+
+commit 8757ddfe7678bbd2aef2ca8ae7b5fe69ee9b8170
+Merge: a6c3922 04cf32d
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Apr 2 14:37:45 2016 +0000
+
+    Merge pull request #4 from HulaHoopWhonix/patch-4
+    
+    Added more WebUI rules
+
+commit 04cf32d46ce3c3850f09689d6dad97a7f6c61d37
+Author: HulaHoopWhonix <bancfc@openmailbox.org>
+Date:   Tue Mar 29 21:03:23 2016 +0000
+
+    Added more WebUI rules
+
+commit a6c39224a2f2d3fe4b33bdd6a97776e6c6dfee64
+Merge: c24c38e 52a3833
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Mar 28 15:24:37 2016 +0200
+
+    Merge remote-tracking branch 'origin/master'
+
+commit 52a38330f75e1c27a54f0e3140895500723d9db2
+Merge: 5e47bd4 5f9ee2c
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Mar 28 15:22:59 2016 +0200
+
+    Merge pull request #3 from HulaHoopWhonix/patch-3
+    
+    Update control
+
+commit 5f9ee2ce81f312fe19cfb3eccfdaf5743d6dd904
+Author: HulaHoopWhonix <bancfc@openmailbox.org>
+Date:   Mon Mar 28 13:19:45 2016 +0000
+
+    Update control
+
+commit 5e47bd4651de829dea3cdb31fcd5a181d0667091
+Merge: 1c1e731 3d32b71
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Mar 23 14:19:04 2016 +0100
+
+    Merge pull request #2 from HulaHoopWhonix/patch-2
+    
+    Update control
+
+commit 1c1e731cad9ff654c63ecf7061f2b1c187d98465
+Merge: c24c38e 2331c02
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Mar 23 14:18:40 2016 +0100
+
+    Merge pull request #1 from HulaHoopWhonix/patch-1
+    
+    Create foxyproxy.xml
+
+commit 3d32b71e880f4e812bd331bc4a19a118fe096eac
+Author: HulaHoopWhonix <bancfc@openmailbox.org>
+Date:   Wed Mar 23 12:55:25 2016 +0000
+
+    Update control
+
+commit 2331c02f19fa8fefcff73c45d8b353309ef8c1a0
+Author: HulaHoopWhonix <bancfc@openmailbox.org>
+Date:   Wed Mar 23 12:42:14 2016 +0000
+
+    Create foxyproxy.xml
+
+commit c24c38e6c16ee7c71288bd8c54143b8e07cd61ab
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Mar 11 01:10:10 2016 +0000
+
+    fix
+
+commit 708ba1a9d5fd874562e90b12f15d50b10a173b12
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Mar 11 01:09:15 2016 +0000
+
+    added man/iptables-save-deterministic.8.ronn
+
+commit 8d8fc40fbe78ab22d665455088fef631550b9a62
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Mar 11 01:04:43 2016 +0000
+
+    create user 'tunnel' in postinst script
+
+commit b56edec672f88d466f58834ab2c92f2a581be769
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Mar 11 00:54:59 2016 +0000
+
+    added /sbin/iptables-save-deterministic wrapper
+    
+    that makes the output of iptables-save deterministic
+    
+    useful to diffing effects by firewall script changes
+
+commit 1f919d82cf118bb648a29f7f09de5414c6998d0e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jan 20 21:41:09 2016 +0100
+
+    improved package description
+
+commit c26bfb72de8dd797ed79d2f41686f5f3d5ac3e62
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jan 9 16:41:50 2016 +0000
+
+    Fix
+    
+    Configured openvpn systemd service to start as user tunnel. Otherwise openvpn
+    would initially start as root, connect and then drop to and continue to connect
+    as user tunnel. This would not work, because the VPN_FIREWALL allows only user
+    tunnel to connect to external destinations. Added (and out commented by
+    default) sudoers exception to allow user tunnel to run openvpn as root so it
+    can delete/add the tun device.
+    
+    https://phabricator.whonix.org/T460
+
+commit f946e06b06e73c0f251ae39def4114c1e7082776
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jan 9 16:00:05 2016 +0000
+
+    fixed usr/bin/ip_unpriv
+
+commit 5a9f39dc9d7e576425b50c38a0be7d46847a0c41
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Jan 8 22:18:21 2016 +0000
+
+    systemd openvpn@openvpn.service.d/50_unpriv.conf: fix, removed 'User=tunnel'
+    
+    Not working, because we need root to create the tun device. Also not required,
+    because we suggest to use openvpn.conf to drop to user 'tunnel'.
+    (Which has the firewall exception.)
+
+commit 81ff389dcadd390d52bae810ad06c8365b574d27
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Jan 8 22:13:05 2016 +0000
+
+    systemd openvpn@openvpn.service.d/50_unpriv.conf: fix, must use full paths
+
+commit e0a01053265efc3253fc48e168db3345af89710e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Dec 30 00:55:30 2015 +0000
+
+    don't start openvpn@openvpn systemd service in Qubes TemplateVMs
+
+commit f4dca1f593441c4cd2f7a45d40c6e31edc101029
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Dec 30 00:33:27 2015 +0000
+
+    access rights for running OpenVPN as unprivileged user
+
+commit a8bd66530dce8652cdcce8629f7ab436a1952042
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Dec 30 00:29:17 2015 +0000
+
+    fixes
+
+commit b89982ec65bb28ce8f4503b00561d555711e801d
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Dec 30 00:13:18 2015 +0000
+
+    have systemd start OpenVPN as user 'tunnel'
+
+commit ea8ecc9b659b27dde540ee490b7c7b0e9d8f2942
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Dec 29 23:16:13 2015 +0000
+
+    added man page for ip_unpriv
+
+commit 9e4927fc4b803c2d88b95079253b9d83236cb209
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Dec 29 22:59:59 2015 +0000
+
+    50_unpriv.conf ok to be commented in by default
+
+commit 2edff01bf402e7872e627f22ae0aa72a22618309
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Dec 29 22:40:43 2015 +0000
+
+    renamed:    lib/systemd/system/openvpn.service.d/50_unpriv.conf -> lib/systemd/system/openvpn@openvpn.service.d/50_unpriv.conf
+
+commit 91482787adedabaea6fa0e369784c0d4a05b41c0
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Dec 29 22:10:18 2015 +0100
+
+    simplify running OpenVPN as unprivileged user
+    
+    https://phabricator.whonix.org/T460
+
+commit e497554da897e8c5200b80aa682d56900b2707c7
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Aug 25 14:08:28 2015 +0000
+
+    bumped changelog version
+
 commit a9e675c52a4dbeae2ca99a09cdd9e439f1f1869a
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Aug 24 17:47:27 2015 +0000
