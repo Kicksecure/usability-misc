@@ -1,3 +1,15 @@
+commit 8874633203a41dae26c0a41a925759187653dd06
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Apr 9 16:45:50 2016 +0200
+
+    licensing
+
+commit efa9871078ecb1a776bfafffb89be54374136251
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Apr 7 22:54:51 2016 +0000
+
+    bumped changelog version
+
 commit ddef42a5b383c82d107c00aac22c1836004a8158
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Apr 2 18:22:40 2016 +0000
