@@ -14,7 +14,7 @@ Standards-Version: 3.9.6
 
 Package: usability-misc
 Architecture: all
-Depends: sudo, xul-ext-foxyproxy-standard, ${misc:Depends}
+Depends: sudo, ${misc:Depends}
 Description: Misc usability improvements
  Creates user "user" if it does not already exist.
  .
