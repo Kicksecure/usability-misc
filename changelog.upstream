@@ -1,3 +1,17 @@
+commit ab042e1037c579ec4e521a28b3501fa9584b2815
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Apr 18 15:39:55 2016 +0200
+
+    Revert "Update control"
+    
+    This reverts commit 5f9ee2ce81f312fe19cfb3eccfdaf5743d6dd904.
+
+commit 33645ed933f4f8bfc97d70016e970d9c9c6d87df
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Apr 14 21:14:50 2016 +0000
+
+    bumped changelog version
+
 commit 8874633203a41dae26c0a41a925759187653dd06
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Apr 9 16:45:50 2016 +0200
