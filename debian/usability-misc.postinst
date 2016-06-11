@@ -56,21 +56,25 @@ case "$1" in
          touch "/var/lib/usability-misc/do_once/mkdir_home_user_Pictures"
       fi
 
-      ## {{ Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
-      # Add the kvm group unless it's already there
-      if ! getent group kvm >/dev/null; then
-         addgroup --quiet --system kvm || true
-      fi
-      ## }} Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
+      if command -v qubesdb-read >/dev/null 2>&1 ; then
+         true
+      else
+         ## {{ Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
+         # Add the kvm group unless it's already there
+         if ! getent group kvm >/dev/null; then
+            addgroup --quiet --system kvm || true
+         fi
+         ## }} Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
 
-      ## {{ Taken from libvirt-bin.postinst.
-      if ! getent group libvirt >/dev/null; then
-         addgroup --system libvirt
-      fi
-      ## }} Taken from libvirt-bin.postinst.
+         ## {{ Taken from libvirt-bin.postinst.
+         if ! getent group libvirt >/dev/null; then
+            addgroup --system libvirt
+         fi
+         ## }} Taken from libvirt-bin.postinst.
 
-      addgroup user kvm >/dev/null
-      addgroup user libvirt >/dev/null
+         addgroup user kvm >/dev/null
+         addgroup user libvirt >/dev/null
+      fi
 
       true "INFO: End configuring $DPKG_MAINTSCRIPT_PACKAGE."
 
