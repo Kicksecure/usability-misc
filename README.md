@@ -8,6 +8,9 @@ Ships a file /etc/sudoers.d/user-passwordless that contains comments and
 "#user   ALL=(ALL:ALL) NOPASSWD:ALL". Lets user "user" easily run all
 commands without password. Disabled (out commented) by default.
 
+Process configuration folder /etc/audit/rules.d/ by default if auditd is
+installed.
+
 (This package description has been [automatically](https://github.com/Whonix/whonix-developer-meta-files/blob/master/debug-steps/packaging-helper-script) extracted and mirrored from `debian/control`.)
 
 # Generic Readme #

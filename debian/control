@@ -29,3 +29,6 @@ Description: Misc usability improvements
  Simplifies running OpenVPN as unprivileged user.
  .
  Ships a FoxyProxy add-on configuration file for use with Tor Browser
+ .
+ Process configuration folder /etc/audit/rules.d/ by default if auditd is
+ installed.
