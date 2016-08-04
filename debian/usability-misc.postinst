@@ -88,6 +88,11 @@ if [ -d /run/systemd/system ] ; then
         systemd-tmpfiles --create /usr/lib/tmpfiles.d/50_openvpn_unpriv.conf >/dev/null || true
 fi
 
+## Make systemd drop-in config snippets take effect.
+if [ -d /run/systemd/system ]; then
+        systemctl --system daemon-reload >/dev/null || true
+fi
+
 true "INFO: debhelper beginning here."
 
 #DEBHELPER#
