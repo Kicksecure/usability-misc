@@ -2,16 +2,26 @@
 
 Creates user "user" if it does not already exist.
 
+Creates folders /home/user/Downloads and /home/user/Pictures.
+
 Adds user "user" to group libvirt as well as to group kvm.
 
 Ships a file /etc/sudoers.d/user-passwordless that contains comments and
 "#user   ALL=(ALL:ALL) NOPASSWD:ALL". Lets user "user" easily run all
 commands without password. Disabled (out commented) by default.
 
+Simplifies running OpenVPN as unprivileged user.
+
+Ships a FoxyProxy add-on configuration file for use with Tor Browser
+
 Process configuration folder /etc/audit/rules.d/ by default if auditd is
 installed.
 
 (This package description has been [automatically](https://github.com/Whonix/whonix-developer-meta-files/blob/master/debug-steps/packaging-helper-script) extracted and mirrored from `debian/control`.)
+
+# Manual Page #
+
+See also `man` folder for more information.
 
 # Generic Readme #
 ## Readme Version ##
@@ -58,7 +68,7 @@ gpg --export 916B8D99C38EAF5E8ADC7A2A8D66066A2EEACCDA | sudo apt-key add -
 3\. Add Whonix's APT repository.
 
 ```
-echo "deb http://sourceforge.net/projects/whonixdevelopermetafiles/files/internal/ wheezy main" > /etc/apt/sources.list.d/whonix.list
+echo "deb http://deb.whonix.org jessie main" > /etc/apt/sources.list.d/whonix.list
 ```
 
 4\. Update your package lists.
