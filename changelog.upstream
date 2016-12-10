@@ -1,3 +1,81 @@
+commit 7c7b7195e2d4636088cb83f41b2f8f3611f41a8e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Nov 21 17:43:40 2016 +0000
+
+    readme
+
+commit 59c6b5b19d79d163d4cef3578e368fc5a8615e2a
+Merge: 1daa638 897c7a7
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Oct 10 20:01:08 2016 +0200
+
+    Merge remote-tracking branch 'origin/master'
+
+commit 897c7a7f979f09520674d8cf570fd74b9f51ba27
+Merge: 1daa638 2f8b093
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Oct 10 18:00:42 2016 +0000
+
+    Merge pull request #5 from HulaHoopWhonix/patch-5
+    
+    Freenet Message System
+
+commit 2f8b093c098de381fe3609f85cfc0820eb77ee51
+Author: HulaHoopWhonix <bancfc@openmailbox.org>
+Date:   Mon Oct 10 14:35:00 2016 +0000
+
+    Freenet Message System
+
+commit 1daa638bc1d5adcc4dd4a34d9617a52b4c95246e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Aug 30 21:14:59 2016 +0000
+
+    sudo --non-interactive
+    
+    https://phabricator.whonix.org/T549
+
+commit 6b9ac496a4b3fa4690388804a94092054ad5b145
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Aug 4 23:01:07 2016 +0000
+
+    update README.md and debian/control
+    
+    https://phabricator.whonix.org/T535
+
+commit 9c1daa4251eb4de74f8967928bbbddbaba3ac7e6
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Aug 4 22:58:51 2016 +0000
+
+    postinst: Make systemd drop-in config snippets take effect.
+    
+    https://phabricator.whonix.org/T535
+
+commit 28204e16a51de662e3ef13141994fd2c2b5aa7f7
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Aug 4 22:49:41 2016 +0000
+
+    auditd: process configuration folder /etc/audit/rules.d/ by default
+    
+    https://phabricator.whonix.org/T535
+
+commit cbb44f0225d3a6312f73ec6244b57abaa161ef07
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Jun 13 13:32:07 2016 +0000
+
+    simplify using VPN with resolvconf for automatic DNS configuration
+
+commit 3e982bab84c0650623c5a604ea7dbdb284e91d2a
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jun 11 14:01:31 2016 +0000
+
+    do not create kvm / libvirt user / group in Qubes
+
+commit ad174eb212e888eb76c7a32d342df64bbba57838
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Apr 19 19:44:42 2016 +0000
+
+    bumped changelog version
+
 commit ab042e1037c579ec4e521a28b3501fa9584b2815
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Apr 18 15:39:55 2016 +0200
