@@ -22,7 +22,7 @@ Simple wrapper that sets environment variables and adds --yes,
 -o Dpkg::Options::=--force-confnew then forwards all arguments to apt-get.
 Does not pass --force-yes.
 
-If you like to keep old configuration files, use the following.
+If you like to keep old configuration files, add the following parameter.
 
 -o Dpkg::Options::=--force-confold
 
