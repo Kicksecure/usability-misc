@@ -15,8 +15,13 @@ apt-get-noninteractive(8) -- wrapper to run `apt-get` non-interactively
 </span>
 
 ## Description
-Simple wrapper that sets environment variables and adds --yes, then forwards
-all arguments to apt-get. Does not pass --force-yes.
+Simple wrapper that sets environment variables and adds --yes,
+-o Dpkg::Options::=--force-confnew then forwards all arguments to apt-get.
+Does not pass --force-yes.
+
+If you like to keep old configuration files, use the following.
+
+-o Dpkg::Options::=--force-confold
 
 ## SYNOPSIS
 `apt-get-noninteractive` [option]s

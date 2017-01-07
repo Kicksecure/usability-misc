@@ -12,4 +12,4 @@ set -e
 [ -n "$APT_LISTCHANGES_FRONTEND" ] || APT_LISTCHANGES_FRONTEND="text"
 export DEBIAN_FRONTEND DEBIAN_PRIORITY DEBCONF_NOWARNINGS APT_LISTCHANGES_FRONTEND
 
-apt-get --yes "$@"
+apt-get -o Dpkg::Options::=--force-confnew --yes "$@"
