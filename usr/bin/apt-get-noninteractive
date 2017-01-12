@@ -6,6 +6,7 @@
 
 set -e
 
+[ -n "$POLICYRCD" ] || POLICYRCD="/usr/share/usability-misc/policy-rc.d"
 [ -n "$DEBIAN_FRONTEND" ] || DEBIAN_FRONTEND="noninteractive"
 [ -n "$DEBIAN_PRIORITY" ] || DEBIAN_PRIORITY="critical"
 [ -n "$DEBCONF_NOWARNINGS" ] || DEBCONF_NOWARNINGS="yes"
