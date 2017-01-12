@@ -1,3 +1,39 @@
+commit 65a4022ae2a312f8d57e6b42a3f2f1fd2f01539c
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jan 7 21:44:42 2017 +0000
+
+    improve man page
+
+commit 4d608ebd8ff8e4f73a5c32aa52dc8c7ead4c36c1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jan 7 21:43:57 2017 +0000
+
+    shuffle
+
+commit 25d6c4b56e2d7d7530eff0a428d213601e7d6b0e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jan 7 21:43:39 2017 +0000
+
+    add examples
+
+commit 6a138774f4e1c3eb80827ad46a6fbf6891e7eb7f
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jan 7 21:41:24 2017 +0000
+
+    add -o Dpkg::Options::=--force-confnew
+
+commit 0a0d4d6e42a1c3ed2b3f2c6a735a5e0b126f1ea3
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jan 7 20:32:11 2017 +0000
+
+    add /usr/bin/apt-get-noninteractive - simple wrapper to run apt-get non-interactively
+
+commit 37564cec77515483c5ca6e6c02bff91a55794c87
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Dec 10 02:35:18 2016 +0000
+
+    bumped changelog version
+
 commit 7c7b7195e2d4636088cb83f41b2f8f3611f41a8e
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Nov 21 17:43:40 2016 +0000
