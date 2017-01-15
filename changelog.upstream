@@ -1,3 +1,39 @@
+commit 2ab3ef2d19e3f01a7e3f55034417e101af03abcd
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jan 15 08:35:43 2017 +0100
+
+    packaging, bumped Standards-Version from 3.9.6 to 3.9.8 for jessie support
+
+commit 925634e884d1e45be4bec68300ea8201c6146cd0
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Jan 12 21:31:50 2017 +0000
+
+    add bash-completion for apt-get-noninteractive
+
+commit 639235f1f82563257dabd6fb8c59e929ca8fd8ec
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Jan 12 21:19:49 2017 +0000
+
+    improved package description
+
+commit cb651440c81f987a2b81870c6dfb603ff17d4ee2
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Jan 12 18:59:58 2017 +0000
+
+    export POLICYRCD
+
+commit 4090fe407a103b5ec81de654617b1eed1c32b029
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Jan 12 16:56:00 2017 +0000
+
+    prevent (re)starting daemons when using apt-get-noninteractive
+
+commit 0fd8551323ce5b64330b4f63560d7ba89fd3c863
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Jan 12 02:57:38 2017 +0000
+
+    bumped changelog version
+
 commit 65a4022ae2a312f8d57e6b42a3f2f1fd2f01539c
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Jan 7 21:44:42 2017 +0000
