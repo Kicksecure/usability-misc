@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 9), faketime, genmkfile, ruby-ronn
 Homepage: https://github.com/Whonix/usability-misc
 Vcs-Browser: https://github.com/Whonix/usability-misc
 Vcs-Git: https://github.com/Whonix/usability-misc.git
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 
 Package: usability-misc
 Architecture: all
