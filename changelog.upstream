@@ -1,3 +1,23 @@
+commit 8a7f1ca0c3be1e762201cc145f0d60a0797677f1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Jan 17 10:54:01 2017 +0100
+
+    reimplement /home/user/Downloads / Pictures using /etc/skel
+
+commit bebf63bd2006f3fa13ec280305bc4ad6c1cdb801
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Jan 17 10:49:28 2017 +0100
+
+    disable sudo --non-interactive -u user mkdir "/home/user/Downloads" / Pictures
+    
+    because broken in stretch
+
+commit feae83d4dce609772d0a45b2f06aab30d8778cad
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jan 15 15:36:59 2017 +0000
+
+    bumped changelog version
+
 commit 2ab3ef2d19e3f01a7e3f55034417e101af03abcd
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sun Jan 15 08:35:43 2017 +0100
