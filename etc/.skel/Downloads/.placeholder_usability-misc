@@ -1,0 +1,2 @@
+This file is a simple placeholder to keep dpkg from removing
+/etc/.skel/Downloads directory. Safe to delete.
