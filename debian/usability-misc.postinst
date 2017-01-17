@@ -40,22 +40,6 @@ case "$1" in
          fi
       done
 
-      if [ ! -f "/var/lib/usability-misc/do_once/mkdir_home_user_Downloads" ]; then
-         if [ ! -d "/home/user/Downloads" ]; then
-            sudo --non-interactive -u user mkdir "/home/user/Downloads"
-         fi
-         mkdir --parents "/var/lib/usability-misc/do_once"
-         touch "/var/lib/usability-misc/do_once/mkdir_home_user_Downloads"
-      fi
-
-      if [ ! -f "/var/lib/usability-misc/do_once/mkdir_home_user_Pictures" ]; then
-         if [ ! -d "/home/user/Pictures" ]; then
-            sudo --non-interactive -u user mkdir "/home/user/Pictures"
-         fi
-         mkdir --parents "/var/lib/usability-misc/do_once"
-         touch "/var/lib/usability-misc/do_once/mkdir_home_user_Pictures"
-      fi
-
       if command -v qubesdb-read >/dev/null 2>&1 ; then
          true
       else
