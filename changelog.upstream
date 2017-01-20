@@ -1,3 +1,17 @@
+commit 747ded51984cbf3e65097f79978a95dac6593cbd
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Jan 20 15:29:36 2017 +0100
+
+    apt-get-noninteractive drop --yes
+    
+    can be easily manually entered and better to have a look before dist-upgrade'ing
+
+commit 1557c65a347fdb1991003b1b895d6be60a1a87eb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jan 18 14:33:35 2017 +0000
+
+    bumped changelog version
+
 commit 5eb707e97bed0987e498d4fda6d8bd3a59594e95
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Jan 18 09:52:53 2017 +0000
