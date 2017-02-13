@@ -12,10 +12,14 @@ commands without password. Disabled (out commented) by default.
 
 Simplifies running OpenVPN as unprivileged user.
 
-Ships a FoxyProxy add-on configuration file for use with Tor Browser
+Ships a FoxyProxy add-on configuration file for use with Tor Browser.
 
 Process configuration folder /etc/audit/rules.d/ by default if auditd is
 installed.
+
+Provides apt-get-noninteractive that is a simple wrapper around apt-get, that
+sets all required environment variables to make it interactive as well as to
+prevent systemd service starts and restarts during apt-get.
 
 (This package description has been [automatically](https://github.com/Whonix/whonix-developer-meta-files/blob/master/debug-steps/packaging-helper-script) extracted and mirrored from `debian/control`.)
 
