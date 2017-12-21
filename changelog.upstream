@@ -1,3 +1,15 @@
+commit fa2f89e2c490ea801b455e0ebd289a5478c9acb9
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Dec 21 19:47:07 2017 +0000
+
+    user tunnel no create home
+
+commit a24420242d4c26d56d0bbfc6170f9f147bbc4560
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jul 26 14:40:23 2017 +0000
+
+    bumped changelog version
+
 commit 113fb3c58203f700e3aab3a03904121fac6b9de4
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Jul 26 14:22:21 2017 +0000
