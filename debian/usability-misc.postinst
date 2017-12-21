@@ -20,7 +20,7 @@ case "$1" in
    configure)
       true "INFO: Configuring $DPKG_MAINTSCRIPT_PACKAGE..."
 
-      adduser --no-create-home --home /nonexistent --quiet --system --user-group --shell /bin/false "tunnel"
+      adduser --no-create-home --home /nonexistent --quiet --system --group --shell /bin/false "tunnel"
 
       user_account_list="user"
 
