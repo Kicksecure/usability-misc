@@ -20,7 +20,7 @@ case "$1" in
    configure)
       true "INFO: Configuring $DPKG_MAINTSCRIPT_PACKAGE..."
 
-      adduser --no-create-home --home /nonexistent --quiet --system --group --shell /bin/false "tunnel"
+      adduser --no-create-home --home /nonexistent --quiet --system --group --shell /bin/false "tunnel" || true
 
       user_account_list="user"
 
@@ -38,7 +38,7 @@ case "$1" in
                ## Resulted in: aTayYxVyw5kDo
                password="aTayYxVyw5kDo"
             fi
-            useradd --create-home --password "$password" --user-group --shell /bin/bash "$user_account"
+            useradd --create-home --password "$password" --user-group --shell /bin/bash "$user_account" || true
          fi
       done
 
