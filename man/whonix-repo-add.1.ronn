@@ -24,6 +24,8 @@ No frills.
 
 Use whonix_repository instead.
 
+`/usr/bin/whonix-repo-add` is self-contained.
+
 ## Examples
 `whonix-repo-add`
 
