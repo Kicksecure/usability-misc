@@ -1,0 +1,31 @@
+whonix-repo-add(8) -- add Whonix stable repository
+=============================================
+
+<span class="comment">
+# This file is part of Whonix.
+# Copyright (C) 2018 - 2018 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# See the file COPYING for copying conditions.
+
+# Not using angle brackets in copyright notice for e-mail address, because
+# angle brackets would result in this file being non-deterministic. (There
+# must be a bug in Debian wheezy in ruby-ronn.)
+
+# Not using "##", because for some reason this comment would be visible in the
+# resulting man page.
+</span>
+
+## SYNOPSIS
+`whonix-repo-add`
+
+## Description
+Adds Whonix stable repository.
+
+No frills.
+
+Use whonix_repository instead.
+
+## Examples
+`whonix-repo-add`
+
+## AUTHOR
+This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
