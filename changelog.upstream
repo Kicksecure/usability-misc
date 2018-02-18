@@ -1,3 +1,29 @@
+commit af29c0fdc91b45314ce24a0569ad10c81705c432
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Feb 17 17:55:12 2018 +0000
+
+    add etc/lightdm/lightdm.conf.d/autologin.conf
+    
+    out commented by default
+
+commit c25a5074e14b586e3040fc82e9ecc51d9fd9a99c
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Feb 17 17:55:06 2018 +0000
+
+    comments
+
+commit e21eca4160d642f6d90ef9340fa7c1ba0a64cb65
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Feb 17 17:52:51 2018 +0000
+
+    add usr/bin/whonix-repo-add
+
+commit 0acfeaafca05859e61844b7a40cd1c2bd861a50c
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Feb 10 13:52:19 2018 +0000
+
+    bumped changelog version
+
 commit fe364f80ae81802f6110d1e9f68e88cf27b02fed
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Feb 9 14:02:14 2018 +0100
