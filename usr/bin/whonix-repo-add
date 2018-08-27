@@ -25,12 +25,14 @@ gpg_tmp_create() {
    chmod 700 "$gpg_tmp"
 }
 
-[ -n "$apt_target_key" ] || apt_target_key="/etc/apt/trusted.gpg.d/whonix.gpg"
-
 root_check
+## sets: gpg_tmp
 gpg_tmp_create
 
-cat <<EOF > "$gpg_tmp/whonix.asc"
+[ -n "$apt_target_key" ] || apt_target_key="/etc/apt/trusted.gpg.d/whonix.gpg"
+[ -n "$apt_source_key" ] || apt_source_key="$gpg_tmp/whonix.asc"
+
+cat <<EOF > "$apt_source_key"
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQINBFLYY+gBEACb5AqqsBuxzGlqSQZoua/CI/kr9YOagD9G8I+aBXoTUqyTSafy
@@ -953,32 +955,7 @@ kVJ+boF5KVLLoEKRfQzp/k4zl68H+jCTbEC7GG1fDqgVOV3dy2pdp1yXnKCWJCgp
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
 
-gpg2 \
-   --ignore-time-conflict \
-   --no-options \
-   --no-default-keyring \
-   --homedir "$gpg_tmp" \
-   --quiet \
-   --import "$gpg_tmp/whonix.asc"
-
-gpg2 \
-   --ignore-time-conflict \
-   --no-options \
-   --no-default-keyring \
-   --homedir "$gpg_tmp" \
-   --quiet \
-   --fingerprint "916B8D99C38EAF5E8ADC7A2A8D66066A2EEACCDA" >/dev/null
-
-## Create keyring gpg file.
-gpg2 \
-   --ignore-time-conflict \
-   --no-options \
-   --no-default-keyring \
-   --homedir "$gpg_tmp" \
-   --quiet \
-   --export > "$gpg_tmp/pubring.gpg"
-
-cp "$gpg_tmp/pubring.gpg" "$apt_target_key"
+apt-key --keyring "$apt_target_key" add "$apt_source_key"
 
 cat <<EOF > "/etc/apt/sources.list.d/whonix.list"
 deb http://deb.whonix.org stretch main
