@@ -1,0 +1,76 @@
+apt-get-update-plus(8) -- secure combined apt-get update and apt-get dist-upgrade
+=============================================
+
+<span class="comment">
+# This file is part of Whonix.
+# Copyright (C) 2012 - 2018 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# See the file COPYING for copying conditions.
+
+# Not using angle brackets in copyright notice for e-mail address, because
+# angle brackets would result in this file being non-deterministic. (There
+# must be a bug in Debian wheezy in ruby-ronn.)
+
+# Not using "##", because for some reason this comment would be visible in the
+# resulting man page.
+</span>
+
+## SYNOPSIS
+`apt-get-update-plus` `[option]s`
+
+## Description
+Runs two commands. One after another:
+
+1) `/usr/lib/security-misc/apt-get-wrapper update`
+
+2) `apt-get [option]s`
+
+`/usr/lib/security-misc/apt-get-wrapper` would fail (exit non-zero) in case of
+any apt sources are unavailable. In such cases `apt-get-update-plus` would
+stop.
+
+In other words, `apt-get [option]s` gets only run if the previously run
+`apt-get update` was successsful.
+
+No options are passed to `/usr/lib/security-misc/apt-get-wrapper`. Use
+`apt_get_wrapper_pre` / `apt_get_wrapper_post` for that. In other words,
+no options are passed to `apt-get update`.
+
+All `[option]s` are passed to `apt-get`.
+
+## Environment Variables
+
+`apt_get_update_wrapper`
+
+By setting apt_bin the user can use another program other than `/usr/lib/security-misc/apt-get-wrapper`.
+
+`apt_get_wrapper_pre`
+
+Parameters before apt_get_wrapper_pre.
+
+`apt_get_wrapper_post`
+
+Parameters after apt_get_wrapper_pre.
+
+`apt_bin`
+
+By setting apt_bin the uer could use another program other than apt-get.
+
+`apt_get_pre`
+
+Parameters before apt_bin.
+
+`apt_get_post`
+
+Parameters after apt_bin.
+
+## Examples
+sudo apt-get-update-plus dist-upgrade
+
+sudo apt-get-update-plus install xfce4
+
+sudo apt_bin=apt-get-noninteractive apt-get-update-plus dist-upgrade
+
+sudo apt_bin=apt-get-noninteractive apt-get-update-plus dist-upgrade -o Dpkg::Options::=--force-confold
+
+## AUTHOR
+This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
