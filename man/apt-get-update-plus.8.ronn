@@ -1,4 +1,4 @@
-apt-get-update-plus(8) -- secure combined apt-get update and apt-get dist-upgrade
+apt-get-update-plus(8) -- secure combined apt-get update and apt-get command
 =============================================
 
 <span class="comment">
