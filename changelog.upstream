@@ -1,3 +1,21 @@
+commit a84dca55a5793795076cfdeeb18d946906ffbd6b
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Sep 17 18:31:49 2018 +0000
+
+    man
+
+commit 5dce33d1925dd6578901e1f6cffe9f431386ffd6
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Sep 17 18:27:28 2018 +0000
+
+    apt-get-update-plus(8) -- secure combined apt-get update and apt-get dist-upgrade
+
+commit 19501be106950ae2a7ecace5a0d3fa8647cd139e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Aug 27 21:22:19 2018 +0000
+
+    bumped changelog version
+
 commit 5b450e215c6976dc117f85b20cec13ec27f97b66
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Aug 27 18:58:25 2018 +0000
