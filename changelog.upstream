@@ -1,3 +1,19 @@
+commit c2a0c84b4a12b5bebc241b65a932b96a33cacedb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Nov 13 04:19:18 2018 -0500
+
+    fix Whonix-Gateway XFCE / CLI keyboard layout bug
+    
+    workaround for:
+    console-setup.sh[407]: /bin/setupcon: 866: /bin/setupcon: cannot open /tmp/tmpkbd.5RvhtP: No such file
+    https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=846256#44
+
+commit 8c96b03333796d586ea38b7402c14d66a95eb926
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Oct 1 05:40:16 2018 +0000
+
+    bumped changelog version
+
 commit a84dca55a5793795076cfdeeb18d946906ffbd6b
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Sep 17 18:31:49 2018 +0000
