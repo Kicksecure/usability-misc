@@ -44,12 +44,12 @@ case "$1" in
       if command -v qubesdb-read >/dev/null 2>&1 ; then
          true
       else
-         ## {{ Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
+         ## {{ Taken from qemu-system-common.postinst.
          # Add the kvm group unless it's already there
          if ! getent group kvm >/dev/null; then
             addgroup --quiet --system kvm || true
          fi
-         ## }} Taken from /var/lib/dpkg/info/qemu-system-common.postinst.
+         ## }} Taken from qemu-system-common.postinst.
 
          ## {{ Taken from libvirt-bin.postinst.
          if ! getent group libvirt >/dev/null; then
