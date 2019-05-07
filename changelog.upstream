@@ -1,3 +1,25 @@
+commit eeb5829683efdd3dc906e8d599476ce4c2e27eea
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue May 7 12:52:57 2019 -0400
+
+    implement upgrade-nonroot
+    
+    based on suggestion by xariv
+    
+    https://forums.whonix.org/t/non-root-apt-updates/7337
+
+commit be153716e02642cbe5cb12de3951259fc873820a
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue May 7 07:42:00 2019 -0400
+
+    pwchange(8) -- user friendly account password change utility
+
+commit eb34646b6ff457af06b76124e0d5b46c974bb5bf
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri May 3 11:40:12 2019 +0000
+
+    bumped changelog version
+
 commit 88dfe237bafeecfd457d72e16636339b7820320e
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri May 3 10:56:58 2019 +0000
