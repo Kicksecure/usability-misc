@@ -21,27 +21,6 @@ case "$1" in
 
       adduser --no-create-home --home /nonexistent --quiet --system --group --shell /bin/false "tunnel" || true
 
-      if command -v qubesdb-read >/dev/null 2>&1 ; then
-         true
-      else
-         ## {{ Taken from qemu-system-common.postinst.
-         # Add the kvm group unless it's already there
-         if ! getent group kvm >/dev/null; then
-            addgroup --quiet --system kvm || true
-         fi
-         ## }} Taken from qemu-system-common.postinst.
-
-         ## {{ Taken from libvirt-bin.postinst.
-         if ! getent group libvirt >/dev/null; then
-            addgroup --system libvirt
-         fi
-         ## }} Taken from libvirt-bin.postinst.
-
-         ## Existence of user "user" is not guaranteed at this point.
-         addgroup user kvm >/dev/null || true
-         addgroup user libvirt >/dev/null || true
-      fi
-
       true "INFO: End configuring $DPKG_MAINTSCRIPT_PACKAGE."
 
       ;;
