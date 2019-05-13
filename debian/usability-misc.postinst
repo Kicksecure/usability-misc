@@ -37,8 +37,9 @@ case "$1" in
          fi
          ## }} Taken from libvirt-bin.postinst.
 
-         addgroup user kvm >/dev/null
-         addgroup user libvirt >/dev/null
+         ## Existence of user "user" is not guaranteed at this point.
+         addgroup user kvm >/dev/null || true
+         addgroup user libvirt >/dev/null || true
       fi
 
       true "INFO: End configuring $DPKG_MAINTSCRIPT_PACKAGE."
