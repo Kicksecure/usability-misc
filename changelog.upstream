@@ -1,3 +1,31 @@
+commit bfc9f1c8279d319691ec04651cbdbfe5b5969401
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon May 13 11:08:49 2019 +0000
+
+    move libvirt stuff to whonix-libvirt package so it will be run in time
+
+commit dd30f4bb4cd6b968089ea490f2ea8f57fe4a5109
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon May 13 10:37:34 2019 +0000
+
+    fix
+
+commit 3d4e037842e75d74bfe2185d88f9fe136998e3d5
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon May 13 10:31:02 2019 +0000
+
+    remove creation of user "user"
+    
+    conflicts with Whonix host live boot
+    
+    https://forums.whonix.org/t/whonix-desktop-installer-with-calamares-field-report
+
+commit 788372c344b37e53d15efca65093352690f3bbbb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun May 12 10:52:55 2019 +0000
+
+    bumped changelog version
+
 commit 08b4555b8999a14ff716fab64be950e2aab631db
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sun May 12 02:58:45 2019 -0400
