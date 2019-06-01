@@ -1,3 +1,17 @@
+commit 63c1ba7cae2914bd3bcfe5d7d2e5edf495a79c02
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon May 27 17:20:29 2019 -0400
+
+    fix etc/.skel -> etc/skel/Downloads
+    
+    https://forums.whonix.org/t/bug-not-all-files-form-etc-skel-are-copied-to-home-user/6778
+
+commit e6f8f20c1c314e2b3f06435b117e59efafe20389
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri May 24 20:58:17 2019 +0000
+
+    bumped changelog version
+
 commit b43b43d358393abbd1cee055aee7eb5f16aeb0bd
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri May 24 12:29:11 2019 -0400
