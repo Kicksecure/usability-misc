@@ -1,3 +1,15 @@
+commit 73b10f562fee904732eaf037a7931b7e8c131489
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jun 1 08:28:23 2019 +0000
+
+    fix lintian warning package-contains-file-in-etc-skel
+
+commit 182fa6788c2c994b6d291cae0227368262c25b73
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jun 1 08:24:14 2019 +0000
+
+    bumped changelog version
+
 commit 63c1ba7cae2914bd3bcfe5d7d2e5edf495a79c02
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon May 27 17:20:29 2019 -0400
