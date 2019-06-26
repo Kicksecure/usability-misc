@@ -1,4 +1,8 @@
 #!/bin/sh
 
 ## Sets mousepad as the default editor for sudoedit.
-export SUDO_EDITOR="mousepad"
+
+if [ "$SUDO_EDITOR" = "" ]; then
+   SUDO_EDITOR="mousepad"
+   export SUDO_EDITOR
+fi
