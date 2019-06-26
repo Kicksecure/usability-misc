@@ -1,5 +1,8 @@
 #!/bin/sh
 
+## Copyright (C) 2019 - 2019 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+## See the file COPYING for copying conditions.
+
 ## Sets mousepad as the default editor for sudoedit if environment variable
 ## SUDO_EDITOR is unset and if mousepad is installed.
 
