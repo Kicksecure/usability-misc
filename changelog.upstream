@@ -1,3 +1,91 @@
+commit 38f6d48886c213354a278e580deea21d0bd18037
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:27:12 2019 -0400
+
+    package description
+
+commit b32f55a10b13214ce862648f4473558b273bba1a
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:14:01 2019 -0400
+
+    copyright
+
+commit 141063f56e6dac55a63ba6ea60bbad80e7cd4fdb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:12:42 2019 -0400
+
+    comment
+
+commit 7df575efec6d24ceb3393cdd84cc4c78d9bb8216
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:11:21 2019 -0400
+
+    output silent fix
+
+commit cb2facb3debd6bb805c3fd4b4add03b45994f2a0
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:10:29 2019 -0400
+
+    set SUDO_EDITOR="mousepad" only if mousepad is installed
+
+commit 9d48c1baacd8977fb0e3bbdfa74e4c531be9c061
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:07:13 2019 -0400
+
+    set SUDO_EDITOR only if not set already
+
+commit e63e3fe753e8e4b49d7679f816edba609dd6d4ef
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:06:12 2019 -0400
+
+    minor
+
+commit ce07265d04bc1667d090903d4d304f843096f81a
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:05:52 2019 -0400
+
+    fix shebang
+
+commit b5b48247594153f4d1fb8a79e00f75e1e30ea4db
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:04:33 2019 -0400
+
+    chmod +x usr/lib/default-editor/default_editor.sh
+
+commit 81edd1184172368e125dcf43eab8125ed5151c93
+Merge: be58448 a01d4a7
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 07:03:42 2019 -0400
+
+    Merge remote-tracking branch 'origin/master'
+
+commit a01d4a7aa08e2c5636c8cbfe77d29203d4043629
+Merge: be58448 a2da744
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jun 26 11:03:12 2019 +0000
+
+    Merge pull request #7 from madaidan/patch-1
+    
+    Set mousepad as the default editor for sudoedit
+
+commit a2da74427132a195162dc442b617edc02bfbaf54
+Author: madaidan <50278627+madaidan@users.noreply.github.com>
+Date:   Tue Jun 25 19:32:23 2019 +0000
+
+    Create 50default_editor
+
+commit 15059b2eee89a879abcb1fbc080c8d120bdc1c23
+Author: madaidan <50278627+madaidan@users.noreply.github.com>
+Date:   Tue Jun 25 19:30:23 2019 +0000
+
+    Create default_editor.sh
+
+commit be58448c978de2e0707576bb802e6b11abcc7ace
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jun 8 11:38:10 2019 +0000
+
+    bumped changelog version
+
 commit 037a15785ad7eee6136051250b7b01a997797206
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Jun 8 00:05:37 2019 -0400
