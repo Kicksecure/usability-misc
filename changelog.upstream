@@ -1,3 +1,15 @@
+commit 82b84e0f85efdeb7e8ef9261df757c446beeedb7
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Jul 31 03:13:29 2019 -0400
+
+    /var/run -> /run
+
+commit 2f2fd183852ee24c1a8fc6309bc8a120fce6a722
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jul 13 16:31:14 2019 +0000
+
+    bumped changelog version
+
 commit 31bbbfb1c76900a12efae44f0ccaa2683f2ca83f
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Jul 13 16:29:25 2019 +0000
@@ -452,7 +464,7 @@ commit 17d0d7de21074c95d470daec58fde2f739f8c1ae
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Dec 22 13:46:59 2017 +0000
 
-    remove legacy /run/qubes/this-is-templatevm
+    remove legacy /var/run/qubes/this-is-templatevm
 
 commit 8af782a58d895332efc54fa137b5b0b9568f59b6
 Author: Patrick Schleizer <adrelanos@riseup.net>
