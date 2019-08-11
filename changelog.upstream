@@ -1,3 +1,29 @@
+commit 1ac24eb00c0c2abe7f1839a2023aa70e5c8e65cf
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Aug 11 06:17:17 2019 +0000
+
+    readme
+
+commit a8643ed368fe5c4dc04181fa78b0a3b487dee605
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Aug 11 06:16:39 2019 +0000
+
+    xfce4-terminal:
+    
+    * Disables automatic scroll on output when manually scrolled up to make
+    reading output such as "sudo journalctl -f" easier.  Automatic scroll on
+    output still happening in default when not manually scrolling up beforehand
+    first.
+    
+    * Enables unlimited scrollback by default to avoid output from being
+    truncated.
+
+commit 1512ac19513b9404e3ad0130c8988c8c5a503a61
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Aug 1 12:09:12 2019 +0000
+
+    bumped changelog version
+
 commit 10d188a82c826bd7ddc1659df297069f9f50b34f
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Aug 1 11:13:46 2019 +0000
