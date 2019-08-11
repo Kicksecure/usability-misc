@@ -38,3 +38,13 @@ Description: Misc usability improvements
  .
  Sets mousepad as the default editor for sudoedit if environment variable
  SUDO_EDITOR is unset and if mousepad is installed.
+ .
+ xfce4-terminal:
+ .
+  * Disables automatic scroll on output when manually scrolled up to make
+ reading output such as "sudo journalctl -f" easier.  Automatic scroll on
+ output still happening in default when not manually scrolling up beforehand
+ first.
+ .
+  * Enables unlimited scrollback by default to avoid output from being
+ truncated.
