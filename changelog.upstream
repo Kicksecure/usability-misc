@@ -1,3 +1,15 @@
+commit 7c161657076aebd4a8ae0abf14446f5c4ba4a065
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Sep 7 05:44:46 2019 +0000
+
+    add virtualbox-send-sysrq
+
+commit 11606987e05260c75f0e76602071b8789d3986fb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Aug 28 12:50:27 2019 +0000
+
+    bumped changelog version
+
 commit 62f246288c05ade98619ae08e5ea22de79b94e76
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Aug 28 11:35:36 2019 +0000
