@@ -1,0 +1,14 @@
+#!/usr/bin/python3 -u
+
+## Copyright (C) 2019 - 2019 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+## See the file COPYING for copying conditions.
+
+import subprocess
+import sys
+
+vmname = sys.argv[1]
+key = sys.argv[2]
+
+subprocess.call(['VBoxManage', 'controlvm', vmname, 'keyboardputscancode', '1d', '38', '54'])
+subprocess.call(['VBoxManage', 'controlvm', vmname, 'keyboardputstring', key])
+subprocess.call(['VBoxManage', 'controlvm', vmname, 'keyboardputscancode', 'd4', 'b8', '9d'])
