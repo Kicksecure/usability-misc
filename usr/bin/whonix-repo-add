@@ -31,7 +31,7 @@ gpg_tmp_create
 
 [ -n "$apt_target_key" ] || apt_target_key="/etc/apt/trusted.gpg.d/whonix.gpg"
 [ -n "$apt_source_key" ] || apt_source_key="$gpg_tmp/whonix.asc"
-[ -n "$sources_list_target" ] || sources_list_target="/etc/apt/sources.list.d/whonix.list"
+[ -n "$sources_list_target_build_remote_derivative" ] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/whonix.list"
 [ -n "$codename" ] || codename="buster"
 [ -n "$sources_list_build_remote_derivative" ] || sources_list_build_remote_derivative="deb https://deb.whonix.org $codename main contrib non-free"
 
@@ -960,6 +960,6 @@ EOF
 
 apt-key --keyring "$apt_target_key" add "$apt_source_key"
 
-cat <<EOF > "$sources_list_target"
+cat <<EOF > "$sources_list_target_build_remote_derivative"
 $sources_list_build_remote_derivative
 EOF
