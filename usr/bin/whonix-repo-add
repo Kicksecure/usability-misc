@@ -31,6 +31,7 @@ gpg_tmp_create
 
 [ -n "$apt_target_key" ] || apt_target_key="/etc/apt/trusted.gpg.d/whonix.gpg"
 [ -n "$apt_source_key" ] || apt_source_key="$gpg_tmp/whonix.asc"
+[ -n "$codename" ] || codename="buster"
 
 cat <<EOF > "$apt_source_key"
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -958,5 +959,5 @@ EOF
 apt-key --keyring "$apt_target_key" add "$apt_source_key"
 
 cat <<EOF > "/etc/apt/sources.list.d/whonix.list"
-deb http://deb.whonix.org buster main contrib non-free
+deb http://deb.whonix.org $codename main contrib non-free
 EOF
