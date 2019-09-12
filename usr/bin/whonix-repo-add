@@ -960,6 +960,8 @@ EOF
 
 apt-key --keyring "$apt_target_key" add "$apt_source_key"
 
+true "sources_list_target_build_remote_derivative: $sources_list_target_build_remote_derivative"
+
 cat <<EOF > "$sources_list_target_build_remote_derivative"
 $sources_list_build_remote_derivative
 EOF
