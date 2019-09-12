@@ -959,5 +959,5 @@ EOF
 apt-key --keyring "$apt_target_key" add "$apt_source_key"
 
 cat <<EOF > "/etc/apt/sources.list.d/whonix.list"
-deb http://deb.whonix.org $codename main contrib non-free
+deb https://deb.whonix.org $codename main contrib non-free
 EOF
