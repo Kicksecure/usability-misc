@@ -21,8 +21,7 @@ gpg_tmp_create() {
    gpg_tmp="$(mktemp --directory)"
 
    rm --recursive --force "$gpg_tmp"
-   mkdir --parents "$gpg_tmp"
-   chmod 700 "$gpg_tmp"
+   mkdir --parents --mode 700 "$gpg_tmp"
 }
 
 root_check
