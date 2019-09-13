@@ -1,3 +1,47 @@
+commit 3310d9c31a4470962d2b9ca2560a401f0d5a8685
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 12 14:24:49 2019 +0000
+
+    debugging
+
+commit 1d657f4c051fa5ec7e60f84f6a28e4c6e0cfcfe0
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 12 14:09:11 2019 +0000
+
+    rename to sources_list_target_build_remote_derivative
+
+commit c6893f2413f46d0078d937562e01a0a1409d419a
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 12 14:07:39 2019 +0000
+
+    make sources_list_target configurable
+
+commit 71bd4795dd1d7cba5675040948eb21440d2e9f5c
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 12 14:00:42 2019 +0000
+
+    support setting apt sources line through sources_list_build_remote_derivative
+    
+    environment variable
+
+commit 1986474f382727eefef9a977bcca03f8f21c7143
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 12 13:50:22 2019 +0000
+
+    use https by default
+
+commit 3c158cfb5a8b068fde38e9a4d82ddb621f5fc169
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Sep 12 13:49:52 2019 +0000
+
+    make codename configurable by environment variable
+
+commit 31832090f03d54d80d36e3d0f11882a6aefbe0c1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Sep 7 06:12:46 2019 +0000
+
+    bumped changelog version
+
 commit 7c161657076aebd4a8ae0abf14446f5c4ba4a065
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Sep 7 05:44:46 2019 +0000
