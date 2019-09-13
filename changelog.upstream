@@ -1,3 +1,21 @@
+commit 0e6c3f038393c26b0b6ae824e0f832fdb921febb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Sep 13 05:54:32 2019 +0000
+
+    mkdir --mode 700
+
+commit 38ec862e882e4275ae5054c0a4ff9b2059ff4229
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Sep 13 05:51:39 2019 +0000
+
+    rename variables
+
+commit 863fe5365c8a0e6c28d4b50f640ba9a6113b65cb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Sep 13 05:46:51 2019 +0000
+
+    bumped changelog version
+
 commit 3310d9c31a4470962d2b9ca2560a401f0d5a8685
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Sep 12 14:24:49 2019 +0000
