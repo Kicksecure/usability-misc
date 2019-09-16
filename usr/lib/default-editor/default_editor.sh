@@ -3,8 +3,12 @@
 ## Copyright (C) 2019 - 2019 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
 ## See the file COPYING for copying conditions.
 
-## Sets mousepad as the default editor for VISUAL if environment variable
-## VISUAL is unset and if mousepad is installed.
+## Sets mousepad as the default editor for environment variable VISUAL
+## is unset and if mousepad is installed.
+
+## Environment variable VISUAL will also be honored by sudoedit.
+
+## https://forums.whonix.org/t/use-sudoedit-in-whonix-documentation/7599
 
 ## please provide /usr/bin/visual
 ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=758228
