@@ -21,8 +21,8 @@ Provides apt-get-noninteractive that is a simple wrapper around apt-get, that
 sets all required environment variables to make it interactive as well as to
 prevent systemd service starts and restarts during apt-get.
 
-Sets mousepad as the default editor for sudoedit if environment variable
-SUDO_EDITOR is unset and if mousepad is installed.
+Sets mousepad as the default editor for environment variable VISUAL
+is unset and if mousepad is installed.
 
 xfce4-terminal:
 
