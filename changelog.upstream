@@ -1,3 +1,17 @@
+commit 39ef6cd24610deb2b816fc7e223769116f760789
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Oct 21 15:13:22 2019 +0000
+
+    disable sudo default lecture
+    
+    https://forums.whonix.org/t/disable-or-change-sudo-lecture-at-frist-run-we-trust-you-have-received-the-usual-lecture-from-the-local-system-administrator-it-usually-boils-down-to-these-three-things/8323
+
+commit a94d5c36ca3aad1dea115a798caa298cc9aa0469
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Sep 16 13:36:32 2019 +0000
+
+    bumped changelog version
+
 commit 0cdfc599d31f69dd09aee9f20be8640884342b49
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Sep 16 13:32:33 2019 +0000
