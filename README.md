@@ -24,6 +24,9 @@ prevent systemd service starts and restarts during apt-get.
 Sets mousepad as the default editor for environment variable VISUAL
 is unset and if mousepad is installed.
 
+Disable sudo default lecture.
+/etc/sudoers.d/sudo-lecture-disable
+
 xfce4-terminal:
 
 * Disables automatic scroll on output when manually scrolled up to make
