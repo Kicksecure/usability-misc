@@ -1,0 +1,25 @@
+gsudoedit(8) -- graphical sudoedit
+=============================================
+
+<span class="comment">
+# Copyright (C) 2019 - 2019 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# See the file COPYING for copying conditions.
+</span>
+
+## SYNOPSIS
+`gsudoedit` filename
+
+## Description
+Similar to the sudoedit(8) utility but using a graphical editor.
+
+Wrapper arround sudoedit. Makes invocation of sudoedit easier. Less to type.
+
+Requires environment variable `VISUAL` to be set to a graphical editor such as
+`mousepad`.
+
+Runs:
+
+`env VISUAL="$VISUAL" sudoedit`
+
+## AUTHOR
+This man page has been written by Patrick Schleizer (adrelanos@riseup.net).

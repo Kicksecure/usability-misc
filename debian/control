@@ -52,3 +52,5 @@ Description: Misc usability improvements
  .
   * Enables unlimited scrollback by default to avoid output from being
  truncated.
+ .
+ Ships gsudoedit, a wrapper to run sudoedit with a graphical editor.
