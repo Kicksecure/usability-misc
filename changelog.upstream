@@ -1,3 +1,21 @@
+commit d5bf9fd8778951a4cc3f27131aebee22520062df
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Dec 6 09:30:07 2019 -0500
+
+    readme
+
+commit 666c26f1dc2ea312f3d6509df535599ae47b203f
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Dec 4 12:57:19 2019 -0500
+
+    add gsudoedit, a wrapper to run sudoedit with a graphical editor
+
+commit 5b9d8ae2ee7f4202f2595ed7b438299fbd7ab684
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Nov 23 14:08:29 2019 +0000
+
+    bumped changelog version
+
 commit 5cd196da064256e0737eea25c979d3a13106e663
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Nov 23 14:06:30 2019 +0000
