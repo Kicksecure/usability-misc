@@ -12,7 +12,7 @@ gsudoedit(8) -- graphical sudoedit
 ## Description
 Similar to the sudoedit(8) utility but using a graphical editor.
 
-Wrapper arround sudoedit. Makes invocation of sudoedit easier. Less to type.
+Wrapper around sudoedit. Makes invocation of sudoedit easier. Less to type.
 
 Requires environment variable `VISUAL` to be set to a graphical editor such as
 `mousepad`.
