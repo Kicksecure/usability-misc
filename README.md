@@ -36,6 +36,8 @@ first.
 
 * Enables unlimited scrollback by default to avoid output from being
 truncated.
+
+Ships gsudoedit, a wrapper to run sudoedit with a graphical editor.
 ## How to install `usability-misc` using apt-get ##
 
 1\. Download [Whonix's Signing Key]().
