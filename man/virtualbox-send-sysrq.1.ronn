@@ -38,5 +38,7 @@ Has to be used on the host.
 ## Documentation
 https://www.whonix.org/wiki/SysRq
 
+https://forums.whonix.org/t/send-sysrq-commands-to-virtualbox-usability-helper-virtualbox-send-sysrq/8369
+
 ## AUTHOR
 This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
