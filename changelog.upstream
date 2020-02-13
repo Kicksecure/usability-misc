@@ -1,3 +1,38 @@
+commit b3d775e35ff5abd8ab9267902300836de053cc65
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Feb 13 08:34:24 2020 -0500
+
+    add new usability wrapper /usr/bin/dpkg-noninteractive
+    
+    https://github.com/freedomofpress/securedrop-workstation/issues/428
+
+commit 63f96f9f142b92e088fefd1dc7a32d31e6c5ac5c
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Feb 13 06:14:45 2020 -0500
+
+    speed up "apt update"
+    
+    add /etc/apt/apt.conf.d/30usability-misc
+    
+    Acquire::Languages none;
+    Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;
+    
+    It's roughly 140 KB vs 43 MB. Seconds vs real delay.
+    
+    I wonder if this should become the default for Whonix and Kicksecure.
+    
+    We'd loose translations something. I don't even know where - since I always use English as default language - to be on par with the defaults that users will use. Probably translations for `apt-cache show pkg-name` or so. But only for those who change the system language for APT. Dunno if anyone is doing that actually. If that's a problem, it would be better to have instructions how to reactivate this for desired languages only.
+    
+    We might also loose default `apt-file list pkg-name` but those who want that can (and probably have to use anyhow) `sudo apt-file update`.
+    
+    https://forums.whonix.org/t/speeding-up-apt-update-with-acquire-languages-none-and-contents-deb-defaultenabled-false-its-so-much-faster/8894
+
+commit bd68a636e96fed2183468fa2dff11aa41077506e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Dec 31 01:57:18 2019 -0500
+
+    bumped changelog version
+
 commit 19e83db5d2a8caf57c134dd7ebf9c39c12a91448
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Tue Dec 31 01:56:23 2019 -0500
