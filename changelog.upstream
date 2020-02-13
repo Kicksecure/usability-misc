@@ -1,3 +1,17 @@
+commit e22135dcb60ae207fbcad0b71e905b78bee761f1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Feb 13 09:32:41 2020 -0500
+
+    add dpkg-noninteractive man page
+    
+    https://github.com/freedomofpress/securedrop-workstation/issues/428
+
+commit 9e4db712667b39b9d865e10aeb03ab35ce45d019
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Feb 13 14:14:37 2020 +0000
+
+    bumped changelog version
+
 commit b3d775e35ff5abd8ab9267902300836de053cc65
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Feb 13 08:34:24 2020 -0500
