@@ -1,0 +1,6 @@
+## Copyright (C) 2020 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+## See the file COPYING for copying conditions.
+
+## https://forums.whonix.org/t/speeding-up-apt-update-with-acquire-languages-none-and-contents-deb-defaultenabled-false-its-so-much-faster/8894/2
+Acquire::Languages none;
+Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;
