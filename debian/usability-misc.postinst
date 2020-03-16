@@ -13,8 +13,11 @@ bisq_desktop_directories_workaround() {
    if [ -f "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1" ]; then
       return 0
    fi
+
    ## https://github.com/bisq-network/bisq/issues/848
    mkdir -p /usr/share/desktop-directories
+
+   mkdir -p "/var/lib/usability-misc/do_once"
    touch "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1"
 }
 
