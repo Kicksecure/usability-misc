@@ -9,6 +9,15 @@ fi
 
 set -e
 
+bisq_desktop_directories_workaround() {
+   if [ -f "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1" ]; then
+      return 0
+   fi
+   ## https://github.com/bisq-network/bisq/issues/848
+   mkdir -p /usr/share/desktop-directories
+   touch "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1"
+}
+
 true "
 #####################################################################
 ## INFO: BEGIN: $DPKG_MAINTSCRIPT_PACKAGE $DPKG_MAINTSCRIPT_NAME $@
@@ -28,6 +37,8 @@ case "$1" in
    *)
       ;;
 esac
+
+bisq_desktop_directories_workaround
 
 if [ -d /run/systemd/system ] ; then
         systemd-tmpfiles --create /usr/lib/tmpfiles.d/50_openvpn_unpriv.conf >/dev/null || true
