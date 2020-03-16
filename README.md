@@ -38,6 +38,9 @@ first.
 truncated.
 
 Ships gsudoedit, a wrapper to run sudoedit with a graphical editor.
+
+Bisq workarond "sudo mkdir -p /usr/share/desktop-directories" as per
+https://github.com/bisq-network/bisq/issues/848
 ## How to install `usability-misc` using apt-get ##
 
 1\. Download [Whonix's Signing Key]().
