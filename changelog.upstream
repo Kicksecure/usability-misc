@@ -1,3 +1,15 @@
+commit d21f281757c7fc27734807ed75fa2cb8e500f9de
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Mar 31 10:07:17 2020 -0400
+
+    add apt-cacher-ng-prepare / apt-cacher-ng-undo
+
+commit fb62d1cb8bee13b9430e845e9c1f64e42323e5e8
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Mar 27 07:36:49 2020 -0400
+
+    bumped changelog version
+
 commit 2f9ec5dbbae3d93b6a41fd9efbc745bdcfef57f3
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Mar 27 07:31:06 2020 -0400

@@ -1,3 +1,9 @@
+usability-misc (3:6.8-1) unstable; urgency=medium
+
+  * New upstream version (local package).
+
+ -- Patrick Schleizer <adrelanos@riseup.net>  Tue, 31 Mar 2020 14:13:30 +0000
+
 usability-misc (3:6.7-1) unstable; urgency=medium
 
   * New upstream version (local package).
