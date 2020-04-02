@@ -41,6 +41,10 @@ Ships gsudoedit, a wrapper to run sudoedit with a graphical editor.
 
 Bisq workarond "sudo mkdir -p /usr/share/desktop-directories" as per
 https://github.com/bisq-network/bisq/issues/848
+
+gpl_sources_download GPL'ed source code of all installed packages.
+Used damngpl to get a list of all GPL'ed packages, then downloads them using
+apt-get source.
 ## How to install `usability-misc` using apt-get ##
 
 1\. Download [Whonix's Signing Key]().
