@@ -13,8 +13,9 @@ Standards-Version: 4.3.0
 
 Package: usability-misc
 Architecture: all
-Depends: sudo, policyrcd-script-zg2, adduser, python3,
+Depends: sudo, policyrcd-script-zg2, adduser, python3, damngpl,
  ${misc:Depends}
+Replaces: gpl-sources-download
 Description: Misc usability improvements
  Creates user "user" if it does not already exist.
  .
@@ -57,3 +58,7 @@ Description: Misc usability improvements
  .
  Bisq workarond "sudo mkdir -p /usr/share/desktop-directories" as per
  https://github.com/bisq-network/bisq/issues/848
+ .
+ gpl_sources_download GPL'ed source code of all installed packages.
+ Used damngpl to get a list of all GPL'ed packages, then downloads them using
+ apt-get source.

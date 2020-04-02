@@ -3,3 +3,6 @@
 
 ## The whole point of the package.
 usability-misc: package-contains-file-in-etc-skel etc/skel/*
+
+## Read-only access is ok.
+usability-misc: uses-dpkg-database-directly usr/bin/gpl_download_sources

@@ -1,0 +1,16 @@
+gpl-sources-download(8) -- download source code for included GPL packages
+=============================================
+
+<span class="comment">
+# Copyright (C) 2012 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# See the file COPYING for copying conditions.
+</span>
+
+## SYNOPSIS
+`gpl-sources-download`
+
+## DESCRIPTION
+gpl-sources-download - download source code for included GPL packages
+
+## AUTHOR
+gpl-sources-download and this man page has been written by Patrick Schleizer (adrelanos@riseup.net).
