@@ -1,3 +1,21 @@
+commit ed2fdbb184a397b5a398c2cdee02b4be1e92ee5e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Apr 2 18:13:22 2020 -0400
+
+    readme
+
+commit 38e3117d3c42fb21ae019fc9102c3838aa012a7f
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Apr 2 17:28:49 2020 -0400
+
+    merge gpl-sources-download package into this package
+
+commit a52f3c8a1c580e9577112ab74c426739b5d66405
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Apr 2 08:05:54 2020 -0400
+
+    bumped changelog version
+
 commit e5ab31aa3ad5f17ae09504ed1ffd935ca3a6eb27
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Apr 2 07:22:58 2020 -0400
