@@ -1,3 +1,27 @@
+commit 20e9b68866c1dbbcc883c48036fce4bb9db69631
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Apr 3 09:47:40 2020 -0400
+
+    readme
+
+commit 688757decb77b540203872db6ed46140958e1f09
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Apr 3 05:47:26 2020 -0400
+
+    generate man pages using "genmkfile manpages"
+
+commit 31794420b6af692a8e39c473c958b2ca34635d0f
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Apr 3 05:46:42 2020 -0400
+
+    merge scurl into this package
+
+commit 1bc2ca1fbf3444b8acae51e536cc7191e1e524ad
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Apr 2 18:15:32 2020 -0400
+
+    bumped changelog version
+
 commit ed2fdbb184a397b5a398c2cdee02b4be1e92ee5e
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Apr 2 18:13:22 2020 -0400
