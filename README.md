@@ -45,6 +45,10 @@ https://github.com/bisq-network/bisq/issues/848
 gpl_sources_download GPL'ed source code of all installed packages.
 Used damngpl to get a list of all GPL'ed packages, then downloads them using
 apt-get source.
+
+SSL curl wrapper: Simple wrapper called scurl, that adds
+"--tlsv1 --proto =https" in front of all invocations of "curl" when
+running "scurl".
 ## How to install `usability-misc` using apt-get ##
 
 1\. Download [Whonix's Signing Key]().
