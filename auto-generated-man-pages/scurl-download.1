@@ -1,0 +1,18 @@
+.\" generated with Ronn-NG/v0.8.0
+.\" http://github.com/apjanke/ronn-ng/tree/0.8.0
+.TH "SCURL\-DOWNLOAD" "1" "April 2020" "usability-misc" "usability-misc Manual"
+.SH "NAME"
+\fBscurl\-download\fR \- curl file download wrapper while enforcing TLS (https)
+.P
+.SH "SYNOPSIS"
+\fBscurl\-download\fR [options] [URL\|\.\|\.\|\.]
+.SH "DESCRIPTION"
+A scurl wrapper, which adds \fB\-\-location\fR and \fB\-\-remote\-name\fR as options\.
+.SH "OPTIONS"
+Any options will be forwarded to curl\. See curl(1)\.
+.SH "RETURN VALUES"
+Forwards anything curl returns\.
+.SH "EXAMPLE"
+\fBcurl\-download https://check\.torproject\.org/index\.html\fR
+.SH "AUTHOR"
+This man page has been written by Patrick Schleizer (adrelanos@riseup\.net)\.

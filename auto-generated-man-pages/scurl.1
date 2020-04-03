@@ -1,0 +1,18 @@
+.\" generated with Ronn-NG/v0.8.0
+.\" http://github.com/apjanke/ronn-ng/tree/0.8.0
+.TH "SCURL" "1" "April 2020" "usability-misc" "usability-misc Manual"
+.SH "NAME"
+\fBscurl\fR \- start curl while enforcing TLS (https)
+.P
+.SH "SYNOPSIS"
+\fBscurl\fR [options] [URL\|\.\|\.\|\.]
+.SH "DESCRIPTION"
+A curl wrapper, which adds \fB\-\-tlsv1\fR and \fB\-\-proto =https\fR as options\.
+.SH "OPTIONS"
+Any options will be forwarded to curl\. See curl(1)\.
+.SH "RETURN VALUES"
+Forwards anything curl returns\.
+.SH "EXAMPLE"
+\fBscurl https://check\.torproject\.org\fR
+.SH "AUTHOR"
+This man page has been written by Patrick Schleizer (adrelanos@riseup\.net)\.
