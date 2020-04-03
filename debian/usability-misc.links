@@ -1,0 +1,8 @@
+## Copyright (C) 2019 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+## See the file COPYING for copying conditions.
+
+/usr/bin/curl-download /usr/bin/curlget
+/usr/bin/scurl-download /usr/bin/scurlget
+
+/usr/share/man/man1/curl-download.1.gz /usr/share/man/man1/curlget.1.gz
+/usr/share/man/man1/scurl-download.1.gz /usr/share/man/man1/scurlget.1.gz
