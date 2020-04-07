@@ -1,3 +1,35 @@
+commit 88508212aebd818b08e33c5632945d006ec01291
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Apr 7 20:36:37 2020 +0000
+
+    readme
+
+commit 4b9d13721ac4b31a17253bab07a13a210e22b8d9
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Apr 7 20:34:02 2020 +0000
+
+    skip etc/default/grub.d/30_screen_resolution.cfg in Qubes
+    
+    since might cause issues, see: https://phabricator.whonix.org/T353
+
+commit bb9b5f75b5151ffe21fd990387146a00e4de6bd5
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Apr 7 20:31:25 2020 +0000
+
+    update-grub
+
+commit 72a6a2a8659e1a62718a9824638c1b37d8b61656
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Apr 7 20:28:01 2020 +0000
+
+    import from grub-screen-resolution
+
+commit 95ca9adf81829d6ea22929281c84774dc3963aab
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Apr 3 10:18:30 2020 -0400
+
+    bumped changelog version
+
 commit 20e9b68866c1dbbcc883c48036fce4bb9db69631
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Apr 3 09:47:40 2020 -0400
