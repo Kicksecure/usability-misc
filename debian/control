@@ -15,7 +15,7 @@ Package: usability-misc
 Architecture: all
 Depends: sudo, policyrcd-script-zg2, adduser, python3, damngpl,
  ${misc:Depends}
-Replaces: gpl-sources-download, scurl
+Replaces: gpl-sources-download, scurl, grub-screen-resolution
 Description: Misc usability improvements
  Creates user "user" if it does not already exist.
  .
@@ -66,3 +66,7 @@ Description: Misc usability improvements
  SSL curl wrapper: Simple wrapper called scurl, that adds
  "--tlsv1 --proto =https" in front of all invocations of "curl" when
  running "scurl".
+ .
+ Sets 1024x768 as boot screen resolution
+ Ships a /etc/default/grub.d/30_screen_resolution.cfg configuration file, that
+ injects "vga=0x0317" into the GRUB_CMDLINE_LINUX_DEFAULT variable.
