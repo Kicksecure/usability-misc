@@ -10,13 +10,15 @@ apt-get-noninteractive(8) -- wrapper to run `apt-get` non-interactively
 `apt-get-noninteractive` [option]s
 
 ## Description
-Simple wrapper that sets environment variables and adds --yes,
--o Dpkg::Options::=--force-confnew then forwards all arguments to apt-get.
-Does not pass --force-yes.
+Simple wrapper that sets environment variables and adds `--yes`,
+`-o Dpkg::Options::=--force-confnew,confmiss` then forwards all arguments to
+apt-get.
+
+Does not pass `--force-yes`.
 
 If you like to keep old configuration files, add the following parameter.
 
--o Dpkg::Options::=--force-confold
+`-o Dpkg::Options::=--force-confold`
 
 ## Examples
 sudo apt-get-noninteractive dist-upgrade
