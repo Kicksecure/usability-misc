@@ -1,3 +1,45 @@
+commit e4afcb186fb4933df3f4e80588e145753d51c9c6
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jun 7 10:29:53 2020 -0400
+
+    man
+
+commit b765de6b608b95a5246f01d3f84c650d189ff0cf
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jun 7 10:26:36 2020 -0400
+
+    man page
+
+commit 21a5d27a3178ee3eb0f0850dd698033630688cbf
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jun 7 10:25:33 2020 -0400
+
+    apt-get-noninteractive: Dpkg::Options::=--force-confask,confnew,confnew
+
+commit 8ed7250338dabe411cf4d709083a147c4d7985b5
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jun 7 05:15:53 2020 -0400
+
+    man page
+
+commit ac57ce4c96d1f481587485c98bdbf3f382f819cb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jun 7 05:12:19 2020 -0400
+
+    man page
+
+commit 363916e7e510347d26d6ffee2a9b04317c955f3b
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jun 7 05:08:50 2020 -0400
+
+    apt-get-noninteractive: force confmiss
+
+commit 69948eab1590d4c94584803583d917e3cff79d46
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Apr 16 08:48:03 2020 -0400
+
+    bumped changelog version
+
 commit 954eb90627238bce7822dbbd1cd1739efbdcee02
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Apr 15 14:05:39 2020 -0400
