@@ -1,3 +1,15 @@
+commit 3c756d36c45e316d1e181b76029de5af0d01e20a
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Mon Jun 8 10:44:51 2020 -0400
+
+    fix: apt-get -o Dpkg::Options::="--force-confask,confnew,confmiss" "$@"
+
+commit 8c55249f055d58b193de5482972e599a33ee148f
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Jun 7 11:37:34 2020 -0400
+
+    bumped changelog version
+
 commit e4afcb186fb4933df3f4e80588e145753d51c9c6
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sun Jun 7 10:29:53 2020 -0400
