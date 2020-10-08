@@ -1,0 +1,5 @@
+#!/bin/bash
+
+## Disables hardened_malloc per application by creating an
+## empty tmpfs where the libraries are located.
+bwrap --dev-bind / / --tmpfs /usr/lib/libhardened_malloc.so "${@}"
