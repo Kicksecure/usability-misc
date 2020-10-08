@@ -1,3 +1,37 @@
+commit 753356eb40b7b8fa3b4b6a2189015479afb43192
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 8 13:42:16 2020 -0400
+
+    readme
+
+commit 8ed6a5d0b2ba787f2950b88e046e8e9ce595d597
+Merge: d952095 6e26197
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 8 12:08:25 2020 -0400
+
+    Merge remote-tracking branch 'github/master'
+
+commit 6e26197843d1570b959bc07dc0c216d8f95ae343
+Merge: d952095 b66b74e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 8 16:07:04 2020 +0000
+
+    Merge pull request #8 from madaidan/master
+    
+    Add hardened-malloc-disable
+
+commit b66b74e5e3cfe8eac580f888384f3440422eada9
+Author: madaidan <50278627+madaidan@users.noreply.github.com>
+Date:   Thu Oct 8 16:55:55 2020 +0000
+
+    Add hardened-malloc-disable
+
+commit d9520954ad79e345b13c571552b849ae73499d54
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Jun 13 11:31:22 2020 -0400
+
+    bumped changelog version
+
 commit 3c756d36c45e316d1e181b76029de5af0d01e20a
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Jun 8 10:44:51 2020 -0400
