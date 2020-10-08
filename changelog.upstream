@@ -1,3 +1,21 @@
+commit c7878d19eb28c013a0d830c9f1bf47cb524be3aa
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 8 13:46:27 2020 -0400
+
+    add auto-generated-man-pages/hardened-malloc-disable.8
+
+commit 0b015a97e944a16b283f393b940b7b5fb85d208d
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 8 13:46:13 2020 -0400
+
+    add man/hardened-malloc-disable.8.ronn
+
+commit 56fb1fc954e932a36c29ac35e68d536f508ed45e
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 8 13:42:16 2020 -0400
+
+    bumped changelog version
+
 commit 753356eb40b7b8fa3b4b6a2189015479afb43192
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Oct 8 13:42:16 2020 -0400
