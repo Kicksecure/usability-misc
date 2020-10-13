@@ -1,3 +1,35 @@
+commit 6b152cb75cbc07aedb0f0204adbb00d211ce6ca1
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Oct 13 12:33:33 2020 -0400
+
+    readme
+
+commit e6268228cdf598afebf355f146bb4e0b4e73cceb
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Oct 11 12:27:47 2020 -0400
+
+    description
+
+commit fe15039b56fa5e21a00e8a36fe7a205f46fd8af6
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Oct 11 12:27:16 2020 -0400
+
+    remove no longer needed dependency
+
+commit 5a16996fd732afbe39177caa73561bd0207b3303
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Oct 11 12:23:49 2020 -0400
+
+    remove hardened-malloc-disable
+    
+    http://forums.whonix.org/t/hardened-malloc-hardened-memory-allocator/7474/116
+
+commit df9a02db0ccc8e88aab5ee869b68bfb3bc48ed3b
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 8 13:47:03 2020 -0400
+
+    bumped changelog version
+
 commit c7878d19eb28c013a0d830c9f1bf47cb524be3aa
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Oct 8 13:46:27 2020 -0400
