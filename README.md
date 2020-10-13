@@ -53,9 +53,6 @@ running "scurl".
 Sets 1024x768 as boot screen resolution
 Ships a /etc/default/grub.d/30_screen_resolution.cfg configuration file, that
 injects "vga=0x0317" into the GRUB_CMDLINE_LINUX_DEFAULT variable.
-
-Provides the hardened-malloc-disable wrapper to disable hardened_malloc per
-application via bubblewrap if hardened_malloc is being preloaded globally.
 ## How to install `usability-misc` using apt-get ##
 
 1\. Download Whonix's Signing Key.
