@@ -11,7 +11,7 @@ scurl(1) -- start curl while enforcing TLS (https)
 `scurl` [options] [URL...]
 
 ## DESCRIPTION
-A curl wrapper, which adds `--tlsv1` and `--proto =https` as options.
+A curl wrapper, which adds `--tlsv1.3` and `--proto =https` as options.
 
 ## OPTIONS
 Any options will be forwarded to curl. See curl(1).

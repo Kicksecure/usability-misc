@@ -5,4 +5,4 @@
 
 ## scurl stands for sslcurl
 
-curl --tlsv1.2 --proto =https "$@"
+curl --tlsv1.3 --proto =https "$@"
