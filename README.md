@@ -47,7 +47,7 @@ Used damngpl to get a list of all GPL'ed packages, then downloads them using
 apt-get source.
 
 SSL curl wrapper: Simple wrapper called scurl, that adds
-"--tlsv1 --proto =https" in front of all invocations of "curl" when
+"--tlsv1.3 --proto =https" in front of all invocations of "curl" when
 running "scurl".
 
 Sets 1024x768 as boot screen resolution
