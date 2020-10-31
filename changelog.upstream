@@ -1,3 +1,15 @@
+commit 1bdb77dd70ad39d84282d946e9dfedf44ff4d355
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Oct 31 05:47:38 2020 -0400
+
+    chmod +x /etc/X11/Xsession.d/50default_editor
+
+commit 7b7df299ba3dbcd059f1ecd967d88c15126a8b34
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Thu Oct 29 16:19:52 2020 -0400
+
+    bumped changelog version
+
 commit 99fbd1d4cea09a92c90d874f7b9ab6a8131128a9
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Oct 29 16:19:51 2020 -0400
