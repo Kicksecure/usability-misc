@@ -19,6 +19,13 @@ fi
 cd ~/whonix_backup/WhonixWikiBackups
 git fetch || true
 
+mkdir --parents ~/whonix_backup/WhonixWikiFullHistoryBackup
+if ! test -d ~/whonix_backup/WhonixWikiFullHistoryBackup ; then
+   git clone https://gitlab.com/whonix/whonixwikifullhistorybackup || true
+fi
+cd ~/whonix_backup/WhonixWikiFullHistoryBackup
+git fetch || true
+
 mkdir --parents ~/whonix_backup/adrelanos
 cd ~/whonix_backup/adrelanos
 github-backup adrelanos || true
