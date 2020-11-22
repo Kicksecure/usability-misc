@@ -9,6 +9,16 @@ set -e
 sudo apt-get update
 sudo apt-get install --yes git git-mediawiki github-backup
 
+mkdir --parents ~/whonix_backup
+cd ~/whonix_backup
+
+mkdir --parents ~/whonix_backup/WhonixWikiBackups
+if ! test -d ~/whonix_backup/WhonixWikiBackups ; then
+   git clone https://gitlab.com/whonix/WhonixWikiBackups || true
+fi
+cd ~/whonix_backup/WhonixWikiBackups
+git fetch || true
+
 mkdir --parents ~/whonix_backup/adrelanos
 cd ~/whonix_backup/adrelanos
 github-backup adrelanos || true
