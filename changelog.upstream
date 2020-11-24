@@ -1,3 +1,21 @@
+commit 9d715e7f0aad8dc14e9948980060b7436c24ba74
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Nov 22 05:22:00 2020 -0500
+
+    https://gitlab.com/whonix/whonixwikifullhistorybackup
+
+commit 89e4d058182bd0d4dd3263f331b1e534f78c3844
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sun Nov 22 04:42:05 2020 -0500
+
+    https://gitlab.com/whonix/WhonixWikiBackups
+
+commit 5686f58f0ac0ed7c332dc416aea66e3f79ffb85d
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Sat Oct 31 06:11:30 2020 -0400
+
+    bumped changelog version
+
 commit 1bdb77dd70ad39d84282d946e9dfedf44ff4d355
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Oct 31 05:47:38 2020 -0400
