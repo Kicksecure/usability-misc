@@ -1,3 +1,23 @@
+commit 7351313d9576290e7a54779229dba80970fee723
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Dec 25 07:32:46 2020 -0500
+
+    readme
+
+commit 6c84d27f02e17a866fa35ad0df4edde59c0d8f51
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Fri Dec 25 07:27:33 2020 -0500
+
+    update description
+    
+    no longer does anything related to auditd
+
+commit 176efa94e4e31107230eed540314a22f8f398888
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Tue Nov 24 06:18:35 2020 -0500
+
+    bumped changelog version
+
 commit 9d715e7f0aad8dc14e9948980060b7436c24ba74
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sun Nov 22 05:22:00 2020 -0500
