@@ -1,0 +1,15 @@
+#!/bin/bash
+
+## Copyright (C) 2021 - 2021 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+## See the file COPYING for copying conditions.
+
+set -e
+
+if [ "$(id -u)" != "0" ]; then
+   echo "ERROR: must be run as root! sudo $0"
+   exit 1
+fi
+
+sed -i '/OnlyShowIn/d' /etc/xdg/autostart/orca-autostart.desktop
+
+echo "OK"
