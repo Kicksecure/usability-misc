@@ -1,4 +1,4 @@
-whonix-repo-add(8) -- add Whonix stable repository
+repo-add-dist(8) -- add derivative stable repository
 =============================================
 
 <span class="comment">
@@ -14,19 +14,19 @@ whonix-repo-add(8) -- add Whonix stable repository
 </span>
 
 ## SYNOPSIS
-`whonix-repo-add`
+`repo-add-dist`
 
 ## Description
-Adds Whonix stable repository.
+Adds derivative stable repository.
 
 No frills.
 
 Use repository-dist instead.
 
-`/usr/bin/whonix-repo-add` is self-contained.
+`/usr/bin/repo-add-dist` is self-contained.
 
 ## Examples
-`whonix-repo-add`
+`repo-add-dist`
 
 ## AUTHOR
 This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
