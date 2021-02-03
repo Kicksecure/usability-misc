@@ -21,7 +21,7 @@ Adds Whonix stable repository.
 
 No frills.
 
-Use whonix_repository instead.
+Use repository-dist instead.
 
 `/usr/bin/whonix-repo-add` is self-contained.
 
