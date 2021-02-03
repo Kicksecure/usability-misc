@@ -28,9 +28,9 @@ root_check
 ## sets: gpg_tmp
 gpg_tmp_create
 
-[ -n "$apt_target_key_derivative" ] || apt_target_key_derivative="/etc/apt/trusted.gpg.d/whonix.gpg"
-[ -n "$apt_source_key_derivative" ] || apt_source_key_derivative="$gpg_tmp/whonix.asc"
-[ -n "$sources_list_target_build_remote_derivative" ] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/whonix.list"
+[ -n "$apt_target_key_derivative" ] || apt_target_key_derivative="/etc/apt/trusted.gpg.d/derivative.gpg"
+[ -n "$apt_source_key_derivative" ] || apt_source_key_derivative="$gpg_tmp/derivative-distribution-signing-key.asc"
+[ -n "$sources_list_target_build_remote_derivative" ] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/derivative.list"
 [ -n "$codename" ] || codename="buster"
 [ -n "$sources_list_build_remote_derivative" ] || sources_list_build_remote_derivative="deb https://deb.whonix.org $codename main contrib non-free"
 
