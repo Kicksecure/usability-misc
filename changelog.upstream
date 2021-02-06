@@ -1,3 +1,27 @@
+commit fc53fffb8f4fd6ec396c95b8664fa3000d11144f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Feb 6 04:58:06 2021 -0500
+
+    comment
+
+commit 4115f168d848be5b96ac4f31d4b812b2c665cde8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Feb 6 04:54:43 2021 -0500
+
+    add preset disabled by default systemd unit `orca-kill-at-shutdown.service`
+    
+    sends signal sigterm to the orca screenreader at shutdown
+    
+    https://www.whonix.org/wiki/orca
+    
+    supposed to be enabled through `easyorca` (part of `setup-dist`
+
+commit 27caf4ce57ad211ec61bd70fa1357c405896e520
+Author: Patrick Schleizer <adrelanos@riseup.net>
+Date:   Wed Feb 3 11:56:42 2021 -0500
+
+    bumped changelog version
+
 commit b00f69a8282a8ce942a75d676877d33cdb95deb5
 Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Feb 3 10:17:33 2021 -0500
