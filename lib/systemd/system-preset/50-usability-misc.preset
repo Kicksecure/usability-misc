@@ -1,0 +1,5 @@
+## Copyright (C) 2021 - 2021 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+## See the file COPYING for copying conditions.
+
+## https://www.whonix.org/wiki/orca
+disable orca-kill-at-shutdown.service
