@@ -9,8 +9,20 @@ Documentation=https://www.whonix.org/wiki/orca
 
 [Service]
 Type=oneshot
-ExecStop=/bin/bash -c 'kill -s sigterm $(pgrep orca)'
 RemainAfterExit=yes
+
+## Proper shutdown. Give orca chance to say notification "screenreader off".
+ExecStop=/bin/bash -c 'killall -s SIGTERM orca'
+
+## In case of issues.
+## https://gitlab.gnome.org/GNOME/orca/-/issues/188
+## https://gitlab.gnome.org/GNOME/orca/-/issues/190
+ExecStop=/bin/bash -c 'sleep 5 && killall -s KILL orca'
+
+## killall -s KILL orca ; echo $?
+## orca: no process found
+## 1
+SuccessExitStatus=1
 
 [Install]
 WantedBy=multi-user.target
