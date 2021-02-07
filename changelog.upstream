@@ -1,3 +1,21 @@
+commit a64a300795c8d2bdc37365fccbfe4ef4407623c5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 7 09:18:06 2021 -0500
+
+    readme
+
+commit 380d9638068f498d0810ed47e55649f08aa8663b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 7 09:10:55 2021 -0500
+
+    improve orca-kill-at-shutdown.service
+
+commit 9b323589194248486853d403e50d568a6311a7d7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Feb 6 04:58:58 2021 -0500
+
+    bumped changelog version
+
 commit fc53fffb8f4fd6ec396c95b8664fa3000d11144f
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Feb 6 04:58:06 2021 -0500
