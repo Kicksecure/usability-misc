@@ -1,3 +1,15 @@
+commit d8a390c2c546e560c9b31c483b9ab4bcc1f0b067
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Mar 11 14:47:09 2021 -0500
+
+    add /usr/bin/apt-get-reset
+
+commit 27a87d481e730b796031d2eb51620acd84f2ec91
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Mar 11 14:34:24 2021 -0500
+
+    bumped changelog version
+
 commit 0ffd588a25be9d412505b614086324e5cc78360d
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Mar 11 14:18:38 2021 -0500
