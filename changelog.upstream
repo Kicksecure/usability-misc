@@ -1,3 +1,17 @@
+commit 0ffd588a25be9d412505b614086324e5cc78360d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Mar 11 14:18:38 2021 -0500
+
+    stop using apt-key since deprecated
+    
+    https://forums.whonix.org/t/apt-2-2-changes/11240/1
+
+commit 18e1de88a029c556c8a19076f8bd024760f1545d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 7 09:18:07 2021 -0500
+
+    bumped changelog version
+
 commit a64a300795c8d2bdc37365fccbfe4ef4407623c5
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Feb 7 09:18:06 2021 -0500
