@@ -957,7 +957,13 @@ kVJ+boF5KVLLoEKRfQzp/k4zl68H+jCTbEC7GG1fDqgVOV3dy2pdp1yXnKCWJCgp
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
 
-apt-key --keyring "$apt_target_key_derivative" add "$apt_source_key_derivative"
+cat "$apt_source_key_derivative" | \
+    gpg \
+        --dearmor \
+        --no-options \
+        --homedir "$gpg_tmp" \
+        --no-default-keyring \
+        > "$apt_target_key_derivative"
 
 true "sources_list_target_build_remote_derivative: $sources_list_target_build_remote_derivative"
 
