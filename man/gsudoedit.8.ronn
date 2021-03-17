@@ -2,7 +2,7 @@ gsudoedit(8) -- graphical sudoedit
 =============================================
 
 <span class="comment">
-# Copyright (C) 2019 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# Copyright (C) 2019 - 2021 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 </span>
 
@@ -22,4 +22,4 @@ Runs:
 `env VISUAL="$VISUAL" sudoedit`
 
 ## AUTHOR
-This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
+This man page has been written by Patrick Schleizer (adrelanos@whonix.org).

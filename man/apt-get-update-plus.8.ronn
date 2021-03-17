@@ -2,7 +2,7 @@ apt-get-update-plus(8) -- secure combined apt-get update and apt-get command
 =============================================
 
 <span class="comment">
-# Copyright (C) 2012 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# Copyright (C) 2012 - 2021 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 </span>
 
@@ -65,4 +65,4 @@ sudo apt_bin=apt-get-noninteractive apt-get-update-plus dist-upgrade
 sudo apt_bin=apt-get-noninteractive apt-get-update-plus dist-upgrade -o Dpkg::Options::=--force-confold
 
 ## AUTHOR
-This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
+This man page has been written by Patrick Schleizer (adrelanos@whonix.org).

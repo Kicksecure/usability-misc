@@ -2,7 +2,7 @@ repo-add-dist(8) -- add derivative stable repository
 =============================================
 
 <span class="comment">
-# Copyright (C) 2018 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# Copyright (C) 2018 - 2021 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 
 # Not using angle brackets in copyright notice for e-mail address, because
@@ -29,4 +29,4 @@ Use repository-dist instead.
 `repo-add-dist`
 
 ## AUTHOR
-This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
+This man page has been written by Patrick Schleizer (adrelanos@whonix.org).

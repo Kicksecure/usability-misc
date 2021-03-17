@@ -2,7 +2,7 @@ gpl-sources-download(8) -- download source code for included GPL packages
 =============================================
 
 <span class="comment">
-# Copyright (C) 2012 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# Copyright (C) 2012 - 2021 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 </span>
 
@@ -13,4 +13,4 @@ gpl-sources-download(8) -- download source code for included GPL packages
 gpl-sources-download - download source code for included GPL packages
 
 ## AUTHOR
-gpl-sources-download and this man page has been written by Patrick Schleizer (adrelanos@riseup.net).
+gpl-sources-download and this man page has been written by Patrick Schleizer (adrelanos@whonix.org).

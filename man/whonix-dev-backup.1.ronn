@@ -2,7 +2,7 @@ whonix-dev-backup(8) -- creates a backup of the whonix.org website and all Whoni
 =============================================
 
 <span class="comment">
-# Copyright (C) 2012 - 2020 ENCRYPTED SUPPORT LP <adrelanos@riseup.net>
+# Copyright (C) 2012 - 2021 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 </span>
 
@@ -10,4 +10,4 @@ whonix-dev-backup(8) -- creates a backup of the whonix.org website and all Whoni
 `whonix-dev-backup`
 
 ## AUTHOR
-This man page has been written by Patrick Schleizer (adrelanos@riseup.net).
+This man page has been written by Patrick Schleizer (adrelanos@whonix.org).
