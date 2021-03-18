@@ -6,6 +6,8 @@
 ## Self-contained script. Don't add dependencies to other files. See man page
 ## for the purpose of this script.
 
+## Dependency of Whonix / Kicksecure build script.
+
 set -e
 
 root_check() {
