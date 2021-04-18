@@ -1,3 +1,15 @@
+commit d5347a7a13f73a94e6cc2cc8764ec97324c1729d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Apr 18 04:07:42 2021 -0400
+
+    update signing key
+
+commit 1be5d2f78f4c1137cf0ea7a25589e9128e93f486
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Mar 18 10:27:34 2021 -0400
+
+    bumped changelog version
+
 commit 678c304f9f8f2551505454ee7847dae38d67420c
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Mar 18 10:21:30 2021 -0400
