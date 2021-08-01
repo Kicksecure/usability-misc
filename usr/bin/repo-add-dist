@@ -36,7 +36,7 @@ gpg_tmp_create
 ## Variable set by Whonix / Kicksecure build script.
 [ -n "$sources_list_target_build_remote_derivative" ] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/derivative.list"
 
-[ -n "$codename" ] || codename="buster"
+[ -n "$codename" ] || codename="bullseye"
 [ -n "$sources_list_build_remote_derivative" ] || sources_list_build_remote_derivative="deb https://deb.whonix.org $codename main contrib non-free"
 
 cat <<EOF > "$apt_source_key_derivative"
