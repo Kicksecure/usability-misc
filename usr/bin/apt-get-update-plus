@@ -5,9 +5,9 @@
 
 set -e
 
-[ -n "$apt_get_update_wrapper" ] || apt_get_update_wrapper=/usr/lib/security-misc/apt-get-wrapper
+[ -n "$apt_get_update_wrapper" ] || apt_get_update_wrapper="apt-get update --error-on=any"
 [ -n "$apt_bin" ] || apt_bin=apt-get
 
-$apt_get_wrapper_pre $apt_get_update_wrapper update $apt_get_wrapper_post
+$apt_get_wrapper_pre $apt_get_update_wrapper $apt_get_wrapper_post
 
 $apt_get_pre $apt_bin $apt_get_post "$@"

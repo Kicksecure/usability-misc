@@ -12,18 +12,18 @@ apt-get-update-plus(8) -- secure combined apt-get update and apt-get command
 ## Description
 Runs two commands. One after another:
 
-1) `/usr/lib/security-misc/apt-get-wrapper update`
+1) apt-get --error-on=any
 
 2) `apt-get [option]s`
 
-`/usr/lib/security-misc/apt-get-wrapper` would fail (exit non-zero) in case of
+`apt-get --error-on=any` would fail (exit non-zero) in case of
 any apt sources are unavailable. In such cases `apt-get-update-plus` would
 stop.
 
 In other words, `apt-get [option]s` gets only run if the previously run
 `apt-get update` was successsful.
 
-No options are passed to `/usr/lib/security-misc/apt-get-wrapper`. Use
+No options are passed to `apt-get --error-on=any`. Use
 `apt_get_wrapper_pre` / `apt_get_wrapper_post` for that. In other words,
 no options are passed to `apt-get update`.
 
@@ -33,7 +33,7 @@ All `[option]s` are passed to `apt-get`.
 
 `apt_get_update_wrapper`
 
-By setting apt_bin the user can use another program other than `/usr/lib/security-misc/apt-get-wrapper`.
+By setting apt_bin the user can use another program other than `apt-get --error-on=any`.
 
 `apt_get_wrapper_pre`
 
