@@ -1,7 +1,7 @@
 repo-add-dist(8) -- add derivative stable repository
 =============================================
 
-<span class="comment">
+<!--
 # Copyright (C) 2018 - 2021 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 
@@ -11,7 +11,7 @@ repo-add-dist(8) -- add derivative stable repository
 
 # Not using "##", because for some reason this comment would be visible in the
 # resulting man page.
-</span>
+-->
 
 ## SYNOPSIS
 `repo-add-dist`
