@@ -3,6 +3,6 @@
 ## Copyright (C) 2019 - 2021 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-if [ -x /usr/lib/default-editor/default_editor.sh ]; then
-   . /usr/lib/default-editor/default_editor.sh
+if [ -x /usr/libexec/default-editor/default_editor.sh ]; then
+   . /usr/libexec/default-editor/default_editor.sh
 fi
