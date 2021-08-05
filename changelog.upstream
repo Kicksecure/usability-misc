@@ -1,3 +1,69 @@
+commit 1e581a307e212d4f6a3f2ded72dcec1a8653d68a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 5 17:11:04 2021 -0400
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit de44b45bb7e9f77b4f28889fcb39d41c3155e761
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Aug 4 12:55:42 2021 -0400
+
+    lintian FHS
+
+commit 4987791232451ac3d1204ccffe59c16cbcd92df7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 3 12:48:59 2021 -0400
+
+    move /usr/lib/helper-scripts and /usr/lib/curl-scripts to /usr/libexec/helper-scripts as per lintian FHS
+
+commit 7291238c1752bc88be73b1f1d031169034db340b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 3 12:21:02 2021 -0400
+
+    replace no longer required `/usr/lib/security-misc/apt-get-wrapper` with `apt-get --error-on=any`
+
+commit 1781b7bcbaa4187d1e8eff0b6754809bab17a2fa
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 3 11:51:31 2021 -0400
+
+    update lintian tag name
+
+commit be2ddd680c344b21931c20d2b005c54abbc200a1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 3 11:47:36 2021 -0400
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit 7de28bf00488a9d6e6775796819fbb1916e789ef
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 3 11:44:56 2021 -0400
+
+    man page
+
+commit e922a844a0901d0e1a9f8b0e2085be5b725141ed
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 3 05:48:28 2021 -0400
+
+    bullseye
+
+commit 613b31a8f1880e0903f94327737381a547c9d0fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 1 16:37:41 2021 -0400
+
+    bullseye
+
+commit c4d3ee4320ac41798293cfa370137e06abbb836d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 1 16:24:48 2021 -0400
+
+    readme
+
+commit 1d1286f1c9048bc0a75683b899031d96fd406da6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Apr 18 04:09:28 2021 -0400
+
+    bumped changelog version
+
 commit d5347a7a13f73a94e6cc2cc8764ec97324c1729d
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Apr 18 04:07:42 2021 -0400
