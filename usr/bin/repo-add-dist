@@ -19,18 +19,9 @@ root_check() {
    fi
 }
 
-gpg_tmp_create() {
-   gpg_tmp="$(mktemp --directory)"
-
-   rm --recursive --force "$gpg_tmp"
-   mkdir --parents --mode 700 "$gpg_tmp"
-}
-
 root_check
-## sets: gpg_tmp
-gpg_tmp_create
 
-[ -n "$apt_target_key_derivative" ] || apt_target_key_derivative="/etc/apt/trusted.gpg.d/derivative.gpg"
+[ -n "$apt_target_key_derivative" ] || apt_target_key_derivative="/etc/apt/trusted.gpg.d/derivative.asc"
 [ -n "$apt_source_key_derivative" ] || apt_source_key_derivative="$gpg_tmp/derivative-distribution-signing-key.asc"
 
 ## Variable set by Whonix / Kicksecure build script.
@@ -1235,16 +1226,12 @@ Whapos8dv40=
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
 
-cat "$apt_source_key_derivative" | \
-    gpg \
-        --dearmor \
-        --no-options \
-        --homedir "$gpg_tmp" \
-        --no-default-keyring \
-        > "$apt_target_key_derivative"
+cp --verbose "$apt_source_key_derivative" "$apt_target_key_derivative"
 
 true "sources_list_target_build_remote_derivative: $sources_list_target_build_remote_derivative"
 
 cat <<EOF > "$sources_list_target_build_remote_derivative"
 $sources_list_build_remote_derivative
 EOF
+
+echo "OK."
