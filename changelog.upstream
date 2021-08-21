@@ -1,3 +1,15 @@
+commit 2f76d16ffb302d03a7f364c68a655134bd7b1138
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 21 07:10:02 2021 -0400
+
+    code simplification
+
+commit 921f7ec14094c711f50235f7c0dffdb131574ba5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 5 17:11:05 2021 -0400
+
+    bumped changelog version
+
 commit 1e581a307e212d4f6a3f2ded72dcec1a8653d68a
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Aug 5 17:11:04 2021 -0400
