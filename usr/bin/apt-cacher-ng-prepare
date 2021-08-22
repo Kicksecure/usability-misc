@@ -20,5 +20,5 @@ for file_name in /etc/apt/sources.list /etc/apt/sources.list.d/*.list ; do
    if ! test -f "$file_name" ; then
       continue
    fi
-   str_replace "$search" "$replace" "$file_name"
+   LANG=C str_replace "$search" "$replace" "$file_name"
 done
