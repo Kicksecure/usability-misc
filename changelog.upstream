@@ -1,3 +1,17 @@
+commit b6461000a276594155ab88d994b4b4268451030e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 6 09:45:48 2021 -0400
+
+    remove /etc/lightdm/lightdm.conf.d/autologin.conf (comments only)
+    
+    since it might interfere with autologin
+
+commit 106bd72083486dff90d33bb215ef70be7c13fb1b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 6 06:33:12 2021 -0400
+
+    bumped changelog version
+
 commit 8cfbb0f6282967dfe5e772a438588c10b312dd40
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Sep 6 06:33:01 2021 -0400
