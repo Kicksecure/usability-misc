@@ -52,21 +52,21 @@ Ships a /etc/default/grub.d/30_screen_resolution.cfg configuration file, that
 injects "vga=0x0317" into the GRUB_CMDLINE_LINUX_DEFAULT variable.
 ## How to install `usability-misc` using apt-get ##
 
-1\. Download Whonix's Signing Key.
+1\. Download the APT Signing Key.
 
 ```
-wget https://www.whonix.org/patrick.asc
+wget https://www.whonix.org/derivative.asc
 ```
 
 Users can [check Whonix Signing Key](https://www.whonix.org/wiki/Whonix_Signing_Key) for better security.
 
-2\. Add Whonix's signing key.
+2\. Add the APT Signing Key..
 
 ```
 sudo cp ~/derivative.asc /usr/share/keyrings/derivative.asc
 ```
 
-3\. Add Whonix's APT repository.
+3\. Add the derivative repository.
 
 ```
 echo "deb [signed-by=/usr/share/keyrings/derivative.asc] https://deb.whonix.org bullseye main contrib non-free" | sudo tee /etc/apt/sources.list.d/derivative.list
