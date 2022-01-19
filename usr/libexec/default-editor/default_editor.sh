@@ -14,7 +14,7 @@
 ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=758228
 
 if [ "$VISUAL" = "" ]; then
-   if command -v mousepad 1>/dev/null 2>/dev/null  ; then
+   if command -v mousepad 1>/dev/null 2>/dev/null ; then
       VISUAL="mousepad"
       export VISUAL
    fi
