@@ -8,6 +8,7 @@
 
 ## Dependency of Whonix / Kicksecure build script.
 
+true "START: $0"
 set -e
 
 root_check() {
@@ -1235,3 +1236,4 @@ $sources_list_build_remote_derivative
 EOF
 
 echo "OK."
+true "END: $0"
