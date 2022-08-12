@@ -1,3 +1,15 @@
+commit 499b344707d4844ed18d75aff51d8c2f5cf3ddb1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 29 16:13:03 2022 -0400
+
+    apt-get-noninteractive / dpkg-noninteractive: `export NEEDRESTART_MODE="l"`
+
+commit 5a32a831d882551048897eca57fe0f850b09e36a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 27 10:25:40 2022 -0400
+
+    bumped changelog version
+
 commit c13bf7ae73c17067b045708c28787ab40388dc91
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri May 27 07:51:17 2022 -0400
