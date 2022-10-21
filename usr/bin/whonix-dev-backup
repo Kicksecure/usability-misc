@@ -7,41 +7,38 @@ set -x
 set -e
 
 sudo apt-get update
-sudo apt-get install --yes git git-mediawiki github-backup
+sudo apt-get install --yes git github-backup
 
-mkdir --parents ~/whonix_backup
-cd ~/whonix_backup
+for project in kicksecure whonix ; do
+   mkdir --parents ~/project-backup
+   cd ~/project-backup
 
-mkdir --parents ~/whonix_backup/WhonixWikiBackups
-if ! test -d ~/whonix_backup/WhonixWikiBackups ; then
-   git clone https://gitlab.com/whonix/WhonixWikiBackups || true
-fi
-cd ~/whonix_backup/WhonixWikiBackups
-git fetch || true
+   mkdir --parents ~/project-backup/$project
+   cd ~/project-backup/$project
+   github-backup $project || true
 
-mkdir --parents ~/whonix_backup/WhonixWikiFullHistoryBackup
-if ! test -d ~/whonix_backup/WhonixWikiFullHistoryBackup ; then
-   git clone https://gitlab.com/whonix/whonixwikifullhistorybackup || true
-fi
-cd ~/whonix_backup/WhonixWikiFullHistoryBackup
-git fetch || true
+   mkdir --parents ~/project-backup/$project-wiki-backup-dump-content-current
+   if ! test -d ~/project-backup/$project-wiki-backup-dump-content-current ; then
+      git clone https://gitlab.com/$project/$project-wiki-backup-dump-content-current.git || true
+   fi
+   cd ~/project-backup/$project-wiki-backup-dump-content-current
+   git fetch || true
 
-mkdir --parents ~/whonix_backup/adrelanos
-cd ~/whonix_backup/adrelanos
-github-backup adrelanos || true
+   ## git-mediawiki based backup
+   ## git-mediawiki is broken upstream
+   #
+   #if [ "$project" = "kicksecure" ]; then
+      #url=https://www.kicksecure.com/w
+   #else
+      #url=https://www.whonix.org/w
+   #fi
+   #
+   #mkdir --parents ~/project-backup/$project
+   #cd ~/project-backup/$project
+   #git clone mediawiki::$url || true
+   #cd ~/project-backup/$project/w
+   #git fetch || true
 
-mkdir --parents ~/whonix_backup/whonix
-cd ~/whonix_backup/whonix
-github-backup Whonix || true
-
-mkdir --parents ~/whonix_backup/WhonixBOT
-cd ~/whonix_backup/WhonixBOT
-github-backup WhonixBOT || true
-
-mkdir --parents ~/whonix_backup
-cd ~/whonix_backup
-git clone mediawiki::https://www.whonix.org/w || true
-cd ~/whonix_backup/w
-git fetch
+done
 
 true "END"
