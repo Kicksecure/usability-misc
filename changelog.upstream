@@ -1,3 +1,15 @@
+commit a74ca43aeb4999177a8642a986801f03a9c5745b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 21 08:57:00 2022 -0400
+
+    work on whonix-dev-backup
+
+commit 23f51990cf6ef9336db577dc5dd8e0d31ef7c24b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 19 11:52:05 2022 -0400
+
+    bumped changelog version
+
 commit 9cbd47acacc6d95d37e519d8eb658880dbdc3756
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Aug 19 11:50:20 2022 -0400
