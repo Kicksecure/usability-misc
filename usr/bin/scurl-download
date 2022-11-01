@@ -14,11 +14,7 @@ for res in "$@"; do
   # exclude arguments from options
   if [ "$skip_next" = "1" ]; then
     skip_next=0
-    if echo "$res" | grep -F " "; then
-      opt="$opt \"$res\""
-    else
-      opt="$opt $res"
-    fi
+    opt="$opt \"$res\""
     continue
   fi
   # exclude options that require arguments
