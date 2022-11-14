@@ -120,6 +120,10 @@ not_as_root(){
 ## wrapper that supports su, sudo, doas
 root_cmd(){
   test -z "${1:-}" && die 1 "Failed to pass arguments to root_cmd."
+  if test "${dry_run}" = "1"; then
+    log info "Skipping running root command '${sucmd} ${@}' because dry_run is set"
+    return 0
+  fi
   if test -n "${sucmd_quote:-}"; then
     true "sucmd_quote"
     ${sucmd} '${@}'
@@ -439,8 +443,12 @@ die(){
 
 ## wrapper to log command before running to avoid duplication of code
 log_and_run(){
-  log info "Running command: $ (${1})"
-  ${1}
+  log info "Running command:\n$ ${1}"
+  if test "${dry_run}" = "1"; then
+    true "Skipping running above logged command because dry_run is set"
+    return 0
+  fi
+  exec ${1}
 }
 
 
@@ -547,11 +555,16 @@ install_pkg(){
   done
 
   if test -n "${pkg_not_installed}"; then
+    if test "${dry_run}" = "1"; then
+      log notice "Installing package(s):${pkg_not_installed}."
+      log info "Skipping installing packages because dry_run is set"
+      return 0
+    fi
     log notice "Updating package list."
     root_cmd ${pkg_mngr_update}
     log notice "Installing package(s):${pkg_not_installed}."
     root_cmd ${pkg_mngr_install} ${pkg_not_installed}
-    fi
+  fi
 }
 
 
@@ -572,7 +585,7 @@ test_pkg(){
 abort_on_existence(){
   ## testing if file exists, not minding if it is a refular file or not
   if test -e "${1:-}"; then
-    log error "File exists: ${guest_basedir}/${guest_up}-${interface_up}.vbox."
+    log error "File exists: ${1:-}."
     die 1 "Not touching user data, aborting."
   fi
 }
@@ -580,8 +593,8 @@ abort_on_existence(){
 
 common_virtualbox_install_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  root_cmd adduser $(whoami) vboxusers || {
-    die 1 "Failed to add user '$(whoami)' to group 'vboxusers'."
+  root_cmd adduser "${USER}" vboxusers || {
+    die 1 "Failed to add user '${USER}' to group 'vboxusers'."
   }
 }
 
@@ -590,8 +603,14 @@ install_virtualbox_debian(){
   has vboxmanage && return 0
   install_pkg fasttrack-archive-keyring
   test_pkg fasttrack-archive-keyring
-  ## TODO: check if fasttrack is already enabled, apt gives error on dups
-  echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
+  if grep -v "#" /etc/apt/sources.list /etc/apt/sources.list.d/*.list | \
+    grep -e "://fasttrack.debian.net" \
+    -e grep "://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
+  then
+    log info "Skipping adding fasttrack because it was already found"
+  else
+    echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
+  fi
   install_pkg virtualbox linux-headers-$(dpkg --print-architecture)
   common_virtualbox_install_end
 }
@@ -730,17 +749,11 @@ set_trap(){
 }
 
 
-
-## sanity checks that should be called before execution of main
-pre_check(){
-  set_trap
-  get_os
-  get_utilities
-  check_virtualization
-  get_host_pkgs
-
+get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    die 1 "Only supported architecture is x86_64, your's is ${arch}."
+    #die 1 "Only supported architecture is x86_64, your's is ${arch}."
+    log error "Only supported architecture is x86_64, your's is ${arch}."
+    return 1
   fi
 
   ## min_ram_mb not used currently because less than total 4GB is too low
@@ -765,11 +778,32 @@ pre_check(){
 
   free_space="$(df --output=avail -BG . | awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ ${free_space} -lt 10 ]; then
-    die 1 "You need at least 10G of available space, you only have ${free_space}G."
+    log error "You need at least 10G of available space, you only have ${free_space}G."
+    return 1
   fi
 
   has curl || install_pkg curl
   test_pkg curl
+}
+
+
+## sanity checks that should be called before execution of main
+pre_check(){
+  set_trap
+  get_os
+  get_utilities
+  ## below functions are difficult to emulate
+  if ! get_system_stat && test "${dry_run}" = "1"; then
+    log info "Skipping failing commands because dry_run is set"
+  fi
+  if ! get_virtualization && test "${dry_run}" = "1"; then
+    log info "Skipping failing commands because dry_run is set"
+  fi
+  if test "${dry_run}" = "1"; then
+    log info "Skipping rest or pre_check() because dry_run is set"
+    return 0
+  fi
+  get_host_pkgs
 }
 
 
@@ -802,6 +836,11 @@ get_curl_proxy_cred(){
 
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
+  if test "${dry_run}" = "1"; then
+    log info "Faking SOCKS proxy response because dry_run is set"
+    log notice "Connected to tor SOCKS proxy succesfully."
+    return 0
+  fi
   curl_reply="$(curl -sSI -m 3 "${proxy}" | head -1 | tr -d "\r")"
   expected_curl_reply="HTTP/1.0 501 Tor is not an HTTP Proxy"
   if [ "${curl_reply}" = "${expected_curl_reply}" ]; then
@@ -854,8 +893,13 @@ get_version(){
     guest_version="${guest_version_user}"
     return 0
   fi
+  if test "${dry_run}" = "1"; then
+    log info "Faking software version because of dry_run"
+    guest_version="16.0.8.2"
+    return 0
+  fi
   log info "Acquiring guest version from API."
-  log info "API host: ${1}."
+  log info "API host: ${1}"
   raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} "${1}")"
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
 }
@@ -885,13 +929,13 @@ download_files(){
     return 1
 
   log_elapsed_time
-  touch "${download_flag}"
+  log_and_run "touch ${download_flag}"
   return 0
 }
 
 
 ## https://en.wikipedia.org/wiki/X86_virtualization
-check_virtualization(){
+get_virtualization(){
   ## check cpu flags for capability
   virt_flag="$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | grep -wo -E '(vmx|svm)' || true)"
 
@@ -981,14 +1025,14 @@ check_virtualization(){
   [ "${virt}" = "vmx" ] && brand="intel"
   [ "${virt}" = "svm" ] && brand="amd"
 
-  # Now, check that the device exists
-# if test -e /dev/kvm; then
-#   echo "INFO: /dev/kvm exists"
-#   verdict 0
-# else
-#   echo "INFO: /dev/kvm does not exist"
-#   echo "HINT:   sudo modprobe kvm_$brand"
-# fi
+  ## Now, check that the device exists
+  if test -e /dev/kvm; then
+    log notice "Device /dev/kvm exists"
+    verdict 0
+  else
+    log warn "Device /dev/kvm does not exist"
+    log wanr "hint: sudo modprobe kvm_$brand"
+  fi
 
   ## Prepare MSR access
   msr="/dev/cpu/0/msr"
@@ -1037,6 +1081,7 @@ set_default(){
   : "${socks_proxy:=""}"
   : "${onion:=""}"
   : "${non_interactive:=""}"
+  : "${dry_run:=""}"
   : "${dev:=""}"
 }
 
@@ -1066,6 +1111,7 @@ usage(){
                        notice (default), warn, error.
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
+ -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Get parsed options and exit.
  -V, --version       Print script version.
  -h, --help          Print this help message.
@@ -1074,187 +1120,198 @@ usage(){
 }
 
 
-#test -z "${1:-}" && usage
-set_default
-while true; do
-  begin_optparse "${1:-}" "${2:-}" || break
-  # shellcheck disable=SC2034
-  case "${opt}" in
-    o|onion)
-      set_arg onion 1
+main(){
+  check_license || die 1 "User disagreed with the license."
+  log notice "User agreed with the license."
+  log info "Command line options: ${all_args}."
+
+  pre_check
+  log_elapsed_time
+
+  log notice "Hypervisor: ${hypervisor}."
+  log notice "Guest: ${guest}."
+  log notice "Interface: ${interface}."
+  interface_up="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
+
+
+  case "${guest}" in
+    whonix)
+      site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
+      site="whonix.org"
+      site_dl="mirrors.dotsrc.org/${guest}"
       ;;
-    s|socks-proxy)
-      get_arg socks_proxy
-      ;;
-    l|log-level)
-      get_arg log_level
-      ;;
-    g|guest)
-      get_arg guest
-      ;;
-    u|guest-version)
-      get_arg guest_version_user
-      ;;
-    i|interface)
-      get_arg interface
-      ;;
-    m|hypervisor)
-      get_arg hypervisor
-      ;;
-    n|non-interactive)
-      set_arg non_interactive 1
-      ;;
-    t|getopt)
-      set_arg dev getopt
-      ;;
-    V|version)
-      set_arg dev version
-      ;;
-    h|help)
-      usage
-      ;;
-    *)
-      die 1 "Invalid option: '${opt_orig}'."
+    kicksecure)
+      site_onion="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+      site="kicksecure.com"
+      #site_download="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
+      site_dl="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
       ;;
   esac
-  shift "${shift_n:-1}"
-done
+  ##
+  site_mirror="mirrors.dotsrc.org/${guest}"
+
+  guest_up="$(echo "${guest}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1')"
 
 
-range_arg guest whonix kicksecure
-range_arg hypervisor kvm virtualbox
-range_arg interface cli xfce
-range_arg log_level error warn notice info debug
-[ "${log_level}" = "debug" ] && set -o xtrace
+  case "${onion}" in
+    1)
+      log info "Onion preferred."
+      torify_conn
+      curl_opt_ssl=""
+      url_origin="http://www.${site_onion}"
+      url_download="http://download.${site_onion}"
+      #url_download="http://${site_dl}"
+      url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
+      url_version="http://www.${site_onion}/${url_version}"
+      ;;
+    *)
+      log info "Clearnet preferred."
+      test -n "${socks_proxy}" && torify_conn
+      curl_opt_ssl="--tlsv1.3 --proto =https"
+      url_origin="https://www.${site}"
+      url_download="https://${site_dl}"
+      #url_download="https://download.${site}"
+      url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
+      url_version="https://www.${site}/${url_version}"
+      ;;
+  esac
 
 
-case "${dev:-}" in
-  getopt)
-    printf %s"${arg_saved}\n"
+  case "${hypervisor}" in
+    virtualbox)
+      signify_key="${adrelanos_signify}"
+      url_domain="${url_download}/ova"
+      guest_file_ext="ova"
+      guest_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
+      import_guest="import_virtualbox"
+      guest_basedir="${HOME}/VirtualBox VMs"
+      case "${guest}" in
+        whonix)
+          abort_on_existence "${guest_basedir}/${guest_up}-Workstation-${interface_up}/${guest_up}-Workstation-${interface_up}.vbox"
+          abort_on_existence "${guest_basedir}/${guest_up}-Gateway-${interface_up}/${guest_up}-Gateway-${interface_up}.vbox"
+          ;;
+        kicksecure)
+          abort_on_existence "${guest_basedir}/${guest_up}-${interface_up}/${guest_up}-${interface_up}.vbox"
+          ;;
+      esac
+      ;;
+
+    kvm)
+      signify_key="${hulahoop_signify}"
+      url_domain="${url_download}/libvirt"
+      guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
+      guest_version="w/index.php?title=Template:Version_KVM&stable=0&action=raw"
+      import_guest="import_kvm"
+      ## TODO
+      die 1 "KVM code is unfinished."
+      #guest_basedir="${HOME}/VirtualBox VMs"
+      #abort_on_existence "kvmfile"
+      ;;
+  esac
+
+  log_and_run "curl -sSf -m 20 --fail-early "${url_download}" >/dev/null" ||
+    die 1 "Can't connect to destination, perhaps you don't have internet?"
+
+  get_version "${url_origin}/${guest_version}."
+  log notice "Version: ${guest_version}."
+
+  url_domain="${url_domain}/${guest_version:?}"
+  guest_file="${guest_up}-${interface_up}-${guest_version}"
+  url_guest_file="${url_domain}/${guest_file}"
+  curl_opt_save_dir="${HOME}/installer-dist-download"
+
+  download_files "${curl_opt_save_dir}" || die 1 "Failed to download files."
+
+  if test "${dry_run}" = "1"; then
+    log info "Ending run before doing integrity checks because dry_run is set"
     exit 0
-    ;;
-  version)
-    printf '%s\n' "${me} ${version}"
-    exit 0
-    ;;
-esac
+  fi
+
+  log notice "Signify signature:\n${signify_key}"
+  log notice "Verifying file: ${curl_opt_save_dir}/${guest_file}.sha512sums."
+  echo "${signify_key}" | signify -V -p - \
+   -m "${curl_opt_save_dir}/${guest_file}.sha512sums" ||
+    die 1 "Failed to verify signature."
+
+  log notice "Checking SHA512 checksum: ${curl_opt_save_dir}/${guest_file}.${guest_file_ext}"
+  ${checkhash} "${curl_opt_save_dir}/${guest_file}.sha512sums" ||
+    die 1 "Failed hash checking."
+
+  ${import_guest}
+
+  log_elapsed_time
+}
 
 
-check_license || die 1 "User disagreed with the license."
-log notice "User agreed with the license."
-log info "Command line options: ${all_args}."
-
-pre_check
-log_elapsed_time
-
-log notice "Virtualization: ${hypervisor}."
-log notice "Guest: ${guest}."
-log notice "Interface: ${interface}."
-interface_up="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
-
-
-case "${guest}" in
-  whonix)
-    site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
-    site="whonix.org"
-    site_dl="mirrors.dotsrc.org/${guest}"
-    ;;
-  kicksecure)
-    site_onion="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
-    site="kicksecure.com"
-    #site_download="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
-    site_dl="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
-    ;;
-esac
-##
-site_mirror="mirrors.dotsrc.org/${guest}"
-
-guest_up="$(echo "${guest}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1')"
-
-
-case "${onion}" in
-  1)
-    log info "Onion preferred."
-    torify_conn
-    curl_opt_ssl=""
-    url_origin="http://www.${site_onion}"
-    url_download="http://download.${site_onion}"
-    #url_download="http://${site_dl}"
-    url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
-    url_version="http://www.${site_onion}/${url_version}"
-    ;;
-  *)
-    log info "Clearnet preferred."
-    test -n "${socks_proxy}" && torify_conn
-    curl_opt_ssl="--tlsv1.3 --proto =https"
-    url_origin="https://www.${site}"
-    url_download="https://${site_dl}"
-    #url_download="https://download.${site}"
-    url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
-    url_version="https://www.${site}/${url_version}"
-    ;;
-esac
-
-
-case "${hypervisor}" in
-  virtualbox)
-    signify_key="${adrelanos_signify}"
-    url_domain="${url_download}/ova"
-    guest_file_ext="ova"
-    guest_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
-    import_guest="import_virtualbox"
-    guest_basedir="${HOME}/VirtualBox VMs"
-    case "${guest}" in
-      whonix)
-        previous_import="${guest_basedir}/${guest_up}-Workstation-${interface_up}.vbox ${guest_basedir}/${guest_up}-Gateway-${interface_up}.vbox"
+parse_opt(){
+  #test -z "${1:-}" && usage
+  set_default
+  while true; do
+    begin_optparse "${1:-}" "${2:-}" || break
+    # shellcheck disable=SC2034
+    case "${opt}" in
+      o|onion)
+        set_arg onion 1
         ;;
-      kicksecure)
-        previous_import="${guest_basedir}/${guest_up}-${interface_up}.vbox"
+      s|socks-proxy)
+        get_arg socks_proxy
+        ;;
+      l|log-level)
+        get_arg log_level
+        ;;
+      g|guest)
+        get_arg guest
+        ;;
+      u|guest-version)
+        get_arg guest_version_user
+        ;;
+      i|interface)
+        get_arg interface
+        ;;
+      m|hypervisor)
+        get_arg hypervisor
+        ;;
+      n|non-interactive)
+        set_arg non_interactive 1
+        ;;
+      t|getopt)
+        set_arg dev getopt
+        ;;
+      d|dry-run)
+        set_arg dry_run 1
+        log info "dry_run set, commands will be printed and not executed"
+        ;;
+      V|version)
+        set_arg dev version
+        ;;
+      h|help)
+        usage
+        ;;
+      *)
+        die 1 "Invalid option: '${opt_orig}'."
         ;;
     esac
-    ;;
+    shift "${shift_n:-1}"
+  done
 
-  kvm)
-    signify_key="${hulahoop_signify}"
-    url_domain="${url_download}/libvirt"
-    guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
-    guest_version="w/index.php?title=Template:Version_KVM&stable=0&action=raw"
-    import_guest="import_kvm"
-    ## TODO
-    die 1 "KVM code is unfinished."
-    #guest_basedir="${HOME}/VirtualBox VMs"
-    #abort_on_existence "kvmfile"
-    ;;
-esac
+  range_arg guest whonix kicksecure
+  range_arg hypervisor kvm virtualbox
+  range_arg interface cli xfce
+  range_arg log_level error warn notice info debug
+  [ "${log_level}" = "debug" ] && set -o xtrace
 
-for vm in ${previous_import}; do
-  abort_on_existence "${vm}"
-done
+  case "${dev:-}" in
+    getopt)
+      printf %s"${arg_saved}\n"
+      exit 0
+      ;;
+    version)
+      printf '%s\n' "${me} ${version}"
+      exit 0
+      ;;
+  esac
+}
 
-curl -sSf -m 20 --fail-early "${url_download}" >/dev/null ||
-  die 1 "Can't connect to destination, perhaps you don't have internet?"
 
-get_version "${url_origin}/${guest_version}."
-log notice "Version: ${guest_version}."
-
-url_domain="${url_domain}/${guest_version:?}"
-guest_file="${guest_up}-${interface_up}-${guest_version}"
-url_guest_file="${url_domain}/${guest_file}"
-curl_opt_save_dir="${HOME}/dist-installer"
-
-download_files "${curl_opt_save_dir}" || die 1 "Failed to download files."
-
-log notice "Signify signature:\n${signify_key}"
-log notice "Verifying file: ${curl_opt_save_dir}/${guest_file}.sha512sums."
-echo "${signify_key}" | signify -V -p - \
- -m "${curl_opt_save_dir}/${guest_file}.sha512sums" ||
-  die 1 "Failed to verify signature."
-
-log notice "Checking SHA512 checksum: ${curl_opt_save_dir}/${guest_file}.${guest_file_ext}"
-${checkhash} "${curl_opt_save_dir}/${guest_file}.sha512sums" ||
-  die 1 "Failed hash checking."
-
-log_elapsed_time
-${import_guest}
-
-log_elapsed_time
+parse_opt "${@}"
+main
