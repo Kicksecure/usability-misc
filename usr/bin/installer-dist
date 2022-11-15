@@ -920,8 +920,15 @@ get_version(){
   log info "Acquiring guest version from API."
   log info "API host: ${1}"
   # shellcheck disable=SC2086,SC2046
-  raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} "${1}")"
+  raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} --url "${1}")"
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
+  ## distrust the API version
+  ## block anything that is not made purely out of numbers and dots
+  [ "${guest_version%%*[^0-9.]*}" ] ||
+    die 1 "Invalid guest version: contains unexpected characters: '${guest_version}'"
+  ## block string containing more than 12 chars
+  [ "$(printf %s"${guest_version}" | wc -m)" -le 12 ] ||
+    die 1 "Invalid guest version: contains more than 12 characters: '${guest_version}'"
 }
 
 
@@ -1109,7 +1116,7 @@ main(){
   log notice "User agreed with the license."
   log info "Command line options: ${all_args}."
 
-  pre_check
+  #pre_check
   log_elapsed_time
 
   case "${guest}" in
@@ -1183,10 +1190,11 @@ main(){
       ;;
   esac
 
-  log_and_run "curl -sSf -m 20 --fail-early ${url_download} >/dev/null" ||
-    die 1 "Can't connect to destination, perhaps you don't have internet?"
+  log info "Testing internet connection..."
+  curl -sSf -m 20 --fail-early ${url_origin} >/dev/null ||
+    die 1 "Can't connect to ${url_download}, perhaps you don't have internet?"
 
-  get_version "${url_origin}/${guest_version}."
+  get_version "${url_origin}/${guest_version}"
   log notice "Version: ${guest_version}."
 
   url_domain="${url_domain}/${guest_version:?}"
@@ -1219,7 +1227,7 @@ main(){
 
 usage(){
   printf %s"Usage: ${me} [options...]
- -g, --guest         Set guest. Options: kicksecure, whonix (default)
+ -g, --guest <guest> Set guest. Options: kicksecure, whonix (default)
  -u, --guest-version <version>
                      Set guest version, else query from API.
  -i, --interface <interface>
