@@ -1101,9 +1101,9 @@ main(){
   pre_check
   log_elapsed_time
 
-  log notice "Hypervisor: ${hypervisor}."
   log notice "Guest: ${guest}."
   log notice "Interface: ${interface}."
+  log notice "Hypervisor: ${hypervisor}."
   interface_up="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
 
 
@@ -1214,21 +1214,6 @@ main(){
 }
 
 
-## set default values of variables
-set_default(){
-  : "${arg_saved:=""}"
-  : "${guest:="whonix"}"
-  : "${hypervisor:="virtualbox"}"
-  : "${interface:="xfce"}"
-  : "${log_level:="notice"}"
-  : "${socks_proxy:=""}"
-  : "${onion:=""}"
-  : "${non_interactive:=""}"
-  : "${dry_run:=""}"
-  : "${dev:=""}"
-}
-
-
 usage(){
   printf %s"Usage: ${me} [options...]
  -g, --guest         Set guest. Options: kicksecure, whonix (default)
@@ -1246,24 +1231,69 @@ usage(){
  -l, --log-level <level>
                      Set log level. Options: debug, info,
                        notice (default), warn, error.
+ -V, --version       Print script version.
+ -h, --help          Print this help message.
+Developer options:
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Get parsed options and exit.
- -V, --version       Print script version.
- -h, --help          Print this help message.
+File name:
+  The default file name is installer-dist. Some basic options can be set as the
+  file name if they follow the format 'guest-interface-hypervisor'. Anything,
+  different than the default name or the allowed format is rejected.
+  Command line options override the file name definition.
 "
-  exit 1
+  exit 0
 }
 
+
+## set default values of variables
+set_default(){
+  arg_saved=""
+  guest=""
+  set_arg guest whonix
+  hypervisor=""
+  set_arg hypervisor virtualbox
+  interface=""
+  set_arg interface xfce
+  log_level=""
+  set_arg log_level notice
+  socks_proxy=""
+  onion=""
+  non_interactive=""
+  dry_run=""
+  dev=""
+}
+
+
 parse_name(){
-  true 
+  ## if using default file name, ignore the rest
+  test "${me}" = "installer-dist" && return 0
+  ## check if file name is valid
+  case "${me}" in
+    whonix-xfce-virtualbox | whonix-cli-virtualbox | \
+    whonix-xfce-kvm | whonix-cli-kvm | \
+    kicksecure-xfce-virtualbox | kicksecure-cli-virtualbox | \
+    kicksecure-xfce-kvm | kicksecure-cli-kvm )
+      log info "Valid script name ${me}, using its name to set options."
+      ;;
+    *)
+      log error "Invalid script name '${0}'."
+      log error "If you don't know why this happened, rename this script to"
+      log error "  installer-dist and use command-line options instead."
+      return 1
+  esac
+  ## assign values according to script name
+  set_arg guest "$(echo "${me}" | cut -d "-" -f1)"
+  set_arg interface "$(echo "${me}" | cut -d "-" -f2)"
+  set_arg hypervisor "$(echo "${me}" | cut -d "-" -f3)"
+  log info "Assigned guest, interface and hypervisor according to script name ${me}."
 }
 
 
 parse_opt(){
   #test -z "${1:-}" && usage
-  set_default
   while true; do
     begin_optparse "${1:-}" "${2:-}" || break
     # shellcheck disable=SC2034
@@ -1331,5 +1361,7 @@ parse_opt(){
 }
 
 
+set_default
+parse_name
 parse_opt "${@}"
 main
