@@ -707,8 +707,13 @@ check_license(){
 
 
 import_virtualbox(){
-  vboxmanage import "${curl_opt_save_dir}/${guest_file}.${guest_file_ext}" \
-    --vsys 0 --eula accept --vsys 1 --eula accept
+  ## default to import 1 virtual system
+  vbox_arg="--vsys 0 --eula accept"
+  ## if importing whonix, import 2 virtual systems
+  test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
+  ## import virtualbox image
+  vboxmanage import \
+    "${curl_opt_save_dir}/${guest_file}.${guest_file_ext}" ${vbox_arg}
 }
 
 
