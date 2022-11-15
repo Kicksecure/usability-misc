@@ -113,6 +113,11 @@ has(){ _cmd="$(command -v "${1}")" 2>/dev/null || return 1
 }
 
 
+capitalize_first_char(){
+  echo "${1:-}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1'
+}
+
+
 not_as_root(){
   [ "$(id -u)" -eq 0 ] && die 1 "Running as root, aborting."
 }
@@ -280,8 +285,7 @@ set_arg(){
     if test -z "${var:-}"; then
       arg_saved="${arg_saved}\n${1}=\"${2}\""
     else
-      arg_saved="${arg_saved}\n${1}=\"${2}\""
-      arg_saved="$(printf '%s\n' "${arg_saved}" | sed "s/${1}=.*/${1}=\"${2}\"/")"
+      arg_saved="$(printf %s"${arg_saved}" | sed "s/^${1}=.*$/${1}=\"${2}\"/")"
     fi
   fi
 }
@@ -656,6 +660,9 @@ check_license(){
     return 0
   fi
 
+  log notice "The license will be show in some seconds."
+  sleep 3
+
   while true; do
     has dialog && dialog_box="dialog" && break
     has whiptail && dialog_box="whiptail" && break
@@ -679,8 +686,6 @@ check_license(){
         24 80
       ;;
     *)
-      log notice "The license will be printed to screen, read with care."
-      sleep 3
       printf '%s\n' "${license}"
       printf '%s' "Do you agree with the license(s)? (yes/no): "
       read -r license_agreement
@@ -1094,18 +1099,18 @@ get_virtualization(){
 ## BEGIN MAIN ##
 ################
 main(){
+  guest_pretty="$(capitalize_first_char "${guest}")"
+  interface_pretty="$(capitalize_first_char "${interface}")"
+  interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
+  hypervisor_pretty="$(capitalize_first_char "${hypervisor}")"
+
+  log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
   check_license || die 1 "User disagreed with the license."
   log notice "User agreed with the license."
   log info "Command line options: ${all_args}."
 
   pre_check
   log_elapsed_time
-
-  log notice "Guest: ${guest}."
-  log notice "Interface: ${interface}."
-  log notice "Hypervisor: ${hypervisor}."
-  interface_up="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
-
 
   case "${guest}" in
     whonix)
@@ -1120,8 +1125,6 @@ main(){
       site_download="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
       ;;
   esac
-
-  guest_up="$(echo "${guest}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1')"
 
 
   case "${onion}" in
@@ -1158,11 +1161,11 @@ main(){
       guest_basedir="${HOME}/VirtualBox VMs"
       case "${guest}" in
         whonix)
-          abort_on_existence "${guest_basedir}/${guest_up}-Workstation-${interface_up}/${guest_up}-Workstation-${interface_up}.vbox"
-          abort_on_existence "${guest_basedir}/${guest_up}-Gateway-${interface_up}/${guest_up}-Gateway-${interface_up}.vbox"
+          abort_on_existence "${guest_basedir}/${guest_pretty}-Workstation-${interface_all_caps}/${guest_pretty}-Workstation-${interface_all_caps}.vbox"
+          abort_on_existence "${guest_basedir}/${guest_pretty}-Gateway-${interface_all_caps}/${guest_pretty}-Gateway-${interface_all_caps}.vbox"
           ;;
         kicksecure)
-          abort_on_existence "${guest_basedir}/${guest_up}-${interface_up}/${guest_up}-${interface_up}.vbox"
+          abort_on_existence "${guest_basedir}/${guest_pretty}-${interface_all_caps}/${guest_pretty}-${interface_all_caps}.vbox"
           ;;
       esac
       ;;
@@ -1187,7 +1190,7 @@ main(){
   log notice "Version: ${guest_version}."
 
   url_domain="${url_domain}/${guest_version:?}"
-  guest_file="${guest_up}-${interface_up}-${guest_version}"
+  guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
   url_guest_file="${url_domain}/${guest_file}"
   curl_opt_save_dir="${HOME}/installer-dist-download"
 
@@ -1272,10 +1275,7 @@ parse_name(){
   test "${me}" = "installer-dist" && return 0
   ## check if file name is valid
   case "${me}" in
-    whonix-xfce-virtualbox | whonix-cli-virtualbox | \
-    whonix-xfce-kvm | whonix-cli-kvm | \
-    kicksecure-xfce-virtualbox | kicksecure-cli-virtualbox | \
-    kicksecure-xfce-kvm | kicksecure-cli-kvm )
+    whonix-xfce | whonix-cli | kicksecure-xfce | kicksecure-cli )
       log info "Valid script name ${me}, using its name to set options."
       ;;
     *)
@@ -1287,8 +1287,9 @@ parse_name(){
   ## assign values according to script name
   set_arg guest "$(echo "${me}" | cut -d "-" -f1)"
   set_arg interface "$(echo "${me}" | cut -d "-" -f2)"
-  set_arg hypervisor "$(echo "${me}" | cut -d "-" -f3)"
-  log info "Assigned guest, interface and hypervisor according to script name ${me}."
+  #set_arg hypervisor "$(echo "${me}" | cut -d "-" -f3)"
+  log info "Assigned guest and interface according to script name ${me}."
+  return 0
 }
 
 
@@ -1342,11 +1343,11 @@ parse_opt(){
     shift "${shift_n:-1}"
   done
 
-  range_arg guest whonix kicksecure
-  range_arg hypervisor kvm virtualbox
-  range_arg interface cli xfce
   range_arg log_level error warn notice info debug
   [ "${log_level}" = "debug" ] && set -o xtrace
+  range_arg guest whonix kicksecure
+  range_arg interface cli xfce
+  range_arg hypervisor kvm virtualbox
 
   case "${dev:-}" in
     getopt)
