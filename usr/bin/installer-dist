@@ -1116,7 +1116,7 @@ main(){
   log notice "User agreed with the license."
   log info "Command line options: ${all_args}."
 
-  #pre_check
+  pre_check
   log_elapsed_time
 
   case "${guest}" in
