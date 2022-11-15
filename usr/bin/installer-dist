@@ -466,7 +466,7 @@ get_elapsed_time(){
 
 
 log_elapsed_time(){
-  log info "Elapsed time (seconds): $(get_elapsed_time)."
+  log info "Elapsed time: $(get_elapsed_time)s."
 }
 
 
