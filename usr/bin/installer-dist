@@ -910,7 +910,7 @@ torify_conn(){
 get_version(){
   if test -n "${guest_version_user:-}"; then
     log info "User input version."
-    guest_version="${guest_version_user}"
+    guest_version="${guest_version_user:-}"
     return 0
   fi
   if test "${dry_run}" = "1"; then
@@ -1112,25 +1112,35 @@ main(){
   interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
   hypervisor_pretty="$(capitalize_first_char "${hypervisor}")"
 
+  log info "Command line options: ${all_args}."
   log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
   check_license || die 1 "User disagreed with the license."
   log notice "User agreed with the license."
-  log info "Command line options: ${all_args}."
 
   pre_check
   log_elapsed_time
 
   case "${guest}" in
     whonix)
-      site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
+      ## clearnet project domain
       site_clearnet="whonix.org"
-      site_download="mirrors.dotsrc.org/${guest}"
+      ## clearnet download origin
+      site_clearnet_download="https://mirrors.dotsrc.org/${guest}"
+      ## onion project domain
+      site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
+      ## onion download url
+      site_onion_download="http://${site_onion}"
       ;;
     kicksecure)
-      site_onion="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+      ## clearnet project domain
       site_clearnet="kicksecure.com"
-      #site_download="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
-      site_download="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
+      ## clearnet download origin
+      site_clearnet_download="https://mirrors.dotsrc.org/${guest}"
+      #site_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
+      ## onion project domain
+      site_onion="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+      ## onion download url
+      site_onion_download="http://download.${site_onion}"
       ;;
   esac
 
@@ -1140,9 +1150,11 @@ main(){
       log info "Onion preferred."
       torify_conn
       curl_opt_ssl=""
+      ## use to test internet connection
       url_origin="http://www.${site_onion}"
-      url_download="http://download.${site_onion}"
-      #url_download="http://${site_download}"
+      ## url to download files from
+      url_download="${site_onion_download}"
+      ## use to query version
       url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
       url_version="http://www.${site_onion}/${url_version}"
       ;;
@@ -1150,9 +1162,11 @@ main(){
       log info "Clearnet preferred."
       test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
+      ## use to test internet connection
       url_origin="https://www.${site_clearnet}"
-      url_download="https://${site_download}"
-      #url_download="https://download.${site_clearnet}"
+      ## url to download files from
+      url_download="${site_clearnet_download}"
+      ## use to query version
       url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
       url_version="https://www.${site_clearnet}/${url_version}"
       ;;
@@ -1161,11 +1175,15 @@ main(){
 
   case "${hypervisor}" in
     virtualbox)
+      ## image signer
       signify_key="${adrelanos_signify}"
+      ## url directory to find files of the selected hypervisor
       url_domain="${url_download}/ova"
+      ## image file extension
       guest_file_ext="ova"
-      guest_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
+      ## function to call when importing guest
       import_guest="import_virtualbox"
+      ## directory where the hypervisor places the VMs
       guest_basedir="${HOME}/VirtualBox VMs"
       case "${guest}" in
         whonix)
@@ -1179,10 +1197,13 @@ main(){
       ;;
 
     kvm)
+      ## image signer
       signify_key="${hulahoop_signify}"
+      ## url directory to find files of the selected hypervisor
       url_domain="${url_download}/libvirt"
+      ## image file extension
       guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
-      guest_version="w/index.php?title=Template:Version_KVM&stable=0&action=raw"
+      ## function to call when importing guest
       import_guest="import_kvm"
       ## TODO
       die 1 "KVM code is unfinished."
@@ -1191,11 +1212,13 @@ main(){
       ;;
   esac
 
-  log info "Testing internet connection..."
-  curl -sSf -m 20 --fail-early ${url_origin} >/dev/null ||
-    die 1 "Can't connect to ${url_download}, perhaps you don't have internet?"
+  if test "${dry_run}" != "1"; then
+    log info "Testing internet connection..."
+    curl -sSf -m 20 --fail-early ${url_origin} >/dev/null ||
+      die 1 "Can't connect to ${url_download}, perhaps you don't have internet?"
+  fi
 
-  get_version "${url_origin}/${guest_version}"
+  get_version "${url_version}"
   log notice "Version: ${guest_version}."
 
   url_domain="${url_domain}/${guest_version:?}"
@@ -1264,6 +1287,7 @@ File name:
 set_default(){
   arg_saved=""
   guest=""
+  guest_version_user=""
   set_arg guest whonix
   hypervisor=""
   set_arg hypervisor virtualbox
