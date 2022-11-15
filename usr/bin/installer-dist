@@ -455,7 +455,7 @@ log_and_run(){
     return 0
   fi
   # shellcheck disable=SC2086
-  exec ${1}
+  ${1}
 }
 
 
@@ -737,6 +737,8 @@ get_utilities(){
       die 1 "Failed to find program to run as another user."
     }
   done
+
+  log info "Testing root login"
   root_cmd echo hello >/dev/null || {
     die 1 "Failed to run test command as root."
   }
@@ -847,7 +849,7 @@ posix_rand(){
 ## use script name as the user for easier filtering of the controller logs
 get_curl_proxy_cred(){
   test "${distro:-}" = "Whonix" && return 0
-  test "${onion:-}" != "1" && return 0
+  test -z "${curl_proxy:-}" && return 0
   proxy_user="anonym"
   proxy_pass="$(posix_rand)"
   printf '%s' "-U ${proxy_user}:${proxy_pass}"
@@ -942,7 +944,7 @@ download_files(){
   fi
 
   log_elapsed_time
-  curl_full_download="curl --fail-early --fail --show-error --location --create-dirs --output-dir ${download_dir} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred) --remote-name "
+  curl_full_download="curl --fail --show-error --location --create-dirs --output-dir ${download_dir} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred) --remote-name "
 
   log notice "Downloading ${guest_file}.${guest_file_ext}."
   log_and_run "${curl_full_download} ${url_guest_file}.${guest_file_ext}" ||
