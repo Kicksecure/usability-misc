@@ -285,7 +285,7 @@ set_arg(){
     if test -z "${var:-}"; then
       arg_saved="${arg_saved}\n${1}=\"${2}\""
     else
-      arg_saved="$(printf %s"${arg_saved}" | sed "s/^${1}=.*$/${1}=\"${2}\"/")"
+      arg_saved="$(printf %s"${arg_saved}" | sed "s|^${1}=.*$|${1}=\"${2}\"|")"
     fi
   fi
 }
@@ -948,7 +948,6 @@ download_files(){
   fi
 
   log_elapsed_time
-  mkdir "${directory_prefix}"
   curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred) --remote-name "
 
   log notice "Downloading ${guest_file}.${guest_file_ext}."
