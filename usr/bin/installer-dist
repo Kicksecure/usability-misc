@@ -714,6 +714,8 @@ import_virtualbox(){
   ## import virtualbox image
   vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg}
+
+  log notice "You can now open the virtualbox application to use ${guest}."
 }
 
 
