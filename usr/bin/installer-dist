@@ -1230,7 +1230,6 @@ main(){
   url_domain="${url_domain}/${guest_version:?}"
   guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
   url_guest_file="${url_domain}/${guest_file}"
-  directory_prefix="${HOME}/installer-dist-download"
 
   download_files || die 1 "Failed to download files."
 
@@ -1279,7 +1278,7 @@ Developer options:
                      Set directory prefix to save files to. If you change this
                        directory, but the previously downloaded files are not
                        changed to the new directory, the download will be done
-                       again. \$HOME/installer-dist-download (default)
+                       again. \$HOME (default)
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -d, --dry-run       Fake run, log commands to info level without executing.
@@ -1298,7 +1297,7 @@ File name:
 set_default(){
   arg_saved=""
   directory_prefix=""
-  set_arg directory_prefix "${HOME}/installer-dist-download"
+  set_arg directory_prefix "${HOME}"
   guest_version_user=""
   guest=""
   set_arg guest whonix
