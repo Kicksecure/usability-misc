@@ -113,17 +113,19 @@ has(){ _cmd="$(command -v "${1}")" 2>/dev/null || return 1
 }
 
 
+## Capitalize only the first char of a string.
 capitalize_first_char(){
   echo "${1:-}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1'
 }
 
 
+## Block running as root.
 not_as_root(){
   [ "$(id -u)" -eq 0 ] && die 1 "Running as root, aborting."
 }
 
 
-## wrapper that supports su, sudo, doas
+## Wrapper that supports su, sudo, doas
 root_cmd(){
   test -z "${1:-}" && die 1 "Failed to pass arguments to root_cmd."
   if test "${dry_run}" = "1"; then
@@ -140,13 +142,13 @@ root_cmd(){
 }
 
 
-## check if variable is integer
+## Check if variable is integer
 is_integer(){
   printf %d "${1}" >/dev/null 2>&1 || return 1
 }
 
 
-## checks if the target is valid.
+## Checks if the target is valid.
 ## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
 ## this is not perfect but it is better than nothing
 is_addr_port(){
@@ -155,26 +157,27 @@ is_addr_port(){
   addr="${addr_port%%:*}"
 
   is_integer "${port}" ||
-    die 1 "Invalid port '${port}', not an integer."
+    die 2 "Invalid port '${port}', not an integer."
 
   if [ "${port}" -gt 0 ] && [ "${port}" -le 65535 ]; then
     true "Valid port '${port}'"
   else
-    die 1 "Invalid port '${port}', not within range: 0-65535."
+    die 2 "Invalid port '${port}', not within range: 0-65535."
   fi
 
   for quad in $(printf '%s\n' "${addr}" | tr "." " "); do
     is_integer "${quad}" ||
-      die 1 "Invalid address '${addr}', '${quad}' is not an integer."
+      die 2 "Invalid address '${addr}', '${quad}' is not an integer."
     if [ "${quad}" -ge 0 ] && [ "${quad}" -le 255 ]; then
       true "Valid quad '${quad}'"
     else
-      die 1 "Invalid address '${addr}', '${quad}' not within range: 0-255."
+      die 2 "Invalid address '${addr}', '${quad}' not within range: 0-255."
     fi
   done
 }
 
 
+## Get host os and other necessary information.
 get_os(){
   ## Source: pfetch: https://github.com/dylanaraps/pfetch/blob/master/pfetch
   os="$(uname -s)"
@@ -232,6 +235,8 @@ get_os(){
 ##########################
 ## BEGIN OPTION PARSING ##
 ##########################
+
+## Begin parsing options.
 ## function should be called before the case statement to assign the options
 ## to a temporary variable
 begin_optparse(){
@@ -247,6 +252,7 @@ begin_optparse(){
 }
 
 
+## Get arguments from options that require them.
 ## if option requires argument, check if it was provided, if true, assign the
 ## arg to the opt. If $arg was already assigned, and if valid, will use it for
 ## the key value
@@ -255,7 +261,7 @@ get_arg(){
   ## if argument is empty or starts with '-', fail as it possibly is an option
   case "${arg:-}" in
     ""|-*)
-      die 1 "Option '${opt_orig}' requires an argument."
+      die 2 "Option '${opt_orig}' requires an argument."
       ;;
   esac
   set_arg "${1}" "${arg}"
@@ -269,7 +275,7 @@ get_arg(){
 }
 
 
-## single source to set opts, can later be used to print the options parsed
+## Single source to set opts, can later be used to print the options parsed
 set_arg(){
   ## check if $var had already a value assigned
   eval var='$'"${1:-}"
@@ -291,6 +297,7 @@ set_arg(){
 }
 
 
+## Clean options.
 ## '--option=value' should shift once and '--option value' should shift twice
 ## but at this point it is not possible to be sure if option requires an
 ## argument, reset shift to zero, at the end, if it is still 0, it will be
@@ -298,6 +305,10 @@ set_arg(){
 ## argument is separated by space ' ' or equal sign '='
 clean_opt(){
   case "${opt_orig}" in
+    "")
+      ## options ended
+      return 1
+      ;;
     --)
       ## stop option parsing
       shift 1
@@ -327,19 +338,15 @@ clean_opt(){
       opt="${opt_orig#*-}"
       arg="${arg_possible}"
       ;;
-    "")
-      ## options ended
-      return 1
-      ;;
     *)
       ## not an option
-      usage
+      usage 2
       ;;
   esac
 }
 
 
-## check if argument is within range
+## Check if argument is within range
 ## usage:
 ## $ range_arg key "1" "2" "3" "4" "5"
 ## $ range_arg key "a" "b" "c" "A" "B" "C"
@@ -357,7 +364,7 @@ range_arg(){
     done
     ## if not within range, fail and show the fixed range that can be used
     if [ ${success} -eq 0 ]; then
-      die 1 "Option '${key}' can not be '${var:-}'. Possible values: '${list}'."
+      die 2 "Option '${key}' can't be '${var:-}'. Possible values: '${list}'."
     fi
   fi
 }
@@ -368,7 +375,7 @@ range_arg(){
 check_opt_filled(){
   key="${1}"
   eval val='$'"${key:-}"
-  ! test -n "${val}" && die 1 "${key} is missing."
+  ! test -n "${val}" && die 2 "${key} is missing."
 }
 ########################
 ## END OPTION PARSING ##
@@ -377,12 +384,18 @@ check_opt_filled(){
 ###################
 ## BEGIN LOGGING ##
 ###################
+
+## Logging mechanism with easy customization of message format as well as
+## standardization on how the messages are delivered.
 ## usage: log [info|notice|warn|error] "X occurred."
 log(){
   log_type="${1}"
-  shift 1
-  log_content="${*}"
+  ## capitalize log level
   log_type_up="$(echo "${log_type}" | tr "[:lower:]" "[:upper:]")"
+  shift 1
+  ## escape printf reserved char '%'
+  log_content="$(echo "${*}" | sed "s/%/%%/g")"
+  ## set formatting based on log level
   case "${log_type}" in
     bug)
       log_color="${yellow}"
@@ -434,9 +447,9 @@ log(){
 }
 
 
+## For one liners 'log error; die'
 ## 'log' should not handle exits, because then it would not be possible
 ## to log consecutive errors on multiple lines, making die more suitable
-## for one liners 'log error; die'
 ## usage: die # "msg"
 ## where '#' is the exit code.
 die(){
@@ -447,7 +460,7 @@ die(){
 }
 
 
-## wrapper to log command before running to avoid duplication of code
+## Wrapper to log command before running to avoid duplication of code
 log_and_run(){
   log info "Running command:\n$ ${1}"
   if test "${dry_run}" = "1"; then
@@ -455,21 +468,23 @@ log_and_run(){
     return 0
   fi
   # shellcheck disable=SC2086
-  ${1}
+  eval ${1}
 }
 
 
-## useful to get runtime mid run to log easily
+## Useful to get runtime mid run to log easily
 get_elapsed_time(){
   printf '%s\n' "$(($(date +%s) - start_time))"
 }
 
 
+## Log elapsed time, the name explains itself.
 log_elapsed_time(){
   log info "Elapsed time: $(get_elapsed_time)s."
 }
 
 
+## Handle exit trap with line it failed and its exit code.
 handle_exit(){
   last_exit="${1}"
   line_number="${2:-0}"
@@ -482,6 +497,7 @@ handle_exit(){
   else
     log error "Exit code: ${last_exit}."
   fi
+  exit "${last_exit}"
 }
 
 
@@ -492,6 +508,8 @@ handle_exit(){
 ###########################
 ## BEGIN SCRIPT SPECIFIC ##
 ###########################
+
+## Get necessary packages for your host system. to be able to set the guest.
 get_host_pkgs(){
   case "${os}" in
     Linux*)
@@ -514,7 +532,7 @@ get_host_pkgs(){
           install_virtualbox_ubuntu
           install_signify signify-openbsd
           if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
-            die 1 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
+            die 4 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           ;;
         "Kicksecure"|"Whonix")
@@ -527,32 +545,33 @@ get_host_pkgs(){
           install_signify signify-openbsd
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          die 1 "Unsupported system."
+          die 4 "Unsupported system."
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          die 1 "Unsupported system."
+          die 4 "Unsupported system."
           ;;
         *)
-          die 1 "Unsupported system."
+          die 4 "Unsupported system."
           ;;
       esac
     ;;
     "OpenBSD"*)
-      die 1 "Unsupported system."
+      die 4 "Unsupported system."
       ;;
     "NetBSD"*)
-      die 1 "Unsupported system."
+      die 4 "Unsupported system."
       ;;
     "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      die 1 "Unsupported system."
+      die 4 "Unsupported system."
       ;;
     *)
-      die 1 "Unsupported system."
+      die 4 "Unsupported system."
       ;;
   esac
 }
 
 
+## Install package only if not installed already.
 install_pkg(){
   pkgs="${*}"
   pkg_not_installed=""
@@ -578,7 +597,7 @@ install_pkg(){
 }
 
 
-## used to test for a 2nd time if packages exist or not, if not,
+## Used to test for a 2nd time if packages exist or not, if not,
 ## install_pkg() failed above and best thing to do is abort because of missing
 ## dependencies.
 test_pkg(){
@@ -595,16 +614,18 @@ test_pkg(){
 }
 
 
+## If file exists (vms), abort process to avoid overwriting user data.
 abort_on_existence(){
   ## testing if file exists, not minding if it is a refular file or not
   if test -e "${1:-}"; then
     log error "File exists: ${1:-}."
-    die 1 "Not touching user data, aborting."
+    die 5 "Not touching user data, aborting."
   fi
 }
 
 
-common_virtualbox_install_end(){
+## End installation of virtualbox on debian and derived systems.
+install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
   root_cmd adduser "${USER}" vboxusers || {
     die 1 "Failed to add user '${USER}' to group 'vboxusers'."
@@ -612,6 +633,7 @@ common_virtualbox_install_end(){
 }
 
 
+## Install virtualbox on debian
 install_virtualbox_debian(){
   has vboxmanage && return 0
   install_pkg fasttrack-archive-keyring
@@ -625,24 +647,27 @@ install_virtualbox_debian(){
     echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
   fi
   install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
-  common_virtualbox_install_end
+  install_virtualbox_debian_common_end
 }
 
 
+## Install virtualbox on ubuntu
 install_virtualbox_ubuntu(){
   has vboxmanage && return 0
   install_pkg virtualbox linux-headers-generic
-  common_virtualbox_install_end
+  install_virtualbox_debian_common_end
 }
 
 
+## Install virtualbox on kicksecure
 install_virtualbox_kicksecure(){
   has vboxmanage && return 0
   install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
-  common_virtualbox_install_end
+  install_virtualbox_debian_common_end
 }
 
 
+## Helper to install signify on different systems.
 install_signify(){
   if has signify-openbsd; then
     ## fix debian unconventional naming
@@ -657,6 +682,7 @@ install_signify(){
 }
 
 
+## Test if user accepts the license, if not, abort.
 check_license(){
   if [ "${non_interactive}" = "1" ]; then
     log notice "License agreed by the user by setting non_interactive option."
@@ -706,6 +732,7 @@ check_license(){
 }
 
 
+## Import VirtualBox images
 import_virtualbox(){
   ## default to import 1 virtual system
   vbox_arg="--vsys 0 --eula accept"
@@ -719,11 +746,14 @@ import_virtualbox(){
 }
 
 
+## Import KVM images
 import_kvm(){
   ## placeholder
   die 1 "KVM import not coded."
 }
 
+
+## Get utilities from a pool of known utilities and use the first one found.
 get_utilities(){
   while true; do
     has sha512sum && checkhash="sha512sum" && break
@@ -751,6 +781,8 @@ get_utilities(){
   }
 }
 
+
+## Set default traps
 set_trap(){
   ## Get current shell from current process
   ## If the process if the file name, get its shell from shebang
@@ -778,11 +810,11 @@ set_trap(){
 }
 
 
+## Check if system status is supported
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    #die 1 "Only supported architecture is x86_64, your's is ${arch}."
     log error "Only supported architecture is x86_64, your's is ${arch}."
-    return 1
+    return 4
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
@@ -809,12 +841,12 @@ get_system_stat(){
   free_space="$(df --output=avail -BG ${directory_prefix} | awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
     log error "You need at least 10G of available space, you only have ${free_space}G."
-    return 1
+    return 4
   fi
 }
 
 
-## sanity checks that should be called before execution of main
+## Sanity checks that should be called before execution of main
 pre_check(){
   set_trap
   get_os
@@ -836,8 +868,8 @@ pre_check(){
 }
 
 
-## used for SOCKS credentials and stream isolation with
-## curl [-U|--proxy-user] user:password
+## Used for SOCKS credentials and stream isolation with
+## $ curl [-U|--proxy-user] user:password
 posix_rand(){
   awk \
   'BEGIN {
@@ -852,70 +884,62 @@ posix_rand(){
 }
 
 
-## generate SOCKS credentials for stream isolation
-## use script name as the user for easier filtering of the controller logs
+## Generate SOCKS credentials for stream isolation
 get_curl_proxy_cred(){
-  test "${distro:-}" = "Whonix" && return 0
   test -z "${curl_proxy:-}" && return 0
   proxy_user="anonym"
   proxy_pass="$(posix_rand)"
-  printf '%s' "-U ${proxy_user}:${proxy_pass}"
+  printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
 }
 
 
+## Test if can connect to SOCKS proxy and expect the correct tor reply.
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
-  if test "${dry_run}" = "1"; then
-    log info "Faking SOCKS proxy response because dry_run is set."
-    log notice "Connected to tor SOCKS proxy succesfully."
-    return 0
-  fi
-  curl_reply="$(curl -sSI -m 3 "${proxy}" | head -1 | tr -d "\r")"
+  curl_reply="$(curl -sSI -m 3 "${proxy}" 2>&1 | head -1 | tr -d "\r")"
   expected_curl_reply="HTTP/1.0 501 Tor is not an HTTP Proxy"
   if [ "${curl_reply}" = "${expected_curl_reply}" ]; then
     log notice "Connected to tor SOCKS proxy succesfully."
     log info "${curl_reply}."
     return 0
   else
-    log error "Unexpected proxy response (maybe not a tor proxy?)."
+    log error "Unexpected proxy response, maybe not a tor proxy?"
     log error "${curl_reply}."
     return 1
   fi
 
 }
 
-## useful to test if it is a SOCKS proxy before attempting to connect
-## to onion hosts.
+
+## Useful to test if it is a SOCKS proxy before attempting to make requests.
+## If connection to proxy fails, abort to avoid leaks.
 torify_conn(){
-  if test "${distro:-}" = "Whonix"; then
-    log info "Skipping torifying connection because of distro: ${distro}."
-    return 0
-  fi
   ## curl does not support SOCKS proxy to connect with Unix Domain Socket
   ##  https://curl.se/mail/archive-2021-03/0013.html
   if test -n "${socks_proxy:-}"; then
     proxy="${socks_proxy}"
-    curl_proxy="-x socks5h://${proxy}"
+    curl_proxy="--proxy socks5h://${proxy}"
   elif test -n "${TOR_SOCKS_PORT:-}"; then
     proxy="${TOR_SOCKS_HOST:-127.0.0.1}:${TOR_SOCKS_PORT}"
-    curl_proxy="-x socks5h://${proxy}"
+    curl_proxy="--proxy socks5h://${proxy}"
   else
+    ## Stream Isolation will be enforced get_curl_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
     log warn "Trying tor defaults: TBB (9150) and system tor (9050)."
     proxy="127.0.0.1:9050"
-    curl_proxy="-x socks5h://${proxy}"
+    curl_proxy="--proxy socks5h://${proxy}"
     if ! check_tor_proxy; then
       proxy="127.0.0.1:9050"
-      curl_proxy="-x socks5h://${proxy}"
+      curl_proxy="--proxy socks5h://${proxy}"
     else
       return 0
     fi
   fi
-  check_tor_proxy || die 1 "SOCKS proxy not setup correctly."
+  check_tor_proxy || die 2 "Can't connect to SOCKS proxy."
 }
 
 
-## set version by user input or by querying the API
+## Set version by user input or by querying the API
 get_version(){
   if test -n "${guest_version_user:-}"; then
     log info "User input version."
@@ -942,6 +966,17 @@ get_version(){
 }
 
 
+## Helper for download_files() to make it less repetitive.
+get_file(){
+  curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred) --remote-name "
+
+  log notice "Downloading ${1:-}."
+  log_and_run "${curl_full_download} ${1:-}"
+}
+
+
+## Check if files were already downloaded, if not, try to download everything
+## and only if succeeds, set download flag.
 download_files(){
   download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   if test -f "${download_flag}"; then
@@ -950,27 +985,18 @@ download_files(){
   fi
 
   log_elapsed_time
-  curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred) --remote-name "
 
-  log notice "Downloading ${guest_file}.${guest_file_ext}."
-  log_and_run "${curl_full_download} ${url_guest_file}.${guest_file_ext}" ||
-    return 1
-
-  log notice "Downloading ${guest_file}.sha512sums.sig."
-  log_and_run "${curl_full_download} ${url_guest_file}.sha512sums.sig" ||
-    return 1
-
-  log notice "Downloading ${guest_file}.sha512sums."
-  log_and_run "${curl_full_download} ${url_guest_file}.sha512sums" ||
-    return 1
+  get_file "${url_guest_file}.${guest_file_ext}"
+  get_file "${url_guest_file}.sha512sums.sig"
+  get_file "${url_guest_file}.sha512sums"
 
   log_elapsed_time
   log_and_run "touch ${download_flag}"
-  return 0
 }
 
 
 ## https://en.wikipedia.org/wiki/X86_virtualization
+## Check if virtualization is enabled.
 get_virtualization(){
   ## check cpu flags for capability
   virt_flag="$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | grep -wo -E '(vmx|svm)' || true)"
@@ -993,14 +1019,9 @@ get_virtualization(){
       ;;
     "")
       log warn "Virtualization not available, could be either:"
-      log warn "  a) not enabled in your BIOS; or"
-      log warn "  b) not available for your CPU."
-      return 1
-      ;;
-    *)
       log warn "Unknown virtualization flag: ${virt_flag}."
       log warn "  Please report this bug."
-      return 1
+      return 4
       ;;
   esac
 
@@ -1114,6 +1135,8 @@ get_virtualization(){
 ################
 ## BEGIN MAIN ##
 ################
+
+## Self explanatory name, make everything after option parsing.
 main(){
   guest_pretty="$(capitalize_first_char "${guest}")"
   interface_pretty="$(capitalize_first_char "${interface}")"
@@ -1122,7 +1145,7 @@ main(){
 
   log info "Command line options: ${all_args}."
   log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
-  check_license || die 1 "User disagreed with the license."
+  check_license || die 3 "User disagreed with the license."
   log notice "User agreed with the license."
 
   pre_check
@@ -1156,6 +1179,7 @@ main(){
   case "${onion}" in
     1)
       log info "Onion preferred."
+      ## always torify onion connections
       torify_conn
       curl_opt_ssl=""
       ## use to test internet connection
@@ -1168,6 +1192,7 @@ main(){
       ;;
     *)
       log info "Clearnet preferred."
+      ## only torify to clearnet is SOCKS proxy is specified
       test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
       ## use to test internet connection
@@ -1223,7 +1248,7 @@ main(){
   if test "${dry_run}" != "1"; then
     log info "Testing internet connection..."
     curl -sSf -m 20 --fail-early ${url_origin} >/dev/null ||
-      die 1 "Can't connect to ${url_download}, perhaps you don't have internet?"
+      die $? "Can't connect to ${url_download}, perhaps no internet?"
   fi
 
   get_version "${url_version}"
@@ -1233,7 +1258,7 @@ main(){
   guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
   url_guest_file="${url_domain}/${guest_file}"
 
-  download_files || die 1 "Failed to download files."
+  download_files || die 6 "Failed to download files."
 
   if test "${dry_run}" = "1"; then
     log info "Ending run before doing integrity checks because dry_run is set."
@@ -1244,18 +1269,20 @@ main(){
   log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
   echo "${signify_key}" | signify -V -p - \
    -m "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 1 "Failed to verify signature."
+    die 7 "Failed to verify signature."
 
   log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
   ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 1 "Failed hash checking."
+    die 7 "Failed hash checking."
 
-  ${import_guest}
+  eval ${import_guest} || die 8 "Failed to import virtual machines."
 
   log_elapsed_time
 }
 
 
+## Print usage message and exit with set exit code, depending if usage was
+## called by [-h|--help] or because user tried and invalid option.
 usage(){
   printf %s"Usage: ${me} [options...]
  -g, --guest=<guest> Set guest. Options: kicksecure, whonix (default)
@@ -1270,12 +1297,12 @@ usage(){
                      Set TCP SOCKS proxy for onion client connections.
                        (default: TOR_SOCKS_HOST:TOR_SOCKS_PORT, if not set, try
                        TBB proxy at 9150, else try system tor proxy at 9050)
- -V, --version       Print script version.
- -h, --help          Print this help message.
-Developer options:
  -l, --log-level=<level>
                      Set log level. Options: debug, info,
                        notice (default), warn, error.
+ -V, --version       Show version and quit.
+ -h, --help          Show help for commands and quit.
+Developer options:
  -P, --directory-prefix=<dir>
                      Set directory prefix to save files to. The directory must
                        already exist and have read and write capabilities for
@@ -1285,18 +1312,18 @@ Developer options:
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -d, --dry-run       Fake run, log commands to info level without executing.
- -t, --getopt        Get parsed options and exit.
+ -t, --getopt        Show parsed options and quit.
 File name:
   The default file name is installer-dist. Some basic options can be set as the
   file name if they follow the format 'guest-interface-hypervisor'. Anything,
   different than the default name or the allowed format is rejected.
   Command line options override the file name definition.
 "
-  exit 0
+  exit ${1:-0}
 }
 
 
-## set default values of variables
+## Set default values for variables.
 set_default(){
   arg_saved=""
   directory_prefix=""
@@ -1318,6 +1345,7 @@ set_default(){
 }
 
 
+## Parse script name.
 parse_name(){
   ## if using default file name, ignore the rest
   test "${me}" = "installer-dist" && return 0
@@ -1330,7 +1358,7 @@ parse_name(){
       log error "Invalid script name '${0}'."
       log error "If you don't know why this happened, rename this script to"
       log error "  installer-dist and use command-line options instead."
-      return 1
+      return 2
   esac
   ## assign values according to script name
   set_arg guest "$(echo "${me}" | cut -d "-" -f1)"
@@ -1341,8 +1369,9 @@ parse_name(){
 }
 
 
+## Parse command-line options.
 parse_opt(){
-  #test -z "${1:-}" && usage
+  #test -z "${1:-}" && usage 2
   while true; do
     begin_optparse "${1:-}" "${2:-}" || break
     # shellcheck disable=SC2034
@@ -1385,10 +1414,10 @@ parse_opt(){
         set_arg dev version
         ;;
       h|help)
-        usage
+        usage 0
         ;;
       *)
-        die 1 "Invalid option: '${opt_orig}'."
+        die 2 "Invalid option: '${opt_orig}'."
         ;;
     esac
     shift "${shift_n:-1}"
