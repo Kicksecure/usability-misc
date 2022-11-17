@@ -1258,29 +1258,30 @@ main(){
 
 usage(){
   printf %s"Usage: ${me} [options...]
- -g, --guest <guest> Set guest. Options: kicksecure, whonix (default)
- -u, --guest-version <version>
+ -g, --guest=<guest> Set guest. Options: kicksecure, whonix (default)
+ -u, --guest-version=<version>
                      Set guest version, else query from API.
- -i, --interface <interface>
+ -i, --interface=<interface>
                      Set interface. Options: cli, xfce (default)
- -m, --hypervisor <platform>
+ -m, --hypervisor=<platform>
                      Set virtualization. Options: kvm, virtualbox (default)
  -o, --onion         Download files over onion.
- -s, --socks-proxy <proxy>
+ -s, --socks-proxy=<proxy>
                      Set TCP SOCKS proxy for onion client connections.
                        (default: TOR_SOCKS_HOST:TOR_SOCKS_PORT, if not set, try
                        TBB proxy at 9150, else try system tor proxy at 9050)
- -l, --log-level <level>
-                     Set log level. Options: debug, info,
-                       notice (default), warn, error.
  -V, --version       Print script version.
  -h, --help          Print this help message.
 Developer options:
- -P, --directory-prefix
-                     Set directory prefix to save files to. If you change this
-                       directory, but the previously downloaded files are not
-                       changed to the new directory, the download will be done
-                       again. \$HOME (default)
+ -l, --log-level=<level>
+                     Set log level. Options: debug, info,
+                       notice (default), warn, error.
+ -P, --directory-prefix=<dir>
+                     Set directory prefix to save files to. The directory must
+                       already exist and have read and write capabilities for
+                       the calling user. If you change this directory, but the
+                       previously downloaded files are not changed to the new
+                       directory, the download start again. \$HOME (default).
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -d, --dry-run       Fake run, log commands to info level without executing.
