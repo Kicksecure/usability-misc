@@ -624,6 +624,24 @@ abort_on_existence(){
 }
 
 
+## Check if VM exists using hypervisor tools.
+check_vm_exists(){
+  vm="${1}"
+  case "${hypervisor}" in
+    virtualbox)
+      if vboxmanage showvminfo "${vm}" >/dev/null 2>&1; then
+        vm_saved_path="$(vboxmanage showvminfo "${vm}" | grep "^Config file:" |
+                         sed "s/.*:[[:blank:]]*//")"
+        die 5 "Virtual machine was imported previously to: ${vm_saved_path}"
+      fi
+      ;;
+    kvm)
+      true
+      ;;
+  esac
+}
+
+
 ## End installation of virtualbox on debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
@@ -838,7 +856,8 @@ get_system_stat(){
     log warn "You may encounter problems using a desktop environment."
   fi
 
-  free_space="$(df --output=avail -BG ${directory_prefix} | awk '/G$/{print substr($1, 1, length($1)-1)}')"
+  free_space="$(df --output=avail -BG "${directory_prefix}" |
+                awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
     log error "You need at least 10G of available space, you only have ${free_space}G."
     return 4
@@ -1217,14 +1236,13 @@ main(){
       ## function to call when importing guest
       import_guest="import_virtualbox"
       ## directory where the hypervisor places the VMs
-      guest_basedir="${HOME}/VirtualBox VMs"
       case "${guest}" in
         whonix)
-          abort_on_existence "${guest_basedir}/${guest_pretty}-Workstation-${interface_all_caps}/${guest_pretty}-Workstation-${interface_all_caps}.vbox"
-          abort_on_existence "${guest_basedir}/${guest_pretty}-Gateway-${interface_all_caps}/${guest_pretty}-Gateway-${interface_all_caps}.vbox"
+          check_vm_exists "${guest_pretty}-Workstation-${interface_all_caps}"
+          check_vm_exists "${guest_pretty}-Gateway-${interface_all_caps}"
           ;;
         kicksecure)
-          abort_on_existence "${guest_basedir}/${guest_pretty}-${interface_all_caps}/${guest_pretty}-${interface_all_caps}.vbox"
+          check_vm_exists "${guest_pretty}-${interface_all_caps}"
           ;;
       esac
       ;;
@@ -1240,8 +1258,6 @@ main(){
       import_guest="import_kvm"
       ## TODO
       die 1 "KVM code is unfinished."
-      #guest_basedir="${HOME}/VirtualBox VMs"
-      #abort_on_existence "kvmfile"
       ;;
   esac
 
@@ -1319,7 +1335,7 @@ File name:
   different than the default name or the allowed format is rejected.
   Command line options override the file name definition.
 "
-  exit ${1:-0}
+  exit "${1:-0}"
 }
 
 
