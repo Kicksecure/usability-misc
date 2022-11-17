@@ -532,7 +532,7 @@ get_host_pkgs(){
           install_virtualbox_ubuntu
           install_signify signify-openbsd
           if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
-            die 4 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
+            die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           ;;
         "Kicksecure"|"Whonix")
@@ -545,27 +545,27 @@ get_host_pkgs(){
           install_signify signify-openbsd
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          die 4 "Unsupported system."
+          die 101 "Unsupported system."
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          die 4 "Unsupported system."
+          die 101 "Unsupported system."
           ;;
         *)
-          die 4 "Unsupported system."
+          die 101 "Unsupported system."
           ;;
       esac
     ;;
     "OpenBSD"*)
-      die 4 "Unsupported system."
+      die 101 "Unsupported system."
       ;;
     "NetBSD"*)
-      die 4 "Unsupported system."
+      die 101 "Unsupported system."
       ;;
     "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      die 4 "Unsupported system."
+      die 101 "Unsupported system."
       ;;
     *)
-      die 4 "Unsupported system."
+      die 101 "Unsupported system."
       ;;
   esac
 }
@@ -619,7 +619,7 @@ abort_on_existence(){
   ## testing if file exists, not minding if it is a refular file or not
   if test -e "${1:-}"; then
     log error "File exists: ${1:-}."
-    die 5 "Not touching user data, aborting."
+    die 102 "Not touching user data, aborting."
   fi
 }
 
@@ -632,7 +632,7 @@ check_vm_exists(){
       if vboxmanage showvminfo "${vm}" >/dev/null 2>&1; then
         vm_saved_path="$(vboxmanage showvminfo "${vm}" | grep "^Config file:" |
                          sed "s/.*:[[:blank:]]*//")"
-        die 5 "Virtual machine was imported previously to: ${vm_saved_path}"
+        die 102 "Virtual machine was imported previously to: ${vm_saved_path}"
       fi
       ;;
     kvm)
@@ -832,7 +832,7 @@ set_trap(){
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
     log error "Only supported architecture is x86_64, your's is ${arch}."
-    return 4
+    return 101
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
@@ -860,7 +860,7 @@ get_system_stat(){
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
     log error "You need at least 10G of available space, you only have ${free_space}G."
-    return 4
+    return 101
   fi
 }
 
@@ -1040,7 +1040,7 @@ get_virtualization(){
       log warn "Virtualization not available, could be either:"
       log warn "Unknown virtualization flag: ${virt_flag}."
       log warn "  Please report this bug."
-      return 4
+      return 101
       ;;
   esac
 
@@ -1164,7 +1164,7 @@ main(){
 
   log info "Command line options: ${all_args}."
   log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
-  check_license || die 3 "User disagreed with the license."
+  check_license || die 100 "User disagreed with the license."
   log notice "User agreed with the license."
 
   pre_check
@@ -1263,8 +1263,10 @@ main(){
 
   if test "${dry_run}" != "1"; then
     log info "Testing internet connection..."
-    curl -sSf -m 20 --fail-early ${url_origin} >/dev/null ||
-      die $? "Can't connect to ${url_download}, perhaps no internet?"
+    curl --silent --show-error --max-time 20 --fail --fail-early \
+      ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} \
+      --url "${url_origin}" >/dev/null ||
+      die $? "Can't connect to ${url_origin}, perhaps no internet?"
   fi
 
   get_version "${url_version}"
@@ -1274,7 +1276,7 @@ main(){
   guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
   url_guest_file="${url_domain}/${guest_file}"
 
-  download_files || die 6 "Failed to download files."
+  download_files || die 103 "Failed to download files."
 
   if test "${dry_run}" = "1"; then
     log info "Ending run before doing integrity checks because dry_run is set."
@@ -1285,13 +1287,13 @@ main(){
   log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
   echo "${signify_key}" | signify -V -p - \
    -m "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 7 "Failed to verify signature."
+    die 104 "Failed to verify signature."
 
   log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
   ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 7 "Failed hash checking."
+    die 104 "Failed hash checking."
 
-  eval ${import_guest} || die 8 "Failed to import virtual machines."
+  eval ${import_guest} || die 105 "Failed to import virtual machines."
 
   log_elapsed_time
 }

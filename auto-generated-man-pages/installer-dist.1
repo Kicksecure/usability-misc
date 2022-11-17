@@ -133,23 +133,28 @@ Install default flavour and run without questions print info messages:
 .fi
 .IP "" 0
 .SH "EXIT CODES"
+An exit trap is set to return the exit code of the last command that was ran\. Some commands might conflict with the script exit code, and that would be considered a bug\. As \fIcurl\fR is important to the script, its exit codes are reseverd to not conflict with the script exit code to ease debugging\.
+.IP "" 4
 .nf
 1       Catchall for general errors\.
 
 2       Unrecognized option usage\.
 
-3       User disagreed with the license\.
+3\-96    Curl errors\.
 
-4       Unsupported system\.
+100     User disagreed with the license\.
 
-5       Virtual machines already exist\.
+101     Unsupported system\.
 
-6       Failed to download files\.
+102     Virtual machines already exist\.
 
-7       Failed cryptographic verification\.
+103     Failed to download files\.
 
-8       Failed to import virtual machines\.
+104     Failed cryptographic verification\.
+
+105     Failed to import virtual machines\.
 .fi
+.IP "" 0
 .SH "AUTHOR"
 This man page was written by grass (grass@danwin1210\.de)\.
 .SH "WWW"
