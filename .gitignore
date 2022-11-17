@@ -1,1 +1,13 @@
 *.swp
+debian/debhelper-build-stamp
+debian/files
+debian/*.debhelper*
+debian/*.postinst.debhelper
+debian/*.postrm.debhelper
+debian/*.preinst.debhelper
+debian/*.prerm.debhelper
+debian/*.substvars
+debian/usability-misc/
+*-build-deps_*.deb
+*-build-deps_*.buildinfo
+*-build-deps_*.changes
