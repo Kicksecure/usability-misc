@@ -758,7 +758,8 @@ import_virtualbox(){
   test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
   ## import virtualbox image
   vboxmanage import \
-    "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg}
+    "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
+    return 1
 
   log notice "You can now open the virtualbox application to use ${guest}."
 }
@@ -960,20 +961,21 @@ torify_conn(){
 
 ## Set version by user input or by querying the API
 get_version(){
-  if test -n "${guest_version_user:-}"; then
+  log notice "Searching for guest version."
+  if test -n "${guest_version:-}"; then
     log info "User input version."
-    guest_version="${guest_version_user:-}"
     return 0
   fi
   if test "${dry_run}" = "1"; then
+    log_and_run "curl ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} --url ${1}"
     log info "Faking software version because of dry_run"
     guest_version="16.0.8.2"
     return 0
   fi
   log info "Acquiring guest version from API."
   log info "API host: ${1}"
-  # shellcheck disable=SC2086,SC2046
   raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} --url "${1}")"
+  # shellcheck disable=SC2086,SC2046
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
   ## distrust the API version
   ## block anything that is not made purely out of numbers and dots
@@ -997,12 +999,6 @@ get_file(){
 ## Check if files were already downloaded, if not, try to download everything
 ## and only if succeeds, set download flag.
 download_files(){
-  download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
-  if test -f "${download_flag}"; then
-    log notice "Skipping download because flag exists: ${download_flag}."
-    return 0
-  fi
-
   log_elapsed_time
 
   get_file "${url_guest_file}.${guest_file_ext}"
@@ -1261,22 +1257,34 @@ main(){
       ;;
   esac
 
-  if test "${dry_run}" != "1"; then
-    log info "Testing internet connection..."
-    curl --silent --show-error --max-time 180 --fail --fail-early \
-      ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} \
-      --url "${url_origin}" >/dev/null ||
-      die $? "Can't connect to ${url_origin}, perhaps no internet?"
+
+  if test -n "${guest_version}"; then
+    guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
+    download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
-  get_version "${url_version}"
-  log notice "Version: ${guest_version}."
+  ## Skip making internet requests if flag already exists and user specified
+  ## the desired version.
+  if  ! test -f "${download_flag:-}"; then
+    if test "${dry_run}" != "1"; then
+      log info "Testing internet connection..."
+      curl --silent --show-error --max-time 180 --fail --fail-early \
+        ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} \
+        --url "${url_origin}" >/dev/null ||
+        die $? "Can't connect to ${url_origin}, perhaps no internet?"
+    fi
 
-  url_domain="${url_domain}/${guest_version:?}"
-  guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
-  url_guest_file="${url_domain}/${guest_file}"
+    get_version "${url_version}"
+    log notice "Version: ${guest_version}."
+    guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
+    download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
 
-  download_files || die 103 "Failed to download files."
+    url_domain="${url_domain}/${guest_version:?}"
+    url_guest_file="${url_domain}/${guest_file}"
+
+    log notice "Skipping download because flag exists: ${download_flag}."
+    download_files || die 103 "Failed to download files."
+  fi
 
   if test "${dry_run}" = "1"; then
     log info "Ending run before doing integrity checks because dry_run is set."
@@ -1346,7 +1354,7 @@ set_default(){
   arg_saved=""
   directory_prefix=""
   set_arg directory_prefix "${HOME}"
-  guest_version_user=""
+  guest_version=""
   guest=""
   set_arg guest whonix
   hypervisor=""
@@ -1410,7 +1418,7 @@ parse_opt(){
         get_arg guest
         ;;
       u|guest-version)
-        get_arg guest_version_user
+        get_arg guest_version
         ;;
       i|interface)
         get_arg interface
