@@ -992,7 +992,7 @@ get_file(){
   curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred) --remote-name "
 
   log notice "Downloading ${1:-}."
-  log_and_run "${curl_full_download} ${1:-}"
+  log_and_run "${curl_full_download} ${1:-}" || return
 }
 
 
@@ -1265,7 +1265,9 @@ main(){
 
   ## Skip making internet requests if flag already exists and user specified
   ## the desired version.
-  if  ! test -f "${download_flag:-}"; then
+  if test -f "${download_flag:-}"; then
+    log notice "Skipping download because flag exists: ${download_flag}."
+  else
     if test "${dry_run}" != "1"; then
       log info "Testing internet connection..."
       curl --silent --show-error --max-time 180 --fail --fail-early \
@@ -1273,16 +1275,12 @@ main(){
         --url "${url_origin}" >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
     fi
-
     get_version "${url_version}"
     log notice "Version: ${guest_version}."
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
-
     url_domain="${url_domain}/${guest_version:?}"
     url_guest_file="${url_domain}/${guest_file}"
-
-    log notice "Skipping download because flag exists: ${download_flag}."
     download_files || die 103 "Failed to download files."
   fi
 
