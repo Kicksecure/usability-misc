@@ -888,27 +888,11 @@ pre_check(){
 }
 
 
-## Used for SOCKS credentials and stream isolation with
-## $ curl [-U|--proxy-user] user:password
-posix_rand(){
-  awk \
-  'BEGIN {
-    srand();
-    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    s = "";
-    for(i=0;i<8;i++) {
-        s = s "" substr(chars, int(rand()*62), 1);
-    }
-    print s
-  }'
-}
-
-
 ## Generate SOCKS credentials for stream isolation
 get_curl_proxy_cred(){
   test -z "${curl_proxy:-}" && return 0
   proxy_user="anonym"
-  proxy_pass="$(posix_rand)"
+  proxy_pass="${1:?}"
   printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
 }
 
@@ -916,7 +900,8 @@ get_curl_proxy_cred(){
 ## Test if can connect to SOCKS proxy and expect the correct tor reply.
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
-  curl_reply="$(curl -sSI -m 3 "${proxy}" 2>&1 | head -1 | tr -d "\r")"
+  curl_reply="$(UWT_DEV_PASSTHROUGH=1 curl -sSI -m 3 "${proxy}" 2>&1 |
+                head -1 | tr -d "\r")"
   expected_curl_reply="HTTP/1.0 501 Tor is not an HTTP Proxy"
   if [ "${curl_reply}" = "${expected_curl_reply}" ]; then
     log notice "Connected to tor SOCKS proxy succesfully."
@@ -935,7 +920,7 @@ check_tor_proxy(){
 ## If connection to proxy fails, abort to avoid leaks.
 torify_conn(){
   ## curl does not support SOCKS proxy to connect with Unix Domain Socket
-  ##  https://curl.se/mail/archive-2021-03/0013.html
+  ## https://curl.se/mail/archive-2021-03/0013.html
   if test -n "${socks_proxy:-}"; then
     proxy="${socks_proxy}"
     curl_proxy="--proxy socks5h://${proxy}"
@@ -967,14 +952,14 @@ get_version(){
     return 0
   fi
   if test "${dry_run}" = "1"; then
-    log_and_run "curl ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} --url ${1}"
+    log_and_run "curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
     log info "Faking software version because of dry_run"
     guest_version="16.0.8.2"
     return 0
   fi
   log info "Acquiring guest version from API."
   log info "API host: ${1}"
-  raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} --url "${1}")"
+  raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url "${1}")"
   # shellcheck disable=SC2086,SC2046
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
   ## distrust the API version
@@ -989,7 +974,9 @@ get_version(){
 
 ## Helper for download_files() to make it less repetitive.
 get_file(){
-  curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred) --remote-name "
+  : "${round:=10}"
+  round=$((round+1))
+  curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred ${round}) --remote-name "
 
   log notice "Downloading ${1:-}."
   log_and_run "${curl_full_download} ${1:-}" || return
@@ -1257,6 +1244,7 @@ main(){
       ;;
   esac
 
+  curl_opt="${curl_opt_ssl:-} ${curl_proxy:-}"
 
   if test -n "${guest_version}"; then
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
@@ -1271,7 +1259,7 @@ main(){
     if test "${dry_run}" != "1"; then
       log info "Testing internet connection..."
       curl --silent --show-error --max-time 180 --fail --fail-early \
-        ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} \
+        ${curl_opt} $(get_curl_proxy_cred netconnection) \
         --url "${url_origin}" >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
     fi
