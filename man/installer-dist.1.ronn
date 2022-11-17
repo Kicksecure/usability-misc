@@ -1,0 +1,93 @@
+installer-dist(1) -- wrapper download and import Whonix/Kicksecure VMs
+=============================================
+
+<!--
+## Copyright (C) 2022 grass <grass@danwin1210.de>
+-->
+
+## SYNOPSIS
+`installer-dist` [options]
+
+## DESCRIPTION
+**installer-dist** is a wrapper that automates the download and importation
+of Kicksecure and Whonix VMs, on the interface you prefer such as CLI or Xfce,
+using the hypervisor of you choice, such as KVM or VirtualBox.
+
+## OPTIONS
+Options starts with one or two dashes. Long and short options that require
+arguments accept being separated by spaces of an equal sign.
+
+`-g`, `--guest`=<guest>
+
+        Set guest operating system.
+
+
+`-u`, `--guest-version`=<version>
+
+        Set guest's version.
+
+`-i`, `--interface`=<interface>
+
+        Set guest's interface.
+
+`-m`, `--hypervisor`=<hypervisor>
+
+        Set guest's hypervisor.
+
+`-o`, `--onion`
+
+        Make requests over the onion network.
+
+`-s`, `--socks-proxy`=<proxy>
+
+        Set SOCKS proxy for use in requests.
+
+`-s`, `--log-level`=<level>
+
+        Set logging level.
+
+`-P`, `--directory-prefix`=<directory>
+
+        Set directory to save downloaded files to.
+
+`-n`, `--non-interactive`
+
+        Set non-interactive mode, instead of questions, defaults will be
+        assumed.
+
+`-d`, `--dry-run`
+
+        Set dry-run mode to emulate a run without doing anything relevant.
+
+`-t`, `--getopt`
+
+        Show parsed options and quit.
+
+`-V`, `--version`
+
+        Show version and quit.
+
+`-h`, `--help`
+
+        Show help for commands and quit.
+
+## EXAMPLES
+
+Install Whonix Xfce for VirtualBox:
+
+        $ installer-dist --guest=whonix --interface=xfce --hypervisor=virtualbox
+
+Install default flavour making requests over onion and using SOCKS proxy:
+
+        $ installer-dist --onion --socks-proxy=127.0.0.1:9050
+
+Install default flavour and run without questions print info messages:
+
+        $ installer-dist --non-interactive --log-level=info
+
+## AUTHOR
+This man page was written by grass (grass@danwin1210.de).
+
+## WWW
+https://www.whonix.org/wiki/Dev/Linux_Installer
+
