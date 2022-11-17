@@ -17,6 +17,9 @@ using the hypervisor of you choice, such as KVM or VirtualBox.
 Options starts with one or two dashes. Long and short options that require
 arguments accept being separated by spaces of an equal sign.
 
+Guest and Interface can be set by changing the script name to the format
+<guest-interface>.
+
 `-g`, `--guest`=<guest>
 
         Set guest operating system. Options: kicksecure, whonix (default).
