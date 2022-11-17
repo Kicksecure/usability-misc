@@ -2,7 +2,7 @@
 .\" http://github.com/apjanke/ronn-ng/tree/0.9.1
 .TH "INSTALLER\-DIST" "1" "January 2020" "usability-misc" "usability-misc Manual"
 .SH "NAME"
-\fBinstaller\-dist\fR \- wrapper download and import Whonix/Kicksecure VMs
+\fBinstaller\-dist\fR \- download and import Whonix/Kicksecure VMs
 .SH "SYNOPSIS"
 \fBinstaller\-dist\fR \fIoptions\fR
 .SH "DESCRIPTION"
@@ -13,28 +13,28 @@ Options starts with one or two dashes\. Long and short options that require argu
 \fB\-g\fR, \fB\-\-guest\fR=\fIguest\fR
 .IP "" 4
 .nf
-    Set guest operating system\.
+    Set guest operating system\. Options: kicksecure, whonix (default)\.
 .fi
 .IP "" 0
 .P
 \fB\-u\fR, \fB\-\-guest\-version\fR=\fIversion\fR
 .IP "" 4
 .nf
-    Set guest's version\.
+    Set guest's version\. Default to use API if none specified\.
 .fi
 .IP "" 0
 .P
 \fB\-i\fR, \fB\-\-interface\fR=\fIinterface\fR
 .IP "" 4
 .nf
-    Set guest's interface\.
+    Set guest's interface\. Options: cli, xfce (default)\.
 .fi
 .IP "" 0
 .P
 \fB\-m\fR, \fB\-\-hypervisor\fR=\fIhypervisor\fR
 .IP "" 4
 .nf
-    Set guest's hypervisor\.
+    Set guest's hypervisor\. Options: kvm, virtualbox (default)\.
 .fi
 .IP "" 0
 .P
@@ -48,21 +48,29 @@ Options starts with one or two dashes\. Long and short options that require argu
 \fB\-s\fR, \fB\-\-socks\-proxy\fR=\fIproxy\fR
 .IP "" 4
 .nf
-    Set SOCKS proxy for use in requests\.
+    Set TCP SOCKS proxy for use in requests\. Format: __host:addr__\. If none
+    specified, but onion request is set, try
+    TOR_SOCKS_HOST:TOR_SOCKS_PORT, if empty, try host 127\.0\.0\.1 and default
+    ports for TBB port 9151 and tor system port 9050\.
 .fi
 .IP "" 0
 .P
 \fB\-s\fR, \fB\-\-log\-level\fR=\fIlevel\fR
 .IP "" 4
 .nf
-    Set logging level\.
+    Set logging level\. Options: debug, info, notice (default), warn, error\.
+    Everything below the selected logging level level will be printed\.
 .fi
 .IP "" 0
 .P
 \fB\-P\fR, \fB\-\-directory\-prefix\fR=\fIdirectory\fR
 .IP "" 4
 .nf
-    Set directory to save downloaded files to\.
+    Set directory to save downloaded files to\. Default to $HOME\. The
+    directory must already exist and have read and write capabilities for
+    the calling user\. If you change this directory, but the previously
+    downloaded files are not changed to the new directory, the download
+    starts again\.
 .fi
 .IP "" 0
 .P
@@ -70,7 +78,7 @@ Options starts with one or two dashes\. Long and short options that require argu
 .IP "" 4
 .nf
     Set non\-interactive mode, instead of questions, defaults will be
-    assumed\.
+    assumed, including accepting the license\.
 .fi
 .IP "" 0
 .P
@@ -105,7 +113,7 @@ Options starts with one or two dashes\. Long and short options that require argu
 Install Whonix Xfce for VirtualBox:
 .IP "" 4
 .nf
-    $ installer\-dist \-\-guest=whonix \-\-interface=xfce \-\-hypervisor=virtualbox
+    $ installer\-dist \-\-guest=whonix \-\-interface=xfce \-\-hypervisor=kvm
 .fi
 .IP "" 0
 .P
@@ -122,7 +130,27 @@ Install default flavour and run without questions print info messages:
     $ installer\-dist \-\-non\-interactive \-\-log\-level=info
 .fi
 .IP "" 0
+.SH "EXIT CODES"
+.nf
+1       Catchall for general errors\.
+
+2       Unrecognized option usage\.
+
+3       User disagreed with the license\.
+
+4       Unsupported system\.
+
+5       Virtual machines already exist\.
+
+6       Failed to download files\.
+
+7       Failed cryptographic verification\.
+
+8       Failed to import virtual machines\.
+.fi
 .SH "AUTHOR"
 This man page was written by grass (grass@danwin1210\.de)\.
 .SH "WWW"
 https://www\.whonix\.org/wiki/Dev/Linux_Installer
+.SH "SEE ALSO"
+curl(1), sha512sum(1), signify\-openbsd(1), qemu(1), kvm(1)

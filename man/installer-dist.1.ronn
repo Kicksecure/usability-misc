@@ -1,4 +1,4 @@
-installer-dist(1) -- wrapper download and import Whonix/Kicksecure VMs
+installer-dist(1) -- download and import Whonix/Kicksecure VMs
 =============================================
 
 <!--
@@ -19,20 +19,20 @@ arguments accept being separated by spaces of an equal sign.
 
 `-g`, `--guest`=<guest>
 
-        Set guest operating system.
+        Set guest operating system. Options: kicksecure, whonix (default).
 
 
 `-u`, `--guest-version`=<version>
 
-        Set guest's version.
+        Set guest's version. Default to use API if none specified.
 
 `-i`, `--interface`=<interface>
 
-        Set guest's interface.
+        Set guest's interface. Options: cli, xfce (default).
 
 `-m`, `--hypervisor`=<hypervisor>
 
-        Set guest's hypervisor.
+        Set guest's hypervisor. Options: kvm, virtualbox (default).
 
 `-o`, `--onion`
 
@@ -40,20 +40,28 @@ arguments accept being separated by spaces of an equal sign.
 
 `-s`, `--socks-proxy`=<proxy>
 
-        Set SOCKS proxy for use in requests.
+        Set TCP SOCKS proxy for use in requests. Format: __host:addr__. If none
+        specified, but onion request is set, try
+        TOR_SOCKS_HOST:TOR_SOCKS_PORT, if empty, try host 127.0.0.1 and default
+        ports for TBB port 9151 and tor system port 9050.
 
 `-s`, `--log-level`=<level>
 
-        Set logging level.
+        Set logging level. Options: debug, info, notice (default), warn, error.
+        Everything below the selected logging level level will be printed.
 
 `-P`, `--directory-prefix`=<directory>
 
-        Set directory to save downloaded files to.
+        Set directory to save downloaded files to. Default to $HOME. The
+        directory must already exist and have read and write capabilities for
+        the calling user. If you change this directory, but the previously
+        downloaded files are not changed to the new directory, the download
+        starts again.
 
 `-n`, `--non-interactive`
 
         Set non-interactive mode, instead of questions, defaults will be
-        assumed.
+        assumed, including accepting the license.
 
 `-d`, `--dry-run`
 
@@ -75,7 +83,7 @@ arguments accept being separated by spaces of an equal sign.
 
 Install Whonix Xfce for VirtualBox:
 
-        $ installer-dist --guest=whonix --interface=xfce --hypervisor=virtualbox
+        $ installer-dist --guest=whonix --interface=xfce --hypervisor=kvm
 
 Install default flavour making requests over onion and using SOCKS proxy:
 
@@ -85,9 +93,32 @@ Install default flavour and run without questions print info messages:
 
         $ installer-dist --non-interactive --log-level=info
 
+## EXIT CODES
+
+    1       Catchall for general errors.
+
+    2       Unrecognized option usage.
+
+    3       User disagreed with the license.
+
+    4       Unsupported system.
+
+    5       Virtual machines already exist.
+
+    6       Failed to download files.
+
+    7       Failed cryptographic verification.
+
+    8       Failed to import virtual machines.
+
 ## AUTHOR
+
 This man page was written by grass (grass@danwin1210.de).
 
 ## WWW
+
 https://www.whonix.org/wiki/Dev/Linux_Installer
+
+## SEE ALSO
+curl(1), sha512sum(1), signify-openbsd(1), qemu(1), kvm(1)
 
