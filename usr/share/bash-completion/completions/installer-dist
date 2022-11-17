@@ -1,0 +1,50 @@
+# installer-dist(8) completion                           -*- shell-script -*-
+
+_installer_dist()
+{
+    local cur prev words cword
+    _init_completion -s || return
+    ## prepare for bash-completion > 2.11
+    #local cur prev words cword split comp_args
+    #_comp_initialize -s -- "$@" || return
+
+    case $prev in
+        --guest-version | --socks-proxy | --onion | --non-interactive | \
+            --dry-run | --getopt | --version | --help )
+            return
+            ;;
+        --directory-prefix )
+            _filedir -d
+            return
+            ;;
+        --guest )
+            COMPREPLY=($(compgen -W "whonix kicksecure" -- "$cur"))
+            return
+            ;;
+        --interface )
+            COMPREPLY=($(compgen -W "xfce cli" -- "$cur"))
+            return
+            ;;
+        --hypervisor )
+            COMPREPLY=($(compgen -W "virtualbox kvm" -- "$cur"))
+            return
+            ;;
+        --log-level )
+            COMPREPLY=($(compgen -W "debug info notice warn error" -- "$cur"))
+            return
+            ;;
+    esac
+
+    $split && return
+
+    if [[ $cur == -* ]]; then
+        COMPREPLY=($(compgen -W '$(_parse_help "$1")' -- "$cur"))
+        [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
+    fi
+
+} &&
+    complete -F _installer_dist installer-dist \
+                kicksecure-cli kicksecure-xfce \
+                whonix-cli whonix-xfce
+
+# ex: filetype=sh
