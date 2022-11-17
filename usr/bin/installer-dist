@@ -1263,7 +1263,7 @@ main(){
 
   if test "${dry_run}" != "1"; then
     log info "Testing internet connection..."
-    curl --silent --show-error --max-time 20 --fail --fail-early \
+    curl --silent --show-error --max-time 180 --fail --fail-early \
       ${curl_proxy:-} $(get_curl_proxy_cred) ${curl_opt_ssl:-} \
       --url "${url_origin}" >/dev/null ||
       die $? "Can't connect to ${url_origin}, perhaps no internet?"
