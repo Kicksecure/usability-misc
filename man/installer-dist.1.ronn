@@ -3,6 +3,8 @@ installer-dist(1) -- download and import Whonix/Kicksecure VMs
 
 <!--
 ## Copyright (C) 2022 grass <grass@danwin1210.de>
+## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
 -->
 
 ## SYNOPSIS

@@ -1,26 +1,8 @@
 #!/bin/sh
 ## vim: set sw=2 sts=2 ts=2 et :
 ##
-## Copyright (C) 2022 nyxnor <nyxnor@protonmail.com>
-## Copyright (C) 2022 grass <grass@danwin1210.de>
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
-##
-## This program is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with this program.  If not, see <https://www.gnu.org/licenses/>.
-##
-## On Debian systems, the full text of the GNU General Public
-## License version 3 can be found in the file
-## '/usr/share/common-licenses/GPL-3'.
+## See the file COPYING for copying conditions.
 ##
 ##########################
 ## BEGIN DEFAULT VALUES ##
@@ -225,7 +207,7 @@ get_os(){
     *) distro="${os} ${kernel}";;
   esac
   log notice "Detected system: ${distro} ${distro_version}."
-  log notice "Detected CPU arhictecture: ${arch}."
+  log notice "Detected CPU architecture: ${arch}."
 }
 
 ##############
@@ -268,7 +250,7 @@ get_arg(){
 
   ## shift positional argument two times, as this option demands argument,
   ## unless they are separated by equal sign '='
-  ## shift_n default value was assigned when trimming hifens '--' from the
+  ## shift_n default value was assigned when trimming dashes '--' from the
   ## options. If shift_n is equal to zero, '--option arg', if shift_n is not
   ## equal to zero, '--option=arg'
   [ -z "${shift_n}" ] && shift_n=2
@@ -359,7 +341,7 @@ range_arg(){
   if [ -n "${var:-}" ]; then
     success=0
     for tests in ${list:-}; do
-      ## only envaluate if matches all chars
+      ## only evaluate if matches all chars
       [ "${var:-}" = "${tests}" ] && success=1 && break
     done
     ## if not within range, fail and show the fixed range that can be used
@@ -412,11 +394,14 @@ log(){
     notice)
       log_color="${green}"
       ;;
+    *)
+      log bug "Unsupported log type: '${log_type}'."
+      die 1 "Please report this bug."
   esac
   ## uniform log format
   log_color="${bold}${log_color}"
   log_full="${me}: [${log_color}${log_type_up}${nocolor}]: ${log_content}"
-  ## error logs are the minimum and should alwasy be printed, even if
+  ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
   case "${log_type}" in
@@ -614,9 +599,9 @@ test_pkg(){
 }
 
 
-## If file exists (vms), abort process to avoid overwriting user data.
+## If file exists (VMs), abort process to avoid overwriting user data.
 abort_on_existence(){
-  ## testing if file exists, not minding if it is a refular file or not
+  ## testing if file exists, not minding if it is a regular file or not
   if test -e "${1:-}"; then
     log error "File exists: ${1:-}."
     die 102 "Not touching user data, aborting."
@@ -630,8 +615,8 @@ check_vm_exists(){
   case "${hypervisor}" in
     virtualbox)
       if vboxmanage showvminfo "${vm}" >/dev/null 2>&1; then
-        vm_saved_path="$(vboxmanage showvminfo "${vm}" | grep "^Config file:" |
-                         sed "s/.*:[[:blank:]]*//")"
+        vm_saved_path="$(vboxmanage showvminfo "${vm}" --machinereadable |
+                         grep "^CfgFile=" | sed "s/.*=//;s/\"//g")"
         die 102 "Virtual machine was imported previously to: ${vm_saved_path}"
       fi
       ;;
@@ -642,7 +627,7 @@ check_vm_exists(){
 }
 
 
-## End installation of virtualbox on debian and derived systems.
+## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
   root_cmd adduser "${USER}" vboxusers || {
@@ -651,7 +636,7 @@ install_virtualbox_debian_common_end(){
 }
 
 
-## Install virtualbox on debian
+## Install VirtualBox on Debian
 install_virtualbox_debian(){
   has vboxmanage && return 0
   install_pkg fasttrack-archive-keyring
@@ -669,7 +654,7 @@ install_virtualbox_debian(){
 }
 
 
-## Install virtualbox on ubuntu
+## Install VirtualBox on Ubuntu
 install_virtualbox_ubuntu(){
   has vboxmanage && return 0
   install_pkg virtualbox linux-headers-generic
@@ -677,7 +662,7 @@ install_virtualbox_ubuntu(){
 }
 
 
-## Install virtualbox on kicksecure
+## Install VirtualBox on Kicksecure
 install_virtualbox_kicksecure(){
   has vboxmanage && return 0
   install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
@@ -688,7 +673,7 @@ install_virtualbox_kicksecure(){
 ## Helper to install signify on different systems.
 install_signify(){
   if has signify-openbsd; then
-    ## fix debian unconventional naming
+    ## fix Debian unconventional naming
     signify(){ signify-openbsd "${@}"; }
     return 0
   fi
@@ -756,12 +741,12 @@ import_virtualbox(){
   vbox_arg="--vsys 0 --eula accept"
   ## if importing whonix, import 2 virtual systems
   test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
-  ## import virtualbox image
+  ## import VirtualBox image
   vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
     return 1
 
-  log notice "You can now open the virtualbox application to use ${guest}."
+  log notice "You can now open the VirtualBox application to use ${guest}."
 }
 
 
@@ -810,8 +795,8 @@ set_trap(){
   ## missing letters.
   case "${0##*/}" in
     ${curr_shell}*)
-      ## necessary glob cause /bin/sh makes the file name
-      ## appear withone letter less
+      ## necessary glob because /bin/sh makes the file name
+      ## appear with one letter less
       shebang="$(head -1 "${0}")"
       curr_shell="${shebang##*/}"
       ;;
@@ -904,7 +889,7 @@ check_tor_proxy(){
                 head -1 | tr -d "\r")"
   expected_curl_reply="HTTP/1.0 501 Tor is not an HTTP Proxy"
   if [ "${curl_reply}" = "${expected_curl_reply}" ]; then
-    log notice "Connected to tor SOCKS proxy succesfully."
+    log notice "Connected to tor SOCKS proxy successfully."
     log info "${curl_reply}."
     return 0
   else
@@ -962,19 +947,23 @@ get_version(){
   raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url "${1}")"
   # shellcheck disable=SC2086,SC2046
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
-  ## distrust the API version
-  ## block anything that is not made purely out of numbers and dots
+  ## Distrust the API version
+  ## Block anything that is not made purely out of numbers and dots
+  ## Not printing queried version to avoid it showing a very long version
+  ## that could inhibit the user from seeing the error message.
+  ## The user would still see a failed exit code.
   [ "${guest_version%%*[^0-9.]*}" ] ||
-    die 1 "Invalid guest version: contains unexpected characters: '${guest_version}'"
+    die 1 "Invalid guest version: contains unexpected characters."
   ## block string containing more than 12 chars
   [ "$(printf %s"${guest_version}" | wc -m)" -le 12 ] ||
-    die 1 "Invalid guest version: contains more than 12 characters: '${guest_version}'"
+    die 1 "Invalid guest version: contains more than 12 characters."
 }
 
 
 ## Helper for download_files() to make it less repetitive.
 get_file(){
-  : "${round:=10}"
+  ## Round is only used to get a different password every time.
+  test -z "${round:-}" && round=10
   round=$((round+1))
   curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred ${round}) --remote-name "
 
@@ -1000,8 +989,9 @@ download_files(){
 ## https://en.wikipedia.org/wiki/X86_virtualization
 ## Check if virtualization is enabled.
 get_virtualization(){
-  ## check cpu flags for capability
+  ## check CPU flags for capability
   virt_flag="$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | grep -wo -E '(vmx|svm)' || true)"
+
 
   case "${virt_flag:=}" in
     vmx) brand=intel;;
@@ -1019,11 +1009,13 @@ get_virtualization(){
       log notice "Your CPU supports virtualization: ${brand}: ${virt_flag}."
       return 0
       ;;
-    "")
+    ""|*)
       log warn "Virtualization not available, could be either:"
       log warn "Unknown virtualization flag: ${virt_flag}."
       log warn "  Please report this bug."
-      return 101
+      return 0
+      ## let's not hard fail here, let the user do it later.
+      #return 101
       ;;
   esac
 
@@ -1062,19 +1054,27 @@ get_virtualization(){
     case "${1}" in
       0)
         log notice "Virtualization can be used."
+        log warn "Virtualization availability can be a false negative."
         return 0
         ;;
       1)
-        die 1 "Virtualization can NOT be used."
+        log warn "Virtualization can NOT be used."
+        log warn "Virtualization availability can be a false negative."
+        return 0
+        ## let's not hard fail here, let the user do it later.
+        #return 1
         ;;
       2)
         log warn "Virtualization can be used, but not enabled."
-        return 1
+        log warn "Virtualization availability can be a false negative."
+        return 0
+        ## let's not hard fail here, let the user do it later.
+        #return 1
         ;;
     esac
   }
 
-  ## Check cpu flags for capability
+  ## Check CPU flags for capability
   virt=$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo |
          grep -wo -E '(vmx|svm)')
   if test -z "${virt}"; then
@@ -1090,18 +1090,21 @@ get_virtualization(){
     verdict 0
   else
     log warn "Device /dev/kvm does not exist"
-    log wanr "hint: sudo modprobe kvm_$brand"
+    log warn "hint: sudo modprobe kvm_$brand"
   fi
 
   ## Prepare MSR access
   msr="/dev/cpu/0/msr"
-  root_cmd test ! -r "${msr}" && root_cmd modprobe msr
   if root_cmd test ! -r "${msr}"; then
-    log error "Cannot read ${msr}"
+    root_cmd modprobe msr ||
+      die 1 "Could not add module 'msr' to the kernel."
+  fi
+  if root_cmd test ! -r "${msr}"; then
+    log error "Cannot read: '${msr}'"
     return 1
   fi
 
-  log notice "Your CPU supports Virutalization extensions."
+  log notice "Your CPU supports Virtualization extensions."
 
   virt_disabled=0
   ## check brand-specific registers
@@ -1326,8 +1329,8 @@ Developer options:
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
 File name:
-  The default file name is installer-dist. Some basic options can be set as the
-  file name if they follow the format 'guest-interface-hypervisor'. Anything,
+  The default file name is installer-dist. Some basic options can be set as
+  the file name if they follow the format 'guest-interface'. Anything
   different than the default name or the allowed format is rejected.
   Command line options override the file name definition.
 "
