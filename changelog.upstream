@@ -1,3 +1,251 @@
+commit 24597560f0f879c11331b47473ded85ed03fe905
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 01:49:49 2022 -0500
+
+    use dh-links instead of hardcoded symlinks
+
+commit b1caff02cabdcef18a6513826e2df59f1ca4542b
+Merge: 5cc1928 c872a7f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 01:46:17 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit c872a7fb3ac739743b186a08a5a33805d69269d3
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 20:50:04 2022 +0000
+
+    ignore debian build files
+
+commit b0b4f90a9ddc8f14e26ad74402cfde9da427e5a2
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 20:07:16 2022 +0000
+
+    simplify credential assignment
+    - portable number generators is hard to find and does not give enough
+    entropy when calling on a loop withing the same second.
+    - date +%N is not portable
+
+commit 6a5c5dd053364077a500cad704c7349e659154a1
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 18:24:58 2022 +0000
+
+    fix log message in the wrong place
+
+commit 0541b142d4567bb29be701a23eb2b3d6bf59aad0
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 17:26:08 2022 +0000
+
+    make no request if image was already downloaded
+    - requires user to set --guest-version.
+
+commit 89463acee729f67771fe293870886f5fcdcf2d70
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 16:45:28 2022 +0000
+
+    increase connection timout for first trial
+
+commit d2c245647ceaab8afd1d569c9ced54c6d7dc2c53
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 16:30:48 2022 +0000
+
+    reserve curl exit codes and fix curl args
+
+commit 6cdc826f3aefc1a391dbabe1e770f66d2f185aee
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 16:10:50 2022 +0000
+
+    enhance vm existence check
+
+commit 6dcccb5fd37e119e2dad0f336e6078788f74f4c8
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 15:17:44 2022 +0000
+
+    put filename functionality to manpage
+
+commit 3db48e748c1ca9be3f36d7ab3fe79eae36298cd4
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 15:05:16 2022 +0000
+
+    fix installer proxy for whonix systems
+    - proxy and credentials were not being set, but whonix users deserver an
+    eascy option to use SOCKS proxy also.
+    - set exit codes for easy of debugging and script parsing automation.
+
+commit 884414c0731e1c0c5b40ea6f8c0670678e8a92b7
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 15:04:08 2022 +0000
+
+    improve man page option's description
+
+commit 510b756618de96ac5d6e70476b1374e9de36743b
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 00:27:21 2022 +0000
+
+    fix man page missing new line
+
+commit 12c736dca053548223f6c3f8d529e3d25890a764
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 00:26:29 2022 +0000
+
+    create zsh completion script
+
+commit f8b100224a39ab84260b0be39bf9da4d3e42bda0
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 00:26:02 2022 +0000
+
+    create bash completion script
+
+commit 0bd807fa01e7e173e8085aa7de0f462bda991db7
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 00:25:41 2022 +0000
+
+    create minimal man page for testing
+
+commit 56da2c1b2708b87582d7f9db9749cd6b72f6aa14
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 17 00:25:16 2022 +0000
+
+    improve installer help message
+
+commit cfcde6d9497bb83b2fbd620f058fcb014d1ab95a
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 23:06:22 2022 +0000
+
+    better description of elapsed time
+
+commit 1f832b74ded790770920a47d6898f88f662a90bf
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 23:04:01 2022 +0000
+
+    nice message to open hypervisor after vm import
+
+commit cce56d3bab0bde7a384b04b7a1b037f2d81c90d0
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 22:49:42 2022 +0000
+
+    set dir prefix to an already existing dir ($HOME)
+
+commit f8fd4e4ca01060c764adc4e664e24853e6f7819f
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 22:45:18 2022 +0000
+
+    fix sed path that has '/' char
+
+commit 5d98de4d816efdf468c5c922f39d607e9ac7d936
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 22:37:38 2022 +0000
+
+    set download directory via command-line option
+    let the user choose the directory where files will be saved to.
+
+commit c90827e15423bf635a745183b5c9f6297a95b5fb
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 21:39:08 2022 +0000
+
+    fix importation of kicksecure
+    Import was defaulting to two systems, now it defaults to 1 unless whonix
+    is being used.
+
+commit 687fe28707dc8ca848e52117da52ba72baafbb78
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 21:10:21 2022 +0000
+
+    fix downloading only the first file
+    - exec spawns a different process and was giving problems stopping at the
+      first to be downloaded.
+    - fix curl proxy random credentials if not using onion but SOCKS proxy
+      is set.
+
+commit 1351ec9b7607a22f594d01f786263d3fbfb4b192
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 17:32:58 2022 +0000
+
+    fix urls variables
+    Comments are necessary to keep track of that many url format. A bug was
+    occurring of usign both clearnet and onion urls.
+
+commit 6243626e5aa19eb02a22952b2605f0573d401132
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 16:58:50 2022 +0000
+
+    fix test_pkg and functions order
+
+commit 638671d1ef2f88e7eb1a57be85308377d12eb309
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 16:45:38 2022 +0000
+
+    uncoment essential function
+
+commit 8ff5959b3ef686b1b7ac7ad55b98e892e430d5bb
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 16:29:26 2022 +0000
+
+    distrust version queried from API
+    - check if it is a valid string of only numbers and dot (.).
+    - check if it has less than 12 chars.
+
+commit 5351dba0c2acf16e523a787976f83d7c9326c510
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 11:15:14 2022 +0000
+
+    improve parsing script name and header message
+    - fix set_arg() arg_saved not saving variables correctly
+    - fix parse_name script name parsing
+    - set header info for chosen flavor
+
+commit bcc84918cb646f568d4dc498349f7e50f3921c2a
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 15 00:30:19 2022 +0000
+
+    set options by file name
+
+commit cde2cb0fcfcbd1150ea6a6e95c20e089ffa60ce5
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 14 23:37:16 2022 +0000
+
+    shellcheck fixes
+
+commit 99cd357e118c160495d4cea0d4842bff59ab12f7
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 14 23:00:34 2022 +0000
+
+    move installer-dist to /usr/bin dir
+
+commit 465bd67fa81ffc38f3c6e75be70007a054380caa
+Merge: 5cc1928 c3ae4b2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 14 22:57:38 2022 +0000
+
+    merge installer to usability-misc
+
+commit c3ae4b2d26197738756667ebd41229d78459f1c9
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 14 22:45:29 2022 +0000
+
+    implement dry-run
+    - guards against server partion content transfer with function calls.
+    - run in dry-run mode for debugging, where important commands are printed
+    instead of executed.
+    - check if fasttrack repo is already enabled.
+
+commit 75a1187c20ee06f92dd2b515a16798f432f82100
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 13 23:51:01 2022 +0000
+
+    initial commit
+    Installer for:
+    - Whonix/Kicksecure
+    - Virtualbox/KVM(unfinished)
+    - CLI/XFCE
+    - onion/clearnet
+
+commit 5cc192896ae669430362648c967e1e752686016b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 21 09:29:54 2022 -0400
+
+    bumped changelog version
+
 commit a74ca43aeb4999177a8642a986801f03a9c5745b
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Oct 21 08:57:00 2022 -0400
