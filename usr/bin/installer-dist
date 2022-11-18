@@ -860,9 +860,7 @@ pre_check(){
   if ! get_system_stat && test "${dry_run}" = "1"; then
     log info "Skipping failing get_system_stat() because dry_run is set."
   fi
-  if ! get_virtualization && test "${dry_run}" = "1"; then
-    log info "Skipping failing get_virtualization() because dry_run is set."
-  fi
+  get_virtualization
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
     return 0
