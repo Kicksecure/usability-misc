@@ -2,7 +2,6 @@ Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
 Copyright: 2012-2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
-           2022-2022 grass <grass@danwin.1210.de>
 License: GPL-3+-with-additional-terms-1
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
