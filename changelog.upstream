@@ -1,3 +1,62 @@
+commit e0d8c8244129f770467b75c642ae2d957da6b924
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 11:36:11 2022 -0500
+
+    copyright
+
+commit fb09413ebf99701d6ebfb602cfa86938e38d1113
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 10:58:46 2022 -0500
+
+    copyright
+
+commit fddc0574e5860f11cd6b7e7e6c13b8d3193ff8d5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 10:58:39 2022 -0500
+
+    copyright
+
+commit 56cda598cd682bfed44dd7d549b60b25e2f5d87d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 10:56:47 2022 -0500
+
+    fix
+
+commit 8efa0a68e7b7cd42307e5625f36f5ffe641aa08f
+Merge: 28daa33 513d6e3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 10:55:52 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 513d6e301f4eca4253788e7a30ecd7a5cad922be
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 18 15:07:25 2022 +0000
+
+    do not fail anymore for get_virtualization
+        not needing to handle that anymore as we are not failing if not
+        virtualization available.
+
+commit 3b6efbed4e2bd488f70a108701aa46d8a11cd223
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 18 15:05:39 2022 +0000
+
+    remove symlinks
+    
+    will be added later by the debian packaging mechanism
+
+commit 915e5433178029fb55c7f3a502c8118e9077b735
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 18 15:04:42 2022 +0000
+
+    copyright all files and link to COPYING for all licenses
+
+commit 28daa33678fe48bdaa680f646c775a202065a4d5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 07:41:01 2022 -0500
+
+    bumped changelog version
+
 commit 24597560f0f879c11331b47473ded85ed03fe905
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 18 01:49:49 2022 -0500
