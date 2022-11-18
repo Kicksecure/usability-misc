@@ -1,5 +1,9 @@
 #compdef installer-dist kicksecure-cli kicksecure-xfce whonix-cli whonix-xfce
 
+## Copyright (C) 2022 grass <grass@danwin1210.de> 
+## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 local curcontext="$curcontext" state state_descr line expl ret=1
 local -a args
 typeset -A opt_args

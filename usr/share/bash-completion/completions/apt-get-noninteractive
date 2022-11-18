@@ -1,5 +1,8 @@
 # Debian apt-get(8) completion                             -*- shell-script -*-
 
+## Copyright (C) 2012 - 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 if [ -f /usr/share/bash-completion/completions/apt-get ]; then
    source /usr/share/bash-completion/completions/apt-get
 
