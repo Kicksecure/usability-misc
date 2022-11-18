@@ -1,0 +1,67 @@
+#compdef installer-dist kicksecure-cli kicksecure-xfce whonix-cli whonix-xfce
+
+local curcontext="$curcontext" state state_descr line expl ret=1
+local -a args
+typeset -A opt_args
+
+args=(
+  '(-g --guest)'{-g,--guest=}'[Set guest operating system]:<guest>:->guests'
+  '(-u --guest-version)'{-u,--guest-version=}"[Set guest's version]:<version>"
+  '(-i --interface)'{-i,--interface=}"[Set guest's interface]:<interface>:->interfaces"
+  '(-m --hypervisor)'{-m,--hypervisor=}"[Set guest's hypervisor]:<hypervisor>:->hypervisors"
+  '(-s --socks-proxy)'{-s,--socks-proxy=}'[Set SOCKS proxy for requests]':'<host\:port>'
+  '(-P --directory-prefix)'{-P,--directory-prefix=}'[Set directory for saving files]:directory:->directories'
+  '(-o --onion)'{-o,--onion}'[Make requests over onion]'
+  '(- *)'{-V,--version}'[Show version number and quit]'
+  '(- *)'{-h,--help}'[Get help for commands and quit]'
+  '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
+  '(-n --non-interactive)'{-n,--non-interactive}'[Set non-interactive mode]'
+  '(-d --dry-run)'{-d,--dry-run}'[Set dry-run mode]'
+  '(-t --getopt)'{-t,--getopt}'[Show parsed options]'
+  '(-)*:: :->args'
+)
+
+_arguments -C -s -S -A "-*" : $args && ret=0
+
+case "$state" in
+  (directories)
+      _directories -W $HOME
+    ;;
+  (guests)
+    local guests
+    guests=(
+      'whonix:Anonymous by default Kicksecure based distribution'
+      'kicksecure:Hardened by default Debian based distribution'
+    )
+    _describe -t guests 'guests' guests && ret=0
+    ;;
+  (interfaces)
+    local interfaces
+    interfaces=(
+      'cli:Commad-Line Interface'
+      'xfce:Xfce Desktop Environment'
+    )
+    _describe -t interfaces 'interfaces' interfaces && ret=0
+    ;;
+  (hypervisors)
+    local hypervisors
+    hypervisors=(
+      'kvm:Kernel-based Virtual Machine'
+      'virtualbox:VirtualBox Oracle'
+    )
+    _describe -t hypervisors 'hypervisors' hypervisors && ret=0
+    ;;
+  (loglevels)
+    local loglevels
+    loglevels=(
+      'debug:Show everything with xtrace set'
+      'info:Show information, notices, warnings and errors'
+      'notice:Show notices, warnings and errors'
+      'warn:Show warnings and errors'
+      'error:Show only error messages'
+    )
+    _describe -t loglevels 'loglevels' loglevels && ret=0
+    ;;
+esac
+
+return ret
