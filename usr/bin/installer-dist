@@ -406,6 +406,7 @@ log(){
   ## send bugs and error to stdout and stderr
   case "${log_type}" in
     bug)
+      #printf %s"${log_full:+$log_full }Please report this bug.\n" 1>&2
       printf %s"${log_full} Please report this bug.\n" 1>&2
       return 0
       ;;
@@ -700,7 +701,6 @@ check_license(){
     has whiptail && dialog_box="whiptail" && break
     break
   done
-
   case "${dialog_box}" in
     dialog)
       dialog --erase-on-exit --no-shadow \
@@ -859,6 +859,8 @@ pre_check(){
   ## below functions are difficult to emulate
   if ! get_system_stat && test "${dry_run}" = "1"; then
     log info "Skipping failing get_system_stat() because dry_run is set."
+  else
+    return 101
   fi
   get_virtualization
   if test "${dry_run}" = "1"; then
@@ -1007,10 +1009,14 @@ get_virtualization(){
       log notice "Your CPU supports virtualization: ${brand}: ${virt_flag}."
       return 0
       ;;
-    ""|*)
-      log warn "Virtualization not available, could be either:"
+    "")
+      log warn "Virtualization availability can be a false negative."
+      log warn "Not virtualization flag found."
+      return 0
+      ;;
+    *)
+      log warn "Virtualization availability can be a false negative."
       log warn "Unknown virtualization flag: ${virt_flag}."
-      log warn "  Please report this bug."
       return 0
       ## let's not hard fail here, let the user do it later.
       #return 101
