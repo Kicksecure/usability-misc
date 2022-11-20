@@ -7,7 +7,7 @@
 /usr/share/man/man1/curl-download.1.gz /usr/share/man/man1/curlget.1.gz
 /usr/share/man/man1/scurl-download.1.gz /usr/share/man/man1/scurlget.1.gz
 
-/usr/bin/installer-dist /usr/bin/kicksecure-cli
-/usr/bin/installer-dist /usr/bin/kicksecure-xfce
-/usr/bin/installer-dist /usr/bin/whonix-cli
-/usr/bin/installer-dist /usr/bin/whonix-xfce
+/usr/bin/installer-dist /usr/bin/kicksecure-installer-cli
+/usr/bin/installer-dist /usr/bin/kicksecure-installer-xfce
+/usr/bin/installer-dist /usr/bin/whonix-installer-cli
+/usr/bin/installer-dist /usr/bin/whonix-installer-xfce

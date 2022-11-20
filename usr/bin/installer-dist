@@ -138,6 +138,13 @@ is_addr_port(){
   port="${addr_port##*:}"
   addr="${addr_port%%:*}"
 
+  ## Support only IPv4 x.x.x.x:y
+  if [ "$(echo "${addr_port}" | tr -cd "." | wc -c)" != 3 ] ||
+    [ "$(echo "${addr_port}" | tr -cd ":" | wc -c)" != 1 ] ||
+    [ "${port}" = "${addr}" ]; then
+    die 2 "Invalid address:port assignment: ${addr_port}"
+  fi
+
   is_integer "${port}" ||
     die 2 "Invalid port '${port}', not an integer."
 
@@ -448,7 +455,7 @@ die(){
 
 ## Wrapper to log command before running to avoid duplication of code
 log_and_run(){
-  log info "Running command:\n$ ${1}"
+  log info "Running command: $ ${1}"
   if test "${dry_run}" = "1"; then
     true "Skipping running above logged command because dry_run is set."
     return 0
@@ -481,8 +488,13 @@ handle_exit(){
     log bug "At line: ${line_number}."
     pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n7
   else
+    if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
+      signal_caught="$(kill -l "$(echo ${last_exit}-128 | bc)")"
+      log error "Received ${signal_caught} signal."
+    fi
     log error "Exit code: ${last_exit}."
   fi
+  trap - EXIT
   exit "${last_exit}"
 }
 
@@ -575,10 +587,10 @@ install_pkg(){
     fi
     log notice "Updating package list."
     # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_update}
+    log_and_run "root_cmd ${pkg_mngr_update}"
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_install} ${pkg_not_installed}
+    log_and_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
   fi
 }
 
@@ -696,24 +708,28 @@ check_license(){
   log notice "The license will be show in some seconds."
   sleep 3
 
+  ## Whiptail is the Debian version of Dialog with much less features.
+  ## The only reason it is preferred over whiptail is because it doesn't
+  ## leave empty lines after closing the box.
   while true; do
-    has dialog && dialog_box="dialog" && break
     has whiptail && dialog_box="whiptail" && break
+    has dialog && dialog_box="dialog" && break
     break
   done
+
   case "${dialog_box}" in
     dialog)
       dialog --erase-on-exit --no-shadow \
         --title "${dialog_title}" --defaultno \
-        --yes-label "Understood" \
-        --no-label "Not understood" \
+        --yes-label "Agree" \
+        --no-label "Disagree" \
         --yesno "${license}" \
         640 480
       ;;
     whiptail)
       whiptail --scrolltext --title "${dialog_title}" --defaultno \
-        --yes-button "Understood" \
-        --no-button "Not understood" \
+        --yes-button "Agree" \
+        --no-button "Disagree" \
         --yesno "${license}" \
         24 80
       ;;
@@ -742,6 +758,7 @@ import_virtualbox(){
   ## if importing whonix, import 2 virtual systems
   test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
   ## import VirtualBox image
+  # shellcheck disable=SC2086
   vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
     return 1
@@ -810,7 +827,7 @@ set_trap(){
       ;;
   esac
   ## every script exit should be handled by this trap
-  trap 'handle_exit $? ${LINENO:-}' EXIT
+  trap 'handle_exit $? ${LINENO:-}' EXIT HUP INT QUIT ABRT TERM
 }
 
 
@@ -858,16 +875,35 @@ pre_check(){
   get_utilities
   ## below functions are difficult to emulate
   if ! get_system_stat && test "${dry_run}" = "1"; then
-    log info "Skipping failing get_system_stat() because dry_run is set."
-  else
-    return 101
+    log info "Skipping failing get_system_stat() because dry_run is set." else
+    true
+    #return 101
   fi
   get_virtualization
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
     return 0
   fi
+
   get_host_pkgs
+
+  while true; do
+    has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
+    test_pkg virt-what && nested_virt_tool="virt-what" && break
+    install_pkg virt-what && nested_virt_tool="virt-what" && break
+  done
+  if test -z "${nested_virt_tool:-}"; then
+    ## no hard fail, not a requirement, good to have only.
+    log warn "Program to detect nested virtualization not found."
+  else
+    ## Check if we are a guest of virtualization.
+    if root_cmd "${nested_virt_tool:-}"; then
+      log warn "Nested virtualization detected, possibly a user mistake."
+      log warn "For more information about nested virtualization see:"
+      log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
+    fi
+  fi
+
   has curl || install_pkg curl
   test_pkg curl
 }
@@ -938,12 +974,11 @@ get_version(){
   fi
   if test "${dry_run}" = "1"; then
     log_and_run "curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
-    log info "Faking software version because of dry_run"
-    guest_version="16.0.8.2"
     return 0
   fi
   log info "Acquiring guest version from API."
   log info "API host: ${1}"
+  # shellcheck disable=SC2046,SC2086
   raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url "${1}")"
   # shellcheck disable=SC2086,SC2046
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
@@ -987,11 +1022,10 @@ download_files(){
 
 
 ## https://en.wikipedia.org/wiki/X86_virtualization
-## Check if virtualization is enabled.
 get_virtualization(){
-  ## check CPU flags for capability
+  ## Check if virtualization is enabled.
+  ## Check CPU flags for capability
   virt_flag="$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | grep -wo -E '(vmx|svm)' || true)"
-
 
   case "${virt_flag:=}" in
     vmx) brand=intel;;
@@ -1011,10 +1045,10 @@ get_virtualization(){
       ;;
     "")
       log warn "Virtualization availability can be a false negative."
-      log warn "Not virtualization flag found."
-      return 0
-      ;;
-    *)
+        log warn "No virtualization flag found."
+        return 0
+        ;;
+      *)
       log warn "Virtualization availability can be a false negative."
       log warn "Unknown virtualization flag: ${virt_flag}."
       return 0
@@ -1154,6 +1188,10 @@ main(){
 
   log info "Command line options: ${all_args}."
   log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
+  if test "${non_interactive}" != "1"; then
+    log notice "If you wish to cancel installation, press Ctrl+C to abort."
+    sleep 5
+  fi
   check_license || die 100 "User disagreed with the license."
   log notice "User agreed with the license."
 
@@ -1265,6 +1303,7 @@ main(){
   else
     if test "${dry_run}" != "1"; then
       log info "Testing internet connection..."
+      # shellcheck disable=SC2046,SC2086
       curl --silent --show-error --max-time 180 --fail --fail-early \
         ${curl_opt} $(get_curl_proxy_cred netconnection) \
         --url "${url_origin}" >/dev/null ||
@@ -1276,7 +1315,12 @@ main(){
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
     url_domain="${url_domain}/${guest_version:?}"
     url_guest_file="${url_domain}/${guest_file}"
-    download_files || die 103 "Failed to download files."
+
+    if test -f "${download_flag}"; then
+      log notice "Skipping download because flag exists: ${download_flag}."
+    else
+      download_files || die 103 "Failed to download files."
+    fi
   fi
 
   if test "${dry_run}" = "1"; then
@@ -1330,12 +1374,13 @@ Developer options:
                        directory, the download start again. \$HOME (default).
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
+ -D, --dev           Se development mode. Set version to download empty image.
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
 File name:
-  The default file name is installer-dist. Some basic options can be set as
-  the file name if they follow the format 'guest-interface'. Anything
-  different than the default name or the allowed format is rejected.
+  The default file name is installer-dist. Some basic options can be st as
+  the file name if they follow the format 'guest-installer-interface'.
+  Anything different than the default name or the allowed format is rejected.
   Command line options override the file name definition.
 "
   exit "${1:-0}"
@@ -1359,8 +1404,10 @@ set_default(){
   socks_proxy=""
   onion=""
   non_interactive=""
-  dry_run=""
   dev=""
+  dry_run=""
+  getversion=""
+  getopt=""
 }
 
 
@@ -1370,18 +1417,19 @@ parse_name(){
   test "${me}" = "installer-dist" && return 0
   ## check if file name is valid
   case "${me}" in
-    whonix-xfce | whonix-cli | kicksecure-xfce | kicksecure-cli )
+    whonix-installer-xfce | whonix-installer-cli | \
+        kicksecure-installer-xfce | kicksecure-installer-cli )
       log info "Valid script name ${me}, using its name to set options."
       ;;
     *)
-      log error "Invalid script name '${0}'."
+      log error "Invalid script name '${me}'."
       log error "If you don't know why this happened, rename this script to"
       log error "  installer-dist and use command-line options instead."
       return 2
   esac
   ## assign values according to script name
   set_arg guest "$(echo "${me}" | cut -d "-" -f1)"
-  set_arg interface "$(echo "${me}" | cut -d "-" -f2)"
+  set_arg interface "$(echo "${me}" | cut -d "-" -f3)"
   #set_arg hypervisor "$(echo "${me}" | cut -d "-" -f3)"
   log info "Assigned guest and interface according to script name ${me}."
   return 0
@@ -1422,15 +1470,18 @@ parse_opt(){
       n|non-interactive)
         set_arg non_interactive 1
         ;;
+      D|dev)
+        set_arg dev 1
+        ;;
       t|getopt)
-        set_arg dev getopt
+        set_arg getopt 1
         ;;
       d|dry-run)
         set_arg dry_run 1
         log info "dry_run set, commands will be printed and not executed"
         ;;
       V|version)
-        set_arg dev version
+        set_arg getversion 1
         ;;
       h|help)
         usage 0
@@ -1447,6 +1498,7 @@ parse_opt(){
   range_arg guest whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
+  test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
 
   if ! test -d "${directory_prefix}"; then
     die 1 "Directory doesn't exist: '${directory_prefix}'"
@@ -1458,14 +1510,27 @@ parse_opt(){
     die 1 "Directory isn't readable: '${directory_prefix}'"
   fi
 
-  case "${dev:-}" in
-    getopt)
+  # shellcheck disable=SC2194
+  case 1 in
+    "${getopt}")
       printf %s"${arg_saved}\n"
       exit 0
       ;;
-    version)
+    "${getversion}")
       printf '%s\n' "${me} ${version}"
       exit 0
+      ;;
+    "${dev}")
+      if test -z "${guest_version}"; then
+        log info "Faking software version because of dev."
+        guest_version="16.0.4.2"
+      fi
+      ;;
+    "${dry_run}")
+      if test -z "Setting development default version."; then
+        log info "Faking software version because of dry_run."
+        guest_version="16.0.4.2"
+      fi
       ;;
   esac
 }
