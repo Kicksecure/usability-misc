@@ -494,7 +494,9 @@ handle_exit(){
     fi
     log error "Exit code: ${last_exit}."
   fi
+  ## reset exit trap
   trap - EXIT
+  ## leave with desired exit code
   exit "${last_exit}"
 }
 
@@ -643,7 +645,7 @@ check_vm_exists(){
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  root_cmd adduser "${USER}" vboxusers || {
+  log_and_run "root_cmd adduser ${USER} vboxusers" || {
     die 1 "Failed to add user '${USER}' to group 'vboxusers'."
   }
 }
@@ -660,6 +662,7 @@ install_virtualbox_debian(){
   then
     log info "Skipping adding fasttrack because it was already found"
   else
+    log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
     echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
   fi
   install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
@@ -759,8 +762,8 @@ import_virtualbox(){
   test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  vboxmanage import \
-    "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
+  log_and_run "vboxmanage import \
+    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
     return 1
 
   log notice "You can now open the VirtualBox application to use ${guest}."
@@ -826,8 +829,7 @@ set_trap(){
       trap 'handle_exit $? ${LINENO:-}' ERR
       ;;
   esac
-  ## every script exit should be handled by this trap
-  trap 'handle_exit $? ${LINENO:-}' EXIT HUP INT QUIT ABRT TERM
+  trap 'handle_exit $? ${LINENO:-}' EXIT HUP INT QUIT ABRT ALRM TERM
 }
 
 
