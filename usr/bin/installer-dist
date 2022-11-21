@@ -647,6 +647,7 @@ check_vm_exists(){
 
 ## Check if guest should start or not
 check_guest_boot(){
+  log info "Virtual Machine(s) already exist."
   ## Skip guest boot
   if test "${skip_guest_boot}" = "1"; then
     log notice "skip_guest_boot is set."
@@ -938,11 +939,13 @@ pre_check(){
   get_utilities
   ## below functions are difficult to emulate
   if ! get_system_stat && test "${dry_run}" = "1"; then
-    log info "Skipping failing get_system_stat() because dry_run is set." else
-    true
-    #return 101
+    log info "Skipping failing get_system_stat() because dry_run is set."
+  else
+    return 101
   fi
+
   get_virtualization
+
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
     return 0
