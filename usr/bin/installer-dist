@@ -56,6 +56,7 @@ copy of the Program in return for a fee.
 
 version="0.0.1"
 me="${0##*/}"
+# shellcheck disable=SC2034
 all_args="${*}"
 start_time="$(date +%s)"
 
@@ -767,7 +768,7 @@ install_signify(){
 ## Test if user accepts the license, if not, abort.
 check_license(){
   if [ "${non_interactive}" = "1" ]; then
-    log notice "License agreed by the user by setting non_interactive option."
+    log notice "License agreed by the user by setting non_interactive."
     return 0
   fi
 
@@ -793,9 +794,11 @@ check_license(){
         640 480
       ;;
     whiptail)
-      whiptail --scrolltext --title "${dialog_title}" --defaultno \
+      whiptail --scrolltext \
+        --title "${dialog_title}" \
         --yes-button "Agree" \
         --no-button "Disagree" \
+        --default-item "Agree" \
         --yesno "${license}" \
         24 80
       ;;
@@ -937,20 +940,15 @@ get_system_stat(){
 pre_check(){
   get_os
   get_utilities
+
   ## below functions are difficult to emulate
-  if ! get_system_stat && test "${dry_run}" = "1"; then
-    log info "Skipping failing get_system_stat() because dry_run is set."
-  else
-    return 101
-  fi
-
-  get_virtualization
-
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
     return 0
   fi
 
+  get_system_stat
+  get_virtualization
   get_host_pkgs
 
   while true; do
@@ -1353,7 +1351,11 @@ main(){
   check_license || die 100 "User disagreed with the license."
   log notice "User agreed with the license."
 
-  pre_check
+  if test "${dry_run}" = "1"; then
+    pre_check || true
+  else
+    pre_check
+  fi
   log_elapsed_time
 
   ## Get all links to download files and settings
@@ -1367,7 +1369,6 @@ main(){
 
   ## If version is set, use it now to set the download flag path.
   if test -n "${guest_version}"; then
-    log notice "Version: ${guest_version}."
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
@@ -1375,6 +1376,7 @@ main(){
   ## Skip making internet requests if flag already exists and user specified
   ## the desired version.
   if test -f "${download_flag:-}"; then
+    log notice "Version: ${guest_version}."
     log notice "Skipping download because flag exists: ${download_flag}."
   else
     if test "${dry_run}" != "1"; then
@@ -1615,7 +1617,7 @@ parse_opt(){
       fi
       ;;
     "${dry_run}")
-      if test -z "Setting development default version."; then
+      if test -z "${guest_version}"; then
         log info "Faking software version because of dry_run."
         guest_version="16.0.4.2"
       fi
