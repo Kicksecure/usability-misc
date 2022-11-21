@@ -934,7 +934,6 @@ get_system_stat(){
 
 ## Sanity checks that should be called before execution of main
 pre_check(){
-  set_trap
   get_os
   get_utilities
   ## below functions are difficult to emulate
@@ -1309,8 +1308,6 @@ get_download_links(){
       ## function to call when importing guest
       import_guest="import_virtualbox"
       start_guest="start_virtualbox"
-      ## directory where the hypervisor places the VMs
-      check_vm_exists
       ;;
 
     kvm)
@@ -1333,26 +1330,39 @@ get_download_links(){
 
 ## Self explanatory name, make everything after option parsing.
 main(){
+  set_trap
+
   guest_pretty="$(capitalize_first_char "${guest}")"
   interface_pretty="$(capitalize_first_char "${interface}")"
   interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
   hypervisor_pretty="$(capitalize_first_char "${hypervisor}")"
 
-  log info "Command line options: ${all_args}."
+  log info "Parsed options:"
+  for item in ${arg_saved}; do
+    log info "  ${item}"
+  done
+
   log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
   if test "${non_interactive}" != "1"; then
-    log notice "If you wish to cancel installation, press Ctrl+C to abort."
+    log notice "If you wish to cancel installation, press Ctrl+C."
   fi
-  ## the license function sleeps for some seconds to give time to abort
+  ## The license function sleeps for some seconds to give time to abort
   check_license || die 100 "User disagreed with the license."
   log notice "User agreed with the license."
 
   pre_check
   log_elapsed_time
 
+  ## Get all links to download files and settings
   get_download_links
 
-  ## if version is set, use it now to set the download flag path.
+  ## Avoid starting VMs during dry-run mode.
+  if test "${dry_run}" != "1"; then
+    ## Check if VM were already imported, if true then ask to start
+    check_vm_exists
+  fi
+
+  ## If version is set, use it now to set the download flag path.
   if test -n "${guest_version}"; then
     log notice "Version: ${guest_version}."
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
@@ -1565,6 +1575,9 @@ parse_opt(){
     shift "${shift_n:-1}"
   done
 
+  ## Put last newline after last argument of arg_saved.
+  arg_saved="$(printf %s"${arg_saved}\n")"
+  ## Test if options are valid
   range_arg log_level error warn notice info debug
   [ "${log_level}" = "debug" ] && set -o xtrace
   range_arg guest whonix kicksecure
@@ -1585,7 +1598,7 @@ parse_opt(){
   # shellcheck disable=SC2194
   case 1 in
     "${getopt}")
-      printf %s"${arg_saved}\n"
+      printf '%s\n' "${arg_saved}"
       exit 0
       ;;
     "${getversion}")
@@ -1594,7 +1607,7 @@ parse_opt(){
       ;;
     "${dev}")
       if test -z "${guest_version}"; then
-        log info "Faking software version because of dev."
+        log info "Setting dev software version."
         guest_version="16.0.4.2"
       fi
       ;;
