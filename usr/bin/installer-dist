@@ -660,6 +660,15 @@ check_guest_boot(){
     exit
   fi
   ## Ask user to start guest or not
+  case "${guest}" in
+    whonix)
+      log notice "Available guest: ${guest_pretty}-Gateway-${interface_all_caps}"
+      log notice "Available guest: ${guest_pretty}-Workstation-${interface_all_caps}"
+      ;;
+    kicksecure)
+      log notice "Available guest: ${guest_pretty}-${interface_all_caps}"
+      ;;
+  esac
   log notice "Do you want to start the Virtual Machine(s) now? [y/n] (default: yes): "
   printf '%s' "Your answer: "
   read -r response
@@ -1345,6 +1354,7 @@ main(){
 
   ## if version is set, use it now to set the download flag path.
   if test -n "${guest_version}"; then
+    log notice "Version: ${guest_version}."
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
