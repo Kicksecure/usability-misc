@@ -482,7 +482,7 @@ handle_exit(){
   last_exit="${1}"
   line_number="${2:-0}"
   ## return instead of exit because maybe this is not the last trap.
-  test "${last_exit}" = "0" && return 0
+  test "${last_exit}" = "0" && exit 0
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
     log bug "At line: ${line_number}."
@@ -616,6 +616,7 @@ test_pkg(){
 
 ## Check if VM exists using hypervisor tools.
 check_vm_exists(){
+  log info "Checking if Virtual Machine(s) already exist."
   case "${hypervisor}" in
     virtualbox)
       case "${guest}" in
@@ -648,8 +649,9 @@ check_vm_exists(){
 check_guest_boot(){
   ## Skip guest boot
   if test "${skip_guest_boot}" = "1"; then
+    log notice "skip_guest_boot is set."
     log notice "User declined to start Virtual Machine(s)."
-    log notice "Virtual Machine(s) should be started manually."
+    log notice "Virtual Machine(s) can be started manually."
     exit
   fi
   ## Default to start guest without interaction
@@ -661,13 +663,15 @@ check_guest_boot(){
   log notice "Do you want to start the Virtual Machine(s) now? [y/n] (default: yes): "
   printf '%s' "Your answer: "
   read -r response
+  log notice "User replied '${response}'."
   case ${response} in
     ""|[Yy]|[Yy][Ee][Ss])
+      log notice "User accepted to start Virtual Machine(s)."
       ${start_guest}
       ;;
     *)
       log notice "User declined to start Virtual Machine(s)."
-      log notice "Virtual Machine(s) should be started manually."
+      log notice "Virtual Machine(s) can be started manually."
       ;;
   esac
   ## Last phase, should exit here every time.
@@ -758,7 +762,7 @@ check_license(){
   fi
 
   log notice "The license will be show in some seconds."
-  sleep 3
+  sleep 6
 
   ## Whiptail is the Debian version of Dialog with much less features.
   ## The only reason it is preferred over whiptail is because it doesn't
@@ -948,7 +952,7 @@ pre_check(){
     log warn "Program to detect nested virtualization not found."
   else
     ## Check if we are a guest of virtualization.
-    if root_cmd "${nested_virt_tool:-}"; then
+    if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
       log warn "Nested virtualization detected, possibly a user mistake."
       log warn "For more information about nested virtualization see:"
       log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
@@ -1329,8 +1333,8 @@ main(){
   log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
   if test "${non_interactive}" != "1"; then
     log notice "If you wish to cancel installation, press Ctrl+C to abort."
-    sleep 5
   fi
+  ## the license function sleeps for some seconds to give time to abort
   check_license || die 100 "User disagreed with the license."
   log notice "User agreed with the license."
 
