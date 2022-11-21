@@ -55,6 +55,10 @@ Guest and Interface can be set by changing the script name to the format
         error. Everything below the selected logging level level will be
         printed.
 
+`-k`, `--skip-guest-boot`
+
+        Skip booting guest at the end of the run. Default is to start guest.
+
 `-P`, `--directory-prefix`=<directory>
 
         Set directory to save downloaded files to. Default to $HOME. The
@@ -66,7 +70,7 @@ Guest and Interface can be set by changing the script name to the format
 `-n`, `--non-interactive`
 
         Set non-interactive mode, instead of questions, defaults will be
-        assumed, including accepting the license.
+        assumed, including accepting the license and starting the guest.
 
 `-D`, `--dev`
 

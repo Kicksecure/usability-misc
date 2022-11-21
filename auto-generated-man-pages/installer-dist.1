@@ -66,6 +66,13 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .fi
 .IP "" 0
 .P
+\fB\-k\fR, \fB\-\-skip\-guest\-boot\fR
+.IP "" 4
+.nf
+    Skip booting guest at the end of the run\. Default is to start guest\.
+.fi
+.IP "" 0
+.P
 \fB\-P\fR, \fB\-\-directory\-prefix\fR=\fIdirectory\fR
 .IP "" 4
 .nf
@@ -81,7 +88,7 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .IP "" 4
 .nf
     Set non\-interactive mode, instead of questions, defaults will be
-    assumed, including accepting the license\.
+    assumed, including accepting the license and starting the guest\.
 .fi
 .IP "" 0
 .P

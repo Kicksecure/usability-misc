@@ -1023,6 +1023,51 @@ download_files(){
 }
 
 
+## Start the hypervisor with the desired guest
+start_virtualbox(){
+  case "${guest}" in
+    whonix)
+      vboxmanage startvm ${guest_pretty}-Gateway-${interface_all_caps} ||
+        return 1
+      vboxmanage startvm ${guest_pretty}-Workstation-${interface_all_caps} ||
+        return 1
+      ;;
+    kicksecure)
+      vboxmanage startvm ${guest_pretty}-${interface_all_caps} || return 1
+      ;;
+  esac
+}
+
+
+## Check if guest should start or not
+check_guest_boot(){
+  ## Skip guest boot
+  if test "${skip_guest_boot}" = "1"; then
+    log notice "User declined to start VMs."
+    log notice "VMs should be started manually."
+    return 0
+  fi
+  ## Default to start guest without interaction
+  if test "${non_interactive}" = "1"; then
+    ${start_guest}
+    return 0
+  fi
+  ## Ask user to start guest or not
+  log notice "Do you want to start the VMs now? [y/n] (default: yes): "
+  printf '%s' "Your answer: "
+  read -r response
+  case ${response} in
+    ""|[Yy]|[Yy][Ee][Ss])
+      ${start_guest}
+      ;;
+    *)
+      log notice "User declined to start VMs."
+      log notice "VMs should be started manually."
+      ;;
+  esac
+}
+
+
 ## https://en.wikipedia.org/wiki/X86_virtualization
 get_virtualization(){
   ## Check if virtualization is enabled.
@@ -1180,26 +1225,7 @@ get_virtualization(){
 ################
 ## BEGIN MAIN ##
 ################
-
-## Self explanatory name, make everything after option parsing.
-main(){
-  guest_pretty="$(capitalize_first_char "${guest}")"
-  interface_pretty="$(capitalize_first_char "${interface}")"
-  interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
-  hypervisor_pretty="$(capitalize_first_char "${hypervisor}")"
-
-  log info "Command line options: ${all_args}."
-  log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
-  if test "${non_interactive}" != "1"; then
-    log notice "If you wish to cancel installation, press Ctrl+C to abort."
-    sleep 5
-  fi
-  check_license || die 100 "User disagreed with the license."
-  log notice "User agreed with the license."
-
-  pre_check
-  log_elapsed_time
-
+get_download_links(){
   case "${guest}" in
     whonix)
       ## clearnet project domain
@@ -1265,6 +1291,7 @@ main(){
       guest_file_ext="ova"
       ## function to call when importing guest
       import_guest="import_virtualbox"
+      start_guest="start_virtualbox"
       ## directory where the hypervisor places the VMs
       case "${guest}" in
         whonix)
@@ -1286,13 +1313,37 @@ main(){
       guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
       ## function to call when importing guest
       import_guest="import_kvm"
+      start_guest="start_kvm"
       ## TODO
       die 1 "KVM code is unfinished."
       ;;
   esac
 
-  curl_opt="${curl_opt_ssl:-} ${curl_proxy:-}"
 
+}
+
+## Self explanatory name, make everything after option parsing.
+main(){
+  guest_pretty="$(capitalize_first_char "${guest}")"
+  interface_pretty="$(capitalize_first_char "${interface}")"
+  interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
+  hypervisor_pretty="$(capitalize_first_char "${hypervisor}")"
+
+  log info "Command line options: ${all_args}."
+  log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
+  if test "${non_interactive}" != "1"; then
+    log notice "If you wish to cancel installation, press Ctrl+C to abort."
+    sleep 5
+  fi
+  check_license || die 100 "User disagreed with the license."
+  log notice "User agreed with the license."
+
+  pre_check
+  log_elapsed_time
+
+  get_download_links
+
+  ## if version is set, use it now to set the download flag path.
   if test -n "${guest_version}"; then
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
@@ -1307,7 +1358,8 @@ main(){
       log info "Testing internet connection..."
       # shellcheck disable=SC2046,SC2086
       curl --silent --show-error --max-time 180 --fail --fail-early \
-        ${curl_opt} $(get_curl_proxy_cred netconnection) \
+        ${curl_opt_ssl:-} ${curl_proxy:-} \
+        $(get_curl_proxy_cred netconnection) \
         --url "${url_origin}" >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
     fi
@@ -1318,6 +1370,7 @@ main(){
     url_domain="${url_domain}/${guest_version:?}"
     url_guest_file="${url_domain}/${guest_file}"
 
+    ## Check again for download flag after version was queried.
     if test -f "${download_flag}"; then
       log notice "Skipping download because flag exists: ${download_flag}."
     else
@@ -1341,8 +1394,9 @@ main(){
     die 104 "Failed hash checking."
 
   eval ${import_guest} || die 105 "Failed to import virtual machines."
-
   log_elapsed_time
+
+  check_guest_boot
 }
 
 
@@ -1374,6 +1428,8 @@ Developer options:
                        the calling user. If you change this directory, but the
                        previously downloaded files are not changed to the new
                        directory, the download start again. \$HOME (default).
+ -k, --skip-guest-boot
+                     Don't boot guest at the end of run. Default is to start.
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -D, --dev           Se development mode. Set version to download empty image.
@@ -1410,6 +1466,7 @@ set_default(){
   dry_run=""
   getversion=""
   getopt=""
+  skip_guest_boot=""
 }
 
 
@@ -1471,6 +1528,9 @@ parse_opt(){
         ;;
       n|non-interactive)
         set_arg non_interactive 1
+        ;;
+      k|skip-guest-boot)
+        set_arg skip_guest_boot 1
         ;;
       D|dev)
         set_arg dev 1
