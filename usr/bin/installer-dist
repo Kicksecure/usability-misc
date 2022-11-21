@@ -489,7 +489,7 @@ handle_exit(){
     pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n7
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
-      signal_caught="$(kill -l "$(echo ${last_exit}-128 | bc)")"
+      signal_caught="$(kill -l "$(echo "${last_exit}"-128 | bc)")"
       log error "Received ${signal_caught} signal."
     fi
     log error "Exit code: ${last_exit}."
@@ -614,29 +614,78 @@ test_pkg(){
 }
 
 
-## If file exists (VMs), abort process to avoid overwriting user data.
-abort_on_existence(){
-  ## testing if file exists, not minding if it is a regular file or not
-  if test -e "${1:-}"; then
-    log error "File exists: ${1:-}."
-    die 102 "Not touching user data, aborting."
-  fi
-}
-
-
 ## Check if VM exists using hypervisor tools.
 check_vm_exists(){
-  vm="${1}"
   case "${hypervisor}" in
     virtualbox)
-      if vboxmanage showvminfo "${vm}" >/dev/null 2>&1; then
-        vm_saved_path="$(vboxmanage showvminfo "${vm}" --machinereadable |
-                         grep "^CfgFile=" | sed "s/.*=//;s/\"//g")"
-        die 102 "Virtual machine was imported previously to: ${vm_saved_path}"
-      fi
+      case "${guest}" in
+        whonix)
+          if vboxmanage showvminfo \
+            "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1 &&
+            vboxmanage showvminfo \
+            "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
+          then
+            check_guest_boot
+          fi
+          ;;
+        kicksecure)
+          if vboxmanage showvminfo \
+            "${guest_pretty}-${interface_all_caps}" >/dev/null 2>&1
+          then
+            check_guest_boot
+          fi
+          ;;
+      esac
       ;;
     kvm)
       true
+      ;;
+  esac
+}
+
+
+## Check if guest should start or not
+check_guest_boot(){
+  ## Skip guest boot
+  if test "${skip_guest_boot}" = "1"; then
+    log notice "User declined to start Virtual Machine(s)."
+    log notice "Virtual Machine(s) should be started manually."
+    exit
+  fi
+  ## Default to start guest without interaction
+  if test "${non_interactive}" = "1"; then
+    ${start_guest}
+    exit
+  fi
+  ## Ask user to start guest or not
+  log notice "Do you want to start the Virtual Machine(s) now? [y/n] (default: yes): "
+  printf '%s' "Your answer: "
+  read -r response
+  case ${response} in
+    ""|[Yy]|[Yy][Ee][Ss])
+      ${start_guest}
+      ;;
+    *)
+      log notice "User declined to start Virtual Machine(s)."
+      log notice "Virtual Machine(s) should be started manually."
+      ;;
+  esac
+  ## Last phase, should exit here every time.
+  exit
+}
+
+
+## Start the hypervisor with the desired guest
+start_virtualbox(){
+  case "${guest}" in
+    whonix)
+      vboxmanage startvm \
+        "${guest_pretty}-Gateway-${interface_all_caps}" || return 1
+      vboxmanage startvm \
+        "${guest_pretty}-Workstation-${interface_all_caps}" || return 1
+      ;;
+    kicksecure)
+      vboxmanage startvm "${guest_pretty}-${interface_all_caps}" || return 1
       ;;
   esac
 }
@@ -1023,51 +1072,6 @@ download_files(){
 }
 
 
-## Start the hypervisor with the desired guest
-start_virtualbox(){
-  case "${guest}" in
-    whonix)
-      vboxmanage startvm ${guest_pretty}-Gateway-${interface_all_caps} ||
-        return 1
-      vboxmanage startvm ${guest_pretty}-Workstation-${interface_all_caps} ||
-        return 1
-      ;;
-    kicksecure)
-      vboxmanage startvm ${guest_pretty}-${interface_all_caps} || return 1
-      ;;
-  esac
-}
-
-
-## Check if guest should start or not
-check_guest_boot(){
-  ## Skip guest boot
-  if test "${skip_guest_boot}" = "1"; then
-    log notice "User declined to start VMs."
-    log notice "VMs should be started manually."
-    return 0
-  fi
-  ## Default to start guest without interaction
-  if test "${non_interactive}" = "1"; then
-    ${start_guest}
-    return 0
-  fi
-  ## Ask user to start guest or not
-  log notice "Do you want to start the VMs now? [y/n] (default: yes): "
-  printf '%s' "Your answer: "
-  read -r response
-  case ${response} in
-    ""|[Yy]|[Yy][Ee][Ss])
-      ${start_guest}
-      ;;
-    *)
-      log notice "User declined to start VMs."
-      log notice "VMs should be started manually."
-      ;;
-  esac
-}
-
-
 ## https://en.wikipedia.org/wiki/X86_virtualization
 get_virtualization(){
   ## Check if virtualization is enabled.
@@ -1293,15 +1297,7 @@ get_download_links(){
       import_guest="import_virtualbox"
       start_guest="start_virtualbox"
       ## directory where the hypervisor places the VMs
-      case "${guest}" in
-        whonix)
-          check_vm_exists "${guest_pretty}-Workstation-${interface_all_caps}"
-          check_vm_exists "${guest_pretty}-Gateway-${interface_all_caps}"
-          ;;
-        kicksecure)
-          check_vm_exists "${guest_pretty}-${interface_all_caps}"
-          ;;
-      esac
+      check_vm_exists
       ;;
 
     kvm)
