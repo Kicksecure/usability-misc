@@ -1536,7 +1536,10 @@ Developer options:
                        if already imported, see --reimport option.
  --reimport          Redo the import of the guest to the hypervisor. Will try
                        to import already existing files if found. To download
-                       new files, see --redownload option.
+                       new files, see --redownload option. This option
+                       requires --destroy-existing-guest as pledge.
+ --destroy-existing-guest
+                     Required pledge for --reimport.
  -P, --directory-prefix=<dir>
                      Set directory prefix to save files to. The directory must
                        already exist and have read and write capabilities for
@@ -1585,6 +1588,7 @@ set_default(){
   skip_guest_boot=""
   redownload=""
   reimport=""
+  destroy_existing_guest=""
 }
 
 
@@ -1650,6 +1654,9 @@ parse_opt(){
       reimport)
         set_arg reimport 1
         ;;
+      destroy-existing-guest)
+        set_arg destroy_existing_guest 1
+        ;;
       n|non-interactive)
         set_arg non_interactive 1
         ;;
@@ -1687,6 +1694,13 @@ parse_opt(){
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
+  if test "${reimport}" = "1"; then
+    if test -z "${destroy_existing_guest}"; then
+      log error "The option --reimport requires --destroy-existing-guest."
+      log error "The option --destroy-existing-guest was not set."
+      die 1 "User mistake, read the documentation to understand how to use the options."
+    fi
+  fi
 
   # shellcheck disable=SC2194
   case 1 in

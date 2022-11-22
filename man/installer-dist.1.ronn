@@ -81,6 +81,17 @@ Guest and Interface can be set by changing the script name to the format
         Set option to force download even if flag that files were
         successfully download before already exist.
 
+`--reimport`
+
+        Redo the import of the guest to the hypervisor. Will try to import
+        already existing files if found. To download new files, see
+        --redownload option. This option requires --destroy-existing-guest
+        as pledge.
+
+`--destroy-existing-guest`
+
+        Required pledge for --reimport.
+
 `-D`, `--dev`
 
         Set development mode. Set default version to download empty

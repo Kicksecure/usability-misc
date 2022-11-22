@@ -101,6 +101,23 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .fi
 .IP "" 0
 .P
+\fB\-\-reimport\fR
+.IP "" 4
+.nf
+    Redo the import of the guest to the hypervisor\. Will try to import
+    already existing files if found\. To download new files, see
+    \-\-redownload option\. This option requires \-\-destroy\-existing\-guest
+    as pledge\.
+.fi
+.IP "" 0
+.P
+\fB\-\-destroy\-existing\-guest\fR
+.IP "" 4
+.nf
+    Required pledge for \-\-reimport\.
+.fi
+.IP "" 0
+.P
 \fB\-D\fR, \fB\-\-dev\fR
 .IP "" 4
 .nf
