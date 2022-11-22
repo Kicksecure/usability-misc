@@ -447,7 +447,7 @@ log(){
 ## usage: die # "msg"
 ## where '#' is the exit code.
 die(){
-  log_elapsed_time
+  log_time
   log error "${2}"
   log error "Aborting installer."
   exit "${1}"
@@ -455,8 +455,9 @@ die(){
 
 
 ## Wrapper to log command before running to avoid duplication of code
-log_and_run(){
-  log info "Running command: $ ${1}"
+log_run(){
+  ## Extra spaces appearing when breaking log_run on multiple lines.
+  log info "Executing: $ $(echo "${1}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
     true "Skipping running above logged command because dry_run is set."
     return 0
@@ -473,7 +474,7 @@ get_elapsed_time(){
 
 
 ## Log elapsed time, the name explains itself.
-log_elapsed_time(){
+log_time(){
   log info "Elapsed time: $(get_elapsed_time)s."
 }
 
@@ -590,10 +591,10 @@ install_pkg(){
     fi
     log notice "Updating package list."
     # shellcheck disable=SC2086
-    log_and_run "root_cmd ${pkg_mngr_update}"
+    log_run "root_cmd ${pkg_mngr_update}"
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
-    log_and_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
+    log_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
   fi
 }
 
@@ -615,29 +616,59 @@ test_pkg(){
 }
 
 
+## Check if VM exists on VirtualBox
+check_vm_exists_virtualbox(){
+  case "${guest}" in
+    whonix)
+      if vboxmanage showvminfo \
+        "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1 &&
+        vboxmanage showvminfo \
+        "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
+      then
+        log notice "Virtual Machine(s) were imported previously."
+        if test "${reimport}" = "1"; then
+          ## If VMs exists and reimport is set, remove VMs as they are gonna
+          ## be imported later by main.
+          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
+          log_run "vboxmanage unregistervm \
+            ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+          log_run "vboxmanage unregistervm \
+            ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+        else
+          ## VMs already exist, check if user wants to start them.
+          log info "Checking if user wants to start Virtual Machine(s) now."
+          check_guest_boot
+        fi
+      fi
+      ;;
+    kicksecure)
+      if vboxmanage showvminfo \
+        "${guest_pretty}-${interface_all_caps}" >/dev/null 2>&1
+      then
+        log notice "Virtual Machine(s) were imported previously."
+        if test "${reimport}" = "1"; then
+          ## If VMs exists and reimport is set, remove VMs as they are gonna
+          ## be imported later by main.
+          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
+          log_run "vboxmanage unregistervm \
+            ${guest_pretty}-${interface_all_caps} --delete"
+        else
+          ## VMs already exist, check if user wants to start them.
+          log info "Checking if user wants to start Virtual Machine(s) now."
+          check_guest_boot
+        fi
+      fi
+      ;;
+  esac
+}
+
+
 ## Check if VM exists using hypervisor tools.
 check_vm_exists(){
-  log info "Checking if Virtual Machine(s) already exist."
+  log notice "Checking if Virtual Machine(s) were already imported."
   case "${hypervisor}" in
     virtualbox)
-      case "${guest}" in
-        whonix)
-          if vboxmanage showvminfo \
-            "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1 &&
-            vboxmanage showvminfo \
-            "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
-          then
-            check_guest_boot
-          fi
-          ;;
-        kicksecure)
-          if vboxmanage showvminfo \
-            "${guest_pretty}-${interface_all_caps}" >/dev/null 2>&1
-          then
-            check_guest_boot
-          fi
-          ;;
-      esac
+      check_vm_exists_virtualbox
       ;;
     kvm)
       true
@@ -692,15 +723,17 @@ check_guest_boot(){
 
 ## Start the hypervisor with the desired guest
 start_virtualbox(){
+  log notice "Starting Virtual Machine(s)."
   case "${guest}" in
     whonix)
-      vboxmanage startvm \
-        "${guest_pretty}-Gateway-${interface_all_caps}" || return 1
-      vboxmanage startvm \
-        "${guest_pretty}-Workstation-${interface_all_caps}" || return 1
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-Gateway-${interface_all_caps}" || return 1
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-Workstation-${interface_all_caps}" || return 1
       ;;
     kicksecure)
-      vboxmanage startvm "${guest_pretty}-${interface_all_caps}" || return 1
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-${interface_all_caps}" || return 1
       ;;
   esac
 }
@@ -709,7 +742,7 @@ start_virtualbox(){
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  log_and_run "root_cmd adduser ${USER} vboxusers" || {
+  log_run "root_cmd adduser ${USER} vboxusers" || {
     die 1 "Failed to add user '${USER}' to group 'vboxusers'."
   }
 }
@@ -826,15 +859,16 @@ check_license(){
 
 ## Import VirtualBox images
 import_virtualbox(){
+  log notice "Importing Virtual Machine(s)."
   ## default to import 1 virtual system
   vbox_arg="--vsys 0 --eula accept"
   ## if importing whonix, import 2 virtual systems
   test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_and_run "vboxmanage import \
+  log_run "vboxmanage import \
     ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
-    return 1
+    die 105 "Failed to import virtual machines."
 
   log notice "You can now open the VirtualBox application to use ${guest}."
 }
@@ -1046,7 +1080,7 @@ get_version(){
     return 0
   fi
   if test "${dry_run}" = "1"; then
-    log_and_run "curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
+    log_run "curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
     return 0
   fi
   log info "Acquiring guest version from API."
@@ -1076,22 +1110,22 @@ get_file(){
   curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred ${round}) --remote-name "
 
   log notice "Downloading ${1:-}."
-  log_and_run "${curl_full_download} ${1:-}" || return
+  log_run "${curl_full_download} ${1:-}" || return
 }
 
 
 ## Check if files were already downloaded, if not, try to download everything
 ## and only if succeeds, set download flag.
 download_files(){
-  log_elapsed_time
+  log_time
 
   log notice "Downloads will be stored in the directory: '${directory_prefix}'."
   get_file "${url_guest_file}.${guest_file_ext}"
   get_file "${url_guest_file}.sha512sums.sig"
   get_file "${url_guest_file}.sha512sums"
 
-  log_elapsed_time
-  log_and_run "touch ${download_flag}"
+  log_time
+  log_run "touch ${download_flag}"
 }
 
 
@@ -1358,6 +1392,34 @@ should_download(){
 }
 
 
+## Check signature of signed checksum.
+check_signature(){
+  log notice "Signify signature:\n${signify_key}"
+  log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
+  echo "${signify_key}" | signify -V -p - \
+   -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
+}
+
+
+## Check hash sum.
+check_hash(){
+  log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
+  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
+}
+
+
+## Check integrity of files
+check_integrity(){
+  log notice "Doing integrity checks."
+  if test "${dry_run}" = "1"; then
+    log info "Skipping integrity checks because dry_run is set."
+    return 0
+  fi
+  check_signature || die 104 "Failed to verify signature."
+  check_hash || die 104 "Failed hash checking."
+}
+
+
 ## Self explanatory name, make everything after option parsing.
 main(){
   ###############
@@ -1383,19 +1445,16 @@ main(){
   check_license || die 100 "User disagreed with the license."
 
   pre_check
-  log_elapsed_time
+  log_time
 
   ## Get all links to download files and settings
   get_download_links
+
+  ## Check if VM were already imported, if true then ask to start
+  check_vm_exists
   #############
   ## END PRE ##
   #############
-
-  ## Avoid starting VMs during dry-run mode.
-  if test "${dry_run}" != "1"; then
-    ## Check if VM were already imported, if true then ask to start
-    check_vm_exists
-  fi
 
   ####################
   ## BEGIN DOWNLOAD ##
@@ -1436,37 +1495,17 @@ main(){
   ## END DOWNLOAD ##
   ##################
 
-  ########################
-  ## BEGIN VERIFICATION ##
-  ########################
-  if test "${dry_run}" = "1"; then
-    log info "Ending run before doing integrity checks because dry_run is set."
-    exit 0
-  fi
+  ##########################################
+  ## BEGIN VERIFICATION, IMPORT AND START ##
+  ##########################################
+  check_integrity
 
-  log notice "Signify signature:\n${signify_key}"
-  log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
-  echo "${signify_key}" | signify -V -p - \
-   -m "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 104 "Failed to verify signature."
-
-  log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
-  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 104 "Failed hash checking."
-  ######################
-  ## END VERIFICATION ##
-  ######################
-
-  ############################
-  ## BEGIN IMPORT AND START ##
-  ############################
-  eval ${import_guest} || die 105 "Failed to import virtual machines."
-  log_elapsed_time
+  eval ${import_guest}
 
   check_guest_boot
-  ##########################
-  ## END IMPORT AND START ##
-  ##########################
+  ########################################
+  ## END VERIFICATION, IMPORT AND START ##
+  ########################################
 }
 
 
@@ -1545,6 +1584,7 @@ set_default(){
   getopt=""
   skip_guest_boot=""
   redownload=""
+  reimport=""
 }
 
 
@@ -1607,6 +1647,9 @@ parse_opt(){
       redownload)
         set_arg redownload 1
         ;;
+      reimport)
+        set_arg reimport 1
+        ;;
       n|non-interactive)
         set_arg non_interactive 1
         ;;
@@ -1621,7 +1664,6 @@ parse_opt(){
         ;;
       d|dry-run)
         set_arg dry_run 1
-        log info "dry_run set, commands will be printed and not executed"
         ;;
       V|version)
         set_arg getversion 1
@@ -1664,6 +1706,7 @@ parse_opt(){
       ;;
     "${dry_run}")
       if test -z "${guest_version}"; then
+        log info "dry_run set, commands will be printed and not executed"
         log info "Faking software version because of dry_run."
         guest_version="16.0.4.2"
       fi
