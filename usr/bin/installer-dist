@@ -928,6 +928,11 @@ get_system_stat(){
     log warn "You may encounter problems using a desktop environment."
   fi
 
+  log info "Creating directory: '${directory_prefix}'."
+  if test "${dry_run}" != "1"; then
+    mkdir -p "${directory_prefix}" ||
+      die 1 "Failed to created directory: '${directory_prefix}'."
+  fi
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
@@ -1077,6 +1082,7 @@ get_file(){
 download_files(){
   log_elapsed_time
 
+  log notice "Downloads will be stored in the directory: '${directory_prefix}'."
   get_file "${url_guest_file}.${guest_file_ext}"
   get_file "${url_guest_file}.sha512sums.sig"
   get_file "${url_guest_file}.sha512sums"
@@ -1591,16 +1597,6 @@ parse_opt(){
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
-
-  if ! test -d "${directory_prefix}"; then
-    die 1 "Directory doesn't exist: '${directory_prefix}'"
-  fi
-  if ! test -w "${directory_prefix}"; then
-    die 1 "Directory isn't writable: '${directory_prefix}'"
-  fi
-  if ! test -r "${directory_prefix}"; then
-    die 1 "Directory isn't readable: '${directory_prefix}'"
-  fi
 
   # shellcheck disable=SC2194
   case 1 in
