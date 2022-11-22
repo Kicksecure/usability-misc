@@ -1360,6 +1360,9 @@ should_download(){
 
 ## Self explanatory name, make everything after option parsing.
 main(){
+  ###############
+  ## BEGIN PRE ##
+  ###############
   set_trap
 
   guest_pretty="$(capitalize_first_char "${guest}")"
@@ -1379,15 +1382,14 @@ main(){
   ## The license function sleeps for some seconds to give time to abort
   check_license || die 100 "User disagreed with the license."
 
-  if test "${dry_run}" = "1"; then
-    pre_check || true
-  else
-    pre_check
-  fi
+  pre_check
   log_elapsed_time
 
   ## Get all links to download files and settings
   get_download_links
+  #############
+  ## END PRE ##
+  #############
 
   ## Avoid starting VMs during dry-run mode.
   if test "${dry_run}" != "1"; then
@@ -1395,6 +1397,9 @@ main(){
     check_vm_exists
   fi
 
+  ####################
+  ## BEGIN DOWNLOAD ##
+  ####################
   ## Skip making internet requests if flag already exists and user
   ## specified the desired version.
   ## If version is set, use it now to set the download flag path.
@@ -1427,7 +1432,13 @@ main(){
   else
     log notice "Version: ${guest_version}."
   fi
+  ##################
+  ## END DOWNLOAD ##
+  ##################
 
+  ########################
+  ## BEGIN VERIFICATION ##
+  ########################
   if test "${dry_run}" = "1"; then
     log info "Ending run before doing integrity checks because dry_run is set."
     exit 0
@@ -1442,11 +1453,20 @@ main(){
   log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
   ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" ||
     die 104 "Failed hash checking."
+  ######################
+  ## END VERIFICATION ##
+  ######################
 
+  ############################
+  ## BEGIN IMPORT AND START ##
+  ############################
   eval ${import_guest} || die 105 "Failed to import virtual machines."
   log_elapsed_time
 
   check_guest_boot
+  ##########################
+  ## END IMPORT AND START ##
+  ##########################
 }
 
 
