@@ -13,8 +13,8 @@ _installer_dist()
 
     case $prev in
         --guest-version | --socks-proxy | --onion | --non-interactive | \
-            --skip-guest-boot | --dev | --dry-run | --getopt | --version | \
-            --help )
+            --skip-guest-boot | --redownload | --dev | --dry-run | \
+            --getopt | --version | --help )
             return
             ;;
         --directory-prefix )

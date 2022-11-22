@@ -76,6 +76,11 @@ Guest and Interface can be set by changing the script name to the format
         Set non-interactive mode, instead of questions, defaults will be
         assumed, including accepting the license and starting the guest.
 
+`--redownload`
+
+        Set option to force download even if flag that files were
+        successfully download before already exist.
+
 `-D`, `--dev`
 
         Set development mode. Set default version to download empty

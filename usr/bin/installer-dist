@@ -791,7 +791,8 @@ check_license(){
         --title "${dialog_title}" \
         --yes-label "Agree" \
         --no-label "Disagree" \
-        --yesno "${license}" 640 480
+        --yesno "${license}" 640 480 || return 1
+      log notice "User agreed with the license."
       ;;
     whiptail)
       ## When text is too long and scrolltext is needed, the yesno box
@@ -802,7 +803,8 @@ check_license(){
         --title "${dialog_title}" \
         --yes-button "Agree" \
         --no-button "Disagree" \
-        --yesno "${license}" 24 80
+        --yesno "${license}" 24 80 || return 1
+      log notice "User agreed with the license."
       ;;
     *)
       printf '%s\n' "${license}"
@@ -810,7 +812,7 @@ check_license(){
       read -r license_agreement
       case "${license_agreement}" in
         [yY][eE][sS])
-          true
+          log notice "User agreed with the license."
           ;;
         *)
           log warn "User replied '${license_agreement}'."
@@ -1333,9 +1335,28 @@ get_download_links(){
       die 1 "KVM code is unfinished."
       ;;
   esac
-
-
 }
+
+
+## Test if files should be downloaded
+should_download(){
+  if test "${redownload}" = "1"; then
+    ## Do not print further messages as it was already printed before.
+    ## Occurs if the should_download() function was called more than once.
+    test "${download_msg_done:-}" = "1" && return 0
+    download_msg_done=1
+    ## Download if redownload option is set.
+    log notice "Downloading files because redownload is set."
+    return 0
+  elif test -f "${download_flag:-}"; then
+    ## Do not download if flag exists.
+    log notice "Skipping download because flag exists: ${download_flag}."
+    return 1
+  fi
+  ## Download as not obstacles prohibit it.
+  return 0
+}
+
 
 ## Self explanatory name, make everything after option parsing.
 main(){
@@ -1357,7 +1378,6 @@ main(){
   fi
   ## The license function sleeps for some seconds to give time to abort
   check_license || die 100 "User disagreed with the license."
-  log notice "User agreed with the license."
 
   if test "${dry_run}" = "1"; then
     pre_check || true
@@ -1375,18 +1395,15 @@ main(){
     check_vm_exists
   fi
 
+  ## Skip making internet requests if flag already exists and user
+  ## specified the desired version.
   ## If version is set, use it now to set the download flag path.
   if test -n "${guest_version}"; then
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
-  ## Skip making internet requests if flag already exists and user specified
-  ## the desired version.
-  if test -f "${download_flag:-}"; then
-    log notice "Version: ${guest_version}."
-    log notice "Skipping download because flag exists: ${download_flag}."
-  else
+  if should_download; then
     if test "${dry_run}" != "1"; then
       log info "Testing internet connection..."
       # shellcheck disable=SC2046,SC2086
@@ -1404,11 +1421,11 @@ main(){
     url_guest_file="${url_domain}/${guest_file}"
 
     ## Check again for download flag after version was queried.
-    if test -f "${download_flag}"; then
-      log notice "Skipping download because flag exists: ${download_flag}."
-    else
+    if should_download; then
       download_files || die 103 "Failed to download files."
     fi
+  else
+    log notice "Version: ${guest_version}."
   fi
 
   if test "${dry_run}" = "1"; then
@@ -1455,6 +1472,12 @@ usage(){
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
+ --redownload        Redo the download of the guest instead of stopping if it
+                       was already succesfully downloaded. Won't import files
+                       if already imported, see --reimport option.
+ --reimport          Redo the import of the guest to the hypervisor. Will try
+                       to import already existing files if found. To download
+                       new files, see --redownload option.
  -P, --directory-prefix=<dir>
                      Set directory prefix to save files to. The directory must
                        already exist and have read and write capabilities for
@@ -1501,6 +1524,7 @@ set_default(){
   getversion=""
   getopt=""
   skip_guest_boot=""
+  redownload=""
 }
 
 
@@ -1559,6 +1583,9 @@ parse_opt(){
         ;;
       m|hypervisor)
         get_arg hypervisor
+        ;;
+      redownload)
+        set_arg redownload 1
         ;;
       n|non-interactive)
         set_arg non_interactive 1
