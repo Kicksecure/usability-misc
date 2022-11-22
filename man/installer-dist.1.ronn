@@ -2,6 +2,9 @@ installer-dist(1) -- download and import Whonix/Kicksecure VMs
 =============================================
 
 <!--
+# vim: tw=75 cc=76
+## ronn conversion of options description breaks lines horribly if longer
+## than 75 chars.
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 -->
@@ -11,8 +14,8 @@ installer-dist(1) -- download and import Whonix/Kicksecure VMs
 
 ## DESCRIPTION
 **installer-dist** is a wrapper that automates the download and importation
-of Kicksecure and Whonix VMs, on the interface you prefer such as CLI or Xfce,
-using the hypervisor of you choice, such as KVM or VirtualBox.
+of Kicksecure and Whonix VMs, on the interface you prefer such as CLI or
+Xfce, using the hypervisor of you choice, such as KVM or VirtualBox.
 
 ## OPTIONS
 Options starts with one or two dashes. Long and short options that require
@@ -57,15 +60,16 @@ Guest and Interface can be set by changing the script name to the format
 
 `-k`, `--skip-guest-boot`
 
-        Skip booting guest at the end of the run. Default is to start guest.
+        Skip booting guest at the end of the run. Default is to start
+        guest.
 
 `-P`, `--directory-prefix`=<directory>
 
-        Set directory to save downloaded files to. Default to $HOME. The
-        directory must already exist and have read and write capabilities
-        for the calling user. If you change this directory, but the
-        previously downloaded files are not changed to the new directory,
-        the download starts again.
+        Set directory to save downloaded files to. Default to
+        $HOME/installer-dist-download. The directory must already exist
+        and have read and write capabilities for the calling user. If you
+        change this directory, but the previously downloaded files are not
+        changed to the new directory, the download starts again.
 
 `-n`, `--non-interactive`
 
@@ -108,10 +112,11 @@ Install default flavour and run without questions print info messages:
         $ installer-dist --non-interactive --log-level=info
 
 ## EXIT CODES
-An exit trap is set to return the exit code of the last command that was ran.
-Some commands might conflict with the script exit code, and that would be
-considered a bug. As <curl> is important to the script, its exit codes are
-reseverd to not conflict with the script exit code to ease debugging.
+An exit trap is set to return the exit code of the last command that was
+ran.  Some commands might conflict with the script exit code, and that
+would be considered a bug. As <curl> is important to the script, its exit
+codes are reseverd to not conflict with the script exit code to ease
+debugging.
 
     1       Catchall for general errors.
 

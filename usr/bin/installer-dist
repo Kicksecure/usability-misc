@@ -773,7 +773,7 @@ check_license(){
   fi
 
   log notice "The license will be show in some seconds."
-  sleep 6
+  test "${dry_run}" != "1" && sleep 6
 
   ## Whiptail is the Debian version of Dialog with much less features.
   ## The only reason it is preferred over whiptail is because it doesn't
@@ -787,20 +787,21 @@ check_license(){
   case "${dialog_box}" in
     dialog)
       dialog --erase-on-exit --no-shadow \
-        --title "${dialog_title}" --defaultno \
+        --title "${dialog_title}" \
         --yes-label "Agree" \
         --no-label "Disagree" \
-        --yesno "${license}" \
-        640 480
+        --yesno "${license}" 640 480
       ;;
     whiptail)
-      whiptail --scrolltext \
+      ## When text is too long and scrolltext is needed, the yesno box
+      ## does not display a default item. (note: --default-item is for items
+      ## in the box to be selected as menu for example, not for buttons).
+      whiptail \
+        --scrolltext \
         --title "${dialog_title}" \
         --yes-button "Agree" \
         --no-button "Disagree" \
-        --default-item "Agree" \
-        --yesno "${license}" \
-        24 80
+        --yesno "${license}" 24 80
       ;;
     *)
       printf '%s\n' "${license}"
@@ -1452,7 +1453,8 @@ Developer options:
                        already exist and have read and write capabilities for
                        the calling user. If you change this directory, but the
                        previously downloaded files are not changed to the new
-                       directory, the download start again. \$HOME (default).
+                       directory, the download start again.
+                       \$HOME/installer-dist-download (default).
  -k, --skip-guest-boot
                      Don't boot guest at the end of run. Default is to start.
  -n, --non-interactive
@@ -1461,7 +1463,7 @@ Developer options:
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
 File name:
-  The default file name is installer-dist. Some basic options can be st as
+  The default file name is installer-dist. Some basic options can be set as
   the file name if they follow the format 'guest-installer-interface'.
   Anything different than the default name or the allowed format is rejected.
   Command line options override the file name definition.
@@ -1474,7 +1476,7 @@ File name:
 set_default(){
   arg_saved=""
   directory_prefix=""
-  set_arg directory_prefix "${HOME}"
+  set_arg directory_prefix "${HOME}/installer-dist-download"
   guest_version=""
   guest=""
   set_arg guest whonix
