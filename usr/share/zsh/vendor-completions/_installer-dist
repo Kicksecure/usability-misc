@@ -1,6 +1,6 @@
 #compdef installer-dist kicksecure-cli kicksecure-xfce whonix-cli whonix-xfce
 
-## Copyright (C) 2022 grass <grass@danwin1210.de> 
+## Copyright (C) 2022 grass <grass@danwin1210.de>
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
@@ -19,7 +19,9 @@ args=(
   '(- *)'{-V,--version}'[Show version number and quit]'
   '(- *)'{-h,--help}'[Get help for commands and quit]'
   '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
+  '(-k --skip-guest-boot)'{-k,--skip-guest-boot}'[Set booting guest]'
   '(-n --non-interactive)'{-n,--non-interactive}'[Set non-interactive mode]'
+  '(-D --dev)'{-D,--dev}'[Set dev mode]'
   '(-d --dry-run)'{-d,--dry-run}'[Set dry-run mode]'
   '(-t --getopt)'{-t,--getopt}'[Show parsed options]'
   '(-)*:: :->args'

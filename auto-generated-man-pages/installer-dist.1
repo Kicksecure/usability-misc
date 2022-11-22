@@ -10,7 +10,7 @@
 .SH "OPTIONS"
 Options starts with one or two dashes\. Long and short options that require arguments accept being separated by spaces of an equal sign\.
 .P
-Guest and Interface can be set by changing the script name to the format \fIguest\-interface\fR\.
+Guest and Interface can be set by changing the script name to the format \fIguest\-installer\-interface\fR\.
 .P
 \fB\-g\fR, \fB\-\-guest\fR=\fIguest\fR
 .IP "" 4
@@ -50,18 +50,26 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 \fB\-s\fR, \fB\-\-socks\-proxy\fR=\fIproxy\fR
 .IP "" 4
 .nf
-    Set TCP SOCKS proxy for use in requests\. Format: __host:addr__\. If none
-    specified, but onion request is set, try
-    TOR_SOCKS_HOST:TOR_SOCKS_PORT, if empty, try host 127\.0\.0\.1 and default
-    ports for TBB port 9151 and tor system port 9050\.
+    Set TCP SOCKS proxy for use in requests\. Format: "host:addr"\. If
+    none specified, but onion request is set, try
+    TOR_SOCKS_HOST:TOR_SOCKS_PORT, if empty, try host 127\.0\.0\.1 and
+    default ports for TBB port 9151 and tor system port 9050\.
 .fi
 .IP "" 0
 .P
 \fB\-s\fR, \fB\-\-log\-level\fR=\fIlevel\fR
 .IP "" 4
 .nf
-    Set logging level\. Options: debug, info, notice (default), warn, error\.
-    Everything below the selected logging level level will be printed\.
+    Set logging level\. Options: debug, info, notice (default), warn,
+    error\. Everything below the selected logging level level will be
+    printed\.
+.fi
+.IP "" 0
+.P
+\fB\-k\fR, \fB\-\-skip\-guest\-boot\fR
+.IP "" 4
+.nf
+    Skip booting guest at the end of the run\. Default is to start guest\.
 .fi
 .IP "" 0
 .P
@@ -69,10 +77,10 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .IP "" 4
 .nf
     Set directory to save downloaded files to\. Default to $HOME\. The
-    directory must already exist and have read and write capabilities for
-    the calling user\. If you change this directory, but the previously
-    downloaded files are not changed to the new directory, the download
-    starts again\.
+    directory must already exist and have read and write capabilities
+    for the calling user\. If you change this directory, but the
+    previously downloaded files are not changed to the new directory,
+    the download starts again\.
 .fi
 .IP "" 0
 .P
@@ -80,7 +88,15 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .IP "" 4
 .nf
     Set non\-interactive mode, instead of questions, defaults will be
-    assumed, including accepting the license\.
+    assumed, including accepting the license and starting the guest\.
+.fi
+.IP "" 0
+.P
+\fB\-D\fR, \fB\-\-dev\fR
+.IP "" 4
+.nf
+    Set development mode\. Set default version to download empty
+    image\.
 .fi
 .IP "" 0
 .P

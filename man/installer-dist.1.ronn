@@ -2,7 +2,6 @@ installer-dist(1) -- download and import Whonix/Kicksecure VMs
 =============================================
 
 <!--
-## Copyright (C) 2022 grass <grass@danwin1210.de>
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 -->
@@ -20,7 +19,7 @@ Options starts with one or two dashes. Long and short options that require
 arguments accept being separated by spaces of an equal sign.
 
 Guest and Interface can be set by changing the script name to the format
-<guest-interface>.
+<guest-installer-interface>.
 
 `-g`, `--guest`=<guest>
 
@@ -45,28 +44,38 @@ Guest and Interface can be set by changing the script name to the format
 
 `-s`, `--socks-proxy`=<proxy>
 
-        Set TCP SOCKS proxy for use in requests. Format: __host:addr__. If none
-        specified, but onion request is set, try
-        TOR_SOCKS_HOST:TOR_SOCKS_PORT, if empty, try host 127.0.0.1 and default
-        ports for TBB port 9151 and tor system port 9050.
+        Set TCP SOCKS proxy for use in requests. Format: "host:addr". If
+        none specified, but onion request is set, try
+        TOR_SOCKS_HOST:TOR_SOCKS_PORT, if empty, try host 127.0.0.1 and
+        default ports for TBB port 9151 and tor system port 9050.
 
 `-s`, `--log-level`=<level>
 
-        Set logging level. Options: debug, info, notice (default), warn, error.
-        Everything below the selected logging level level will be printed.
+        Set logging level. Options: debug, info, notice (default), warn,
+        error. Everything below the selected logging level level will be
+        printed.
+
+`-k`, `--skip-guest-boot`
+
+        Skip booting guest at the end of the run. Default is to start guest.
 
 `-P`, `--directory-prefix`=<directory>
 
         Set directory to save downloaded files to. Default to $HOME. The
-        directory must already exist and have read and write capabilities for
-        the calling user. If you change this directory, but the previously
-        downloaded files are not changed to the new directory, the download
-        starts again.
+        directory must already exist and have read and write capabilities
+        for the calling user. If you change this directory, but the
+        previously downloaded files are not changed to the new directory,
+        the download starts again.
 
 `-n`, `--non-interactive`
 
         Set non-interactive mode, instead of questions, defaults will be
-        assumed, including accepting the license.
+        assumed, including accepting the license and starting the guest.
+
+`-D`, `--dev`
+
+        Set development mode. Set default version to download empty
+        image.
 
 `-d`, `--dry-run`
 
