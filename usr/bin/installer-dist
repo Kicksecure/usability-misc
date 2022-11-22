@@ -776,8 +776,9 @@ check_license(){
   test "${dry_run}" != "1" && sleep 6
 
   ## Whiptail is the Debian version of Dialog with much less features.
-  ## The only reason it is preferred over whiptail is because it doesn't
-  ## leave empty lines after closing the box.
+  ## Dialog types problems:
+  ## - whiptail does not allow to set default option with scrolltext on.
+  ## - dialog leaves empty lines on exit.
   while true; do
     has dialog && dialog_box="dialog" && break
     has whiptail && dialog_box="whiptail" && break
