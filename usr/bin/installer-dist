@@ -267,8 +267,8 @@ get_arg(){
 
 ## Single source to set opts, can later be used to print the options parsed
 set_arg(){
-  ## check if $var had already a value assigned
-  eval var='$'"${1:-}"
+  ## check if variable had already a value assigned
+  eval previous_value="$(printf '${'"${1}:-}")"
 
   ## Escaping quotes is needed because else it fails if the argument is quoted
   # shellcheck disable=SC2140
@@ -278,9 +278,11 @@ set_arg(){
   if test -z "${arg_saved:-}"; then
     arg_saved="${1}=\"${2}\""
   else
-    if test -z "${var:-}"; then
+    if test -z "${previous_value}"; then
+      ## If didn't add to the end of the list
       arg_saved="${arg_saved}\n${1}=\"${2}\""
     else
+      ## If had, replace existing value.
       arg_saved="$(printf %s"${arg_saved}" | sed "s|^${1}=.*$|${1}=\"${2}\"|")"
     fi
   fi
@@ -1568,18 +1570,12 @@ File name:
 
 ## Set default values for variables.
 set_default(){
-  arg_saved=""
-  directory_prefix=""
   set_arg directory_prefix "${HOME}/installer-dist-download"
-  guest_version=""
-  guest=""
   set_arg guest whonix
-  hypervisor=""
   set_arg hypervisor virtualbox
-  interface=""
   set_arg interface xfce
-  log_level=""
   set_arg log_level notice
+  guest_version=""
   socks_proxy=""
   onion=""
   non_interactive=""
