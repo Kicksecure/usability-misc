@@ -1,9 +1,95 @@
+commit c97ed5b0bfd4a481eec1a7949ce72b140a8ff3bd
+Merge: 99564b8 c0b787e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 23:58:32 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 99564b85aebe945d6a5175adb05d96a3f9fc76fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 23:48:53 2022 -0500
+
+    bumped changelog version
+
+commit c0b787eb07b2f7f621106f1199bb452bb1e65745
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 21:52:30 2022 +0000
+
+    fix duplication of variable definition
+    Previously was required because the code was not allowing empty var when
+    using set_arg, which happened on the first definition of a variable.
+
+commit 961aea8198f1606f88c0bc81e28d24128247191b
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 20:18:38 2022 +0000
+
+    add mention about redownload and reimport when booting guest
+
+commit e2d57ad198c0b6e0174a4719f4f1d572b36d067c
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 20:14:31 2022 +0000
+
+    add pledge for reimport
+
+commit 8d7649dcc70f149f5abf7aad61d97d3fe5cb2e67
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 18:26:11 2022 +0000
+
+    add reimport option
+    ability to reimport over existing vms, leads to data loss,
+    requires more warnings.
+
+commit 66eaeccc4f8f9037506221bcf30ac3ee217b6aa4
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 17:12:11 2022 +0000
+
+    add separate sections to help discern the steps
+
+commit ecae8998050ed4eeea337ea00950b57a4a9f71d8
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 15:45:52 2022 +0000
+
+    add --redownload
+
 commit 41d2a2ad772bd86e207868cb26563efb7aabafc4
 Merge: fe270da 6a8a72a
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Nov 22 06:24:51 2022 -0500
 
     Merge remote-tracking branch 'grass/installer'
+
+commit 966f51efb2f9739ef1b07ef84cd094decbe8d0e0
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 11:01:13 2022 +0000
+
+    fix dialog types comments
+
+commit 0a18b1015d16271c42de3d3298cf4269580ead8f
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 10:58:20 2022 +0000
+
+    prefer dialog over whiptail
+    problems with dialogs:
+    - dialog prints empty lines on exit
+    - whiptail does not set default option when scroll text is neeed
+
+commit c2c91cabe4011115a97524b76c7257d8992f3dd9
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 10:48:15 2022 +0000
+
+    fix directory prefix by creating directory
+
+commit 541667a24fc2d89e8bff13763a4ea5059a5c3ee2
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 10:38:32 2022 +0000
+
+    change default directory prefix
+
+commit 83c18c47140635dde614415d76059b221b068813
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 17:41:27 2022 +0000
+
+    fix pre_check problems during dry-run
 
 commit 6a8a72ae5eeff143c6cdb7eff0317179aba2fe42
 Author: grass <grass@danwin1210.de>
