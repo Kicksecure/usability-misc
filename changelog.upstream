@@ -1,3 +1,70 @@
+commit 41d2a2ad772bd86e207868cb26563efb7aabafc4
+Merge: fe270da 6a8a72a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 06:24:51 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 6a8a72ae5eeff143c6cdb7eff0317179aba2fe42
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 16:00:43 2022 +0000
+
+    fix pre_check not quitting when there is not enough space
+
+commit 838a3f04b23e2cd772c952f14dae960bbdada163
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 15:06:29 2022 +0000
+
+    skip starting vms if dry-run is set
+
+commit 7aa149ee72b3b89ca16a9c0fa4f1adc61e684ed7
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 14:36:39 2022 +0000
+
+    inform which machines are gonna be started
+
+commit 7cb68bbd363f3b4ad113594f9f20c6dd007a6a3a
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 14:27:49 2022 +0000
+
+    improve boot of vms
+
+commit 161653190bcd6289b33cfd64be4f11768134c51f
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 14:11:43 2022 +0000
+
+    change aborting if vm exists to allow booting vm
+
+commit 81c63261d8756e05b95ffa7dbee2b65f3114eae2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 12:21:06 2022 +0000
+
+    ask to start/boot guest at the end of the run
+
+commit ea1159ea33cbea75bc2886ee97ef94e5d30b8c37
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 11:24:55 2022 +0000
+
+    log verbatim commands
+
+commit f33028e7404bfe50e8691a40415192e5b6787952
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 20 23:05:43 2022 +0000
+
+    dev mode, nested virt detection
+
+commit 96e3eed8f8e1e451b466293a0b87b92b08191c07
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 20 09:52:27 2022 +0000
+
+    fix pre_check not quitting when failing
+
+commit fe270da2ac9dd258c87218cb6f71ea749c1b0d38
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 11:48:49 2022 -0500
+
+    bumped changelog version
+
 commit e0d8c8244129f770467b75c642ae2d957da6b924
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 18 11:36:11 2022 -0500
