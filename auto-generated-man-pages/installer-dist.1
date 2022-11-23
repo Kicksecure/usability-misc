@@ -69,18 +69,19 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 \fB\-k\fR, \fB\-\-skip\-guest\-boot\fR
 .IP "" 4
 .nf
-    Skip booting guest at the end of the run\. Default is to start guest\.
+    Skip booting guest at the end of the run\. Default is to start
+    guest\.
 .fi
 .IP "" 0
 .P
 \fB\-P\fR, \fB\-\-directory\-prefix\fR=\fIdirectory\fR
 .IP "" 4
 .nf
-    Set directory to save downloaded files to\. Default to $HOME\. The
-    directory must already exist and have read and write capabilities
-    for the calling user\. If you change this directory, but the
-    previously downloaded files are not changed to the new directory,
-    the download starts again\.
+    Set directory to save downloaded files to\. Default to
+    $HOME/installer\-dist\-download\. The directory must already exist
+    and have read and write capabilities for the calling user\. If you
+    change this directory, but the previously downloaded files are not
+    changed to the new directory, the download starts again\.
 .fi
 .IP "" 0
 .P
@@ -89,6 +90,31 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .nf
     Set non\-interactive mode, instead of questions, defaults will be
     assumed, including accepting the license and starting the guest\.
+.fi
+.IP "" 0
+.P
+\fB\-\-redownload\fR
+.IP "" 4
+.nf
+    Set option to force download even if flag that files were
+    successfully download before already exist\.
+.fi
+.IP "" 0
+.P
+\fB\-\-reimport\fR
+.IP "" 4
+.nf
+    Redo the import of the guest to the hypervisor\. Will try to import
+    already existing files if found\. To download new files, see
+    \-\-redownload option\. This option requires \-\-destroy\-existing\-guest
+    as pledge\.
+.fi
+.IP "" 0
+.P
+\fB\-\-destroy\-existing\-guest\fR
+.IP "" 4
+.nf
+    Required pledge for \-\-reimport\.
 .fi
 .IP "" 0
 .P

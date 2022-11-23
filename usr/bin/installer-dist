@@ -56,6 +56,7 @@ copy of the Program in return for a fee.
 
 version="0.0.1"
 me="${0##*/}"
+# shellcheck disable=SC2034
 all_args="${*}"
 start_time="$(date +%s)"
 
@@ -266,8 +267,8 @@ get_arg(){
 
 ## Single source to set opts, can later be used to print the options parsed
 set_arg(){
-  ## check if $var had already a value assigned
-  eval var='$'"${1:-}"
+  ## check if variable had already a value assigned
+  eval previous_value="$(printf '${'"${1}:-}")"
 
   ## Escaping quotes is needed because else it fails if the argument is quoted
   # shellcheck disable=SC2140
@@ -277,9 +278,11 @@ set_arg(){
   if test -z "${arg_saved:-}"; then
     arg_saved="${1}=\"${2}\""
   else
-    if test -z "${var:-}"; then
+    if test -z "${previous_value}"; then
+      ## If didn't add to the end of the list
       arg_saved="${arg_saved}\n${1}=\"${2}\""
     else
+      ## If had, replace existing value.
       arg_saved="$(printf %s"${arg_saved}" | sed "s|^${1}=.*$|${1}=\"${2}\"|")"
     fi
   fi
@@ -446,7 +449,7 @@ log(){
 ## usage: die # "msg"
 ## where '#' is the exit code.
 die(){
-  log_elapsed_time
+  log_time
   log error "${2}"
   log error "Aborting installer."
   exit "${1}"
@@ -454,8 +457,9 @@ die(){
 
 
 ## Wrapper to log command before running to avoid duplication of code
-log_and_run(){
-  log info "Running command: $ ${1}"
+log_run(){
+  ## Extra spaces appearing when breaking log_run on multiple lines.
+  log info "Executing: $ $(echo "${1}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
     true "Skipping running above logged command because dry_run is set."
     return 0
@@ -472,7 +476,7 @@ get_elapsed_time(){
 
 
 ## Log elapsed time, the name explains itself.
-log_elapsed_time(){
+log_time(){
   log info "Elapsed time: $(get_elapsed_time)s."
 }
 
@@ -589,10 +593,10 @@ install_pkg(){
     fi
     log notice "Updating package list."
     # shellcheck disable=SC2086
-    log_and_run "root_cmd ${pkg_mngr_update}"
+    log_run "root_cmd ${pkg_mngr_update}"
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
-    log_and_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
+    log_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
   fi
 }
 
@@ -614,29 +618,59 @@ test_pkg(){
 }
 
 
+## Check if VM exists on VirtualBox
+check_vm_exists_virtualbox(){
+  case "${guest}" in
+    whonix)
+      if vboxmanage showvminfo \
+        "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1 &&
+        vboxmanage showvminfo \
+        "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
+      then
+        log notice "Virtual Machine(s) were imported previously."
+        if test "${reimport}" = "1"; then
+          ## If VMs exists and reimport is set, remove VMs as they are gonna
+          ## be imported later by main.
+          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
+          log_run "vboxmanage unregistervm \
+            ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+          log_run "vboxmanage unregistervm \
+            ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+        else
+          ## VMs already exist, check if user wants to start them.
+          log info "Checking if user wants to start Virtual Machine(s) now."
+          check_guest_boot
+        fi
+      fi
+      ;;
+    kicksecure)
+      if vboxmanage showvminfo \
+        "${guest_pretty}-${interface_all_caps}" >/dev/null 2>&1
+      then
+        log notice "Virtual Machine(s) were imported previously."
+        if test "${reimport}" = "1"; then
+          ## If VMs exists and reimport is set, remove VMs as they are gonna
+          ## be imported later by main.
+          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
+          log_run "vboxmanage unregistervm \
+            ${guest_pretty}-${interface_all_caps} --delete"
+        else
+          ## VMs already exist, check if user wants to start them.
+          log info "Checking if user wants to start Virtual Machine(s) now."
+          check_guest_boot
+        fi
+      fi
+      ;;
+  esac
+}
+
+
 ## Check if VM exists using hypervisor tools.
 check_vm_exists(){
-  log info "Checking if Virtual Machine(s) already exist."
+  log notice "Checking if Virtual Machine(s) were already imported."
   case "${hypervisor}" in
     virtualbox)
-      case "${guest}" in
-        whonix)
-          if vboxmanage showvminfo \
-            "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1 &&
-            vboxmanage showvminfo \
-            "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
-          then
-            check_guest_boot
-          fi
-          ;;
-        kicksecure)
-          if vboxmanage showvminfo \
-            "${guest_pretty}-${interface_all_caps}" >/dev/null 2>&1
-          then
-            check_guest_boot
-          fi
-          ;;
-      esac
+      check_vm_exists_virtualbox
       ;;
     kvm)
       true
@@ -648,6 +682,8 @@ check_vm_exists(){
 ## Check if guest should start or not
 check_guest_boot(){
   log info "Virtual Machine(s) already exist."
+  log info "If you'd like to redownload the image, read about --redownload (safe)."
+  log info "If you'd like to reimport the image, read about --reimport (danger)."
   ## Skip guest boot
   if test "${skip_guest_boot}" = "1"; then
     log notice "skip_guest_boot is set."
@@ -691,15 +727,17 @@ check_guest_boot(){
 
 ## Start the hypervisor with the desired guest
 start_virtualbox(){
+  log notice "Starting Virtual Machine(s)."
   case "${guest}" in
     whonix)
-      vboxmanage startvm \
-        "${guest_pretty}-Gateway-${interface_all_caps}" || return 1
-      vboxmanage startvm \
-        "${guest_pretty}-Workstation-${interface_all_caps}" || return 1
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-Gateway-${interface_all_caps}" || return 1
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-Workstation-${interface_all_caps}" || return 1
       ;;
     kicksecure)
-      vboxmanage startvm "${guest_pretty}-${interface_all_caps}" || return 1
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-${interface_all_caps}" || return 1
       ;;
   esac
 }
@@ -708,7 +746,7 @@ start_virtualbox(){
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  log_and_run "root_cmd adduser ${USER} vboxusers" || {
+  log_run "root_cmd adduser ${USER} vboxusers" || {
     die 1 "Failed to add user '${USER}' to group 'vboxusers'."
   }
 }
@@ -767,37 +805,43 @@ install_signify(){
 ## Test if user accepts the license, if not, abort.
 check_license(){
   if [ "${non_interactive}" = "1" ]; then
-    log notice "License agreed by the user by setting non_interactive option."
+    log notice "License agreed by the user by setting non_interactive."
     return 0
   fi
 
   log notice "The license will be show in some seconds."
-  sleep 6
+  test "${dry_run}" != "1" && sleep 6
 
   ## Whiptail is the Debian version of Dialog with much less features.
-  ## The only reason it is preferred over whiptail is because it doesn't
-  ## leave empty lines after closing the box.
+  ## Dialog types problems:
+  ## - whiptail does not allow to set default option with scrolltext on.
+  ## - dialog leaves empty lines on exit.
   while true; do
-    has whiptail && dialog_box="whiptail" && break
     has dialog && dialog_box="dialog" && break
+    has whiptail && dialog_box="whiptail" && break
     break
   done
 
   case "${dialog_box}" in
     dialog)
       dialog --erase-on-exit --no-shadow \
-        --title "${dialog_title}" --defaultno \
+        --title "${dialog_title}" \
         --yes-label "Agree" \
         --no-label "Disagree" \
-        --yesno "${license}" \
-        640 480
+        --yesno "${license}" 640 480 || return 1
+      log notice "User agreed with the license."
       ;;
     whiptail)
-      whiptail --scrolltext --title "${dialog_title}" --defaultno \
+      ## When text is too long and scrolltext is needed, the yesno box
+      ## does not display a default item. (note: --default-item is for items
+      ## in the box to be selected as menu for example, not for buttons).
+      whiptail \
+        --scrolltext \
+        --title "${dialog_title}" \
         --yes-button "Agree" \
         --no-button "Disagree" \
-        --yesno "${license}" \
-        24 80
+        --yesno "${license}" 24 80 || return 1
+      log notice "User agreed with the license."
       ;;
     *)
       printf '%s\n' "${license}"
@@ -805,7 +849,7 @@ check_license(){
       read -r license_agreement
       case "${license_agreement}" in
         [yY][eE][sS])
-          true
+          log notice "User agreed with the license."
           ;;
         *)
           log warn "User replied '${license_agreement}'."
@@ -819,15 +863,16 @@ check_license(){
 
 ## Import VirtualBox images
 import_virtualbox(){
+  log notice "Importing Virtual Machine(s)."
   ## default to import 1 virtual system
   vbox_arg="--vsys 0 --eula accept"
   ## if importing whonix, import 2 virtual systems
   test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_and_run "vboxmanage import \
+  log_run "vboxmanage import \
     ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
-    return 1
+    die 105 "Failed to import virtual machines."
 
   log notice "You can now open the VirtualBox application to use ${guest}."
 }
@@ -924,6 +969,11 @@ get_system_stat(){
     log warn "You may encounter problems using a desktop environment."
   fi
 
+  log info "Creating directory: '${directory_prefix}'."
+  if test "${dry_run}" != "1"; then
+    mkdir -p "${directory_prefix}" ||
+      die 1 "Failed to created directory: '${directory_prefix}'."
+  fi
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
@@ -937,20 +987,15 @@ get_system_stat(){
 pre_check(){
   get_os
   get_utilities
+
   ## below functions are difficult to emulate
-  if ! get_system_stat && test "${dry_run}" = "1"; then
-    log info "Skipping failing get_system_stat() because dry_run is set."
-  else
-    return 101
-  fi
-
-  get_virtualization
-
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
     return 0
   fi
 
+  get_system_stat
+  get_virtualization
   get_host_pkgs
 
   while true; do
@@ -1039,7 +1084,7 @@ get_version(){
     return 0
   fi
   if test "${dry_run}" = "1"; then
-    log_and_run "curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
+    log_run "curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
     return 0
   fi
   log info "Acquiring guest version from API."
@@ -1069,21 +1114,22 @@ get_file(){
   curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred ${round}) --remote-name "
 
   log notice "Downloading ${1:-}."
-  log_and_run "${curl_full_download} ${1:-}" || return
+  log_run "${curl_full_download} ${1:-}" || return
 }
 
 
 ## Check if files were already downloaded, if not, try to download everything
 ## and only if succeeds, set download flag.
 download_files(){
-  log_elapsed_time
+  log_time
 
+  log notice "Downloads will be stored in the directory: '${directory_prefix}'."
   get_file "${url_guest_file}.${guest_file_ext}"
   get_file "${url_guest_file}.sha512sums.sig"
   get_file "${url_guest_file}.sha512sums"
 
-  log_elapsed_time
-  log_and_run "touch ${download_flag}"
+  log_time
+  log_run "touch ${download_flag}"
 }
 
 
@@ -1327,12 +1373,62 @@ get_download_links(){
       die 1 "KVM code is unfinished."
       ;;
   esac
-
-
 }
+
+
+## Test if files should be downloaded
+should_download(){
+  if test "${redownload}" = "1"; then
+    ## Do not print further messages as it was already printed before.
+    ## Occurs if the should_download() function was called more than once.
+    test "${download_msg_done:-}" = "1" && return 0
+    download_msg_done=1
+    ## Download if redownload option is set.
+    log notice "Downloading files because redownload is set."
+    return 0
+  elif test -f "${download_flag:-}"; then
+    ## Do not download if flag exists.
+    log notice "Skipping download because flag exists: ${download_flag}."
+    return 1
+  fi
+  ## Download as not obstacles prohibit it.
+  return 0
+}
+
+
+## Check signature of signed checksum.
+check_signature(){
+  log notice "Signify signature:\n${signify_key}"
+  log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
+  echo "${signify_key}" | signify -V -p - \
+   -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
+}
+
+
+## Check hash sum.
+check_hash(){
+  log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
+  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
+}
+
+
+## Check integrity of files
+check_integrity(){
+  log notice "Doing integrity checks."
+  if test "${dry_run}" = "1"; then
+    log info "Skipping integrity checks because dry_run is set."
+    return 0
+  fi
+  check_signature || die 104 "Failed to verify signature."
+  check_hash || die 104 "Failed hash checking."
+}
+
 
 ## Self explanatory name, make everything after option parsing.
 main(){
+  ###############
+  ## BEGIN PRE ##
+  ###############
   set_trap
 
   guest_pretty="$(capitalize_first_char "${guest}")"
@@ -1351,32 +1447,31 @@ main(){
   fi
   ## The license function sleeps for some seconds to give time to abort
   check_license || die 100 "User disagreed with the license."
-  log notice "User agreed with the license."
 
   pre_check
-  log_elapsed_time
+  log_time
 
   ## Get all links to download files and settings
   get_download_links
 
-  ## Avoid starting VMs during dry-run mode.
-  if test "${dry_run}" != "1"; then
-    ## Check if VM were already imported, if true then ask to start
-    check_vm_exists
-  fi
+  ## Check if VM were already imported, if true then ask to start
+  check_vm_exists
+  #############
+  ## END PRE ##
+  #############
 
+  ####################
+  ## BEGIN DOWNLOAD ##
+  ####################
+  ## Skip making internet requests if flag already exists and user
+  ## specified the desired version.
   ## If version is set, use it now to set the download flag path.
   if test -n "${guest_version}"; then
-    log notice "Version: ${guest_version}."
     guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
-  ## Skip making internet requests if flag already exists and user specified
-  ## the desired version.
-  if test -f "${download_flag:-}"; then
-    log notice "Skipping download because flag exists: ${download_flag}."
-  else
+  if should_download; then
     if test "${dry_run}" != "1"; then
       log info "Testing internet connection..."
       # shellcheck disable=SC2046,SC2086
@@ -1394,32 +1489,27 @@ main(){
     url_guest_file="${url_domain}/${guest_file}"
 
     ## Check again for download flag after version was queried.
-    if test -f "${download_flag}"; then
-      log notice "Skipping download because flag exists: ${download_flag}."
-    else
+    if should_download; then
       download_files || die 103 "Failed to download files."
     fi
+  else
+    log notice "Version: ${guest_version}."
   fi
+  ##################
+  ## END DOWNLOAD ##
+  ##################
 
-  if test "${dry_run}" = "1"; then
-    log info "Ending run before doing integrity checks because dry_run is set."
-    exit 0
-  fi
+  ##########################################
+  ## BEGIN VERIFICATION, IMPORT AND START ##
+  ##########################################
+  check_integrity
 
-  log notice "Signify signature:\n${signify_key}"
-  log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
-  echo "${signify_key}" | signify -V -p - \
-   -m "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 104 "Failed to verify signature."
-
-  log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
-  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" ||
-    die 104 "Failed hash checking."
-
-  eval ${import_guest} || die 105 "Failed to import virtual machines."
-  log_elapsed_time
+  eval ${import_guest}
 
   check_guest_boot
+  ########################################
+  ## END VERIFICATION, IMPORT AND START ##
+  ########################################
 }
 
 
@@ -1445,12 +1535,22 @@ usage(){
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
+ --redownload        Redo the download of the guest instead of stopping if it
+                       was already succesfully downloaded. Won't import files
+                       if already imported, see --reimport option.
+ --reimport          Redo the import of the guest to the hypervisor. Will try
+                       to import already existing files if found. To download
+                       new files, see --redownload option. This option
+                       requires --destroy-existing-guest as pledge.
+ --destroy-existing-guest
+                     Required pledge for --reimport.
  -P, --directory-prefix=<dir>
                      Set directory prefix to save files to. The directory must
                        already exist and have read and write capabilities for
                        the calling user. If you change this directory, but the
                        previously downloaded files are not changed to the new
-                       directory, the download start again. \$HOME (default).
+                       directory, the download start again.
+                       \$HOME/installer-dist-download (default).
  -k, --skip-guest-boot
                      Don't boot guest at the end of run. Default is to start.
  -n, --non-interactive
@@ -1459,7 +1559,7 @@ Developer options:
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
 File name:
-  The default file name is installer-dist. Some basic options can be st as
+  The default file name is installer-dist. Some basic options can be set as
   the file name if they follow the format 'guest-installer-interface'.
   Anything different than the default name or the allowed format is rejected.
   Command line options override the file name definition.
@@ -1470,18 +1570,12 @@ File name:
 
 ## Set default values for variables.
 set_default(){
-  arg_saved=""
-  directory_prefix=""
-  set_arg directory_prefix "${HOME}"
-  guest_version=""
-  guest=""
+  set_arg directory_prefix "${HOME}/installer-dist-download"
   set_arg guest whonix
-  hypervisor=""
   set_arg hypervisor virtualbox
-  interface=""
   set_arg interface xfce
-  log_level=""
   set_arg log_level notice
+  guest_version=""
   socks_proxy=""
   onion=""
   non_interactive=""
@@ -1490,6 +1584,9 @@ set_default(){
   getversion=""
   getopt=""
   skip_guest_boot=""
+  redownload=""
+  reimport=""
+  destroy_existing_guest=""
 }
 
 
@@ -1549,6 +1646,15 @@ parse_opt(){
       m|hypervisor)
         get_arg hypervisor
         ;;
+      redownload)
+        set_arg redownload 1
+        ;;
+      reimport)
+        set_arg reimport 1
+        ;;
+      destroy-existing-guest)
+        set_arg destroy_existing_guest 1
+        ;;
       n|non-interactive)
         set_arg non_interactive 1
         ;;
@@ -1563,7 +1669,6 @@ parse_opt(){
         ;;
       d|dry-run)
         set_arg dry_run 1
-        log info "dry_run set, commands will be printed and not executed"
         ;;
       V|version)
         set_arg getversion 1
@@ -1587,15 +1692,12 @@ parse_opt(){
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
-
-  if ! test -d "${directory_prefix}"; then
-    die 1 "Directory doesn't exist: '${directory_prefix}'"
-  fi
-  if ! test -w "${directory_prefix}"; then
-    die 1 "Directory isn't writable: '${directory_prefix}'"
-  fi
-  if ! test -r "${directory_prefix}"; then
-    die 1 "Directory isn't readable: '${directory_prefix}'"
+  if test "${reimport}" = "1"; then
+    if test -z "${destroy_existing_guest}"; then
+      log error "The option --reimport requires --destroy-existing-guest."
+      log error "The option --destroy-existing-guest was not set."
+      die 1 "User mistake, read the documentation to understand how to use the options."
+    fi
   fi
 
   # shellcheck disable=SC2194
@@ -1615,7 +1717,8 @@ parse_opt(){
       fi
       ;;
     "${dry_run}")
-      if test -z "Setting development default version."; then
+      if test -z "${guest_version}"; then
+        log info "dry_run set, commands will be printed and not executed"
         log info "Faking software version because of dry_run."
         guest_version="16.0.4.2"
       fi
