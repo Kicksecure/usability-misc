@@ -268,7 +268,8 @@ get_arg(){
 ## Single source to set opts, can later be used to print the options parsed
 set_arg(){
   ## check if variable had already a value assigned
-  eval previous_value="$(printf '${'"${1}:-}")"
+  # shellcheck disable=SC2016
+  eval previous_value="$(echo '${'"${1}:-}")"
 
   ## Escaping quotes is needed because else it fails if the argument is quoted
   # shellcheck disable=SC2140
@@ -278,7 +279,7 @@ set_arg(){
   if test -z "${arg_saved:-}"; then
     arg_saved="${1}=\"${2}\""
   else
-    if test -z "${previous_value}"; then
+    if test -z "${previous_value:-}"; then
       ## If didn't add to the end of the list
       arg_saved="${arg_saved}\n${1}=\"${2}\""
     else
@@ -524,6 +525,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
+          install_pkg nc.openbsd
           install_virtualbox_debian
           install_signify signify-openbsd
           ;;
@@ -533,6 +535,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
+          install_pkg nc.openbsd
           install_virtualbox_ubuntu
           install_signify signify-openbsd
           if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
@@ -545,6 +548,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
+          install_pkg nc.openbsd
           install_virtualbox_kicksecure
           install_signify signify-openbsd
           ;;
@@ -1017,12 +1021,17 @@ pre_check(){
 
   has curl || install_pkg curl
   test_pkg curl
+  has rsync || install_pkg rsync
+  test_pkg rsync
+  ## curl|rsync
+  transfer_util=curl
 }
 
 
 ## Generate SOCKS credentials for stream isolation
-get_curl_proxy_cred(){
-  test -z "${curl_proxy:-}" && return 0
+get_proxy_cred(){
+  test "${transfer_util}" != "curl" && return 0
+  test -z "${transfer_proxy:-}" && return 0
   proxy_user="anonym"
   proxy_pass="${1:?}"
   printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
@@ -1032,42 +1041,80 @@ get_curl_proxy_cred(){
 ## Test if can connect to SOCKS proxy and expect the correct tor reply.
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
-  curl_reply="$(UWT_DEV_PASSTHROUGH=1 curl -sSI -m 3 "${proxy}" 2>&1 |
-                head -1 | tr -d "\r")"
-  expected_curl_reply="HTTP/1.0 501 Tor is not an HTTP Proxy"
-  if [ "${curl_reply}" = "${expected_curl_reply}" ]; then
+  # proxy_port="${proxy##*:}"
+  # proxy_addr="${proxy%%:*}"
+  ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
+  case "${transfer_util}" in
+    curl)
+      cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl -sSI -m 3 http://${proxy}"
+      ;;
+    rsync*)
+      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync -n rsync://fakeurl"
+      ;;
+  esac
+  response_header="$(${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
+  expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
+  ## grep is necessary to match patterns, because some programs such as rsync
+  ## put extra words on the line of the response header:
+  ## bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
+  if echo "${response_header}" | grep -q "${expected_response_header}"; then
     log notice "Connected to tor SOCKS proxy successfully."
-    log info "${curl_reply}."
+    log info "${response_header}."
     return 0
   else
     log error "Unexpected proxy response, maybe not a tor proxy?"
-    log error "${curl_reply}."
+    log error "${response_header}."
     return 1
   fi
 
 }
 
 
+## Set transference proxy depending on transfer utility.
+## usage: set_transfer_proxy ${proxy}
+set_transfer_proxy(){
+  ## Used for transfers that only curl can do.
+  curl_transfer_proxy="--proxy socks5h://${1}"
+  ## Set transfer proxy per utility.
+  case "${transfer_util}" in
+    curl)
+      transfer_proxy="--proxy socks5h://${1}"
+      ;;
+    rsync*)
+      if has torsocks; then
+        transfer_proxy="torsocks"
+      elif has nc; then
+        ## needs to be nc.openbsd
+        transfer_proxy="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
+      else
+        die 1 "Failed to find program to proxy connections with rsync."
+      fi
+      ;;
+  esac
+}
+
+
 ## Useful to test if it is a SOCKS proxy before attempting to make requests.
 ## If connection to proxy fails, abort to avoid leaks.
 torify_conn(){
-  ## curl does not support SOCKS proxy to connect with Unix Domain Socket
-  ## https://curl.se/mail/archive-2021-03/0013.html
+  ## curl and many other viable applications do not support SOCKS proxy to
+  ## connect with Unix Domain Socket:
+  ##   https://curl.se/mail/archive-2021-03/0013.html
   if test -n "${socks_proxy:-}"; then
     proxy="${socks_proxy}"
-    curl_proxy="--proxy socks5h://${proxy}"
+    set_transfer_proxy "${proxy}"
   elif test -n "${TOR_SOCKS_PORT:-}"; then
     proxy="${TOR_SOCKS_HOST:-127.0.0.1}:${TOR_SOCKS_PORT}"
-    curl_proxy="--proxy socks5h://${proxy}"
+    set_transfer_proxy "${proxy}"
   else
-    ## Stream Isolation will be enforced get_curl_proxy_cred()
+    ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
     log warn "Trying tor defaults: TBB (9150) and system tor (9050)."
     proxy="127.0.0.1:9050"
-    curl_proxy="--proxy socks5h://${proxy}"
+    set_transfer_proxy ${proxy}
     if ! check_tor_proxy; then
       proxy="127.0.0.1:9050"
-      curl_proxy="--proxy socks5h://${proxy}"
+      set_transfer_proxy ${proxy}
     else
       return 0
     fi
@@ -1084,13 +1131,13 @@ get_version(){
     return 0
   fi
   if test "${dry_run}" = "1"; then
-    log_run "curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
+    log_run "curl ${curl_transfer_proxy:-} $(get_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
     return 0
   fi
   log info "Acquiring guest version from API."
   log info "API host: ${1}"
   # shellcheck disable=SC2046,SC2086
-  raw_version="$(curl ${curl_proxy:-} $(get_curl_proxy_cred version) ${curl_opt_ssl:-} --url "${1}")"
+  raw_version="$(curl ${curl_transfer_proxy:-} $(get_proxy_cred version) ${curl_opt_ssl:-} --url "${1}")"
   # shellcheck disable=SC2086,SC2046
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
   ## Distrust the API version
@@ -1111,7 +1158,7 @@ get_file(){
   ## Round is only used to get a different password every time.
   test -z "${round:-}" && round=10
   round=$((round+1))
-  curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${curl_proxy:-} $(get_curl_proxy_cred ${round}) --remote-name "
+  curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${transfer_proxy:-} $(get_proxy_cred ${round}) --remote-name "
 
   log notice "Downloading ${1:-}."
   log_run "${curl_full_download} ${1:-}" || return
@@ -1293,25 +1340,48 @@ get_virtualization(){
 get_download_links(){
   case "${guest}" in
     whonix)
+      ## Set protcol prefix based to transference utility.
+      case "${transfer_util}" in
+        curl)
+          protocol_prefix_onion="http"
+          protocol_prefix_clearnet="https"
+          ;;
+        rsync)
+          protocol_prefix_clearnet="rsync"
+          protocol_prefix_onion="rsync"
+          ;;
+      esac
       ## clearnet project domain
       site_clearnet="whonix.org"
-      ## clearnet download origin
-      site_clearnet_download="https://mirrors.dotsrc.org/${guest}"
       ## onion project domain
       site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
+      ## clearnet download origin
+      site_clearnet_download="${protcol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
       ## onion download url
-      site_onion_download="http://${site_onion}"
+      site_onion_download="${protocol_prefix_onion}://${site_onion}"
       ;;
+
     kicksecure)
+      ## Set protcol prefix based to transference utility.
+      case "${transfer_util}" in
+        curl)
+          protocol_prefix_onion="http"
+          protocol_prefix_clearnet="https"
+          ;;
+        rsync)
+          protocol_prefix_clearnet="rsync"
+          protocol_prefix_onion="rsync"
+          ;;
+      esac
       ## clearnet project domain
       site_clearnet="kicksecure.com"
-      ## clearnet download origin
-      site_clearnet_download="https://mirrors.dotsrc.org/${guest}"
-      #site_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
       ## onion project domain
       site_onion="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+      #site_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
+      ## clearnet download origin
+      site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
       ## onion download url
-      site_onion_download="http://download.${site_onion}"
+      site_onion_download="${protocol_prefix_onion}://download.${site_onion}"
       ;;
   esac
 
@@ -1323,20 +1393,22 @@ get_download_links(){
       torify_conn
       curl_opt_ssl=""
       ## use to test internet connection
-      url_origin="http://www.${site_onion}"
+      url_origin="${protocol_prefix_onion}://www.${site_onion}"
       ## url to download files from
       url_download="${site_onion_download}"
       ## use to query version
       url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
       url_version="http://www.${site_onion}/${url_version}"
       ;;
+
     *)
       log info "Clearnet preferred."
       ## only torify to clearnet is SOCKS proxy is specified
+      test "${transfer_util}" = "rsync" && transfer_util="rsync-ssl"
       test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
       ## use to test internet connection
-      url_origin="https://www.${site_clearnet}"
+      url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
       ## url to download files from
       url_download="${site_clearnet_download}"
       ## use to query version
@@ -1471,13 +1543,33 @@ main(){
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
+transfer_time_large_file="1800"
+transfer_time_small_file="180"
+transfer_size_small_file="200"
+transfer_size_large_file="2G"
+case ${transfer_utility} in
+  curl)
+    transfer_time_opt="--max-time"
+    ## curl max-filesize is not a definitive barrier:
+    ## NOTE:  The file size is not always known prior to download, and for
+    ## such files this option has no effect even if the file transfer ends
+    ## up  being  larger than this given limit.
+    transfer_size_opt="--max-filesize"
+    ;;
+  rsync*)
+    transfer_time_opt="--timeout"
+    transfer_size_opt="--max-size"
+    ;;
+esac
+
   if should_download; then
     if test "${dry_run}" != "1"; then
       log info "Testing internet connection..."
+      #${transfer_utility} ${transfer_time_opt} ${transfer_time_small_file} >/dev/null ||
       # shellcheck disable=SC2046,SC2086
       curl --silent --show-error --max-time 180 --fail --fail-early \
-        ${curl_opt_ssl:-} ${curl_proxy:-} \
-        $(get_curl_proxy_cred netconnection) \
+        ${curl_opt_ssl:-} ${transfer_proxy:-} \
+        $(get_proxy_cred netconnection) \
         --url "${url_origin}" >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
     fi
@@ -1570,10 +1662,15 @@ File name:
 
 ## Set default values for variables.
 set_default(){
+  directory_prefix=""
   set_arg directory_prefix "${HOME}/installer-dist-download"
+  guest=""
   set_arg guest whonix
+  hypervisor=""
   set_arg hypervisor virtualbox
+  interface=""
   set_arg interface xfce
+  log_level=""
   set_arg log_level notice
   guest_version=""
   socks_proxy=""
