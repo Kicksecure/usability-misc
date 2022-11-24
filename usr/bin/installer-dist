@@ -466,7 +466,7 @@ log_run(){
     return 0
   fi
   # shellcheck disable=SC2086
-  eval ${1}
+  ${1} || return 1
 }
 
 
@@ -793,12 +793,6 @@ install_virtualbox_kicksecure(){
 
 ## Helper to install signify on different systems.
 install_signify(){
-  if has signify-openbsd; then
-    ## fix Debian unconventional naming
-    signify(){ signify-openbsd "${@}"; }
-    return 0
-  fi
-
   pkg_name="${1:-signify}"
   has "${pkg_name}" && return 0
   install_pkg "${pkg_name}"
@@ -992,15 +986,29 @@ pre_check(){
   get_os
   get_utilities
 
+  ## curl|rsync
+  transfer_utility=rsync
+
   ## below functions are difficult to emulate
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
     return 0
   fi
 
+  if has signify-openbsd; then
+    ## fix Debian unconventional naming
+    signify(){ signify-openbsd "${@}"; }
+    return 0
+  fi
+
   get_system_stat
   get_virtualization
   get_host_pkgs
+
+  has curl || install_pkg curl
+  test_pkg curl
+  has rsync || install_pkg rsync
+  test_pkg rsync
 
   while true; do
     has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
@@ -1018,19 +1026,12 @@ pre_check(){
       log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
     fi
   fi
-
-  has curl || install_pkg curl
-  test_pkg curl
-  has rsync || install_pkg rsync
-  test_pkg rsync
-  ## curl|rsync
-  transfer_util=curl
 }
 
 
 ## Generate SOCKS credentials for stream isolation
 get_proxy_cred(){
-  test "${transfer_util}" != "curl" && return 0
+  test "${transfer_utility}" != "curl" && return 0
   test -z "${transfer_proxy:-}" && return 0
   proxy_user="anonym"
   proxy_pass="${1:?}"
@@ -1044,7 +1045,7 @@ check_tor_proxy(){
   # proxy_port="${proxy##*:}"
   # proxy_addr="${proxy%%:*}"
   ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
-  case "${transfer_util}" in
+  case "${transfer_utility}" in
     curl)
       cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl -sSI -m 3 http://${proxy}"
       ;;
@@ -1076,7 +1077,7 @@ set_transfer_proxy(){
   ## Used for transfers that only curl can do.
   curl_transfer_proxy="--proxy socks5h://${1}"
   ## Set transfer proxy per utility.
-  case "${transfer_util}" in
+  case "${transfer_utility}" in
     curl)
       transfer_proxy="--proxy socks5h://${1}"
       ;;
@@ -1130,15 +1131,20 @@ get_version(){
     log info "User input version."
     return 0
   fi
-  if test "${dry_run}" = "1"; then
-    log_run "curl ${curl_transfer_proxy:-} $(get_proxy_cred version) ${curl_opt_ssl:-} --url ${1}"
-    return 0
-  fi
   log info "Acquiring guest version from API."
   log info "API host: ${1}"
+  cmd_raw_version="curl ${curl_transfer_proxy:-} $(get_proxy_cred version) \
+      ${curl_opt_ssl:-} \
+      --max-time ${transfer_time_small_file} \
+      --max-filesize ${transfer_size_small_file} \
+      --url ${1}"
+  if test "${dry_run}" = "1"; then
+    log_run "${cmd_raw_version}"
+    return 0
+  fi
   # shellcheck disable=SC2046,SC2086
-  raw_version="$(curl ${curl_transfer_proxy:-} $(get_proxy_cred version) ${curl_opt_ssl:-} --url "${1}")"
-  # shellcheck disable=SC2086,SC2046
+  raw_version="$(${cmd_raw_version})"
+  # shellcheck disable=SC2046,SC2086
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
   ## Distrust the API version
   ## Block anything that is not made purely out of numbers and dots
@@ -1154,14 +1160,28 @@ get_version(){
 
 
 ## Helper for download_files() to make it less repetitive.
+## usage: get_file small|large $url
 get_file(){
+  size="${1}"
+  url="${2}"
   ## Round is only used to get a different password every time.
   test -z "${round:-}" && round=10
   round=$((round+1))
-  curl_full_download="curl --fail --show-error --location --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${transfer_proxy:-} $(get_proxy_cred ${round}) --remote-name "
+  #curl_full_download="curl --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${transfer_proxy:-} $(get_proxy_cred ${round}) --remote-name "
 
-  log notice "Downloading ${1:-}."
-  log_run "${curl_full_download} ${1:-}" || return
+  case "${size}" in
+    small)
+      download_opt="${transfer_time_opt} ${transfer_time_small_file} ${transfer_size_opt} ${transfer_size_small_file}"
+      ;;
+    large)
+      download_opt="${transfer_time_opt} ${transfer_time_large_file} ${transfer_size_opt} ${transfer_size_large_file}"
+      ;;
+  esac
+  # shellcheck disable=SC2046,SC2086
+  download_opt_full="${transfer_util} ${transfer_nomotd_opt} ${transfer_proxy:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+
+  log notice "Downloading ${url:-}."
+  log_run "${download_opt_full}" || return 1
 }
 
 
@@ -1171,12 +1191,20 @@ download_files(){
   log_time
 
   log notice "Downloads will be stored in the directory: '${directory_prefix}'."
-  get_file "${url_guest_file}.${guest_file_ext}"
-  get_file "${url_guest_file}.sha512sums.sig"
-  get_file "${url_guest_file}.sha512sums"
+  get_file large "${url_guest_file}.${guest_file_ext}"
+  get_file small "${url_guest_file}.sha512sums.sig"
+  get_file small "${url_guest_file}.sha512sums"
 
-  log_time
-  log_run "touch ${download_flag}"
+  log notice "Checking if files exists locally."
+  if test -e "${directory_prefix}/${guest_file}.${guest_file_ext}" &&
+    test -e "${directory_prefix}/${guest_file}.sha512sums.sig" &&
+    test -e "${directory_prefix}/${guest_file}.sha512sums"
+  then
+    log_time
+    log_run "touch ${download_flag}"
+  else
+    die 103 "Failed to download files."
+  fi
 }
 
 
@@ -1340,8 +1368,8 @@ get_virtualization(){
 get_download_links(){
   case "${guest}" in
     whonix)
-      ## Set protcol prefix based to transference utility.
-      case "${transfer_util}" in
+      ## Set protocol prefix based to transference utility.
+      case "${transfer_utility}" in
         curl)
           protocol_prefix_onion="http"
           protocol_prefix_clearnet="https"
@@ -1356,14 +1384,14 @@ get_download_links(){
       ## onion project domain
       site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
       ## clearnet download origin
-      site_clearnet_download="${protcol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
+      site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
       ## onion download url
       site_onion_download="${protocol_prefix_onion}://${site_onion}"
       ;;
 
     kicksecure)
-      ## Set protcol prefix based to transference utility.
-      case "${transfer_util}" in
+      ## Set protocol prefix based to transference utility.
+      case "${transfer_utility}" in
         curl)
           protocol_prefix_onion="http"
           protocol_prefix_clearnet="https"
@@ -1404,7 +1432,7 @@ get_download_links(){
     *)
       log info "Clearnet preferred."
       ## only torify to clearnet is SOCKS proxy is specified
-      test "${transfer_util}" = "rsync" && transfer_util="rsync-ssl"
+      test "${transfer_utility}" = "rsync" && transfer_util="rsync-ssl"
       test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
       ## use to test internet connection
@@ -1474,6 +1502,7 @@ check_signature(){
   log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
   echo "${signify_key}" | signify -V -p - \
    -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
+  log notice "Signature matches."
 }
 
 
@@ -1481,6 +1510,7 @@ check_signature(){
 check_hash(){
   log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
   ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
+  log notice "Checksum matches."
 }
 
 
@@ -1545,7 +1575,8 @@ main(){
 
 transfer_time_large_file="1800"
 transfer_time_small_file="180"
-transfer_size_small_file="200"
+transfer_size_test_connection="200K"
+transfer_size_small_file="2K"
 transfer_size_large_file="2G"
 case ${transfer_utility} in
   curl)
@@ -1555,23 +1586,31 @@ case ${transfer_utility} in
     ## such files this option has no effect even if the file transfer ends
     ## up  being  larger than this given limit.
     transfer_size_opt="--max-filesize"
+    transfer_dryrun_opt=""
+    transfer_output_dir_opt="--output-dir"
+    transfer_output_file_opt="--remote-name"
+    transfer_nomotd_opt=""
     ;;
   rsync*)
     transfer_time_opt="--timeout"
     transfer_size_opt="--max-size"
+    transfer_dryrun_opt="--dry-run"
+    transfer_output_dir_opt=""
+    transfer_output_file_opt=""
+    transfer_nomotd_opt="--no-motd"
     ;;
 esac
 
   if should_download; then
     if test "${dry_run}" != "1"; then
-      log info "Testing internet connection..."
-      #${transfer_utility} ${transfer_time_opt} ${transfer_time_small_file} >/dev/null ||
+      log notice "Testing internet connection..."
       # shellcheck disable=SC2046,SC2086
-      curl --silent --show-error --max-time 180 --fail --fail-early \
-        ${curl_opt_ssl:-} ${transfer_proxy:-} \
-        $(get_proxy_cred netconnection) \
-        --url "${url_origin}" >/dev/null ||
+      ${transfer_utility} ${transfer_dryrun_opt} \
+        ${transfer_time_opt} ${transfer_time_small_file} \
+        ${transfer_size_opt} ${transfer_size_test_connection} \
+        ${url_origin} >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
+      log notice "Connection to ${url_origin} succeeded."
     fi
     get_version "${url_version}"
     log notice "Version: ${guest_version}."
