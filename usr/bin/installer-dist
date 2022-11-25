@@ -647,9 +647,13 @@ install_pkg(){
   pkgs="${*}"
   pkg_not_installed=""
   for pkg in ${pkgs}; do
+    ## Tst if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
-    ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1 ||
+    if ! has "${pkg}" &&
+      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
+    then
       pkg_not_installed="${pkg_not_installed} ${pkg}"
+    fi
   done
 
   if test -n "${pkg_not_installed}"; then
@@ -675,8 +679,11 @@ test_pkg(){
   pkgs="${*}"
   pkg_not_installed=""
   for pkg in ${pkgs}; do
-    ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1 ||
+    if ! has "${pkg}" &&
+      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
+    then
       pkg_not_installed="${pkg_not_installed} ${pkg}"
+    fi
   done
 
   if test -n "${pkg_not_installed}"; then
@@ -1092,8 +1099,8 @@ pre_check(){
     return 0
   fi
 
-  get_system_stat
-  get_virtualization
+  #get_system_stat 
+  #get_virtualization
   get_host_pkgs
 
 }
