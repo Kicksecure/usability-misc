@@ -696,6 +696,8 @@ test_pkg(){
 check_vm_exists_virtualbox(){
   case "${guest}" in
     whonix)
+      ## TODO: fix: fails if one machine fails to import or was deleted
+      ## manually.
       if vboxmanage showvminfo \
         "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1 &&
         vboxmanage showvminfo \
