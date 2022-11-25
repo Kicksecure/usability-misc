@@ -1071,6 +1071,7 @@ get_system_stat(){
     test -r "${directory_prefix}" ||
       die 1 "Directory isn't readable: '${directory_prefix}'."
   fi
+
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
