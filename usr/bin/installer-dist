@@ -95,6 +95,39 @@ has(){ _cmd="$(command -v "${1}")" 2>/dev/null || return 1
   [ -x "${_cmd}" ] || return 1
 }
 
+dirname() {
+  ## Usage: dirname "path"
+
+  ## If '$1' is empty set 'dir' to '.', else '$1'.
+  dir=${1:-.}
+
+  ## Strip all trailing forward-slashes '/' from
+  ## the end of the string.
+  #
+  ## "${dir##*[!/]}": Remove all non-forward-slashes
+  ## from the start of the string, leaving us with only
+  ## the trailing slashes.
+  ## "${dir%%"${}"}": Remove the result of the above
+  ## substitution (a string of forward slashes) from the
+  ## end of the original string.
+  dir=${dir%%"${dir##*[!/]}"}
+
+  ## If the variable *does not* contain any forward slashes
+  ## set its value to '.'.
+  [ "${dir##*/*}" ] && dir=.
+
+  ## Remove everything *after* the last forward-slash '/'.
+  dir=${dir%/*}
+
+  ## Again, strip all trailing forward-slashes '/' from
+  ## the end of the string (see above).
+  dir=${dir%%"${dir##*[!/]}"}
+
+  ## Print the resulting string and if it is empty,
+  ## print '/'.
+  printf '%s\n' "${dir:-/}"
+}
+
 
 ## Capitalize only the first char of a string.
 capitalize_first_char(){
@@ -266,10 +299,13 @@ get_arg(){
 
 
 ## Single source to set opts, can later be used to print the options parsed
+## usage: set_arg variable value
 set_arg(){
-  ## check if variable had already a value assigned
+  ## Check if variable had already a value assigned. Expanding to empty value
+  ## is necessary to avoid eval failing because of unset parameter if variable
+  ## didn't have a value assigned before.
   # shellcheck disable=SC2016
-  eval previous_value="$(echo '${'"${1}:-}")"
+  eval previous_value="$(printf '${%s:-}' "${1}")"
 
   ## Escaping quotes is needed because else it fails if the argument is quoted
   # shellcheck disable=SC2140
@@ -540,9 +576,7 @@ get_host_pkgs(){
           install_signify signify-openbsd
           if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
-          fi
-          ;;
-        "Kicksecure"|"Whonix")
+          fi ;; "Kicksecure"|"Whonix")
           true "Kicksecure/Whonix"
           pkg_mngr="apt"
           pkg_mngr_install="${pkg_mngr} install --yes"
@@ -576,6 +610,35 @@ get_host_pkgs(){
       die 101 "Unsupported system."
       ;;
   esac
+
+  ## Platform independent packages
+  if has signify-openbsd; then
+    ## fix Debian unconventional naming
+    signify(){ signify-openbsd "${@}"; }
+  fi
+
+  has curl || install_pkg curl
+  test_pkg curl
+  has rsync || install_pkg rsync
+  test_pkg rsync
+
+  while true; do
+    has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
+    test_pkg virt-what && nested_virt_tool="virt-what" && break
+    install_pkg virt-what && nested_virt_tool="virt-what" && break
+    break
+  done
+  if test -z "${nested_virt_tool:-}"; then
+    ## no hard fail, not a requirement, good to have only.
+    log warn "Program to detect nested virtualization not found."
+  else
+    ## Check if we are a guest of virtualization.
+    if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
+      log warn "Nested virtualization detected, possibly a user mistake."
+      log warn "For more information about nested virtualization see:"
+      log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
+    fi
+  fi
 }
 
 
@@ -677,7 +740,7 @@ check_vm_exists(){
       check_vm_exists_virtualbox
       ;;
     kvm)
-      true
+      return 0
       ;;
   esac
 }
@@ -879,7 +942,8 @@ import_virtualbox(){
 ## Import KVM images
 import_kvm(){
   ## placeholder
-  die 1 "KVM import not coded."
+  log notice "KVM import not coded, ending run."
+  exit 0
 }
 
 
@@ -895,6 +959,36 @@ get_utilities(){
       die 1 "Failed to find program that checks SHA512 hash sum."
     }
   done
+
+  ## curl|rsync
+  transfer_utility=rsync
+  transfer_time_large_file="1800"
+  transfer_time_small_file="180"
+  transfer_size_test_connection="200K"
+  transfer_size_small_file="2K"
+  transfer_size_large_file="2G"
+  case ${transfer_utility} in
+    curl)
+      transfer_time_opt="--max-time"
+      ## curl max-filesize is not a definitive barrier:
+      ## NOTE:  The file size is not always known prior to download, and for
+      ## such files this option has no effect even if the file transfer ends
+      ## up  being  larger than this given limit.
+      transfer_size_opt="--max-filesize"
+      transfer_dryrun_opt=""
+      transfer_output_dir_opt="--output-dir"
+      transfer_output_file_opt="--remote-name"
+      transfer_nomotd_opt=""
+      ;;
+    rsync*)
+      transfer_time_opt="--timeout"
+      transfer_size_opt="--max-size"
+      transfer_dryrun_opt="--dry-run"
+      transfer_output_dir_opt=""
+      transfer_output_file_opt=""
+      transfer_nomotd_opt="--no-motd"
+      ;;
+  esac
 
   while true; do
     has sudo && sucmd=sudo && break
@@ -947,6 +1041,7 @@ get_system_stat(){
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
+  ## TODO
   ## min_ram_mb not used currently because less than total 4GB is too low
   ## already
   # shellcheck disable=SC2034
@@ -971,6 +1066,10 @@ get_system_stat(){
   if test "${dry_run}" != "1"; then
     mkdir -p "${directory_prefix}" ||
       die 1 "Failed to created directory: '${directory_prefix}'."
+    test -w "${directory_prefix}" ||
+      die 1 "Directory isn't writable: '${directory_prefix}'."
+    test -r "${directory_prefix}" ||
+      die 1 "Directory isn't readable: '${directory_prefix}'."
   fi
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
@@ -986,18 +1085,9 @@ pre_check(){
   get_os
   get_utilities
 
-  ## curl|rsync
-  transfer_utility=rsync
-
   ## below functions are difficult to emulate
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
-    return 0
-  fi
-
-  if has signify-openbsd; then
-    ## fix Debian unconventional naming
-    signify(){ signify-openbsd "${@}"; }
     return 0
   fi
 
@@ -1005,27 +1095,6 @@ pre_check(){
   get_virtualization
   get_host_pkgs
 
-  has curl || install_pkg curl
-  test_pkg curl
-  has rsync || install_pkg rsync
-  test_pkg rsync
-
-  while true; do
-    has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
-    test_pkg virt-what && nested_virt_tool="virt-what" && break
-    install_pkg virt-what && nested_virt_tool="virt-what" && break
-  done
-  if test -z "${nested_virt_tool:-}"; then
-    ## no hard fail, not a requirement, good to have only.
-    log warn "Program to detect nested virtualization not found."
-  else
-    ## Check if we are a guest of virtualization.
-    if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
-      log warn "Nested virtualization detected, possibly a user mistake."
-      log warn "For more information about nested virtualization see:"
-      log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
-    fi
-  fi
 }
 
 
@@ -1053,21 +1122,23 @@ check_tor_proxy(){
       cmd_check_proxy="RSYNC_PROXY=${proxy} rsync -n rsync://fakeurl"
       ;;
   esac
-  response_header="$(${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
+  # shellcheck disable=SC2086
+  response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
   ## grep is necessary to match patterns, because some programs such as rsync
   ## put extra words on the line of the response header:
   ## bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
   if echo "${response_header}" | grep -q "${expected_response_header}"; then
     log notice "Connected to tor SOCKS proxy successfully."
+    log info "Proxy response header:"
     log info "${response_header}."
     return 0
   else
     log error "Unexpected proxy response, maybe not a tor proxy?"
+    log info "Proxy response header:"
     log error "${response_header}."
     return 1
   fi
-
 }
 
 
@@ -1178,7 +1249,7 @@ get_file(){
       ;;
   esac
   # shellcheck disable=SC2046,SC2086
-  download_opt_full="${transfer_util} ${transfer_nomotd_opt} ${transfer_proxy:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+  download_opt_full="${transfer_utility} ${transfer_nomotd_opt} ${transfer_proxy:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   log notice "Downloading ${url:-}."
   log_run "${download_opt_full}" || return 1
@@ -1196,9 +1267,11 @@ download_files(){
   get_file small "${url_guest_file}.sha512sums"
 
   log notice "Checking if files exists locally."
-  if test -e "${directory_prefix}/${guest_file}.${guest_file_ext}" &&
-    test -e "${directory_prefix}/${guest_file}.sha512sums.sig" &&
-    test -e "${directory_prefix}/${guest_file}.sha512sums"
+  if test "${dry_run}" = "1" || {
+    test -f "${directory_prefix}/${guest_file}.${guest_file_ext}" &&
+    test -f "${directory_prefix}/${guest_file}.sha512sums.sig" &&
+    test -f "${directory_prefix}/${guest_file}.sha512sums"
+  }
   then
     log_time
     log_run "touch ${download_flag}"
@@ -1432,7 +1505,7 @@ get_download_links(){
     *)
       log info "Clearnet preferred."
       ## only torify to clearnet is SOCKS proxy is specified
-      test "${transfer_utility}" = "rsync" && transfer_util="rsync-ssl"
+      test "${transfer_utility}" = "rsync" && transfer_utility="rsync-ssl"
       test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
       ## use to test internet connection
@@ -1467,10 +1540,9 @@ get_download_links(){
       ## image file extension
       guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
       ## function to call when importing guest
+      ## TODO
       import_guest="import_kvm"
       start_guest="start_kvm"
-      ## TODO
-      die 1 "KVM code is unfinished."
       ;;
   esac
 }
@@ -1573,33 +1645,6 @@ main(){
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
-transfer_time_large_file="1800"
-transfer_time_small_file="180"
-transfer_size_test_connection="200K"
-transfer_size_small_file="2K"
-transfer_size_large_file="2G"
-case ${transfer_utility} in
-  curl)
-    transfer_time_opt="--max-time"
-    ## curl max-filesize is not a definitive barrier:
-    ## NOTE:  The file size is not always known prior to download, and for
-    ## such files this option has no effect even if the file transfer ends
-    ## up  being  larger than this given limit.
-    transfer_size_opt="--max-filesize"
-    transfer_dryrun_opt=""
-    transfer_output_dir_opt="--output-dir"
-    transfer_output_file_opt="--remote-name"
-    transfer_nomotd_opt=""
-    ;;
-  rsync*)
-    transfer_time_opt="--timeout"
-    transfer_size_opt="--max-size"
-    transfer_dryrun_opt="--dry-run"
-    transfer_output_dir_opt=""
-    transfer_output_file_opt=""
-    transfer_nomotd_opt="--no-motd"
-    ;;
-esac
 
   if should_download; then
     if test "${dry_run}" != "1"; then
@@ -1676,12 +1721,12 @@ Developer options:
  --destroy-existing-guest
                      Required pledge for --reimport.
  -P, --directory-prefix=<dir>
-                     Set directory prefix to save files to. The directory must
-                       already exist and have read and write capabilities for
-                       the calling user. If you change this directory, but the
-                       previously downloaded files are not changed to the new
-                       directory, the download start again.
-                       \$HOME/installer-dist-download (default).
+                     Set absolute path to directory prefix to save files to.
+                       The directory must already exist and have read and
+                       write capabilities for the calling user. If you change
+                       this directory, but the previously downloaded files
+                       are not changed to the new directory, the download
+                       start again. \$HOME/installer-dist-download (default).
  -k, --skip-guest-boot
                      Don't boot guest at the end of run. Default is to start.
  -n, --non-interactive
@@ -1827,13 +1872,33 @@ parse_opt(){
   range_arg guest whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
+  
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
+  
   if test "${reimport}" = "1"; then
     if test -z "${destroy_existing_guest}"; then
       log error "The option --reimport requires --destroy-existing-guest."
       log error "The option --destroy-existing-guest was not set."
       die 1 "User mistake, read the documentation to understand how to use the options."
     fi
+  fi
+
+  if test -n "${directory_prefix}"; then
+    ## Remove trailing slash from directory.
+    directory_prefix="${directory_prefix%*/}"
+    ## Only accept an absolute path.
+    if [ "${directory_prefix}" = "${directory_prefix#/}" ]; then
+      log error "Invalid directory prefix: '${directory_prefix}'."
+      die 1 "Directory prefix can not be a relative path, must be an absolute path."
+    fi
+
+    ## Test if parent directory exists.
+    directory_prefix_parent="$(dirname "${directory_prefix}")"
+    if ! test -d "${directory_prefix_parent}"; then
+      die 1 "Directory doesn't exist: '${directory_prefix_parent}'."
+    fi
+    ## Not possible to check if parent dir is writable because if the prefix
+    ## is set to '~/', the parent '/home' is not writable.
   fi
 
   # shellcheck disable=SC2194
