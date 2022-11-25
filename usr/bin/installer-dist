@@ -710,7 +710,7 @@ check_vm_exists_virtualbox(){
         workstation_exists=1
       fi
       ## Find discrepancies.
-      if test "${workstation_exists}" = "0" && "${gateway_exists}" = "1"
+      if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1"
       then
         log warn "Gateway exists but Workstation doesn't."
       fi
