@@ -696,23 +696,59 @@ test_pkg(){
 check_vm_exists_virtualbox(){
   case "${guest}" in
     whonix)
-      ## TODO: fix: fails if one machine fails to import or was deleted
-      ## manually.
+      ## Test if machine exists.
+      workstation_exists=0
+      gateway_exists=0
       if vboxmanage showvminfo \
-        "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1 &&
-        vboxmanage showvminfo \
+        "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1
+      then
+        gateway_exists=1
+      fi
+      if vboxmanage showvminfo \
         "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
+      then
+        workstation_exists=1
+      fi
+      ## Find discrepancies.
+      if test "${workstation_exists}" = "0" && "${gateway_exists}" = "1"
+      then
+        log warn "Gateway exists but Workstation doesn't."
+      fi
+      if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0"
+      then
+        log warn "Workstation exists but Gateway doesn't."
+      fi
+      ## If either one of the Guests exists, procede to test further options.
+      if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1"
       then
         log notice "Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
+          ## It doesn't try to import only the Workstation or the Gateway,
+          ## it deletes both and imports both.
+          ## An enhancement would be to choose which system to import.
           ## If VMs exists and reimport is set, remove VMs as they are gonna
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          log_run "vboxmanage unregistervm \
-            ${guest_pretty}-Workstation-${interface_all_caps} --delete"
-          log_run "vboxmanage unregistervm \
-            ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+          ## Remove Gateway if it existed before.
+          if test "${gateway_exists}" = "1"; then
+            log_run "vboxmanage unregistervm \
+              ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+          fi
+          ## Remove Workstation if it existed before.
+          if test "${workstation_exists}" = "1"; then
+            log_run "vboxmanage unregistervm \
+              ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+          fi
         else
+          ## One of the guests doesn't exist, but reimport was not set.
+          if test "${workstation_exists}" = "0" ||
+            test "${gateway_exists}" = "0"
+          then
+            test "${workstation_exists}" = "0" &&
+              die 1 "Workstation can't be started because it doesn't exist, try --reimport."
+            test "${gateway_exists}" = "0" &&
+              die 1 "Gateway can't be started because it doesn't exist, try --reimport."
+          fi
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
           check_guest_boot
@@ -801,6 +837,31 @@ check_guest_boot(){
 }
 
 
+## Import VirtualBox images
+import_virtualbox(){
+  log notice "Importing Virtual Machine(s)."
+  ## default to import 1 virtual system
+  vbox_arg="--vsys 0 --eula accept"
+  ## if importing whonix, import 2 virtual systems
+  test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
+  ## import VirtualBox image
+  # shellcheck disable=SC2086
+  log_run "vboxmanage import \
+    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
+    die 105 "Failed to import virtual machines."
+
+  log notice "You can now open the VirtualBox application to use ${guest}."
+}
+
+
+## Import KVM images
+import_kvm(){
+  ## placeholder
+  log notice "KVM import not coded, ending run."
+  exit 0
+}
+
+
 ## Start the hypervisor with the desired guest
 start_virtualbox(){
   log notice "Starting Virtual Machine(s)."
@@ -831,6 +892,8 @@ install_virtualbox_debian_common_end(){
 ## Install VirtualBox on Debian
 install_virtualbox_debian(){
   has vboxmanage && return 0
+  install_pkg apt-transport-https
+  install_pkg apt-transport-tor
   install_pkg fasttrack-archive-keyring
   test_pkg fasttrack-archive-keyring
   if grep -v "#" /etc/apt/sources.list /etc/apt/sources.list.d/*.list | \
@@ -928,31 +991,6 @@ check_license(){
       esac
       ;;
   esac
-}
-
-
-## Import VirtualBox images
-import_virtualbox(){
-  log notice "Importing Virtual Machine(s)."
-  ## default to import 1 virtual system
-  vbox_arg="--vsys 0 --eula accept"
-  ## if importing whonix, import 2 virtual systems
-  test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
-  ## import VirtualBox image
-  # shellcheck disable=SC2086
-  log_run "vboxmanage import \
-    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
-    die 105 "Failed to import virtual machines."
-
-  log notice "You can now open the VirtualBox application to use ${guest}."
-}
-
-
-## Import KVM images
-import_kvm(){
-  ## placeholder
-  log notice "KVM import not coded, ending run."
-  exit 0
 }
 
 
