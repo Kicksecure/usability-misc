@@ -1,3 +1,22 @@
+commit ba6136ea4e87708f01efe501fa7aa339f4559ce4
+Merge: bc67fa0 b6f2f7c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 14:33:18 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit b6f2f7c7f353b709685395ddb87fa2f722af6ed5
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 16:48:11 2022 +0000
+
+    fix testing connnection without proxy
+
+commit bc67fa00feee75392f68865034b4be70a62159a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 07:32:57 2022 -0500
+
+    bumped changelog version
+
 commit fe492b3d1a407b6cfdea04df04bcc4870dea24ef
 Merge: 9bf9e09 8f247d9
 Author: Patrick Schleizer <adrelanos@whonix.org>
