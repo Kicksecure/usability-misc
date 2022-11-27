@@ -1,3 +1,80 @@
+commit fe492b3d1a407b6cfdea04df04bcc4870dea24ef
+Merge: 9bf9e09 8f247d9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 07:28:09 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 8f247d9330e26db18246f0668367efe8093bc26b
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 12:05:57 2022 +0000
+
+    fix rsync with torsocks
+
+commit 9bf9e0971aa145907e496dac85bd308548f719a4
+Merge: ffe1164 5fa0ff3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 05:38:19 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 5fa0ff3eb027f682af1bb22a9069345611e06079
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 23:55:57 2022 +0000
+
+    fix missing test key
+
+commit 49c1b7a4792c29ad4897d0465a7aeeddfe721930
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 18:37:06 2022 +0000
+
+    fix problem if ws/gw exists and the other counterpart doesn't
+
+commit b57c7f650557253f590a68e4c08dbb6ee3c99e77
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:47:35 2022 +0000
+
+    fix shell completion files to complet
+
+commit 5465ca7f0dd0069c8d5328fc642c84afccaf89eb
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:41:37 2022 +0000
+
+    fix testing if package is installed
+
+commit 198664fd801422e2ca7eb27037316f0864ffc9ff
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:29:24 2022 +0000
+
+    add extrace space
+
+commit 4de402387801896ca0d6d4f6d0b589a3783cc44d
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:26:17 2022 +0000
+
+    fix rsync downloads
+    other relevant changes:
+    - fix cmd to check proxy evaluation
+    - better check directory prefix validity
+
+commit bf6bd7f779b5728c60896bdce6c1e859e476b096
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 24 23:25:48 2022 +0000
+
+    improve transfer utility with rsync
+
+commit 879bbc41b7eb564a71a8c91fe1dd3dc6ab74a478
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 24 20:33:02 2022 +0000
+
+    add rsync as transfer util (unfinished)
+
+commit ffe1164c369d3d8cc56f8d373b6c15165fe2d0f9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 23:58:52 2022 -0500
+
+    bumped changelog version
+
 commit c97ed5b0bfd4a481eec1a7949ce72b140a8ff3bd
 Merge: 99564b8 c0b787e
 Author: Patrick Schleizer <adrelanos@whonix.org>
