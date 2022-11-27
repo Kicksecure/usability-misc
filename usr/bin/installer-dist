@@ -1497,48 +1497,58 @@ get_virtualization(){
 get_download_links(){
   case "${guest}" in
     whonix)
-      ## Set protocol prefix based to transference utility.
-      case "${transfer_utility}" in
-        curl)
-          protocol_prefix_onion="http"
-          protocol_prefix_clearnet="https"
-          ;;
-        rsync)
-          protocol_prefix_clearnet="rsync"
-          protocol_prefix_onion="rsync"
-          ;;
-      esac
       ## clearnet project domain
       site_clearnet="whonix.org"
       ## onion project domain
       site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
-      ## clearnet download origin
-      site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
-      ## onion download url
-      site_onion_download="${protocol_prefix_onion}://${site_onion}"
-      ;;
-
-    kicksecure)
       ## Set protocol prefix based to transference utility.
       case "${transfer_utility}" in
         curl)
           protocol_prefix_onion="http"
           protocol_prefix_clearnet="https"
+          ## clearnet download origin
+          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
+          ## onion download url
+          site_onion_download="${protocol_prefix_onion}://download.${site_onion}"
           ;;
         rsync)
           protocol_prefix_clearnet="rsync"
           protocol_prefix_onion="rsync"
+          ## Force mirror to be used.
+          ## clearnet download origin
+          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
+          ## onion download url
+          site_onion_download="${protocol_prefix_onion}://${site_onion}/${guest}"
           ;;
       esac
+      ;;
+
+    kicksecure)
       ## clearnet project domain
       site_clearnet="kicksecure.com"
       ## onion project domain
       site_onion="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
       #site_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
-      ## clearnet download origin
-      site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
-      ## onion download url
-      site_onion_download="${protocol_prefix_onion}://download.${site_onion}"
+      ## Set protocol prefix based to transference utility.
+      case "${transfer_utility}" in
+        curl)
+          protocol_prefix_onion="http"
+          protocol_prefix_clearnet="https"
+          ## clearnet download origin
+          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
+          ## onion download url
+          site_onion_download="${protocol_prefix_onion}://download.${site_onion}"
+          ;;
+        rsync)
+          protocol_prefix_clearnet="rsync"
+          protocol_prefix_onion="rsync"
+          ## Force mirror.
+          ## clearnet download url
+          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
+          ## onion download url
+          site_onion_download="${protocol_prefix_onion}://${site_onion}/${guest}"
+          ;;
+      esac
       ;;
   esac
 
