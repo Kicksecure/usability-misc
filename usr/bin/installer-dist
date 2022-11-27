@@ -1027,7 +1027,7 @@ get_utilities(){
       transfer_dryrun_opt=""
       transfer_output_dir_opt="--output-dir"
       transfer_output_file_opt="--remote-name"
-      transfer_nomotd_opt=""
+      transfer_vebosity_opt=""
       ;;
     rsync*)
       transfer_time_opt="--timeout"
@@ -1035,7 +1035,7 @@ get_utilities(){
       transfer_dryrun_opt="--dry-run"
       transfer_output_dir_opt=""
       transfer_output_file_opt=""
-      transfer_nomotd_opt="--no-motd"
+      transfer_verbosity_opt="--no-motd --verbose --verbose"
       ;;
   esac
 
@@ -1305,7 +1305,7 @@ get_file(){
       ;;
   esac
   # shellcheck disable=SC2046,SC2086
-  download_opt_full="${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_nomotd_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+  download_opt_full="${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   log notice "Downloading ${url:-}."
   log_run "${download_opt_full}" || return 1
