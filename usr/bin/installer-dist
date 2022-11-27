@@ -1715,12 +1715,12 @@ main(){
   if should_download; then
     if test "${dry_run}" != "1"; then
       log notice "Testing internet connection..."
-      # shellcheck disable=SC2046,SC2086
-      log_run "${transfer_proxy_prefix:-} ${transfer_utility}
-        ${transfer_proxy_suffix:-} ${transfer_dryrun_opt}
-        ${transfer_time_opt} ${transfer_time_small_file}
-        ${transfer_size_opt} ${transfer_size_test_connection}
-        ${url_origin}" ||
+      # shellcheck disable=SC2046,SC2086,SC2090
+      ${transfer_proxy_prefix:-} ${transfer_utility} \
+        ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} \
+        ${transfer_time_opt} ${transfer_time_small_file} \
+        ${transfer_size_opt} ${transfer_size_test_connection} \
+        ${url_origin} >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
       log notice "Connection to ${url_origin} succeeded."
     fi
