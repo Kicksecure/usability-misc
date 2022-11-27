@@ -1015,7 +1015,7 @@ get_utilities(){
   transfer_time_small_file="180"
   transfer_size_test_connection="200K"
   transfer_size_small_file="2K"
-  transfer_size_large_file="2G"
+  transfer_size_large_file="3G"
   case ${transfer_utility} in
     curl)
       transfer_time_opt="--max-time"
