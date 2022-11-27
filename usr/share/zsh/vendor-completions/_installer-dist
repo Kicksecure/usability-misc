@@ -1,4 +1,4 @@
-#compdef installer-dist kicksecure-cli kicksecure-xfce whonix-cli whonix-xfce
+#compdef installer-dist kicksecure-installer-cli kicksecure-installer-xfce whonix-installer-cli whonix-installer-xfce
 
 ## Copyright (C) 2022 grass <grass@danwin1210.de>
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
