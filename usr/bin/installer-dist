@@ -610,7 +610,10 @@ get_host_pkgs(){
       die 101 "Unsupported system."
       ;;
   esac
+}
 
+
+get_independent_host_pkgs(){
   ## Platform independent packages
   if has signify-openbsd; then
     ## fix Debian unconventional naming
@@ -893,7 +896,6 @@ install_virtualbox_debian_common_end(){
 install_virtualbox_debian(){
   has vboxmanage && return 0
   install_pkg apt-transport-https
-  install_pkg apt-transport-tor
   install_pkg fasttrack-archive-keyring
   test_pkg fasttrack-archive-keyring
   if grep -v "#" /etc/apt/sources.list /etc/apt/sources.list.d/*.list | \
@@ -1133,23 +1135,23 @@ pre_check(){
   get_os
   get_utilities
 
-  ## below functions are difficult to emulate
+  ## Functions below are difficult to emulate
   if test "${dry_run}" = "1"; then
     log info "Skipping rest or pre_check() because dry_run is set."
     return 0
   fi
 
-  #get_system_stat 
-  #get_virtualization
+  get_system_stat
+  get_virtualization
   get_host_pkgs
+  get_independent_host_pkgs
 
 }
-
 
 ## Generate SOCKS credentials for stream isolation
 get_proxy_cred(){
   test "${transfer_utility}" != "curl" && return 0
-  test -z "${transfer_proxy:-}" && return 0
+  test -z "${transfer_proxy_suffix:-}" && return 0
   proxy_user="anonym"
   proxy_pass="${1:?}"
   printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
@@ -1164,48 +1166,55 @@ check_tor_proxy(){
   ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
   case "${transfer_utility}" in
     curl)
-      cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl -sSI -m 3 http://${proxy}"
+      cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-errors --max-time 3 --head http://${proxy}"
       ;;
     rsync*)
-      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync -n rsync://fakeurl"
+      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync --dry-run rsync://fakeurl"
       ;;
   esac
   # shellcheck disable=SC2086
   response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
-  ## grep is necessary to match patterns, because some programs such as rsync
-  ## put extra words on the line of the response header:
-  ## bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
-  if echo "${response_header}" | grep -q "${expected_response_header}"; then
-    log notice "Connected to tor SOCKS proxy successfully."
-    log info "Proxy response header:"
-    log info "${response_header}."
-    return 0
-  else
-    log error "Unexpected proxy response, maybe not a tor proxy?"
-    log info "Proxy response header:"
-    log error "${response_header}."
-    return 1
-  fi
+  ## Globs are necessary to match patterns in the event the header has more
+  ## characters them expected but still has the expected string.
+  ## Rsync header response example:
+  ##   bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
+  case "${response_header}" in
+    *"${expected_response_header}"*)
+      log info "Proxy response header:"
+      log info "${response_header}."
+      log notice "Connected to tor SOCKS proxy successfully."
+      return 0
+      ;;
+    *)
+      log info "Proxy response header:"
+      log info "${response_header}."
+      log error "Unexpected proxy response, maybe not a tor proxy?"
+      return 1
+  esac
 }
 
 
 ## Set transference proxy depending on transfer utility.
 ## usage: set_transfer_proxy ${proxy}
 set_transfer_proxy(){
+  proxy_port="${1##*:}"
+  proxy_addr="${1%%:*}"
   ## Used for transfers that only curl can do.
   curl_transfer_proxy="--proxy socks5h://${1}"
   ## Set transfer proxy per utility.
   case "${transfer_utility}" in
     curl)
-      transfer_proxy="--proxy socks5h://${1}"
+      transfer_proxy_prefix=""
+      transfer_proxy_suffix="--proxy socks5h://${1}"
       ;;
     rsync*)
+      transfer_proxy_suffix=""
       if has torsocks; then
-        transfer_proxy="torsocks"
+        transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
       elif has nc; then
         ## needs to be nc.openbsd
-        transfer_proxy="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
+        transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
       else
         die 1 "Failed to find program to proxy connections with rsync."
       fi
@@ -1286,7 +1295,6 @@ get_file(){
   ## Round is only used to get a different password every time.
   test -z "${round:-}" && round=10
   round=$((round+1))
-  #curl_full_download="curl --output-dir ${directory_prefix} ${curl_opt_ssl:-} ${transfer_proxy:-} $(get_proxy_cred ${round}) --remote-name "
 
   case "${size}" in
     small)
@@ -1297,7 +1305,7 @@ get_file(){
       ;;
   esac
   # shellcheck disable=SC2046,SC2086
-  download_opt_full="${transfer_utility} ${transfer_nomotd_opt} ${transfer_proxy:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+  download_opt_full="${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_nomotd_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   log notice "Downloading ${url:-}."
   log_run "${download_opt_full}" || return 1
@@ -1920,9 +1928,9 @@ parse_opt(){
   range_arg guest whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
-  
+
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
-  
+
   if test "${reimport}" = "1"; then
     if test -z "${destroy_existing_guest}"; then
       log error "The option --reimport requires --destroy-existing-guest."
