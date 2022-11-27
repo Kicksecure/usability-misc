@@ -486,7 +486,6 @@ log(){
 ## usage: die # "msg"
 ## where '#' is the exit code.
 die(){
-  log_time
   log error "${2}"
   log error "Aborting installer."
   exit "${1}"
@@ -522,6 +521,7 @@ log_time(){
 handle_exit(){
   last_exit="${1}"
   line_number="${2:-0}"
+  log_time
   ## return instead of exit because maybe this is not the last trap.
   test "${last_exit}" = "0" && exit 0
   ## some shells have a bug that displays line 1 as LINENO
@@ -1706,10 +1706,11 @@ main(){
     if test "${dry_run}" != "1"; then
       log notice "Testing internet connection..."
       # shellcheck disable=SC2046,SC2086
-      ${transfer_utility} ${transfer_dryrun_opt} \
-        ${transfer_time_opt} ${transfer_time_small_file} \
-        ${transfer_size_opt} ${transfer_size_test_connection} \
-        ${url_origin} >/dev/null ||
+      log_run "${transfer_proxy_prefix:-} ${transfer_utility}
+        ${transfer_proxy_suffix:-} ${transfer_dryrun_opt}
+        ${transfer_time_opt} ${transfer_time_small_file}
+        ${transfer_size_opt} ${transfer_size_test_connection}
+        ${url_origin}" ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
       log notice "Connection to ${url_origin} succeeded."
     fi
