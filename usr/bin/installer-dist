@@ -1044,6 +1044,7 @@ get_utilities(){
       transfer_output_dir_opt="--output-dir"
       transfer_output_file_opt="--remote-name"
       transfer_verbosity_opt=""
+      transfer_speed_optimization_opt=""
       ;;
     rsync*)
       ## Rsync does not have an option to set maximum time for of operation.
@@ -1063,6 +1064,10 @@ get_utilities(){
       transfer_output_dir_opt=""
       transfer_output_file_opt=""
       transfer_verbosity_opt="--no-motd --progress --verbose --verbose"
+      ## Drawback of --inplace is that if the transfer fails, the file will
+      ## be unusuable until a complete sync happens. As this option implies
+      ## --partial, it is possible to resume from failed transfers.
+      transfer_speed_optimization_opt="--compress --inplace"
       ;;
   esac
 
