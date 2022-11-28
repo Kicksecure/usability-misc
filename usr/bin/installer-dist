@@ -1027,7 +1027,7 @@ get_utilities(){
       transfer_dryrun_opt=""
       transfer_output_dir_opt="--output-dir"
       transfer_output_file_opt="--remote-name"
-      transfer_vebosity_opt=""
+      transfer_verbosity_opt=""
       ;;
     rsync*)
       transfer_time_opt="--timeout"
