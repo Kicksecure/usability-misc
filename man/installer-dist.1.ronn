@@ -130,13 +130,15 @@ Install default flavour and run without questions print info messages:
 ## EXIT CODES
 An exit trap is set to return the exit code of the last command that was
 ran.  Some commands might conflict with the script exit code, and that
-would be considered a bug. As <curl> is important to the script, its exit
-codes are reseverd to not conflict with the script exit code to ease
-debugging.
+would be considered a bug. As <curl> and <rsync> are important to the
+script, its exit codes are reseverd to not conflict with the script exit
+code to ease debugging.
 
     1       Catchall for general errors.
 
     2       Unrecognized option usage.
+
+    3-35    Rsync errors.
 
     3-96    Curl errors.
 
