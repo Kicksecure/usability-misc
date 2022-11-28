@@ -1214,6 +1214,7 @@ set_transfer_proxy(){
         transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
       elif has nc; then
         ## needs to be nc.openbsd
+        # shellcheck disable=SC2089
         transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
       else
         die 1 "Failed to find program to proxy connections with rsync."
