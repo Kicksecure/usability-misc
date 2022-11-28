@@ -1035,7 +1035,7 @@ get_utilities(){
       transfer_dryrun_opt="--dry-run"
       transfer_output_dir_opt=""
       transfer_output_file_opt=""
-      transfer_verbosity_opt="--no-motd --verbose --verbose"
+      transfer_verbosity_opt="--no-motd --progress --verbose --verbose"
       ;;
   esac
 
