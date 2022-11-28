@@ -1,3 +1,43 @@
+commit 0e74860c37430f4712494e33031cb4f4936bf4b6
+Merge: 7dc5af2 e726b83
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 28 06:55:11 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit e726b83763a8a77caae2831a5c5fc6e2e9876bc6
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 23:43:52 2022 +0000
+
+    fix max size for whonix xfce images
+    current version 16.0.8.2 is already 2.1Gib and version 16.0.8.9 is at
+    2.2GiB.
+
+commit b22ad9f64bb9f00c2e743a636235efd8bc51138b
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 22:51:50 2022 +0000
+
+    fix rsync now showing while file was skipped
+
+commit 7dc5af2b2886efae56b51b93420989c76324696f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 16:12:35 2022 -0500
+
+    bumped changelog version
+
+commit 2b736869694298b133e55effb79c2914192aca96
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 20:32:24 2022 +0000
+
+    revert printing testing internet command
+    dumps too much data and only useful for testing
+
+commit 1314b5efb64d8b17043d6f1fc5305e62316fed26
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 20:19:01 2022 +0000
+
+    fix download links
+
 commit ba6136ea4e87708f01efe501fa7aa339f4559ce4
 Merge: bc67fa0 b6f2f7c
 Author: Patrick Schleizer <adrelanos@whonix.org>
