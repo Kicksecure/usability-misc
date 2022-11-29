@@ -1755,7 +1755,7 @@ main(){
       cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
       log info "Executing: $ ${cmd_check_internet}"
       # shellcheck disable=SC2046,SC2086,SC2090
-      eval ${cmd_check_internet} ||
+      eval ${cmd_check_internet} >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
       log notice "Connection to ${url_origin} succeeded."
     fi
