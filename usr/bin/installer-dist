@@ -1296,6 +1296,8 @@ get_version(){
       --max-time ${transfer_max_time_small_file} \
       --max-filesize ${transfer_size_small_file} \
       --url ${1}"
+  ## this is necessary because we log will not be printed as the command is
+  ## assigned to a variable at 'raw_version=$()'.
   if test "${dry_run}" = "1"; then
     log_run "${cmd_raw_version}"
     return 0
