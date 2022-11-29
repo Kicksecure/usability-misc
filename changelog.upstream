@@ -1,3 +1,79 @@
+commit af049aa0843c207567bae25bc1ca60bd33a3a4ef
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 04:20:53 2022 -0500
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit 32336600e44f668547ff3cfafd9c41a61ab19e35
+Merge: dcfba7a 9f2e81d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 04:16:18 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 9f2e81d409a719e74a6580f581db815bde15a843
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 01:00:09 2022 +0000
+
+    fix compression and partial not being used
+
+commit 6b4ac3a26823247e87a7d5d2441b4a23d6e76a52
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 00:57:01 2022 +0000
+
+    fix timeout not accepting user signals
+
+commit 640c7ce164041793920e524c03f4c4d5d61267d1
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 00:39:40 2022 +0000
+
+    print pid
+
+commit ed148ce63c4fb0b146a5c0144ccbd55fbb351da6
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 00:30:57 2022 +0000
+
+    change rsync option from inplace to simply partial
+
+commit 07c8e5f0680188f686147b8ff7fa97cbd42a51e7
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 20:20:03 2022 +0000
+
+    add optimizations for transfers
+
+commit 93a285add5bdf15367a6ce9e4e554007a251be9c
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 18:44:03 2022 +0000
+
+    fix timeout of transfer
+    Each program has different timeout options that work in different ways.
+    Implement program specific timeouts when possible and resort to external
+    core utils utility to ensure the maximum timeout is enforced.
+
+commit e4c6cdf6d3d08af9053a18bf45a24a74c1fd46ce
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 14:00:29 2022 +0000
+
+    fix shellcheck warnings
+
+commit 0888453794c32917bc398af50ee30b72df0090f2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 13:54:14 2022 +0000
+
+    fix variable mispelling
+
+commit 61d7a6f9a03775e57f3d6114ed67c0276b5a404d
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 13:52:48 2022 +0000
+
+    fix rsync now showing progress
+
+commit dcfba7a2d7931195e8a69c8aecebc281b96be888
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 28 06:58:21 2022 -0500
+
+    bumped changelog version
+
 commit 0e74860c37430f4712494e33031cb4f4936bf4b6
 Merge: 7dc5af2 e726b83
 Author: Patrick Schleizer <adrelanos@whonix.org>
