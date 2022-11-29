@@ -1312,7 +1312,7 @@ get_version(){
   [ "${guest_version%%*[^0-9.]*}" ] ||
     die 1 "Invalid guest version: contains unexpected characters."
   ## block string containing more than 12 chars
-  [ "$(printf %s"${guest_version}" | wc -m)" -le 12 ] ||
+  [ "${#guest_version}" -le 12 ] ||
     die 1 "Invalid guest version: contains more than 12 characters."
 }
 
