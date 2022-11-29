@@ -1704,6 +1704,8 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
+  log info "Starting main function."
+  log info "PID: $$"
   set_trap
 
   guest_pretty="$(capitalize_first_char "${guest}")"
@@ -2027,6 +2029,8 @@ parse_opt(){
       fi
       ;;
   esac
+
+  log info "Option parsing ended."
 }
 
 
