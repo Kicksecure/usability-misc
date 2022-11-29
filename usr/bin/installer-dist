@@ -1328,11 +1328,11 @@ get_file(){
 
   case "${size}" in
     small)
-      download_opt_prefix="timeout ${transfer_max_time_small_file}"
+      download_opt_prefix="timeout --foreground ${transfer_max_time_small_file}"
       download_opt="${transfer_size_opt} ${transfer_size_small_file}"
       ;;
     large)
-      download_opt_prefix="timeout ${transfer_max_time_large_file}"
+      download_opt_prefix="timeout --foreground ${transfer_max_time_large_file}"
       download_opt="${transfer_size_opt} ${transfer_size_large_file}"
       ;;
     *)
@@ -1753,7 +1753,7 @@ main(){
     if test "${dry_run}" != "1"; then
       log notice "Testing internet connection..."
       # shellcheck disable=SC2046,SC2086,SC2090
-      timeout ${transfer_max_time_small_file} \
+      timeout --foreground ${transfer_max_time_small_file} \
         ${transfer_proxy_prefix:-} ${transfer_utility} \
         ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} \
         ${transfer_size_opt} ${transfer_size_test_connection} \
