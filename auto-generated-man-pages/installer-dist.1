@@ -175,12 +175,14 @@ Install default flavour and run without questions print info messages:
 .fi
 .IP "" 0
 .SH "EXIT CODES"
-An exit trap is set to return the exit code of the last command that was ran\. Some commands might conflict with the script exit code, and that would be considered a bug\. As \fIcurl\fR is important to the script, its exit codes are reseverd to not conflict with the script exit code to ease debugging\.
+An exit trap is set to return the exit code of the last command that was ran\. Some commands might conflict with the script exit code, and that would be considered a bug\. As \fIcurl\fR and \fIrsync\fR are important to the script, its exit codes are reseverd to not conflict with the script exit code to ease debugging\.
 .IP "" 4
 .nf
 1       Catchall for general errors\.
 
 2       Unrecognized option usage\.
+
+3\-35    Rsync errors\.
 
 3\-96    Curl errors\.
 
