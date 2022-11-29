@@ -714,16 +714,19 @@ check_vm_exists_virtualbox(){
         workstation_exists=1
       fi
       ## Find discrepancies.
-      if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1"
+      if test "${workstation_exists}" = "0" &&
+        test "${gateway_exists}" = "1"
       then
         log warn "Gateway exists but Workstation doesn't."
       fi
-      if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0"
+      if test "${workstation_exists}" = "1" &&
+        test "${gateway_exists}" = "0"
       then
         log warn "Workstation exists but Gateway doesn't."
       fi
-      ## If either one of the Guests exists, procede to test further options.
-      if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1"
+      ## If either one of the Guests exists, procede.
+      if test "${workstation_exists}" = "1" ||
+        test "${gateway_exists}" = "1"
       then
         log notice "Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
@@ -1036,7 +1039,7 @@ get_utilities(){
       ## given period, it will continue.
       transfer_connect_timeout_opt="--connect-timeout ${transfer_connect_timeout}"
       ## curl max-filesize is not a definitive barrier:
-      ## NOTE:  The file size is not always known prior to download, and for
+      ## The file size is not always known prior to download, and for
       ## such files this option has no effect even if the file transfer ends
       ## up  being  larger than this given limit.
       transfer_size_opt="--max-filesize"

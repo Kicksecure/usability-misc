@@ -19,7 +19,7 @@ args=(
   '(- *)'{-V,--version}'[Show version number and quit]'
   '(- *)'{-h,--help}'[Get help for commands and quit]'
   '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
-  '(--no-import)'{--no-import}'[Do not import guest]'
+  '(--no-import)'--no-import'[Do not import guest]'
   '(-k --no-boot)'{-k,--no-boot}'[Do not boot guest]'
   '(--redownload)'--redownload'[Redo download]'
   '(--reimport)'--reimport'[Redo import]'

@@ -21,6 +21,9 @@ Xfce, using the hypervisor of you choice, such as KVM or VirtualBox.
 Options starts with one or two dashes. Long and short options that require
 arguments accept being separated by spaces of an equal sign.
 
+If the same option is specified multiple times, the last assignment will
+be used.
+
 Guest and Interface can be set by changing the script name to the format
 <guest-installer-interface>.
 
