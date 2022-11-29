@@ -1333,7 +1333,7 @@ get_file(){
       ;;
     large)
       download_opt_prefix="timeout --foreground ${transfer_max_time_large_file}"
-      download_opt="${transfer_size_opt} ${transfer_size_large_file}"
+      download_opt="${transfer_speed_optimization_opt} ${transfer_size_opt} ${transfer_size_large_file}"
       ;;
     *)
       log bug "Missing size option for get_file()."
