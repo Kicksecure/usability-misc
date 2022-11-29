@@ -620,6 +620,7 @@ get_independent_host_pkgs(){
     signify(){ signify-openbsd "${@}"; }
   fi
 
+  has timeout || die 1 "Timeout utility is missing."
   has curl || install_pkg curl
   test_pkg curl
   has rsync || install_pkg rsync
@@ -1011,14 +1012,29 @@ get_utilities(){
 
   ## curl|rsync
   transfer_utility=rsync
-  transfer_time_large_file="1800"
-  transfer_time_small_file="180"
+  ## 45m
+  transfer_max_time_large_file="2700"
+  ## 3m
+  transfer_max_time_small_file="180"
+  ## 10m
+  transfer_io_timeout="600"
+  ## 3m
+  transfer_connect_timeout="180"
   transfer_size_test_connection="200K"
   transfer_size_small_file="2K"
   transfer_size_large_file="3G"
   case ${transfer_utility} in
     curl)
-      transfer_time_opt="--max-time"
+      ## Maximum time in seconds that we allow the whole operation to take.
+      ## Option works but as rsync doesn't have it, we are using timeout
+      ## utility from coreutils.
+      #transfer_max_time_opt="--max-time"
+      ## Curl does not have I/O timeout.
+      transfer_io_timeout_opt=""
+      ## Maximum time in seconds that we allow curl's connection to take.
+      ## This only limits the connection phase, so if curl's connect in the
+      ## given period, it will continue.
+      transfer_connect_timeout_opt="--connect-timeout ${transfer_connect_timeout}"
       ## curl max-filesize is not a definitive barrier:
       ## NOTE:  The file size is not always known prior to download, and for
       ## such files this option has no effect even if the file transfer ends
@@ -1027,15 +1043,28 @@ get_utilities(){
       transfer_dryrun_opt=""
       transfer_output_dir_opt="--output-dir"
       transfer_output_file_opt="--remote-name"
-      transfer_vebosity_opt=""
+      transfer_verbosity_opt=""
+      transfer_speed_optimization_opt=""
       ;;
     rsync*)
-      transfer_time_opt="--timeout"
+      ## Rsync does not have an option to set maximum time for of operation.
+      ## Option works but as rsync doesn't have it, we are using timeout
+      ## utility from coreutils.
+      #transfer_max_time_opt=""
+      ## If no data is transferred in the specified time, rsync will exit.
+      transfer_io_timeout_opt="--timeout ${transfer_io_timeout}"
+      ## Amount of time the client will wait for its connection to a server
+      ## to succeed.
+      ## Error when using this option:
+      ##   The --contimeout option may only be used when connecting to an
+      ##   rsync daemon.
+      #transfer_connect_timeout_opt="--contimeout ${transfer_connect_timeout}"
       transfer_size_opt="--max-size"
       transfer_dryrun_opt="--dry-run"
       transfer_output_dir_opt=""
       transfer_output_file_opt=""
-      transfer_verbosity_opt="--no-motd --verbose --verbose"
+      transfer_verbosity_opt="--no-motd --progress --verbose --verbose"
+      transfer_speed_optimization_opt="--compress --partial"
       ;;
   esac
 
@@ -1214,6 +1243,7 @@ set_transfer_proxy(){
         transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
       elif has nc; then
         ## needs to be nc.openbsd
+        # shellcheck disable=SC2089
         transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
       else
         die 1 "Failed to find program to proxy connections with rsync."
@@ -1263,7 +1293,7 @@ get_version(){
   log info "API host: ${1}"
   cmd_raw_version="curl ${curl_transfer_proxy:-} $(get_proxy_cred version) \
       ${curl_opt_ssl:-} \
-      --max-time ${transfer_time_small_file} \
+      --max-time ${transfer_max_time_small_file} \
       --max-filesize ${transfer_size_small_file} \
       --url ${1}"
   if test "${dry_run}" = "1"; then
@@ -1298,14 +1328,19 @@ get_file(){
 
   case "${size}" in
     small)
-      download_opt="${transfer_time_opt} ${transfer_time_small_file} ${transfer_size_opt} ${transfer_size_small_file}"
+      download_opt_prefix="timeout --foreground ${transfer_max_time_small_file}"
+      download_opt="${transfer_size_opt} ${transfer_size_small_file}"
       ;;
     large)
-      download_opt="${transfer_time_opt} ${transfer_time_large_file} ${transfer_size_opt} ${transfer_size_large_file}"
+      download_opt_prefix="timeout --foreground ${transfer_max_time_large_file}"
+      download_opt="${transfer_speed_optimization_opt} ${transfer_size_opt} ${transfer_size_large_file}"
+      ;;
+    *)
+      log bug "Missing size option for get_file()."
       ;;
   esac
   # shellcheck disable=SC2046,SC2086
-  download_opt_full="${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+  download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   log notice "Downloading ${url:-}."
   log_run "${download_opt_full}" || return 1
@@ -1669,6 +1704,8 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
+  log info "Starting main function."
+  log info "PID: $$"
   set_trap
 
   guest_pretty="$(capitalize_first_char "${guest}")"
@@ -1716,9 +1753,9 @@ main(){
     if test "${dry_run}" != "1"; then
       log notice "Testing internet connection..."
       # shellcheck disable=SC2046,SC2086,SC2090
-      ${transfer_proxy_prefix:-} ${transfer_utility} \
+      timeout --foreground ${transfer_max_time_small_file} \
+        ${transfer_proxy_prefix:-} ${transfer_utility} \
         ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} \
-        ${transfer_time_opt} ${transfer_time_small_file} \
         ${transfer_size_opt} ${transfer_size_test_connection} \
         ${url_origin} >/dev/null ||
         die $? "Can't connect to ${url_origin}, perhaps no internet?"
@@ -1992,6 +2029,8 @@ parse_opt(){
       fi
       ;;
   esac
+
+  log info "Option parsing ended."
 }
 
 
