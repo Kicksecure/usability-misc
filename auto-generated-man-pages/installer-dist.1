@@ -57,7 +57,7 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .fi
 .IP "" 0
 .P
-\fB\-s\fR, \fB\-\-log\-level\fR=\fIlevel\fR
+\fB\-l\fR, \fB\-\-log\-level\fR=\fIlevel\fR
 .IP "" 4
 .nf
     Set logging level\. Options: debug, info, notice (default), warn,
@@ -66,11 +66,42 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .fi
 .IP "" 0
 .P
-\fB\-k\fR, \fB\-\-skip\-guest\-boot\fR
+\fB\-k\fR, \fB\-\-no\-boot\fR
 .IP "" 4
 .nf
-    Skip booting guest at the end of the run\. Default is to start
-    guest\.
+    Don't boot guest at the end of the run\. Default is ask to start
+    guest and if non\-interactive is set, start guest by default\.
+.fi
+.IP "" 0
+.P
+\fB\-\-no\-import\fR
+.IP "" 4
+.nf
+    Don't import guest\. Default is to import if not already imported\.
+.fi
+.IP "" 0
+.P
+\fB\-\-redownload\fR
+.IP "" 4
+.nf
+    Set option to force download even if flag of previous
+    successfull download already exists\.
+.fi
+.IP "" 0
+.P
+\fB\-\-reimport\fR
+.IP "" 4
+.nf
+    Redo the import of the guest to the hypervisor\. Will try to import
+    already existing files if found\. This option requires
+    \-\-destroy\-existing\-guest as pledge\.
+.fi
+.IP "" 0
+.P
+\fB\-\-destroy\-existing\-guest\fR
+.IP "" 4
+.nf
+    Required pledge for \-\-reimport\.
 .fi
 .IP "" 0
 .P
@@ -90,31 +121,6 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .nf
     Set non\-interactive mode, instead of questions, defaults will be
     assumed, including accepting the license and starting the guest\.
-.fi
-.IP "" 0
-.P
-\fB\-\-redownload\fR
-.IP "" 4
-.nf
-    Set option to force download even if flag that files were
-    successfully download before already exist\.
-.fi
-.IP "" 0
-.P
-\fB\-\-reimport\fR
-.IP "" 4
-.nf
-    Redo the import of the guest to the hypervisor\. Will try to import
-    already existing files if found\. To download new files, see
-    \-\-redownload option\. This option requires \-\-destroy\-existing\-guest
-    as pledge\.
-.fi
-.IP "" 0
-.P
-\fB\-\-destroy\-existing\-guest\fR
-.IP "" 4
-.nf
-    Required pledge for \-\-reimport\.
 .fi
 .IP "" 0
 .P
@@ -175,12 +181,14 @@ Install default flavour and run without questions print info messages:
 .fi
 .IP "" 0
 .SH "EXIT CODES"
-An exit trap is set to return the exit code of the last command that was ran\. Some commands might conflict with the script exit code, and that would be considered a bug\. As \fIcurl\fR is important to the script, its exit codes are reseverd to not conflict with the script exit code to ease debugging\.
+An exit trap is set to return the exit code of the last command that was ran\. Some commands might conflict with the script exit code, and that would be considered a bug\. As \fIcurl\fR and \fIrsync\fR are important to the script, its exit codes are reseverd to not conflict with the script exit code to ease debugging\.
 .IP "" 4
 .nf
 1       Catchall for general errors\.
 
 2       Unrecognized option usage\.
+
+3\-35    Rsync errors\.
 
 3\-96    Curl errors\.
 

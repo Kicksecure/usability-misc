@@ -801,8 +801,8 @@ check_guest_boot(){
   log info "If you'd like to redownload the image, read about --redownload (safe)."
   log info "If you'd like to reimport the image, read about --reimport (danger)."
   ## Skip guest boot
-  if test "${skip_guest_boot}" = "1"; then
-    log notice "skip_guest_boot is set."
+  if test "${no_boot}" = "1"; then
+    log notice "no_boot is set."
     log notice "User declined to start Virtual Machine(s)."
     log notice "Virtual Machine(s) can be started manually."
     exit
@@ -1783,6 +1783,10 @@ main(){
   ##########################################
   check_integrity
 
+  if test "${no_import}" = "1"; then
+    log notice "Not importing guest because no_import is set."
+    exit 0
+  fi
   ${import_guest}
 
   check_guest_boot
@@ -1814,12 +1818,12 @@ usage(){
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
+ -k, --no-boot       Don't boot guest at the end of run. Default is to start.
+ --no-import         Don't import guest. Default is to import.
  --redownload        Redo the download of the guest instead of stopping if it
-                       was already succesfully downloaded. Won't import files
-                       if already imported, see --reimport option.
+                       was already succesfully downloaded.
  --reimport          Redo the import of the guest to the hypervisor. Will try
-                       to import already existing files if found. To download
-                       new files, see --redownload option. This option
+                       to import already existing files if found. This option
                        requires --destroy-existing-guest as pledge.
  --destroy-existing-guest
                      Required pledge for --reimport.
@@ -1830,8 +1834,6 @@ Developer options:
                        this directory, but the previously downloaded files
                        are not changed to the new directory, the download
                        start again. \$HOME/installer-dist-download (default).
- -k, --skip-guest-boot
-                     Don't boot guest at the end of run. Default is to start.
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -D, --dev           Se development mode. Set version to download empty image.
@@ -1867,7 +1869,8 @@ set_default(){
   dry_run=""
   getversion=""
   getopt=""
-  skip_guest_boot=""
+  no_import=""
+  no_boot=""
   redownload=""
   reimport=""
   destroy_existing_guest=""
@@ -1942,8 +1945,11 @@ parse_opt(){
       n|non-interactive)
         set_arg non_interactive 1
         ;;
-      k|skip-guest-boot)
-        set_arg skip_guest_boot 1
+      k|no-boot)
+        set_arg no_boot 1
+        ;;
+      no-import)
+        set_arg no_import 1
         ;;
       D|dev)
         set_arg dev 1
