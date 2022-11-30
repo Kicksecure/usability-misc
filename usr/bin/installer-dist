@@ -1177,8 +1177,8 @@ pre_check(){
   get_virtualization
   get_host_pkgs
   get_independent_host_pkgs
-
 }
+
 
 ## Generate SOCKS credentials for stream isolation
 get_proxy_cred(){
@@ -1358,9 +1358,9 @@ download_files(){
   log_time
 
   log notice "Downloads will be stored in the directory: '${directory_prefix}'."
-  get_file large "${url_guest_file}.${guest_file_ext}"
-  get_file small "${url_guest_file}.sha512sums.sig"
-  get_file small "${url_guest_file}.sha512sums"
+  get_file large "${url_guest_file}.${guest_file_ext}" || return 1
+  get_file small "${url_guest_file}.sha512sums.sig" || return 1
+  get_file small "${url_guest_file}.sha512sums" || return 1
 
   log notice "Checking if files exists locally."
   if test "${dry_run}" = "1" || {
