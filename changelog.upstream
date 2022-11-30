@@ -1,3 +1,78 @@
+commit 7ca9ffa8934d8e9957cd43458e99b57c1b6f1450
+Merge: edaecb1 6a16463
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Nov 30 13:42:00 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 6a16463132750cf819901d99b964f72d4bf6a849
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 21:44:17 2022 +0000
+
+    misc changes
+
+commit 71e66384b454aa030570d7bdb5c1ddcab3407a7d
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 20:46:38 2022 +0000
+
+    add no-import
+
+commit 9a11cec5b928121042bbe1bf8a4cafb96d4dd284
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 18:29:39 2022 +0000
+
+    fix zsh completion
+
+commit 04981ecfd889d9f418b8def70980e786b1374b27
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 16:17:23 2022 +0000
+
+    explain why the log_run can't be encapsulated
+
+commit edaecb1af7def15f57da835f8a44b41e6f13d6e7
+Merge: 2e77c3b 4f8cd0d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 07:25:15 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 4f8cd0d43c157826219c1990f05f7484515da251
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 12:15:37 2022 +0000
+
+    improve testing variable length
+
+commit 2357aaef1e3eb77f372dfa6b78dab870a6e2049d
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 11:25:45 2022 +0000
+
+    remove unused shellcheck
+
+commit 2e77c3be4ef2d2f2b148fe6101a3ad32b84e013f
+Merge: 5de7697 6209ae0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 06:17:28 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 8d54469b19d267361adbf72f01c8d44cf3ded6b5
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 11:14:36 2022 +0000
+
+    fix curl printing too much information
+
+commit 6209ae0ddd25f2e5b46ca42a9b67ebdf23f5eada
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 11:11:28 2022 +0000
+
+    fix not printing cmd to test internet connection
+
+commit 5de7697bff52f5b790cfd154725ee234d16eb886
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 04:20:54 2022 -0500
+
+    bumped changelog version
+
 commit af049aa0843c207567bae25bc1ca60bd33a3a4ef
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Nov 29 04:20:53 2022 -0500
