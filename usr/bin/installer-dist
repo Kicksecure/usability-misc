@@ -714,16 +714,19 @@ check_vm_exists_virtualbox(){
         workstation_exists=1
       fi
       ## Find discrepancies.
-      if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1"
+      if test "${workstation_exists}" = "0" &&
+        test "${gateway_exists}" = "1"
       then
         log warn "Gateway exists but Workstation doesn't."
       fi
-      if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0"
+      if test "${workstation_exists}" = "1" &&
+        test "${gateway_exists}" = "0"
       then
         log warn "Workstation exists but Gateway doesn't."
       fi
-      ## If either one of the Guests exists, procede to test further options.
-      if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1"
+      ## If either one of the Guests exists, procede.
+      if test "${workstation_exists}" = "1" ||
+        test "${gateway_exists}" = "1"
       then
         log notice "Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
@@ -801,8 +804,8 @@ check_guest_boot(){
   log info "If you'd like to redownload the image, read about --redownload (safe)."
   log info "If you'd like to reimport the image, read about --reimport (danger)."
   ## Skip guest boot
-  if test "${skip_guest_boot}" = "1"; then
-    log notice "skip_guest_boot is set."
+  if test "${no_boot}" = "1"; then
+    log notice "no_boot is set."
     log notice "User declined to start Virtual Machine(s)."
     log notice "Virtual Machine(s) can be started manually."
     exit
@@ -1036,7 +1039,7 @@ get_utilities(){
       ## given period, it will continue.
       transfer_connect_timeout_opt="--connect-timeout ${transfer_connect_timeout}"
       ## curl max-filesize is not a definitive barrier:
-      ## NOTE:  The file size is not always known prior to download, and for
+      ## The file size is not always known prior to download, and for
       ## such files this option has no effect even if the file transfer ends
       ## up  being  larger than this given limit.
       transfer_size_opt="--max-filesize"
@@ -1296,6 +1299,8 @@ get_version(){
       --max-time ${transfer_max_time_small_file} \
       --max-filesize ${transfer_size_small_file} \
       --url ${1}"
+  ## this is necessary because we log will not be printed as the command is
+  ## assigned to a variable at 'raw_version=$()'.
   if test "${dry_run}" = "1"; then
     log_run "${cmd_raw_version}"
     return 0
@@ -1781,6 +1786,10 @@ main(){
   ##########################################
   check_integrity
 
+  if test "${no_import}" = "1"; then
+    log notice "Not importing guest because no_import is set."
+    exit 0
+  fi
   ${import_guest}
 
   check_guest_boot
@@ -1812,12 +1821,12 @@ usage(){
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
+ -k, --no-boot       Don't boot guest at the end of run. Default is to start.
+ --no-import         Don't import guest. Default is to import.
  --redownload        Redo the download of the guest instead of stopping if it
-                       was already succesfully downloaded. Won't import files
-                       if already imported, see --reimport option.
+                       was already succesfully downloaded.
  --reimport          Redo the import of the guest to the hypervisor. Will try
-                       to import already existing files if found. To download
-                       new files, see --redownload option. This option
+                       to import already existing files if found. This option
                        requires --destroy-existing-guest as pledge.
  --destroy-existing-guest
                      Required pledge for --reimport.
@@ -1828,8 +1837,6 @@ Developer options:
                        this directory, but the previously downloaded files
                        are not changed to the new directory, the download
                        start again. \$HOME/installer-dist-download (default).
- -k, --skip-guest-boot
-                     Don't boot guest at the end of run. Default is to start.
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -D, --dev           Se development mode. Set version to download empty image.
@@ -1865,7 +1872,8 @@ set_default(){
   dry_run=""
   getversion=""
   getopt=""
-  skip_guest_boot=""
+  no_import=""
+  no_boot=""
   redownload=""
   reimport=""
   destroy_existing_guest=""
@@ -1940,8 +1948,11 @@ parse_opt(){
       n|non-interactive)
         set_arg non_interactive 1
         ;;
-      k|skip-guest-boot)
-        set_arg skip_guest_boot 1
+      k|no-boot)
+        set_arg no_boot 1
+        ;;
+      no-import)
+        set_arg no_import 1
         ;;
       D|dev)
         set_arg dev 1

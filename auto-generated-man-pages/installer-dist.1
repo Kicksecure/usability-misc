@@ -10,6 +10,8 @@
 .SH "OPTIONS"
 Options starts with one or two dashes\. Long and short options that require arguments accept being separated by spaces of an equal sign\.
 .P
+If the same option is specified multiple times, the last assignment will be used\.
+.P
 Guest and Interface can be set by changing the script name to the format \fIguest\-installer\-interface\fR\.
 .P
 \fB\-g\fR, \fB\-\-guest\fR=\fIguest\fR
@@ -57,7 +59,7 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .fi
 .IP "" 0
 .P
-\fB\-s\fR, \fB\-\-log\-level\fR=\fIlevel\fR
+\fB\-l\fR, \fB\-\-log\-level\fR=\fIlevel\fR
 .IP "" 4
 .nf
     Set logging level\. Options: debug, info, notice (default), warn,
@@ -66,11 +68,42 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .fi
 .IP "" 0
 .P
-\fB\-k\fR, \fB\-\-skip\-guest\-boot\fR
+\fB\-k\fR, \fB\-\-no\-boot\fR
 .IP "" 4
 .nf
-    Skip booting guest at the end of the run\. Default is to start
-    guest\.
+    Don't boot guest at the end of the run\. Default is ask to start
+    guest and if non\-interactive is set, start guest by default\.
+.fi
+.IP "" 0
+.P
+\fB\-\-no\-import\fR
+.IP "" 4
+.nf
+    Don't import guest\. Default is to import if not already imported\.
+.fi
+.IP "" 0
+.P
+\fB\-\-redownload\fR
+.IP "" 4
+.nf
+    Set option to force download even if flag of previous
+    successfull download already exists\.
+.fi
+.IP "" 0
+.P
+\fB\-\-reimport\fR
+.IP "" 4
+.nf
+    Redo the import of the guest to the hypervisor\. Will try to import
+    already existing files if found\. This option requires
+    \-\-destroy\-existing\-guest as pledge\.
+.fi
+.IP "" 0
+.P
+\fB\-\-destroy\-existing\-guest\fR
+.IP "" 4
+.nf
+    Required pledge for \-\-reimport\.
 .fi
 .IP "" 0
 .P
@@ -90,31 +123,6 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .nf
     Set non\-interactive mode, instead of questions, defaults will be
     assumed, including accepting the license and starting the guest\.
-.fi
-.IP "" 0
-.P
-\fB\-\-redownload\fR
-.IP "" 4
-.nf
-    Set option to force download even if flag that files were
-    successfully download before already exist\.
-.fi
-.IP "" 0
-.P
-\fB\-\-reimport\fR
-.IP "" 4
-.nf
-    Redo the import of the guest to the hypervisor\. Will try to import
-    already existing files if found\. To download new files, see
-    \-\-redownload option\. This option requires \-\-destroy\-existing\-guest
-    as pledge\.
-.fi
-.IP "" 0
-.P
-\fB\-\-destroy\-existing\-guest\fR
-.IP "" 4
-.nf
-    Required pledge for \-\-reimport\.
 .fi
 .IP "" 0
 .P
