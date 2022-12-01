@@ -1834,6 +1834,7 @@ usage(){
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
+ --allow-errors      Don't exit on errors. Dirty mode.
  --mirror=<number>   Set mirror acording to index. Choose closest mirror to
                        you if not using onion for faster downloads. Not that
                        if not choosing mirror, defaults to whonix.org for
@@ -1902,6 +1903,7 @@ set_default(){
   reimport=""
   destroy_existing_guest=""
   testers=""
+  allow_errors=""
 }
 
 
@@ -1960,6 +1962,9 @@ parse_opt(){
         ;;
       m|hypervisor)
         get_arg hypervisor
+        ;;
+      allow-errors)
+        set_arg allow_errors 1
         ;;
       redownload)
         set_arg redownload 1
@@ -2042,29 +2047,30 @@ parse_opt(){
   fi
 
   # shellcheck disable=SC2194
-  case 1 in
-    "${getopt}")
-      printf '%s\n' "${arg_saved}"
-      exit 0
-      ;;
-    "${getversion}")
-      printf '%s\n' "${me} ${version}"
-      exit 0
-      ;;
-    "${dev}")
-      if test -z "${guest_version}"; then
-        log info "Setting dev software version."
-        guest_version="16.0.4.2"
-      fi
-      ;;
-    "${dry_run}")
-      if test -z "${guest_version}"; then
-        log info "dry_run set, commands will be printed and not executed"
-        log info "Faking software version because of dry_run."
-        guest_version="16.0.4.2"
-      fi
-      ;;
-  esac
+  if test "${getopt}" = "1"; then
+    printf '%s\n' "${arg_saved}"
+    exit 0
+  fi
+  if test "${getversion}" = "1"; then
+    printf '%s\n' "${me} ${version}"
+    exit 0
+  fi
+  if test "${dev}" = "1"; then
+    if test -z "${guest_version}"; then
+      log info "Setting dev software version."
+      guest_version="16.0.4.2"
+    fi
+  fi
+  if test "${dry_run}" = "1"; then
+    if test -z "${guest_version}"; then
+      log info "dry_run set, commands will be printed and not executed"
+      log info "Faking software version because of dry_run."
+      guest_version="16.0.4.2"
+    fi
+  fi
+  if test "${allow_errors}" = "1"; then
+    set +o errexit
+  fi
 
   log info "Option parsing ended."
 }
