@@ -561,7 +561,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
-          install_pkg nc.openbsd
+          install_pkg netcat-openbsd
           install_virtualbox_debian
           install_signify signify-openbsd
           ;;
@@ -571,7 +571,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
-          install_pkg nc.openbsd
+          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
           install_signify signify-openbsd
           if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
@@ -582,7 +582,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
-          install_pkg nc.openbsd
+          install_pkg netcat-openbsd
           install_virtualbox_kicksecure
           install_signify signify-openbsd
           ;;
