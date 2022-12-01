@@ -906,7 +906,7 @@ install_virtualbox_debian(){
     grep -e "://fasttrack.debian.net" \
     -e grep "://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   then
-    log info "Skipping adding fasttrack because it was already found"
+    log info "Skipped adding fasttrack because it was already found."
   else
     log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
     echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
