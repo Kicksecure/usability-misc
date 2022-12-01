@@ -1173,9 +1173,9 @@ pre_check(){
     return 0
   fi
 
-  get_system_stat
-  get_virtualization
-  get_host_pkgs
+#   get_system_stat
+#   get_virtualization
+#   get_host_pkgs
   get_independent_host_pkgs
 }
 
@@ -1604,8 +1604,7 @@ get_download_links(){
       ## url to download files from
       url_download="${site_onion_download}"
       ## use to query version
-      url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
-      url_version="http://www.${site_onion}/${url_version}"
+      url_version_domain="http://www.${site_onion}"
       ;;
 
     *)
@@ -1619,14 +1618,18 @@ get_download_links(){
       ## url to download files from
       url_download="${site_clearnet_download}"
       ## use to query version
-      url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
-      url_version="https://www.${site_clearnet}/${url_version}"
+      url_version_domain="https://www.${site_clearnet}"
       ;;
   esac
 
 
   case "${hypervisor}" in
     virtualbox)
+      if test "${testers}" = "1"; then
+        url_version_template="VersionTesters"
+      else
+        url_version_template="VersionNew"
+      fi
       ## image signer
       signify_key="${adrelanos_signify}"
       ## url directory to find files of the selected hypervisor
@@ -1639,6 +1642,12 @@ get_download_links(){
       ;;
 
     kvm)
+      if test "${testers}" = "1"; then
+        die 1 "KVM does not have testers version."
+        #url_version_template=""
+      else
+        url_version_template="Version_KVM"
+      fi
       ## image signer
       signify_key="${hulahoop_signify}"
       ## url directory to find files of the selected hypervisor
@@ -1651,6 +1660,10 @@ get_download_links(){
       start_guest="start_kvm"
       ;;
   esac
+
+  url_version_prefix="w/index.php?title=Template:"
+  url_version_suffix="&stable=0&action=raw"
+  url_version="${url_version_domain}/${url_version_prefix}${url_version_template}${url_version_suffix}"
 }
 
 
@@ -1840,6 +1853,7 @@ Developer options:
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -D, --dev           Se development mode. Set version to download empty image.
+ --testers           Set testers version to be downloaded.
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
 File name:
@@ -1868,8 +1882,7 @@ set_default(){
   socks_proxy=""
   onion=""
   non_interactive=""
-  dev=""
-  dry_run=""
+  dev="" dry_run=""
   getversion=""
   getopt=""
   no_import=""
@@ -1877,6 +1890,7 @@ set_default(){
   redownload=""
   reimport=""
   destroy_existing_guest=""
+  testers=""
 }
 
 
@@ -1956,6 +1970,9 @@ parse_opt(){
         ;;
       D|dev)
         set_arg dev 1
+        ;;
+      testers)
+        set_arg testers 1
         ;;
       t|getopt)
         set_arg getopt 1

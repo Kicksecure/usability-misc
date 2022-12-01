@@ -98,6 +98,10 @@ Guest and Interface can be set by changing the script name to the format
         Set non-interactive mode, instead of questions, defaults will be
         assumed, including accepting the license and starting the guest.
 
+`--testers`
+
+        Set testers mode, testers version will be used.
+
 `-D`, `--dev`
 
         Set development mode. Set default version to download empty
