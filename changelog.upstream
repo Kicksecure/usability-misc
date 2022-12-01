@@ -1,9 +1,28 @@
+commit eae3601622155facf7146d7918e711e647ecc251
+Merge: 2a8a1df 302754f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 1 09:03:51 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 2a8a1df7fee72e5880858a3df5ab9b8d6b6d9165
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Nov 30 14:37:55 2022 -0500
+
+    bumped changelog version
+
 commit 7ca9ffa8934d8e9957cd43458e99b57c1b6f1450
 Merge: edaecb1 6a16463
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Nov 30 13:42:00 2022 -0500
 
     Merge remote-tracking branch 'grass/installer'
+
+commit 302754f5f225252881d28147075e91d8955d21a9
+Author: grass <grass@danwin1210.de>
+Date:   Wed Nov 30 18:39:02 2022 +0000
+
+    fix not failing on the first download error
 
 commit 6a16463132750cf819901d99b964f72d4bf6a849
 Author: grass <grass@danwin1210.de>
