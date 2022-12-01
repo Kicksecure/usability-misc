@@ -1249,6 +1249,7 @@ set_transfer_proxy(){
         # shellcheck disable=SC2089
         transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
       else
+        log warn "Neither 'torsocks' not 'nc' (netcat-openbsd) is installed."
         die 1 "Failed to find program to proxy connections with rsync."
       fi
       ;;
