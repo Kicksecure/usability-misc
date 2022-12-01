@@ -38,6 +38,10 @@ _installer_dist()
             COMPREPLY=($(compgen -W "debug info notice warn error" -- "$cur"))
             return
             ;;
+        --mirror )
+            COMPREPLY=($(compgen -W "0 1 2 3 4 5" -- "$cur"))
+            return
+            ;;
     esac
 
     $split && return

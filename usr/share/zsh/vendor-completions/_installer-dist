@@ -1,5 +1,5 @@
 #compdef installer-dist kicksecure-installer-cli kicksecure-installer-xfce whonix-installer-cli whonix-installer-xfce
-
+# vim: set sw=2 sts=2 ts=2 et :
 ## Copyright (C) 2022 grass <grass@danwin1210.de>
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
@@ -19,6 +19,7 @@ args=(
   '(- *)'{-V,--version}'[Show version number and quit]'
   '(- *)'{-h,--help}'[Get help for commands and quit]'
   '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
+  '(--mirror)'--mirror'[Set target mirror]:<number>:->mirrors'
   '(--no-import)'--no-import'[Do not import guest]'
   '(-k --no-boot)'{-k,--no-boot}'[Do not boot guest]'
   '(--redownload)'--redownload'[Redo download]'
@@ -73,6 +74,18 @@ case "$state" in
       'error:Show only error messages'
     )
     _describe -t loglevels 'loglevels' loglevels && ret=0
+    ;;
+  (mirrors)
+    local mirrors
+    mirrors=(
+      '0:[DE] download.whonix.org (onion available)'
+      '1:[DK] mirrors.dotsrc.org (onion available)'
+      '2:[DE] mirror.koljasagorski.de'
+      '3:[HU] quantum-mirror.hu'
+      '4:[PL] ftp.icm.edu.pl'
+      '5:[US] mirrors.gigenet.com'
+    )
+    _describe -t mirrors 'mirrors' mirrors && ret=0
     ;;
 esac
 
