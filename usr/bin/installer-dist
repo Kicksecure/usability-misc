@@ -4,6 +4,7 @@
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 ##
+## Distribution commit: commit-hash-replace-me
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
@@ -2083,10 +2084,16 @@ parse_opt(){
         die 1 "Directory isn't writable: '${directory_prefix}'."
       test -r "${directory_prefix}" ||
         die 1 "Directory isn't readable: '${directory_prefix}'."
-      log_dir="${directory_prefix}/logs"
-      mkdir -p "${log_dir}"
-      log_file="${log_dir}/$(date "+%Y-%m-%d-%H-%M-%S").log"
+      log_dir_main="${directory_prefix}/logs"
+      log_dir_cur="${log_dir_main}/$(date "+%Y%m%d-%H%M%S")"
+      log_file="${log_dir_cur}/log"
+      ## If the commands below fail, it should have failed earlier for the
+      ## parent directory permissions, not below.
+      mkdir -p "${log_dir_cur}"
+      cp "${0}" "${log_dir_cur}"
       touch "${log_file}"
+      log notice "Saving logs to: '${log_file}'."
+      ## Current, logging to file is not finished.
       ## TODO: fix this
       # exec 5>&1 1>> "${log_file}"
       # exec 6>&2 2>> "${log_file}"
