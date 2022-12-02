@@ -1151,16 +1151,6 @@ get_system_stat(){
     log warn "You may encounter problems using a desktop environment."
   fi
 
-  log info "Creating directory: '${directory_prefix}'."
-  if test "${dry_run}" != "1"; then
-    mkdir -p "${directory_prefix}" ||
-      die 1 "Failed to created directory: '${directory_prefix}'."
-    test -w "${directory_prefix}" ||
-      die 1 "Directory isn't writable: '${directory_prefix}'."
-    test -r "${directory_prefix}" ||
-      die 1 "Directory isn't readable: '${directory_prefix}'."
-  fi
-
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
@@ -1181,9 +1171,9 @@ pre_check(){
     return 0
   fi
 
-  # get_system_stat
-  # get_virtualization
-  # get_host_pkgs
+  get_system_stat
+  get_virtualization
+  get_host_pkgs
   get_independent_host_pkgs
 }
 
@@ -1757,9 +1747,9 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
+  set_trap
   log info "Starting main function."
   log info "PID: $$"
-  set_trap
 
   guest_pretty="$(capitalize_first_char "${guest}")"
   interface_pretty="$(capitalize_first_char "${interface}")"
@@ -2084,6 +2074,23 @@ parse_opt(){
     fi
     ## Not possible to check if parent dir is writable because if the prefix
     ## is set to '~/', the parent '/home' is not writable.
+
+    log info "Creating directory: '${directory_prefix}'."
+    if test "${dry_run}" != "1"; then
+      mkdir -p "${directory_prefix}" ||
+        die 1 "Failed to created directory: '${directory_prefix}'."
+      test -w "${directory_prefix}" ||
+        die 1 "Directory isn't writable: '${directory_prefix}'."
+      test -r "${directory_prefix}" ||
+        die 1 "Directory isn't readable: '${directory_prefix}'."
+      log_dir="${directory_prefix}/logs"
+      mkdir -p "${log_dir}"
+      log_file="${log_dir}/$(date "+%Y-%m-%d-%H-%M-%S").log"
+      touch "${log_file}"
+      ## TODO: fix this
+      # exec 5>&1 1>> "${log_file}"
+      # exec 6>&2 2>> "${log_file}"
+    fi
   fi
 
   # shellcheck disable=SC2194
@@ -2120,3 +2127,4 @@ set_default
 parse_name
 parse_opt "${@}"
 main
+
