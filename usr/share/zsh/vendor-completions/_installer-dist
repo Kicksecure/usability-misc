@@ -27,6 +27,7 @@ args=(
   '(--destroy-existing-guest)'--destroy-existing-guest'[Required pledge for --reimport]'
   '(-n --non-interactive)'{-n,--non-interactive}'[Set non-interactive mode]'
   '(--allow-errors)'--allow-errors'[Set dirty mode]'
+  '(--no-show-errors)'--no-show-errors'[Hide errors]'
   '(--testers)'--testers'[Set testers mode]'
   '(-D --dev)'{-D,--dev}'[Set dev mode]'
   '(-d --dry-run)'{-d,--dry-run}'[Set dry-run mode]'

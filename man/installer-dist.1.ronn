@@ -114,7 +114,11 @@ Guest and Interface can be set by changing the script name to the format
 
 `--allow-errors`
 
-        Set dirty mode, don't quit on errors. 
+        Set dirty mode, don't quit on errors.
+
+`--no-show-errors`
+
+        Hide errors, do not print them.
 
 `--testers`
 

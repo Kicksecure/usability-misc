@@ -1857,6 +1857,7 @@ usage(){
  -l, --log-level=<level>
                      Set log level. Options: debug, info,
                        notice (default), warn, error.
+ --no-show-errors    Don't print errors.
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
@@ -1930,6 +1931,7 @@ set_default(){
   destroy_existing_guest=""
   testers=""
   allow_errors=""
+  no_show_errors=""
   mirror=""
 }
 
@@ -1995,6 +1997,9 @@ parse_opt(){
         ;;
       allow-errors)
         set_arg allow_errors 1
+        ;;
+      no-show-errors)
+        set_arg no_show_errors 1
         ;;
       redownload)
         set_arg redownload 1
@@ -2129,9 +2134,19 @@ parse_opt(){
   log info "Option parsing ended."
 }
 
+run_installer(){
+  set_default
+  parse_name
+  parse_opt "${@}"
+  ## A better solution would be great.
+  ## It needs to print to stdoud and to the log file and execute the exit
+  ## trap.
+  if test "${no_show_errors}" = "1"; then
+    exec 2>/dev/null
+    main | tee "${log_file}"
+  else
+    main 2>&1 | tee "${log_file}"
+  fi
+}
 
-set_default
-parse_name
-parse_opt "${@}"
-main
-
+run_installer "${@}"
