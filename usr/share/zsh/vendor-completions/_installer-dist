@@ -21,6 +21,7 @@ args=(
   '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
   '(--mirror)'--mirror'[Set target mirror]:<number>:->mirrors'
   '(--no-import)'--no-import'[Do not import guest]'
+  '(--import-only)'--import-only'[Set VM to import when using whonix]:<vms>:->vms'
   '(-k --no-boot)'{-k,--no-boot}'[Do not boot guest]'
   '(--redownload)'--redownload'[Redo download]'
   '(--reimport)'--reimport'[Redo import]'
@@ -75,6 +76,14 @@ case "$state" in
       'error:Show only error messages'
     )
     _describe -t loglevels 'loglevels' loglevels && ret=0
+    ;;
+  (vms)
+    local vms
+    vms=(
+      'workstation:User workspace machine'
+      'gateway:Proxy machine'
+    )
+    _describe -t vms 'vms' vms && ret=0
     ;;
   (mirrors)
     local mirrors

@@ -747,8 +747,26 @@ check_vm_exists_virtualbox(){
             log_run "vboxmanage unregistervm \
               ${guest_pretty}-Workstation-${interface_all_caps} --delete"
           fi
+        elif test -n "${import_only}"; then
+          ## User is trying to import a single machine. Check if the other
+          ## match exists already.
+          if test "${workstation_exists}" = "1" &&
+            test "${gateway_exists}" = "0" &&
+            test "${import_only}" = "workstation"
+          then
+            die 1 "User is trying to import only the Workstation, but Gateway doesn't exist yet."
+          fi
+          if test "${workstation_exists}" = "0" &&
+            test "${gateway_exists}" = "1" &&
+            test "${import_only}" = "gateway"
+          then
+            die 1 "User is trying to import only the Gateway, but Workstation doesn't exist yet."
+          fi
+          ## User is trying to import the missing guest.
+          return 0
         else
-          ## One of the guests doesn't exist, but reimport was not set.
+          ## One of the guests doesn't exist, but neither reimport nor
+          ## import-only was not set.
           if test "${workstation_exists}" = "0" ||
             test "${gateway_exists}" = "0"
           then
@@ -848,15 +866,42 @@ check_guest_boot(){
 ## Import VirtualBox images
 import_virtualbox(){
   log notice "Importing Virtual Machine(s)."
-  ## default to import 1 virtual system
-  vbox_arg="--vsys 0 --eula accept"
-  ## if importing whonix, import 2 virtual systems
-  test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
+  ## Check how many systems to import.
+  ## vsys 0: gateway
+  ## vsys 1: workstation
+  vm_purge="purgeme"
+  case "${import_only}" in
+    workstation)
+      vbox_arg="--vsys 0 --eula accept --vmname ${vm_purge} vsys 1 --eula accept"
+      ;;
+    gateway)
+      vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept --vmname ${vm_purge}"
+      ;;
+    "")
+      case "${guest}" in
+        whonix)
+          ## if importing whonix, import 2 virtual systems
+          vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept"
+        ;;
+        kicksecure)
+          vbox_arg="--vsys 0 --eula accept"
+        ;;
+      esac
+      ;;
+  esac
   ## import VirtualBox image
   # shellcheck disable=SC2086
   log_run "vboxmanage import \
     ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
     die 105 "Failed to import virtual machines."
+
+  ## VirtualBox does not accept any command to import a single virtual system
+  ## out from an ova with multiple ones.
+  ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
+  if test -n "${import_only}"; then
+    log_run "vboxmanage unregistervm ${vm_purge} --delete" ||
+      die 1 "Failed to remove extraneous virtual system."
+  fi
 
   log notice "You can now open the VirtualBox application to use ${guest}."
 }
@@ -1857,10 +1902,12 @@ usage(){
  -l, --log-level=<level>
                      Set log level. Options: debug, info,
                        notice (default), warn, error.
- --no-show-errors    Don't print errors.
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
+ --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
+                       Options: workstation and gateway'.
+ --no-show-errors    Don't print errors.
  --allow-errors      Don't exit on errors. Dirty mode.
  --mirror=<number>   Set mirror acording to number index. Choose closest
                        mirror to you if not using onion for faster downloads.
@@ -1928,6 +1975,7 @@ set_default(){
   no_boot=""
   redownload=""
   reimport=""
+  import_only=""
   destroy_existing_guest=""
   testers=""
   allow_errors=""
@@ -1995,6 +2043,9 @@ parse_opt(){
       mirror)
         get_arg mirror
         ;;
+      import-only)
+        get_arg import_only
+        ;;
       allow-errors)
         set_arg allow_errors 1
         ;;
@@ -2052,6 +2103,10 @@ parse_opt(){
   range_arg guest whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
+  range_arg import_only workstation gateway
+  if test "${guest}" != "whonix" && test -n "${import_only}"; then
+    die 1 "The option import_only can only be set when the guest is whonix."
+  fi
   test -n "${mirror}" && range_arg mirror 0 1 2 3 4 5
 
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
