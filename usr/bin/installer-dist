@@ -1617,7 +1617,7 @@ get_download_links(){
     "")
       ## no mirror chosen, use default values.
       ## Force mirror to be used.
-      site_download_clearnet="mirrors.dotsrc.org"
+      site_download_clearnet="mirrors.dotsrc.org/${guest}"
       site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
       ;;
     0)
@@ -1625,7 +1625,7 @@ get_download_links(){
       site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
       ;;
     1)
-      site_download_clearnet="mirrors.dotsrc.org"
+      site_download_clearnet="mirrors.dotsrc.org/${guest}"
       site_download_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
       ;;
     2)
