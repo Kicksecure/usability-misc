@@ -282,6 +282,7 @@ begin_optparse(){
 ## the key value
 ## usage: get_arg key
 get_arg(){
+  true "BEGIN get_arg(): '${*}'"
   ## if argument is empty or starts with '-', fail as it possibly is an option
   case "${arg:-}" in
     ""|-*)
@@ -295,13 +296,17 @@ get_arg(){
   ## shift_n default value was assigned when trimming dashes '--' from the
   ## options. If shift_n is equal to zero, '--option arg', if shift_n is not
   ## equal to zero, '--option=arg'
-  [ -z "${shift_n}" ] && shift_n=2
+  if test -z "${shift_n}"; then
+    shift_n=2
+  fi
+  true "END get_arg(): '${*}'"
 }
 
 
 ## Single source to set opts, can later be used to print the options parsed
 ## usage: set_arg variable value
 set_arg(){
+  true "BEGIN set_arg(): '${*}'"
   ## Check if variable had already a value assigned. Expanding to empty value
   ## is necessary to avoid eval failing because of unset parameter if variable
   ## didn't have a value assigned before.
@@ -324,6 +329,7 @@ set_arg(){
       arg_saved="$(printf %s"${arg_saved}" | sed "s|^${1}=.*$|${1}=\"${2}\"|")"
     fi
   fi
+  true "BEGIN set_arg(): '${*}'"
 }
 
 
