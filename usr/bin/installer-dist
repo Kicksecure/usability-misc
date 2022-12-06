@@ -1015,10 +1015,14 @@ check_license(){
 
   case "${dialog_box}" in
     dialog)
+      ## output-fd to stdout because currently 'main 2>&1 | tee file' if used
+      ## and makes the dialog fail to recognize the characters as it is
+      ## receiving from stderr and writing to stdout.
       dialog --erase-on-exit --no-shadow \
         --title "${dialog_title}" \
         --yes-label "Agree" \
         --no-label "Disagree" \
+        --output-fd 1 \
         --yesno "${license}" 640 480 || return 1
       log notice "User agreed with the license."
       ;;
@@ -1799,7 +1803,6 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  set_trap
   log info "Starting main function."
   log info "PID: $$"
 
@@ -2150,9 +2153,13 @@ parse_opt(){
         die 1 "Directory isn't writable: '${directory_prefix}'."
       test -r "${directory_prefix}" ||
         die 1 "Directory isn't readable: '${directory_prefix}'."
-      log_dir_main="${directory_prefix}/logs"
-      log_dir_cur="${log_dir_main}/$(date "+%Y%m%d-%H%M%S")"
-      log_file="${log_dir_cur}/log"
+    fi
+
+    log_dir_main="${directory_prefix}/logs"
+    log_dir_cur="${log_dir_main}/$(date "+%Y%m%d-%H%M%S")"
+    log_file="${log_dir_cur}/log"
+
+    if test "${dry_run}" != "1"; then
       ## If the commands below fail, it should have failed earlier for the
       ## parent directory permissions, not below.
       mkdir -p "${log_dir_cur}"
@@ -2196,6 +2203,7 @@ parse_opt(){
 }
 
 run_installer(){
+  set_trap
   set_default
   parse_name
   parse_opt "${@}"
