@@ -2176,8 +2176,16 @@ parse_opt(){
     fi
 
     log_dir_main="${directory_prefix}/logs"
-    ## log to directory name based on UTC
-    log_dir_cur="${log_dir_main}/$(date -u "+%Y%m%d-%H%M%S")"
+
+    ## Log to integer increasinly to avoid leaking other information such
+    ## as PID or date (even if UTC).
+    if ! test -d "${log_dir_main}/1"; then
+      log_dir_cur="${log_dir_main}/1"
+    else
+      last_run_integer="$(echo "${log_dir_main}"/* | awk '{print NF}')"
+      cur_run_integer=$((last_run_integer+1))
+      log_dir_cur="${log_dir_main}/${cur_run_integer}"
+    fi
     log_file="${log_dir_cur}/log"
 
     if test "${dry_run}" != "1"; then
