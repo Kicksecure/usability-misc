@@ -21,7 +21,7 @@ args=(
   '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
   '(--mirror)'--mirror'[Set target mirror]:<number>:->mirrors'
   '(--no-import)'--no-import'[Do not import guest]'
-  '(--import-only)'--import-only'[Set VM to import when using whonix]:<vms>:->vms'
+  '(--import-only)'--import-only='[Set VM to import when using whonix]:<vms>:->vms'
   '(-k --no-boot)'{-k,--no-boot}'[Do not boot guest]'
   '(--redownload)'--redownload'[Redo download]'
   '(--reimport)'--reimport'[Redo import]'
