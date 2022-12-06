@@ -2208,7 +2208,7 @@ run_installer(){
   parse_name
   parse_opt "${@}"
   ## A better solution would be great.
-  ## It needs to print to stdoud and to the log file and execute the exit
+  ## It needs to print to stdout and to the log file and execute the exit
   ## trap.
   if test "${no_show_errors}" = "1"; then
     exec 2>/dev/null
