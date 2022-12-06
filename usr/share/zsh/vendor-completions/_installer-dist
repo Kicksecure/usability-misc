@@ -19,7 +19,7 @@ args=(
   '(- *)'{-V,--version}'[Show version number and quit]'
   '(- *)'{-h,--help}'[Get help for commands and quit]'
   '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
-  '(--mirror)'--mirror'[Set target mirror]:<number>:->mirrors'
+  '(--mirror)'--mirror='[Set target mirror]:<number>:->mirrors'
   '(--no-import)'--no-import'[Do not import guest]'
   '(--import-only)'--import-only='[Set VM to import when using whonix]:<vms>:->vms'
   '(-k --no-boot)'{-k,--no-boot}'[Do not boot guest]'
