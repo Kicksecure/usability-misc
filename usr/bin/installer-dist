@@ -2210,6 +2210,8 @@ run_installer(){
   ## A better solution would be great.
   ## It needs to print to stdout and to the log file and execute the exit
   ## trap.
+  ## For alternatives, it must execute the exit trap, it just return stdout and
+  ## stderr in the correct order data was sent to them.
   if test "${no_show_errors}" = "1"; then
     exec 2>/dev/null
     main | tee "${log_file}"
