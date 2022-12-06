@@ -739,6 +739,7 @@ check_vm_exists_virtualbox(){
         if test "${reimport}" = "1"; then
           ## Remove Gateway if it exists.
           if test "${gateway_exists}" = "1"; then
+            ## Do not remove gateway if import_only is set to workstation
             if test "${import_only}" = "workstation"; then
               log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
               log info "If you wish to reimport both machines, do not specify import_only."
@@ -750,6 +751,7 @@ check_vm_exists_virtualbox(){
           fi
           ## Remove Workstation if it exists.
           if test "${workstation_exists}" = "1"; then
+            ## Do not remove workstation if import_only is set to gateway
             if test "${import_only}" = "gateway"; then
               log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
               log info "If you wish to reimport both machines, do not specify import_only."
@@ -760,6 +762,8 @@ check_vm_exists_virtualbox(){
             fi
           fi
         elif test -n "${import_only}"; then
+          ## reimport was not set and the import_only is set to the same
+          ## machine that already exists.
           if test "${gateway_exists}" = "1" &&
             test "${import_only}" = "gateway"
           then
