@@ -2176,7 +2176,8 @@ parse_opt(){
     fi
 
     log_dir_main="${directory_prefix}/logs"
-    log_dir_cur="${log_dir_main}/$(date "+%Y%m%d-%H%M%S")"
+    ## log to directory name based on UTC
+    log_dir_cur="${log_dir_main}/$(date -u "+%Y%m%d-%H%M%S")"
     log_file="${log_dir_cur}/log"
 
     if test "${dry_run}" != "1"; then
