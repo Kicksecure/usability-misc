@@ -737,39 +737,38 @@ check_vm_exists_virtualbox(){
       then
         log notice "Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
-          ## It doesn't try to import only the Workstation or the Gateway,
-          ## it deletes both and imports both.
-          ## An enhancement would be to choose which system to import.
-          ## If VMs exists and reimport is set, remove VMs as they are gonna
-          ## be imported later by main.
-          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          ## Remove Gateway if it existed before.
+          ## Remove Gateway if it exists.
           if test "${gateway_exists}" = "1"; then
-            log_run "vboxmanage unregistervm \
-              ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+            if test "${import_only}" = "workstation"; then
+              log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
+              log info "If you wish to reimport both machines, do not specify import_only."
+            else
+              log warn "Deleting previously imported gateway because reimport is set."
+              log_run "vboxmanage unregistervm \
+                ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+            fi
           fi
-          ## Remove Workstation if it existed before.
+          ## Remove Workstation if it exists.
           if test "${workstation_exists}" = "1"; then
-            log_run "vboxmanage unregistervm \
-              ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+            if test "${import_only}" = "gateway"; then
+              log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
+              log info "If you wish to reimport both machines, do not specify import_only."
+            else
+              log warn "Deleting previously imported workstation because reimport is set."
+              log_run "vboxmanage unregistervm \
+                ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+            fi
           fi
         elif test -n "${import_only}"; then
-          ## User is trying to import a single machine. Check if the other
-          ## match exists already.
-          if test "${workstation_exists}" = "1" &&
-            test "${gateway_exists}" = "0" &&
-            test "${import_only}" = "workstation"
-          then
-            die 1 "User is trying to import only the Workstation, but Gateway doesn't exist yet."
-          fi
-          if test "${workstation_exists}" = "0" &&
-            test "${gateway_exists}" = "1" &&
+          if test "${gateway_exists}" = "1" &&
             test "${import_only}" = "gateway"
           then
-            die 1 "User is trying to import only the Gateway, but Workstation doesn't exist yet."
+            die 1 "import_only was set to 'gateway', but it already exists and reimport was not set."
+          elif test "${workstation_exists}" = "1" &&
+            test "${import_only}" = "workstation"
+          then
+            die 1 "import_only was set to 'workstation', but it already exists and reimport was not set."
           fi
-          ## User is trying to import the missing guest.
-          return 0
         else
           ## One of the guests doesn't exist, but neither reimport nor
           ## import-only was not set.
@@ -777,9 +776,9 @@ check_vm_exists_virtualbox(){
             test "${gateway_exists}" = "0"
           then
             test "${workstation_exists}" = "0" &&
-              die 1 "Workstation can't be started because it doesn't exist, try --reimport."
+              die 1 "Workstation can't be started because it doesn't exist, try '--import-only=workstation'."
             test "${gateway_exists}" = "0" &&
-              die 1 "Gateway can't be started because it doesn't exist, try --reimport."
+              die 1 "Gateway can't be started because it doesn't exist, try '--import-only=gateway'."
           fi
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -831,13 +830,13 @@ check_guest_boot(){
   ## Skip guest boot
   if test "${no_boot}" = "1"; then
     log notice "no_boot is set."
-    log notice "User declined to start Virtual Machine(s)."
+    log notice "User declined to start Virtual Machine(s) via command line."
     log notice "Virtual Machine(s) can be started manually."
     exit
   fi
   ## Default to start guest without interaction
   if test "${non_interactive}" = "1"; then
-    ${start_guest}
+    start_guest
     exit
   fi
   ## Ask user to start guest or not
@@ -857,7 +856,7 @@ check_guest_boot(){
   case ${response} in
     ""|[Yy]|[Yy][Ee][Ss])
       log notice "User accepted to start Virtual Machine(s)."
-      ${start_guest}
+      start_guest
       ;;
     *)
       log notice "User declined to start Virtual Machine(s)."
@@ -869,6 +868,22 @@ check_guest_boot(){
 }
 
 
+import_guest(){
+  if test "${no_import}" = "1"; then
+    log notice "Not importing guest because no_import is set."
+    exit 0
+  fi
+
+  case "${hypervisor}" in
+    virtualbox)
+      import_virtualbox
+      ;;
+    kvm)
+      import_kvm
+      ;;
+  esac
+}
+
 ## Import VirtualBox images
 import_virtualbox(){
   log notice "Importing Virtual Machine(s)."
@@ -878,7 +893,7 @@ import_virtualbox(){
   vm_purge="purgeme"
   case "${import_only}" in
     workstation)
-      vbox_arg="--vsys 0 --eula accept --vmname ${vm_purge} vsys 1 --eula accept"
+      vbox_arg="--vsys 0 --eula accept --vmname ${vm_purge} --vsys 1 --eula accept"
       ;;
     gateway)
       vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept --vmname ${vm_purge}"
@@ -920,6 +935,17 @@ import_kvm(){
   exit 0
 }
 
+
+start_guest(){
+  case "${hypervisor}" in
+    virtualbox)
+      start_virtualbox
+      ;;
+    kvm)
+      start_kvm
+      ;;
+  esac
+}
 
 ## Start the hypervisor with the desired guest
 start_virtualbox(){
@@ -1718,8 +1744,6 @@ get_download_links(){
       ## image file extension
       guest_file_ext="ova"
       ## function to call when importing guest
-      import_guest="import_virtualbox"
-      start_guest="start_virtualbox"
       ;;
 
     kvm)
@@ -1737,8 +1761,6 @@ get_download_links(){
       guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
       ## function to call when importing guest
       ## TODO
-      import_guest="import_kvm"
-      start_guest="start_kvm"
       ;;
   esac
 
@@ -1878,13 +1900,7 @@ main(){
   ## BEGIN VERIFICATION, IMPORT AND START ##
   ##########################################
   check_integrity
-
-  if test "${no_import}" = "1"; then
-    log notice "Not importing guest because no_import is set."
-    exit 0
-  fi
-  ${import_guest}
-
+  import_guest
   check_guest_boot
   ########################################
   ## END VERIFICATION, IMPORT AND START ##
