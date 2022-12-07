@@ -1,3 +1,28 @@
+commit 79445b59b867abc7c485fa0f99379a2306a479e1
+Merge: 47d1215 3fe47a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 12:03:47 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 3fe47a3a5dc82f909eefc6779113c91b15c424d6
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 16:55:09 2022 +0000
+
+    allow multiple process to be killed
+
+commit dc07d990fab559243fb17f81319be52cef26d375
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 15:40:22 2022 +0000
+
+    clean run_installer into more functions
+
+commit 47d1215fe8e1e698e6820b388ecc24742dda7880
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 10:07:47 2022 -0500
+
+    bumped changelog version
+
 commit d72af776b4315892fc91bd86779d1ad1f62e51ea
 Merge: 75ac6d4 a663588
 Author: Patrick Schleizer <adrelanos@whonix.org>
