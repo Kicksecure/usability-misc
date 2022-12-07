@@ -1951,8 +1951,6 @@ usage(){
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
- --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
-                       Options: workstation and gateway'.
  --no-show-errors    Don't print errors.
  --allow-errors      Don't exit on errors. Dirty mode.
  --mirror=<number>   Set mirror acording to number index. Choose closest
@@ -1966,13 +1964,15 @@ Developer options:
                          3 [HU] quantum-mirror.hu
                          4 [PL] ftp.icm.edu.pl
                          5 [US] mirrors.gigenet.com
- -k, --no-boot       Don't boot guest at the end of run. Default is to start.
- --no-import         Don't import guest. Default is to import.
  --redownload        Redo the download of the guest instead of stopping if it
                        was already succesfully downloaded.
+ --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
+                       Options: workstation and gateway'.
+ --no-import         Don't import guest. Default is to import.
  --reimport          Redo the import of the guest to the hypervisor. Will try
                        to import already existing files if found. This option
                        requires --destroy-existing-guest as pledge.
+ -k, --no-boot       Don't boot guest at the end of run. Default is to start.
  --destroy-existing-guest
                      Required pledge for --reimport.
  -P, --directory-prefix=<dir>
