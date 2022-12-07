@@ -3,8 +3,6 @@
 ##
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
-##
-## Distribution commit: commit-hash-replace-me
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
@@ -55,7 +53,8 @@ Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 "
 
-version="0.0.1"
+## Version is commit based: https://github.com/Whonix/usability-misc
+version="commit-hash-replace-me"
 me="${0##*/}"
 # shellcheck disable=SC2034
 all_args="${*}"
@@ -526,13 +525,15 @@ log_time(){
 
 ## wrappet to end the exit trap.
 end_exit(){
-  ## Sleep less than a second so the file descriptors have enough time to
-  ## output all the logs to the screen before the background job is killed.
-  sleep 0.5
   ## Reset exit trap.
   trap - EXIT HUP INT QUIT ABRT ALRM TERM
   ## Kill tail PID.
-  kill -9 "${tail_pid}"
+  if test -n "${tail_pid:-}"; then
+    ## Sleep less than a second so the file descriptors have enough time to
+    ## output all the logs to the screen before the background job is killed.
+    sleep 0.5
+    kill -9 "${tail_pid}"
+  fi
   ## Exit with desired exit code.
   exit "${last_exit}"
 }
@@ -543,11 +544,8 @@ handle_exit(){
   last_exit="${1}"
   line_number="${2:-0}"
   log_time
-  ## Exit successfully.
-  if test "${last_exit}" = "0"; then
-    log notice "Exit code: ${last_exit}."
-    end_exit
-  fi
+  ## Exit without errors.
+  test "${last_exit}" = "0" && end_exit
   ## Exit with errors.
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
@@ -1847,7 +1845,7 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  log error "Oh no"
+  log notice "Saving logs to: '${log_file}'."
   log info "Starting main function."
 
   guest_pretty="$(capitalize_first_char "${guest}")"
@@ -2212,7 +2210,6 @@ parse_opt(){
       mkdir -p "${log_dir_cur}"
       cp "${0}" "${log_dir_cur}"
       touch "${log_file}"
-      log notice "Saving logs to: '${log_file}'."
     fi
   fi
 
