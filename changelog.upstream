@@ -1,3 +1,28 @@
+commit d72af776b4315892fc91bd86779d1ad1f62e51ea
+Merge: 75ac6d4 a663588
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 10:07:29 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit a6635880ea1e046f46cbbb96ec2086f4e2ad276f
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 15:04:11 2022 +0000
+
+    fix end exit for options that doesn't hit main
+
+commit e61f0a1b8df836aaabbccba250887ea1d1058898
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 14:45:06 2022 +0000
+
+    improve logging mechanism
+
+commit 75ac6d4d5aff01926dba1819893ada67b796f4f0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 08:15:28 2022 -0500
+
+    bumped changelog version
+
 commit 5e70e4d81e494e66b296f89136b1ac332e8a738d
 Merge: f59a6d7 b0303fc
 Author: Patrick Schleizer <adrelanos@whonix.org>
