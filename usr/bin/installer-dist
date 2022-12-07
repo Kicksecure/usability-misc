@@ -524,28 +524,46 @@ log_time(){
 }
 
 
+## wrappet to end the exit trap.
+end_exit(){
+  ## Sleep less than a second so the file descriptors have enough time to
+  ## output all the logs to the screen before the background job is killed.
+  sleep 0.5
+  ## Reset exit trap.
+  trap - EXIT HUP INT QUIT ABRT ALRM TERM
+  ## Kill tail PID.
+  kill -9 "${tail_pid}"
+  ## Exit with desired exit code.
+  exit "${last_exit}"
+}
+
+
 ## Handle exit trap with line it failed and its exit code.
 handle_exit(){
   last_exit="${1}"
   line_number="${2:-0}"
   log_time
-  ## return instead of exit because maybe this is not the last trap.
-  test "${last_exit}" = "0" && exit 0
+  ## Exit successfully.
+  if test "${last_exit}" = "0"; then
+    log notice "Exit code: ${last_exit}."
+    end_exit
+  fi
+  ## Exit with errors.
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
     log bug "At line: ${line_number}."
     pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n7
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
-      signal_caught="$(kill -l "$(echo "${last_exit}"-128 | bc)")"
-      log error "Received ${signal_caught} signal."
+      if has bc; then
+        signal_caught="$(kill -l "$(echo "${last_exit}"-128 | bc)")"
+        log error "Received ${signal_caught} signal."
+      fi
     fi
-    log error "Exit code: ${last_exit}."
   fi
-  ## reset exit trap
-  trap - EXIT
-  ## leave with desired exit code
-  exit "${last_exit}"
+  ## Print exit code.
+  log error "Exit code: ${last_exit}."
+  end_exit
 }
 
 
@@ -1829,8 +1847,8 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
+  log error "Oh no"
   log info "Starting main function."
-  log info "PID: $$"
 
   guest_pretty="$(capitalize_first_char "${guest}")"
   interface_pretty="$(capitalize_first_char "${interface}")"
@@ -2195,10 +2213,6 @@ parse_opt(){
       cp "${0}" "${log_dir_cur}"
       touch "${log_file}"
       log notice "Saving logs to: '${log_file}'."
-      ## Current, logging to file is not finished.
-      ## TODO: fix this
-      # exec 5>&1 1>> "${log_file}"
-      # exec 6>&2 2>> "${log_file}"
     fi
   fi
 
@@ -2231,22 +2245,37 @@ parse_opt(){
   log info "Option parsing ended."
 }
 
+
+## Wrapper to call all necessary functions in one.
 run_installer(){
+  ## Set trap for common signals.
   set_trap
+  ## Set default values.
   set_default
+  ## Parse script name for wanted values.
   parse_name
+  ## Parse command-line options.
   parse_opt "${@}"
-  ## A better solution would be great.
-  ## It needs to print to stdout and to the log file and execute the exit
-  ## trap.
-  ## For alternatives, it must execute the exit trap, it just return stdout and
-  ## stderr in the correct order data was sent to them.
-  if test "${no_show_errors}" = "1"; then
-    exec 2>/dev/null
-    main | tee "${log_file}"
-  else
-    main 2>&1 | tee "${log_file}"
-  fi
+  ## Logging mechanism.
+  ## Current problem is that command-line option is necessary to hide stderr
+  ## by sending it to /dev/null, while the desired method would be to avoid
+  ## this workaround and simply be able to redirect with 2>/dev/null.
+  ## Send f21/stdout to log file.
+  exec 1> "${log_file}"
+  ## Send fd2/stderr to log file by default.
+  exec 2> "${log_file}"
+  ## If no show errors is set, send fd2/stderr to /dev/null.
+  test "${no_show_errors}" = "1" && exec 2>/dev/null
+  ## Send fd3 to the terminal
+  exec 3> "$(tty)"
+  ## Send output of log file to fd3 and send process to the background.
+  tail -f "${log_file}" >&3 &
+  ## Get background job PID.
+  tail_pid="$!"
+  ## Start main function.
+  main
 }
 
+
+## Run the install script.
 run_installer "${@}"
