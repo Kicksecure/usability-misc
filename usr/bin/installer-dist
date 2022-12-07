@@ -532,7 +532,8 @@ end_exit(){
     ## Sleep less than a second so the file descriptors have enough time to
     ## output all the logs to the screen before the background job is killed.
     sleep 0.3
-    kill -9 "${tail_pid}"
+    # shellcheck disable=SC2086
+    kill -9 ${tail_pid}
   fi
   ## Exit with desired exit code.
   exit "${last_exit}"
