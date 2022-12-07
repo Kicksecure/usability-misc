@@ -4,6 +4,7 @@
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 ##
+## Distribution commit: commit-hash-replace-me
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
@@ -281,6 +282,7 @@ begin_optparse(){
 ## the key value
 ## usage: get_arg key
 get_arg(){
+  true "BEGIN get_arg(): '${*}'"
   ## if argument is empty or starts with '-', fail as it possibly is an option
   case "${arg:-}" in
     ""|-*)
@@ -294,13 +296,17 @@ get_arg(){
   ## shift_n default value was assigned when trimming dashes '--' from the
   ## options. If shift_n is equal to zero, '--option arg', if shift_n is not
   ## equal to zero, '--option=arg'
-  [ -z "${shift_n}" ] && shift_n=2
+  if test -z "${shift_n}"; then
+    shift_n=2
+  fi
+  true "END get_arg(): '${*}'"
 }
 
 
 ## Single source to set opts, can later be used to print the options parsed
 ## usage: set_arg variable value
 set_arg(){
+  true "BEGIN set_arg(): '${*}'"
   ## Check if variable had already a value assigned. Expanding to empty value
   ## is necessary to avoid eval failing because of unset parameter if variable
   ## didn't have a value assigned before.
@@ -323,6 +329,7 @@ set_arg(){
       arg_saved="$(printf %s"${arg_saved}" | sed "s|^${1}=.*$|${1}=\"${2}\"|")"
     fi
   fi
+  true "BEGIN set_arg(): '${*}'"
 }
 
 
@@ -561,7 +568,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
-          install_pkg nc.openbsd
+          install_pkg netcat-openbsd
           install_virtualbox_debian
           install_signify signify-openbsd
           ;;
@@ -571,7 +578,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
-          install_pkg nc.openbsd
+          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
           install_signify signify-openbsd
           if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
@@ -582,7 +589,7 @@ get_host_pkgs(){
           pkg_mngr_install="${pkg_mngr} install --yes"
           pkg_mngr_update="${pkg_mngr} update --yes"
           pkg_mngr_check_installed="dpkg -s"
-          install_pkg nc.openbsd
+          install_pkg netcat-openbsd
           install_virtualbox_kicksecure
           install_signify signify-openbsd
           ;;
@@ -730,31 +737,52 @@ check_vm_exists_virtualbox(){
       then
         log notice "Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
-          ## It doesn't try to import only the Workstation or the Gateway,
-          ## it deletes both and imports both.
-          ## An enhancement would be to choose which system to import.
-          ## If VMs exists and reimport is set, remove VMs as they are gonna
-          ## be imported later by main.
-          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          ## Remove Gateway if it existed before.
+          ## Remove Gateway if it exists.
           if test "${gateway_exists}" = "1"; then
-            log_run "vboxmanage unregistervm \
-              ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+            ## Do not remove gateway if import_only is set to workstation
+            if test "${import_only}" = "workstation"; then
+              log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
+              log info "If you wish to reimport both machines, do not specify import_only."
+            else
+              log warn "Deleting previously imported gateway because reimport is set."
+              log_run "vboxmanage unregistervm \
+                ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+            fi
           fi
-          ## Remove Workstation if it existed before.
+          ## Remove Workstation if it exists.
           if test "${workstation_exists}" = "1"; then
-            log_run "vboxmanage unregistervm \
-              ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+            ## Do not remove workstation if import_only is set to gateway
+            if test "${import_only}" = "gateway"; then
+              log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
+              log info "If you wish to reimport both machines, do not specify import_only."
+            else
+              log warn "Deleting previously imported workstation because reimport is set."
+              log_run "vboxmanage unregistervm \
+                ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+            fi
+          fi
+        elif test -n "${import_only}"; then
+          ## reimport was not set and the import_only is set to the same
+          ## machine that already exists.
+          if test "${gateway_exists}" = "1" &&
+            test "${import_only}" = "gateway"
+          then
+            die 1 "import_only was set to 'gateway', but it already exists and reimport was not set."
+          elif test "${workstation_exists}" = "1" &&
+            test "${import_only}" = "workstation"
+          then
+            die 1 "import_only was set to 'workstation', but it already exists and reimport was not set."
           fi
         else
-          ## One of the guests doesn't exist, but reimport was not set.
+          ## One of the guests doesn't exist, but neither reimport nor
+          ## import-only was not set.
           if test "${workstation_exists}" = "0" ||
             test "${gateway_exists}" = "0"
           then
             test "${workstation_exists}" = "0" &&
-              die 1 "Workstation can't be started because it doesn't exist, try --reimport."
+              die 1 "Workstation can't be started because it doesn't exist, try '--import-only=workstation'."
             test "${gateway_exists}" = "0" &&
-              die 1 "Gateway can't be started because it doesn't exist, try --reimport."
+              die 1 "Gateway can't be started because it doesn't exist, try '--import-only=gateway'."
           fi
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -806,13 +834,13 @@ check_guest_boot(){
   ## Skip guest boot
   if test "${no_boot}" = "1"; then
     log notice "no_boot is set."
-    log notice "User declined to start Virtual Machine(s)."
+    log notice "User declined to start Virtual Machine(s) via command line."
     log notice "Virtual Machine(s) can be started manually."
     exit
   fi
   ## Default to start guest without interaction
   if test "${non_interactive}" = "1"; then
-    ${start_guest}
+    start_guest
     exit
   fi
   ## Ask user to start guest or not
@@ -832,7 +860,7 @@ check_guest_boot(){
   case ${response} in
     ""|[Yy]|[Yy][Ee][Ss])
       log notice "User accepted to start Virtual Machine(s)."
-      ${start_guest}
+      start_guest
       ;;
     *)
       log notice "User declined to start Virtual Machine(s)."
@@ -844,18 +872,61 @@ check_guest_boot(){
 }
 
 
+import_guest(){
+  if test "${no_import}" = "1"; then
+    log notice "Not importing guest because no_import is set."
+    exit 0
+  fi
+
+  case "${hypervisor}" in
+    virtualbox)
+      import_virtualbox
+      ;;
+    kvm)
+      import_kvm
+      ;;
+  esac
+}
+
 ## Import VirtualBox images
 import_virtualbox(){
   log notice "Importing Virtual Machine(s)."
-  ## default to import 1 virtual system
-  vbox_arg="--vsys 0 --eula accept"
-  ## if importing whonix, import 2 virtual systems
-  test "${guest}" = "whonix" && vbox_arg="${vbox_arg} --vsys 1 --eula accept"
+  ## Check how many systems to import.
+  ## vsys 0: gateway
+  ## vsys 1: workstation
+  vm_purge="purgeme"
+  case "${import_only}" in
+    workstation)
+      vbox_arg="--vsys 0 --eula accept --vmname ${vm_purge} --vsys 1 --eula accept"
+      ;;
+    gateway)
+      vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept --vmname ${vm_purge}"
+      ;;
+    "")
+      case "${guest}" in
+        whonix)
+          ## if importing whonix, import 2 virtual systems
+          vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept"
+        ;;
+        kicksecure)
+          vbox_arg="--vsys 0 --eula accept"
+        ;;
+      esac
+      ;;
+  esac
   ## import VirtualBox image
   # shellcheck disable=SC2086
   log_run "vboxmanage import \
     ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
     die 105 "Failed to import virtual machines."
+
+  ## VirtualBox does not accept any command to import a single virtual system
+  ## out from an ova with multiple ones.
+  ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
+  if test -n "${import_only}"; then
+    log_run "vboxmanage unregistervm ${vm_purge} --delete" ||
+      die 1 "Failed to remove extraneous virtual system."
+  fi
 
   log notice "You can now open the VirtualBox application to use ${guest}."
 }
@@ -868,6 +939,17 @@ import_kvm(){
   exit 0
 }
 
+
+start_guest(){
+  case "${hypervisor}" in
+    virtualbox)
+      start_virtualbox
+      ;;
+    kvm)
+      start_kvm
+      ;;
+  esac
+}
 
 ## Start the hypervisor with the desired guest
 start_virtualbox(){
@@ -906,7 +988,7 @@ install_virtualbox_debian(){
     grep -e "://fasttrack.debian.net" \
     -e grep "://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   then
-    log info "Skipping adding fasttrack because it was already found"
+    log info "Skipped adding fasttrack because it was already found."
   else
     log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
     echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
@@ -963,10 +1045,14 @@ check_license(){
 
   case "${dialog_box}" in
     dialog)
+      ## output-fd to stdout because currently 'main 2>&1 | tee file' if used
+      ## and makes the dialog fail to recognize the characters as it is
+      ## receiving from stderr and writing to stdout.
       dialog --erase-on-exit --no-shadow \
         --title "${dialog_title}" \
         --yes-label "Agree" \
         --no-label "Disagree" \
+        --output-fd 1 \
         --yesno "${license}" 640 480 || return 1
       log notice "User agreed with the license."
       ;;
@@ -1015,6 +1101,14 @@ get_utilities(){
 
   ## curl|rsync
   transfer_utility=rsync
+  case "${transfer_utility}" in
+    rsync)
+      rsync=1
+      ;;
+    curl)
+      curl=1
+      ;;
+  esac
   ## 45m
   transfer_max_time_large_file="2700"
   ## 3m
@@ -1143,16 +1237,6 @@ get_system_stat(){
     log warn "You may encounter problems using a desktop environment."
   fi
 
-  log info "Creating directory: '${directory_prefix}'."
-  if test "${dry_run}" != "1"; then
-    mkdir -p "${directory_prefix}" ||
-      die 1 "Failed to created directory: '${directory_prefix}'."
-    test -w "${directory_prefix}" ||
-      die 1 "Directory isn't writable: '${directory_prefix}'."
-    test -r "${directory_prefix}" ||
-      die 1 "Directory isn't readable: '${directory_prefix}'."
-  fi
-
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
@@ -1249,6 +1333,7 @@ set_transfer_proxy(){
         # shellcheck disable=SC2089
         transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
       else
+        log warn "Neither 'torsocks' not 'nc' (netcat-openbsd) is installed."
         die 1 "Failed to find program to proxy connections with rsync."
       fi
       ;;
@@ -1535,62 +1620,86 @@ get_virtualization(){
 ## BEGIN MAIN ##
 ################
 get_download_links(){
+  ## Set upstream links as base, especially for API.
+  ## clearnet project domain
+  site_clearnet_whonix="whonix.org"
+  ## onion project domain
+  site_onion_whonix="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
+  ## clearnet project domain
+  site_clearnet_kicksecure="kicksecure.com"
+  ## onion project domain
+  site_onion_kicksecure="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+
   case "${guest}" in
     whonix)
-      ## clearnet project domain
-      site_clearnet="whonix.org"
-      ## onion project domain
-      site_onion="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
-      ## Set protocol prefix based to transference utility.
-      case "${transfer_utility}" in
-        curl)
-          protocol_prefix_onion="http"
-          protocol_prefix_clearnet="https"
-          ## clearnet download origin
-          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
-          ## onion download url
-          site_onion_download="${protocol_prefix_onion}://download.${site_onion}"
-          ;;
-        rsync)
-          protocol_prefix_clearnet="rsync"
-          protocol_prefix_onion="rsync"
-          ## Force mirror to be used.
-          ## clearnet download origin
-          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
-          ## onion download url
-          site_onion_download="${protocol_prefix_onion}://${site_onion}/${guest}"
-          ;;
-      esac
+      site_clearnet="${site_clearnet_whonix}"
+      site_onion="${site_onion_whonix}"
       ;;
-
     kicksecure)
-      ## clearnet project domain
-      site_clearnet="kicksecure.com"
-      ## onion project domain
-      site_onion="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
-      #site_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
-      ## Set protocol prefix based to transference utility.
-      case "${transfer_utility}" in
-        curl)
-          protocol_prefix_onion="http"
-          protocol_prefix_clearnet="https"
-          ## clearnet download origin
-          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
-          ## onion download url
-          site_onion_download="${protocol_prefix_onion}://download.${site_onion}"
-          ;;
-        rsync)
-          protocol_prefix_clearnet="rsync"
-          protocol_prefix_onion="rsync"
-          ## Force mirror.
-          ## clearnet download url
-          site_clearnet_download="${protocol_prefix_clearnet}://mirrors.dotsrc.org/${guest}"
-          ## onion download url
-          site_onion_download="${protocol_prefix_onion}://${site_onion}/${guest}"
-          ;;
-      esac
+      site_clearnet="${site_clearnet_kicksecure}"
+      site_onion="${site_onion_kicksecure}"
       ;;
   esac
+
+  ## ${variable+string} means use string as value if variable is not empty.
+  ## get download links by mirror of choice.
+  case "${mirror}" in
+    "")
+      ## no mirror chosen, use default values.
+      ## Force mirror to be used.
+      site_download_clearnet="mirrors.dotsrc.org/${guest}"
+      site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
+      ;;
+    0)
+      site_download_clearnet="${curl+download.}${site_clearnet}${rsync+/${guest}}"
+      site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
+      ;;
+    1)
+      site_download_clearnet="mirrors.dotsrc.org/${guest}"
+      site_download_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
+      ;;
+    2)
+      site_download_clearnet="mirror.koljasagorski.de/${guest}"
+      site_download_onion=""
+      ;;
+    3)
+      site_download_clearnet="quantum-mirror.hu/mirrors/pub/${guest}"
+      site_download_onion=""
+      ;;
+    4)
+      ## does not have TLS for Rsync
+      ## When using rsync-ssl, this message appears:
+      ##   rsync: did not see server greeting
+      die 1 "Mirror ${mirror} doesn't support TLS for rsync."
+      site_download_clearnet="ftp.icm.edu.pl/pub/Linux/dist/${guest}"
+      site_download_onion=""
+      ;;
+    5)
+      die 1 "Mirror ${mirror} is currently using an invalid certificate."
+      site_download_clearnet="mirror.gigenet.com/${guest}"
+      site_download_onion=""
+      ;;
+    *)
+      ## range_arg should have catch this error before, just safeguarding.
+      log bug "Invalid mirror number: '${mirror}'."
+      ;;
+  esac
+
+  case "${transfer_utility}" in
+    curl)
+      protocol_prefix_clearnet="https"
+      protocol_prefix_onion="http"
+      ;;
+    rsync)
+      protocol_prefix_clearnet="rsync"
+      protocol_prefix_onion="rsync"
+      ;;
+  esac
+
+  ## clearnet download url
+  url_download_clearnet="${protocol_prefix_clearnet}://${site_download_clearnet}"
+  ## onion download url
+  url_download_onion="${protocol_prefix_onion}://${site_download_onion}"
 
 
   case "${onion}" in
@@ -1602,10 +1711,11 @@ get_download_links(){
       ## use to test internet connection
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
       ## url to download files from
-      url_download="${site_onion_download}"
+      test -n "${site_download_onion}" ||
+        die 1 "Mirror ${mirror} doesn't provide an onion service."
+      url_download="${url_download_onion}"
       ## use to query version
-      url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
-      url_version="http://www.${site_onion}/${url_version}"
+      url_version_domain="http://www.${site_onion}"
       ;;
 
     *)
@@ -1617,16 +1727,20 @@ get_download_links(){
       ## use to test internet connection
       url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
       ## url to download files from
-      url_download="${site_clearnet_download}"
+      url_download="${url_download_clearnet}"
       ## use to query version
-      url_version="w/index.php?title=Template:VersionNew&stable=0&action=raw"
-      url_version="https://www.${site_clearnet}/${url_version}"
+      url_version_domain="https://www.${site_clearnet}"
       ;;
   esac
 
 
   case "${hypervisor}" in
     virtualbox)
+      if test "${testers}" = "1"; then
+        url_version_template="VersionTesters"
+      else
+        url_version_template="VersionNew"
+      fi
       ## image signer
       signify_key="${adrelanos_signify}"
       ## url directory to find files of the selected hypervisor
@@ -1634,11 +1748,15 @@ get_download_links(){
       ## image file extension
       guest_file_ext="ova"
       ## function to call when importing guest
-      import_guest="import_virtualbox"
-      start_guest="start_virtualbox"
       ;;
 
     kvm)
+      if test "${testers}" = "1"; then
+        die 1 "KVM does not have testers version."
+        #url_version_template=""
+      else
+        url_version_template="Version_KVM"
+      fi
       ## image signer
       signify_key="${hulahoop_signify}"
       ## url directory to find files of the selected hypervisor
@@ -1647,10 +1765,12 @@ get_download_links(){
       guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
       ## function to call when importing guest
       ## TODO
-      import_guest="import_kvm"
-      start_guest="start_kvm"
       ;;
   esac
+
+  url_version_prefix="w/index.php?title=Template:"
+  url_version_suffix="&stable=0&action=raw"
+  url_version="${url_version_domain}/${url_version_prefix}${url_version_template}${url_version_suffix}"
 }
 
 
@@ -1711,7 +1831,6 @@ main(){
   ###############
   log info "Starting main function."
   log info "PID: $$"
-  set_trap
 
   guest_pretty="$(capitalize_first_char "${guest}")"
   interface_pretty="$(capitalize_first_char "${interface}")"
@@ -1785,13 +1904,7 @@ main(){
   ## BEGIN VERIFICATION, IMPORT AND START ##
   ##########################################
   check_integrity
-
-  if test "${no_import}" = "1"; then
-    log notice "Not importing guest because no_import is set."
-    exit 0
-  fi
-  ${import_guest}
-
+  import_guest
   check_guest_boot
   ########################################
   ## END VERIFICATION, IMPORT AND START ##
@@ -1821,6 +1934,21 @@ usage(){
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
 Developer options:
+ --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
+                       Options: workstation and gateway'.
+ --no-show-errors    Don't print errors.
+ --allow-errors      Don't exit on errors. Dirty mode.
+ --mirror=<number>   Set mirror acording to number index. Choose closest
+                       mirror to you if not using onion for faster downloads.
+                       Not that if not choosing mirror, defaults to whonix.org
+                       for plainnet and dotsrc.org correspondent for onion.
+                       Mirrors index:
+                         0 [DE] download.whonix.org (onion available)
+                         1 [DK] mirrors.dotsrc.org (onion available)
+                         2 [DE] mirror.koljasagorski.de
+                         3 [HU] quantum-mirror.hu
+                         4 [PL] ftp.icm.edu.pl
+                         5 [US] mirrors.gigenet.com
  -k, --no-boot       Don't boot guest at the end of run. Default is to start.
  --no-import         Don't import guest. Default is to import.
  --redownload        Redo the download of the guest instead of stopping if it
@@ -1840,6 +1968,7 @@ Developer options:
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -D, --dev           Se development mode. Set version to download empty image.
+ --testers           Set testers version to be downloaded.
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
 File name:
@@ -1868,15 +1997,19 @@ set_default(){
   socks_proxy=""
   onion=""
   non_interactive=""
-  dev=""
-  dry_run=""
+  dev="" dry_run=""
   getversion=""
   getopt=""
   no_import=""
   no_boot=""
   redownload=""
   reimport=""
+  import_only=""
   destroy_existing_guest=""
+  testers=""
+  allow_errors=""
+  no_show_errors=""
+  mirror=""
 }
 
 
@@ -1936,6 +2069,18 @@ parse_opt(){
       m|hypervisor)
         get_arg hypervisor
         ;;
+      mirror)
+        get_arg mirror
+        ;;
+      import-only)
+        get_arg import_only
+        ;;
+      allow-errors)
+        set_arg allow_errors 1
+        ;;
+      no-show-errors)
+        set_arg no_show_errors 1
+        ;;
       redownload)
         set_arg redownload 1
         ;;
@@ -1956,6 +2101,9 @@ parse_opt(){
         ;;
       D|dev)
         set_arg dev 1
+        ;;
+      testers)
+        set_arg testers 1
         ;;
       t|getopt)
         set_arg getopt 1
@@ -1984,6 +2132,11 @@ parse_opt(){
   range_arg guest whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
+  range_arg import_only workstation gateway
+  if test "${guest}" != "whonix" && test -n "${import_only}"; then
+    die 1 "The option import_only can only be set when the guest is whonix."
+  fi
+  test -n "${mirror}" && range_arg mirror 0 1 2 3 4 5
 
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
 
@@ -2011,38 +2164,89 @@ parse_opt(){
     fi
     ## Not possible to check if parent dir is writable because if the prefix
     ## is set to '~/', the parent '/home' is not writable.
+
+    log info "Creating directory: '${directory_prefix}'."
+    if test "${dry_run}" != "1"; then
+      mkdir -p "${directory_prefix}" ||
+        die 1 "Failed to created directory: '${directory_prefix}'."
+      test -w "${directory_prefix}" ||
+        die 1 "Directory isn't writable: '${directory_prefix}'."
+      test -r "${directory_prefix}" ||
+        die 1 "Directory isn't readable: '${directory_prefix}'."
+    fi
+
+    log_dir_main="${directory_prefix}/logs"
+
+    ## Log to integer increasinly to avoid leaking other information such
+    ## as PID or date (even if UTC).
+    if ! test -d "${log_dir_main}/1"; then
+      log_dir_cur="${log_dir_main}/1"
+    else
+      last_run_integer="$(echo "${log_dir_main}"/* | awk '{print NF}')"
+      cur_run_integer=$((last_run_integer+1))
+      log_dir_cur="${log_dir_main}/${cur_run_integer}"
+    fi
+    log_file="${log_dir_cur}/log"
+
+    if test "${dry_run}" != "1"; then
+      ## If the commands below fail, it should have failed earlier for the
+      ## parent directory permissions, not below.
+      mkdir -p "${log_dir_cur}"
+      cp "${0}" "${log_dir_cur}"
+      touch "${log_file}"
+      log notice "Saving logs to: '${log_file}'."
+      ## Current, logging to file is not finished.
+      ## TODO: fix this
+      # exec 5>&1 1>> "${log_file}"
+      # exec 6>&2 2>> "${log_file}"
+    fi
   fi
 
   # shellcheck disable=SC2194
-  case 1 in
-    "${getopt}")
-      printf '%s\n' "${arg_saved}"
-      exit 0
-      ;;
-    "${getversion}")
-      printf '%s\n' "${me} ${version}"
-      exit 0
-      ;;
-    "${dev}")
-      if test -z "${guest_version}"; then
-        log info "Setting dev software version."
-        guest_version="16.0.4.2"
-      fi
-      ;;
-    "${dry_run}")
-      if test -z "${guest_version}"; then
-        log info "dry_run set, commands will be printed and not executed"
-        log info "Faking software version because of dry_run."
-        guest_version="16.0.4.2"
-      fi
-      ;;
-  esac
+  if test "${getopt}" = "1"; then
+    printf '%s\n' "${arg_saved}"
+    exit 0
+  fi
+  if test "${getversion}" = "1"; then
+    printf '%s\n' "${me} ${version}"
+    exit 0
+  fi
+  if test "${dev}" = "1"; then
+    if test -z "${guest_version}"; then
+      log info "Setting dev software version."
+      guest_version="16.0.4.2"
+    fi
+  fi
+  if test "${dry_run}" = "1"; then
+    if test -z "${guest_version}"; then
+      log info "dry_run set, commands will be printed and not executed"
+      log info "Faking software version because of dry_run."
+      guest_version="16.0.4.2"
+    fi
+  fi
+  if test "${allow_errors}" = "1"; then
+    set +o errexit
+  fi
 
   log info "Option parsing ended."
 }
 
+run_installer(){
+  set_trap
+  set_default
+  parse_name
+  parse_opt "${@}"
+  ## A better solution would be great.
+  ## It needs to print to stdout and to the log file and execute the exit
+  ## trap.
+  ## For alternatives, it must execute the exit trap, it just return stdout and
+  ## stderr in the correct order data was sent to them.
+  if test "${no_show_errors}" = "1"; then
+    exec 2>/dev/null
+    main | tee "${log_file}"
+  else
+    main 2>&1 | tee "${log_file}"
+  fi
+}
 
-set_default
-parse_name
-parse_opt "${@}"
-main
+run_installer "${@}"

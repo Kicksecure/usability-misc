@@ -15,7 +15,8 @@ _installer_dist()
         --guest-version | --socks-proxy | --onion | --non-interactive | \
             --no-import | --no-boot | --redownload | --reimport | \
             --destroy-existing-guest | --dev | --dry-run | --getopt | \
-            --version | --help )
+            --no-show-errors | --allow-errors | --testers | --version | \
+            --help )
             return
             ;;
         --directory-prefix )
@@ -36,6 +37,14 @@ _installer_dist()
             ;;
         --log-level )
             COMPREPLY=($(compgen -W "debug info notice warn error" -- "$cur"))
+            return
+            ;;
+        --import-only )
+            COMPREPLY=($(compgen -W "gateway workstation" -- "$cur"))
+            return
+            ;;
+        --mirror )
+            COMPREPLY=($(compgen -W "0 1 2 3 4 5" -- "$cur"))
             return
             ;;
     esac

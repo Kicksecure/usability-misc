@@ -83,6 +83,14 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .fi
 .IP "" 0
 .P
+\fB\-\-import\-only\fR=\fIvm\fR
+.IP "" 4
+.nf
+    Import only a single Virtual Machine when the guest is whonix\.
+    Options: gateway, workstation\.
+.fi
+.IP "" 0
+.P
 \fB\-\-redownload\fR
 .IP "" 4
 .nf
@@ -123,6 +131,44 @@ Guest and Interface can be set by changing the script name to the format \fIgues
 .nf
     Set non\-interactive mode, instead of questions, defaults will be
     assumed, including accepting the license and starting the guest\.
+.fi
+.IP "" 0
+.P
+\fB\-\-mirror\fR=\fInumber\fR
+.IP "" 4
+.nf
+    Set mirror acording to number index\. Choose closest mirror to
+    you if not using onion for faster downloads\.  Not that if not
+    choosing mirror, defaults to whonix\.org for plainnet and
+    dotsrc\.org correspondent for onion\.
+    Mirrors index:
+      0 [DE] download\.whonix\.org (onion available)
+      1 [DK] mirrors\.dotsrc\.org (onion available)
+      2 [DE] mirror\.koljasagorski\.de
+      3 [HU] quantum\-mirror\.hu
+      4 [PL] ftp\.icm\.edu\.pl
+      5 [US] mirrors\.gigenet\.com
+.fi
+.IP "" 0
+.P
+\fB\-\-allow\-errors\fR
+.IP "" 4
+.nf
+    Set dirty mode, don't quit on errors\.
+.fi
+.IP "" 0
+.P
+\fB\-\-no\-show\-errors\fR
+.IP "" 4
+.nf
+    Hide errors, do not print them\.
+.fi
+.IP "" 0
+.P
+\fB\-\-testers\fR
+.IP "" 4
+.nf
+    Set testers mode, testers version will be used\.
 .fi
 .IP "" 0
 .P
