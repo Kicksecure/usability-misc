@@ -1,3 +1,150 @@
+commit 5e70e4d81e494e66b296f89136b1ac332e8a738d
+Merge: f59a6d7 b0303fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 07:58:32 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit b0303fc33d0327de5b257f6fb2843d1bca87cfeb
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 18:43:22 2022 +0000
+
+    change date logging to increasing number
+
+commit 37d3ecd48553a1e136dd7196572a49b068cd9c15
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 18:07:38 2022 +0000
+
+    fix date to be utc
+
+commit c6c7353f18e8414c38021f6a3d97ccb07f60d197
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 17:47:03 2022 +0000
+
+    add comments to explain import_only functionality
+
+commit 4ebd1bed4f1330b5403635283d52777fa8f53a46
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 17:40:28 2022 +0000
+
+    fix import_only to only manage the specified vm
+
+commit 51ee45680e506092d5df2538db4f008fd59fe28a
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:40:11 2022 +0000
+
+    fix mirror wrong subdir
+
+commit b0db53bc1460d0bf2c709fbd55286074035e640f
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:37:56 2022 +0000
+
+    explain problem with current logging to file implementation
+
+commit 25bd9b01db37b0c0c387bd3bcb603b8ba447b0c4
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:35:28 2022 +0000
+
+    typo
+
+commit 140766098af61df572740bade31956c403d20a16
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:34:40 2022 +0000
+
+    fix dialog failing due to parent script redirection
+
+commit 0629f82efee865c452bc12e3ebd34aa071b777d2
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:03:22 2022 +0000
+
+    fix mirror zsh completion
+
+commit 60aa51c2b6f7f3a48c8452b7f3939507ff83d0ca
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 13:18:53 2022 +0000
+
+    fix zsh completion of --import-only
+
+commit 7300782af1a62c76e09bbe16109855353255657b
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 13:16:32 2022 +0000
+
+    fix get_arg quitting by unhandled case
+    if opt=value was being used, it was returning false, making the script
+        abort.
+
+commit c5c40f77c91b8d1679994aefe1d093c5c25e5383
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 4 22:40:44 2022 +0000
+
+    add import-only
+
+commit 48939c89ec8c9fd549f87ec68425b2703d8077eb
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 4 21:58:50 2022 +0000
+
+    add mode to log to file and option to not show errors
+
+commit faeaf3da5e21db9240ff85d2cbf5de921f6b4bb2
+Author: grass <grass@danwin1210.de>
+Date:   Fri Dec 2 18:36:23 2022 +0000
+
+    add commit hash placeholdre for distribution
+
+commit c80b535d853b4f557836acf1678a7f8b20e5065e
+Author: grass <grass@danwin1210.de>
+Date:   Fri Dec 2 18:19:31 2022 +0000
+
+    uncomment pre_check functions
+
+commit ca853fd9c5ec6ad5047744d61d2d1e28fd4852e2
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 22:55:58 2022 +0000
+
+    add mirrors option
+
+commit 649773ab0e8940b0f09d97785552b192c66cdd02
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 19:03:45 2022 +0000
+
+    fix spelling mistake
+
+commit d22cb017257c7858ab0f8f6af3b5e31bc556f788
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:57:57 2022 +0000
+
+    fix not informing about what package is missing
+
+commit 5c475bbf801b8558936b14f79ba139b20e5e53ec
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:49:21 2022 +0000
+
+    fix netcat-openbsd pkg name
+
+commit 08d5cac4b84cbe17510ca5ec357d4fc8868e2c65
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:23:36 2022 +0000
+
+    add allow errors (dirty mode)
+
+commit 9ce47675440c24c8c74ec853c0361e597aca8fdd
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:14:14 2022 +0000
+
+    fix pre check
+
+commit f59a6d7d95c60bc96ef57ef182bf525826237792
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 1 13:05:24 2022 -0500
+
+    bumped changelog version
+
+commit 82a9775d54b821db368a314a8d323a7c34b81611
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 16:14:45 2022 +0000
+
+    add testers mode
+
 commit eae3601622155facf7146d7918e711e647ecc251
 Merge: 2a8a1df 302754f
 Author: Patrick Schleizer <adrelanos@whonix.org>
