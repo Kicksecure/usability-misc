@@ -531,8 +531,9 @@ end_exit(){
   if test -n "${tail_pid:-}"; then
     ## Sleep less than a second so the file descriptors have enough time to
     ## output all the logs to the screen before the background job is killed.
-    sleep 0.5
-    kill -9 "${tail_pid}"
+    sleep 0.3
+    # shellcheck disable=SC2086
+    kill -9 ${tail_pid}
   fi
   ## Exit with desired exit code.
   exit "${last_exit}"
@@ -2243,17 +2244,8 @@ parse_opt(){
 }
 
 
-## Wrapper to call all necessary functions in one.
-run_installer(){
-  ## Set trap for common signals.
-  set_trap
-  ## Set default values.
-  set_default
-  ## Parse script name for wanted values.
-  parse_name
-  ## Parse command-line options.
-  parse_opt "${@}"
-  ## Logging mechanism.
+## Logging mechanism.
+log_term_and_file(){
   ## Current problem is that command-line option is necessary to hide stderr
   ## by sending it to /dev/null, while the desired method would be to avoid
   ## this workaround and simply be able to redirect with 2>/dev/null.
@@ -2269,6 +2261,21 @@ run_installer(){
   tail -f "${log_file}" >&3 &
   ## Get background job PID.
   tail_pid="$!"
+}
+
+
+## Wrapper to call all necessary functions in one.
+run_installer(){
+  ## Set trap for common signals.
+  set_trap
+  ## Set default values.
+  set_default
+  ## Parse script name for wanted values.
+  parse_name
+  ## Parse command-line options.
+  parse_opt "${@}"
+  ## Logging mechanism.
+  log_term_and_file
   ## Start main function.
   main
 }
