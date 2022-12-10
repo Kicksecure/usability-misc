@@ -1,0 +1,25 @@
+name: docker build
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-22.04
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - image: debian:stable
+                    - image: debian:testing
+                    - image: debian:unstable
+                    - image: ubuntu:latest
+
+
+        container:
+            image: ${{ matrix.image }}
+
+        steps:
+            - uses: actions/checkout@v1
+            - run: cat /etc/os-release
+            - run: bash ./usr/lib/installer-dist -n -l debug -k -D
+
+# vim: sw=4
