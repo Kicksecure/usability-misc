@@ -20,6 +20,6 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - run: cat /etc/os-release
-            - run: bash ./usr/lib/installer-dist -n -l debug -k -D
+            - run: bash ./usr/bin/installer-dist -n -l debug -k -D
 
 # vim: sw=4
