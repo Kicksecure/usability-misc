@@ -2270,21 +2270,29 @@ log_term_and_file(){
   ## by sending it to /dev/null, while the desired method would be to avoid
   ## this workaround and simply be able to redirect with 2>/dev/null.
   ## Send f21/stdout to log file.
+  true "exec 1>>${log_file}"
   exec 1>>"${log_file}"
   ## Send fd2/stderr to log file by default.
+  true "exec 2>>${log_file}"
   exec 2>>"${log_file}"
   ## If no_show_errors is set, send fd2/stderr to /dev/null.
-  test "${no_show_errors}" = "1" && exec 2>/dev/null
+  if test "${no_show_errors}" = "1"; then
+    true "exec 2>/dev/null"
+    exec 2>/dev/null
+  fi
   ## Send fd3 to the terminal
+  true "exec 3>$(tty)"
   exec 3>>"$(tty)"
   ## Bash has built-in feature to redirect xtrace to the specified file.
   if test "${curr_shell}" = "bash"; then
     # shellcheck disable=SC2039
+    true "exec 9>>${log_file}.xtrace"
     exec 9>>"${log_file}.xtrace"
     export BASH_XTRACEFD=9
     set -o xtrace
   fi
   ## Copy output of log file to fd3 and send process to the background.
+  true "tail -f ${log_file} >&3 &"
   tail -f "${log_file}" >&3 &
   ## Get background job PID.
   tail_pid="${!}"
