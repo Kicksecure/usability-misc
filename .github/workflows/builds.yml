@@ -19,7 +19,7 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - run: cat /etc/os-release
-            - run: apt-get update -y && apt-get install -y psmisc
+            - run: apt-get update -y
             - name: Run Installer
               run: bash ./usr/bin/installer-dist -n -l debug -k -D
             - name: Run Installer ShellCheck

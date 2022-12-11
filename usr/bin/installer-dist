@@ -1227,16 +1227,7 @@ get_utilities(){
 set_trap(){
   log info "Current PATH: ${PATH}"
   ## Sometimes ps is not available, default to sh.
-  dpkg -s psmisc || true
-  if test -n "${BASH_SOURCE:-}"; then
-    curr_shell="bash"
-  elif ! has ps; then
-    log warn "Missing program 'ps' to detect shell."
-    log warn "Will assume shell is 'sh'."
-    curr_shell="sh"
-  else
-    curr_shell="$(ps | awk "/ $$ /" | awk '{print $4}')"
-  fi
+  curr_shell="$(cat /proc/$$/comm)"
   ## Get current shell from current process
   ## If the process if the file name, get its shell from shebang
   ## sometimes the process name is the base name of the script with some
@@ -1249,7 +1240,10 @@ set_trap(){
       curr_shell="${shebang##*/}"
       ;;
   esac
-  log info "Current shell: ${curr_shell}"
+  printf '%s\n' "${curr_shell}"
+  log notice "Current shell: '${curr_shell}'"
+  exit 0
+
   case "${curr_shell}" in
     *bash|*ksh|*zsh)
       # shellcheck disable=SC2039
