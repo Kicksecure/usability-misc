@@ -1241,7 +1241,6 @@ set_trap(){
       ;;
   esac
   log notice "Current shell: '${curr_shell}'"
-  exit 0
 
   case "${curr_shell}" in
     *bash|*ksh|*zsh)

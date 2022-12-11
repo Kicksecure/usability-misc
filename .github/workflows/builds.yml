@@ -19,10 +19,9 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - run: cat /etc/os-release
-            - run: apt-get update -y
             - name: Run Installer
               run: bash ./usr/bin/installer-dist -n -l debug -k -D
             - name: Run Installer ShellCheck
-              run: shellcheck usr/bin/installer-dist
+              run: apt-get update -y && apt-get install shellcheck && shellcheck usr/bin/installer-dist
 
 # vim: sw=4
