@@ -1223,7 +1223,9 @@ get_utilities(){
 
 ## Set default traps
 set_trap(){
+  log info "Current PATH: ${PATH}"
   ## Sometimes ps is not available, default to sh.
+  dpkg -s psmisc || true
   if test -n "${BASH_SOURCE:-}"; then
     curr_shell="bash"
   elif ! has ps; then
@@ -1245,6 +1247,7 @@ set_trap(){
       curr_shell="${shebang##*/}"
       ;;
   esac
+  log info "Current shell: ${curr_shell}"
   case "${curr_shell}" in
     *bash|*ksh|*zsh)
       # shellcheck disable=SC2039
