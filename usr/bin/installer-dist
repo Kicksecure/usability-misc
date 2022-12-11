@@ -553,7 +553,7 @@ handle_exit(){
   log error "Current script: ${0}"
   # shellcheck disable=SC3028
   if test -n "${BASH_COMMAND:-}"; then
-    # shellcheck disable=SC2039,3028
+    # shellcheck disable=SC2039,3028,3054
     log error "Function executed: ${FUNCNAME[1]}"
     # shellcheck disable=SC2039,3028,3054
     log error "Command executed: ${BASH_COMMAND}"
