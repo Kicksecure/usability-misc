@@ -558,8 +558,15 @@ handle_exit(){
   if test "${line_number}" -gt 2; then
     log bug "At line: ${line_number}."
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
-    # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n7
-    awk 'NR>L-4 && NR<L+4 { printf " %-5d%3s %s\n",NR,(NR==L?">>>":""),$0 }' L="${line_number}" "${0}" >&2
+    ## Simple version that doesn't indicate the error line.
+    # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
+    ## Easy version for wasting resources and better readability.
+    line_above="$(pr -tn "${0}" | tail -n+$((line_number - 4)) | head -n4)"
+    line_error="$(pr -tn "${0}" | tail -n+$((line_number)) | head -n1)"
+    line_below="$(pr -tn "${0}" | tail -n+$((line_number + 1)) | head -n4)"
+    printf '%s\n*%s\n%s\n' "${line_above}" "${line_error}" "${line_below}"
+    ## Too complex.
+    # awk 'NR>L-4 && NR<L+4 { printf " %-5d%3s %s\n",NR,(NR==L?">>>":""),$0 }' L="${line_number}" "${0}" >&2
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
@@ -2297,6 +2304,7 @@ run_installer(){
   ## Logging mechanism.
   log_term_and_file
   ## Start main function.
+  eca
   main
 }
 
