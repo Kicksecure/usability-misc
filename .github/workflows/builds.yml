@@ -13,7 +13,6 @@ jobs:
                     - image: debian:unstable
                     - image: ubuntu:latest
 
-
         container:
             image: ${{ matrix.image }}
 
@@ -22,5 +21,7 @@ jobs:
             - run: cat /etc/os-release
             - run: apt-get update -y && apt-get install -y psmisc
             - run: bash ./usr/bin/installer-dist -n -l debug -k -D
+            - run: cat ~/installer-dist-download/log
+            - run: cat ~/installer-dist-download/log.xtrace
 
 # vim: sw=4
