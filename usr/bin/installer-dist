@@ -1222,9 +1222,16 @@ get_utilities(){
 
 ## Set default traps
 set_trap(){
+  ## Sometimes ps is not available, default to sh.
+  if has ps; then
+    log warn "Missing program 'ps' to detect shell."
+    log warn "Will assume shell is 'sh'."
+    curr_shell="sh"
+  else
+    curr_shell="$(ps | awk "/ $$ /" | awk '{print $4}')"
+  fi
   ## Get current shell from current process
   ## If the process if the file name, get its shell from shebang
-  curr_shell="$(ps | awk "/ $$ /" | awk '{print $4}')"
   ## sometimes the process name is the base name of the script with some
   ## missing letters.
   case "${0##*/}" in
