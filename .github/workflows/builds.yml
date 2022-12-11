@@ -19,8 +19,8 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - run: cat /etc/os-release
-            - run: sudo apt-get update -y
-            - run: sudo apt-get install -y psmisc
+            - run: apt-get update -y
+            - run: apt-get install -y psmisc
             - run: sh ./usr/bin/test.sh
             - run: bash ./usr/bin/installer-dist -n -l debug -k -D
 
