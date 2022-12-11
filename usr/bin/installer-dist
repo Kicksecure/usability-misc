@@ -1667,7 +1667,6 @@ get_virtualization(){
 
   verdict 0
 }
-
 #########################
 ## END SCRIPT SPECIFIC ##
 #########################
