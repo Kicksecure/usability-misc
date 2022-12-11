@@ -1223,7 +1223,7 @@ get_utilities(){
 ## Set default traps
 set_trap(){
   ## Sometimes ps is not available, default to sh.
-  if has ps; then
+  if ! has ps; then
     log warn "Missing program 'ps' to detect shell."
     log warn "Will assume shell is 'sh'."
     curr_shell="sh"
@@ -2273,6 +2273,13 @@ parse_opt(){
 
 ## Logging mechanism.
 log_term_and_file(){
+  ## Send fd3 to the terminal
+  if test -t 1 && has tty; then
+    true "exec 3>$(tty)"
+    exec 3>>"$(tty)"
+  else
+    true "Output is not being sent to the terminal because either tty program does not exist of because terminal is not connected to stdout."
+  fi
   ## Current problem is that command-line option is necessary to hide stderr
   ## by sending it to /dev/null, while the desired method would be to avoid
   ## this workaround and simply be able to redirect with 2>/dev/null.
@@ -2287,9 +2294,6 @@ log_term_and_file(){
     true "exec 2>/dev/null"
     exec 2>/dev/null
   fi
-  ## Send fd3 to the terminal
-  true "exec 3>$(tty)"
-  exec 3>>"$(tty)"
   ## Bash has built-in feature to redirect xtrace to the specified file.
   if test "${curr_shell}" = "bash"; then
     # shellcheck disable=SC2039
@@ -2308,10 +2312,10 @@ log_term_and_file(){
 
 ## Wrapper to call all necessary functions in one.
 run_installer(){
-  ## Set trap for common signals.
-  set_trap
   ## Set default values.
   set_default
+  ## Set trap for common signals.
+  set_trap
   ## Parse script name for wanted values.
   parse_name
   ## Parse command-line options.
