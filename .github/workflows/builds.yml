@@ -21,7 +21,8 @@ jobs:
             - run: cat /etc/os-release
             - run: apt-get update -y
             - run: apt-get install -y psmisc
-            - run: sh ./usr/bin/test.sh
-            - run: bash ./usr/bin/installer-dist -n -l debug -k -D
+            - name: Run Installer
+              shell: bash
+              run: ./usr/bin/installer-dist -n -l debug -k -D
 
 # vim: sw=4
