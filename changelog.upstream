@@ -1,3 +1,46 @@
+commit 89bdb177d224f07bd4512d59c5df1d240e07044a
+Merge: e7e3048 368f8fe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:05:02 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 368f8fe991324693c9724ff45a8862ec53e4746b
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:03:24 2022 +0000
+
+    live again
+
+commit 51b32b9328283dfd415b05bb9bdf3434f9bd9e71
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:00:02 2022 +0000
+
+    destroy will to live
+
+commit fb9593813a2f24f01f0bac3cf06d5ddba3c5abc9
+Author: grass <grass@danwin1210.de>
+Date:   Sat Dec 10 22:52:40 2022 +0000
+
+    add CI workflow for GH actions
+
+commit 63adee8457cfc741815b4dd8bf6ba4c7d7f44afb
+Author: grass <grass@danwin1210.de>
+Date:   Sat Dec 10 22:52:05 2022 +0000
+
+    better logging xtrace for bash and fix mint
+
+commit 9f276db21c8361532a49b04b54a4c9a9e2f4ee79
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 19:16:34 2022 +0000
+
+    fix help message ordering
+
+commit e7e30482d234ad176a3a3cefba1e7df0a2672608
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 12:04:14 2022 -0500
+
+    bumped changelog version
+
 commit 79445b59b867abc7c485fa0f99379a2306a479e1
 Merge: 47d1215 3fe47a3
 Author: Patrick Schleizer <adrelanos@whonix.org>
