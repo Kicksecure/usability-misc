@@ -1,22 +1,40 @@
 name: docker build
-on: [push, pull_request]
+on:
+    [push,pull_request]:
+        paths:
+            - 'usr/bin/installer-dist'
 
 jobs:
+    changes:
+        runs-on: ubuntu-22.04
+        permissions: 
+            pull-requests: read
+        outputs:
+            build: ${{ steps.filter.outputs.build }}
+        steps:
+            - uses: dorny/paths-filter@v2
+              id: filter
+              with:
+                filters: |
+                    build:
+                        - 'usr/bin/installer-dist'
+
     build:
+        needs: changes
+        if: ${{ needs.changes.outputs.build == 'true' }}
         runs-on: ubuntu-22.04
         strategy:
             fail-fast: false
             matrix:
                 include:
                     - image: debian:stable
-                    # - image: debian:testing
                     - image: ubuntu:latest
 
         container:
             image: ${{ matrix.image }}
 
         steps:
-            - uses: actions/checkout@v1
+            - uses: actions/checkout@v3
             - name: System information
               run: cat /etc/os-release; uname -a; echo "${PATH}"
             - name: System Basic Packages
