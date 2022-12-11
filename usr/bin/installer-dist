@@ -456,6 +456,7 @@ log(){
   esac
   ## uniform log format
   log_color="${bold}${log_color}"
+  test -n "${NO_COLOR:-}" && log_color=""
   log_full="${me}: [${log_color}${log_type_up}${nocolor}]: ${log_content}"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
