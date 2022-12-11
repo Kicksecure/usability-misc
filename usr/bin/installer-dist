@@ -2304,7 +2304,6 @@ run_installer(){
   ## Logging mechanism.
   log_term_and_file
   ## Start main function.
-  eca
   main
 }
 
