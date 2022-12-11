@@ -17,11 +17,13 @@ jobs:
 
         steps:
             - uses: actions/checkout@v1
-            - run: cat /etc/os-release
-            - run: uname -a
-            - run: echo "${PATH}"
-            - run: apt-get update -y
-            - run: apt-get install -y sudo shellcheck
+            - name: System information
+              run: cat /etc/os-release
+              run: uname -a
+              run: echo "${PATH}"
+            - name: System Basic Packages
+              run: apt-get update -y
+              run: apt-get install -y shellcheck
             - name: Run Installer
               run: bash ./usr/bin/installer-dist -n -l debug -k -D
             - name: Run Installer ShellCheck
