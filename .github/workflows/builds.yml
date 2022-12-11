@@ -9,8 +9,7 @@ jobs:
             matrix:
                 include:
                     - image: debian:stable
-                    - image: debian:testing
-                    - image: debian:unstable
+                    # - image: debian:testing
                     - image: ubuntu:latest
 
         container:
@@ -21,10 +20,6 @@ jobs:
             - run: cat /etc/os-release
             - run: uname -a
             - run: echo "${PATH}"
-            - run: echo "${USER}"
-            - run: echo "${USERNAME}"
-            - run: echo "$(id -nu)"
-            - run: echo "$(whoami)"
             - run: apt-get update -y
             - run: apt-get install -y sudo shellcheck
             - name: Run Installer
