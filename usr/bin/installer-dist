@@ -1223,7 +1223,9 @@ get_utilities(){
 ## Set default traps
 set_trap(){
   ## Sometimes ps is not available, default to sh.
-  if ! has ps; then
+  if test -n "${BASH_SOURCE:-}"; then
+    curr_shell="bash"
+  elif ! has ps; then
     log warn "Missing program 'ps' to detect shell."
     log warn "Will assume shell is 'sh'."
     curr_shell="sh"
