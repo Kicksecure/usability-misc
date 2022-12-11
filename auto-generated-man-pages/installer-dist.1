@@ -1,0 +1,261 @@
+.\" generated with Ronn-NG/v0.9.1
+.\" http://github.com/apjanke/ronn-ng/tree/0.9.1
+.TH "INSTALLER\-DIST" "1" "January 2020" "usability-misc" "usability-misc Manual"
+.SH "NAME"
+\fBinstaller\-dist\fR \- download and import Whonix/Kicksecure VMs
+.SH "SYNOPSIS"
+\fBinstaller\-dist\fR \fIoptions\fR
+.SH "DESCRIPTION"
+\fBinstaller\-dist\fR is a wrapper that automates the download and importation of Kicksecure and Whonix VMs, on the interface you prefer such as CLI or Xfce, using the hypervisor of you choice, such as KVM or VirtualBox\.
+.SH "OPTIONS"
+Options starts with one or two dashes\. Long and short options that require arguments accept being separated by spaces of an equal sign\.
+.P
+If the same option is specified multiple times, the last assignment will be used\.
+.P
+Guest and Interface can be set by changing the script name to the format \fIguest\-installer\-interface\fR\.
+.P
+\fB\-g\fR, \fB\-\-guest\fR=\fIguest\fR
+.IP "" 4
+.nf
+    Set guest operating system\. Options: kicksecure, whonix (default)\.
+.fi
+.IP "" 0
+.P
+\fB\-u\fR, \fB\-\-guest\-version\fR=\fIversion\fR
+.IP "" 4
+.nf
+    Set guest's version\. Default to use API if none specified\.
+.fi
+.IP "" 0
+.P
+\fB\-i\fR, \fB\-\-interface\fR=\fIinterface\fR
+.IP "" 4
+.nf
+    Set guest's interface\. Options: cli, xfce (default)\.
+.fi
+.IP "" 0
+.P
+\fB\-m\fR, \fB\-\-hypervisor\fR=\fIhypervisor\fR
+.IP "" 4
+.nf
+    Set guest's hypervisor\. Options: kvm, virtualbox (default)\.
+.fi
+.IP "" 0
+.P
+\fB\-o\fR, \fB\-\-onion\fR
+.IP "" 4
+.nf
+    Make requests over the onion network\.
+.fi
+.IP "" 0
+.P
+\fB\-s\fR, \fB\-\-socks\-proxy\fR=\fIproxy\fR
+.IP "" 4
+.nf
+    Set TCP SOCKS proxy for use in requests\. Format: "host:addr"\. If
+    none specified, but onion request is set, try
+    TOR_SOCKS_HOST:TOR_SOCKS_PORT, if empty, try host 127\.0\.0\.1 and
+    default ports for TBB port 9151 and tor system port 9050\.
+.fi
+.IP "" 0
+.P
+\fB\-l\fR, \fB\-\-log\-level\fR=\fIlevel\fR
+.IP "" 4
+.nf
+    Set logging level\. Options: debug, info, notice (default), warn,
+    error\. Everything below the selected logging level level will be
+    printed\.
+.fi
+.IP "" 0
+.P
+\fB\-k\fR, \fB\-\-no\-boot\fR
+.IP "" 4
+.nf
+    Don't boot guest at the end of the run\. Default is ask to start
+    guest and if non\-interactive is set, start guest by default\.
+.fi
+.IP "" 0
+.P
+\fB\-\-no\-import\fR
+.IP "" 4
+.nf
+    Don't import guest\. Default is to import if not already imported\.
+.fi
+.IP "" 0
+.P
+\fB\-\-import\-only\fR=\fIvm\fR
+.IP "" 4
+.nf
+    Import only a single Virtual Machine when the guest is whonix\.
+    Options: gateway, workstation\.
+.fi
+.IP "" 0
+.P
+\fB\-\-redownload\fR
+.IP "" 4
+.nf
+    Set option to force download even if flag of previous
+    successfull download already exists\.
+.fi
+.IP "" 0
+.P
+\fB\-\-reimport\fR
+.IP "" 4
+.nf
+    Redo the import of the guest to the hypervisor\. Will try to import
+    already existing files if found\. This option requires
+    \-\-destroy\-existing\-guest as pledge\.
+.fi
+.IP "" 0
+.P
+\fB\-\-destroy\-existing\-guest\fR
+.IP "" 4
+.nf
+    Required pledge for \-\-reimport\.
+.fi
+.IP "" 0
+.P
+\fB\-P\fR, \fB\-\-directory\-prefix\fR=\fIdirectory\fR
+.IP "" 4
+.nf
+    Set absolute path directory to save downloaded files to\. Default to
+    $HOME/installer\-dist\-download\. The directory must already exist
+    and have read and write capabilities for the calling user\. If you
+    change this directory, but the previously downloaded files are not
+    changed to the new directory, the download starts again\.
+.fi
+.IP "" 0
+.P
+\fB\-n\fR, \fB\-\-non\-interactive\fR
+.IP "" 4
+.nf
+    Set non\-interactive mode, instead of questions, defaults will be
+    assumed, including accepting the license and starting the guest\.
+.fi
+.IP "" 0
+.P
+\fB\-\-mirror\fR=\fInumber\fR
+.IP "" 4
+.nf
+    Set mirror acording to number index\. Choose closest mirror to
+    you if not using onion for faster downloads\.  Not that if not
+    choosing mirror, defaults to whonix\.org for plainnet and
+    dotsrc\.org correspondent for onion\.
+    Mirrors index:
+      0 [DE] download\.whonix\.org (onion available)
+      1 [DK] mirrors\.dotsrc\.org (onion available)
+      2 [DE] mirror\.koljasagorski\.de
+      3 [HU] quantum\-mirror\.hu
+      4 [PL] ftp\.icm\.edu\.pl
+      5 [US] mirrors\.gigenet\.com
+.fi
+.IP "" 0
+.P
+\fB\-\-allow\-errors\fR
+.IP "" 4
+.nf
+    Set dirty mode, don't quit on errors\.
+.fi
+.IP "" 0
+.P
+\fB\-\-no\-show\-errors\fR
+.IP "" 4
+.nf
+    Hide errors, do not print them\.
+.fi
+.IP "" 0
+.P
+\fB\-\-testers\fR
+.IP "" 4
+.nf
+    Set testers mode, testers version will be used\.
+.fi
+.IP "" 0
+.P
+\fB\-D\fR, \fB\-\-dev\fR
+.IP "" 4
+.nf
+    Set development mode\. Set default version to download empty
+    image\.
+.fi
+.IP "" 0
+.P
+\fB\-d\fR, \fB\-\-dry\-run\fR
+.IP "" 4
+.nf
+    Set dry\-run mode to emulate a run without doing anything relevant\.
+.fi
+.IP "" 0
+.P
+\fB\-t\fR, \fB\-\-getopt\fR
+.IP "" 4
+.nf
+    Show parsed options and quit\.
+.fi
+.IP "" 0
+.P
+\fB\-V\fR, \fB\-\-version\fR
+.IP "" 4
+.nf
+    Show version and quit\.
+.fi
+.IP "" 0
+.P
+\fB\-h\fR, \fB\-\-help\fR
+.IP "" 4
+.nf
+    Show help for commands and quit\.
+.fi
+.IP "" 0
+.SH "EXAMPLES"
+Install Whonix Xfce for VirtualBox:
+.IP "" 4
+.nf
+    $ installer\-dist \-\-guest=whonix \-\-interface=xfce \-\-hypervisor=kvm
+.fi
+.IP "" 0
+.P
+Install default flavour making requests over onion and using SOCKS proxy:
+.IP "" 4
+.nf
+    $ installer\-dist \-\-onion \-\-socks\-proxy=127\.0\.0\.1:9050
+.fi
+.IP "" 0
+.P
+Install default flavour and run without questions print info messages:
+.IP "" 4
+.nf
+    $ installer\-dist \-\-non\-interactive \-\-log\-level=info
+.fi
+.IP "" 0
+.SH "EXIT CODES"
+An exit trap is set to return the exit code of the last command that was ran\. Some commands might conflict with the script exit code, and that would be considered a bug\. As \fIcurl\fR and \fIrsync\fR are important to the script, its exit codes are reseverd to not conflict with the script exit code to ease debugging\.
+.IP "" 4
+.nf
+1       Catchall for general errors\.
+
+2       Unrecognized option usage\.
+
+3\-35    Rsync errors\.
+
+3\-96    Curl errors\.
+
+100     User disagreed with the license\.
+
+101     Unsupported system\.
+
+102     Virtual machines already exist\.
+
+103     Failed to download files\.
+
+104     Failed cryptographic verification\.
+
+105     Failed to import virtual machines\.
+.fi
+.IP "" 0
+.SH "AUTHOR"
+This man page was written by grass (grass@danwin1210\.de)\.
+.SH "WWW"
+https://www\.whonix\.org/wiki/Dev/Linux_Installer
+.SH "SEE ALSO"
+curl(1), sha512sum(1), signify\-openbsd(1), qemu(1), kvm(1)

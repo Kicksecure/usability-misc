@@ -1,0 +1,2331 @@
+#!/bin/sh
+## vim: set sw=2 sts=2 ts=2 et :
+##
+## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+##########################
+## BEGIN DEFAULT VALUES ##
+##########################
+set -o errexit
+set -o nounset
+
+dialog_title="License agreement (scroll with arrows)"
+license="
+Please do NOT continue unless you understand everything!
+ DISCLAIMER OF WARRANTY.
+ .
+ THE PROGRAM IS PROVIDED WITHOUT ANY WARRANTIES, WHETHER EXPRESSED OR IMPLIED,
+ INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+ PURPOSE, NON-INFRINGEMENT, TITLE AND MERCHANTABILITY.  THE PROGRAM IS BEING
+ DELIVERED OR MADE AVAILABLE 'AS IS', 'WITH ALL FAULTS' AND WITHOUT WARRANTY OR
+ REPRESENTATION.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE
+ PROGRAM IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+ ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+ .
+ LIMITATION OF LIABILITY.
+ .
+ UNDER NO CIRCUMSTANCES SHALL ANY COPYRIGHT HOLDER OR ITS AFFILIATES, OR ANY
+ OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE
+ LIABLE TO YOU, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, FOR ANY
+ DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, DIRECT, INDIRECT, SPECIAL,
+ INCIDENTAL, CONSEQUENTIAL OR PUNITIVE DAMAGES ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE USE OR INABILITY TO USE THE PROGRAM OR OTHER DEALINGS WITH
+ THE PROGRAM(INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED
+ INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE
+ PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), WHETHER OR NOT ANY COPYRIGHT HOLDER
+ OR SUCH OTHER PARTY RECEIVES NOTICE OF ANY SUCH DAMAGES AND WHETHER OR NOT SUCH
+ DAMAGES COULD HAVE BEEN FORESEEN.
+ .
+ INDEMNIFICATION.
+ .
+ IF YOU CONVEY A COVERED WORK AND AGREE WITH ANY RECIPIENT
+ OF THAT COVERED WORK THAT YOU WILL ASSUME ANY LIABILITY FOR THAT COVERED WORK,
+ YOU HEREBY AGREE TO INDEMNIFY, DEFEND AND HOLD HARMLESS THE OTHER LICENSORS AND
+ AUTHORS OF THAT COVERED WORK FOR ANY DAMAGES, DEMANDS, CLAIMS, LOSSES, CAUSES OF
+ ACTION, LAWSUITS, JUDGMENTS EXPENSES (INCLUDING WITHOUT LIMITATION REASONABLE
+ ATTORNEYS' FEES AND EXPENSES) OR ANY OTHER LIABILITY ARISING FROM, RELATED TO OR
+ IN CONNECTION WITH YOUR ASSUMPTIONS OF LIABILITY.
+If the disclaimer of warranty and limitation of liability provided
+above cannot be given local legal effect according to their terms,
+reviewing courts shall apply local law that most closely approximates
+an absolute waiver of all civil liability in connection with the
+Program, unless a warranty or assumption of liability accompanies a
+copy of the Program in return for a fee.
+"
+
+## Version is commit based: https://github.com/Whonix/usability-misc
+version="commit-hash-replace-me"
+me="${0##*/}"
+# shellcheck disable=SC2034
+all_args="${*}"
+start_time="$(date +%s)"
+
+## colors
+# shellcheck disable=SC2034
+nocolor="\033[0m"
+bold="\033[1m"
+#nobold="\033[22m"
+#underline="\033[4m"
+#nounderline="\033[24m"
+red="\033[31m"
+green="\033[32m"
+yellow="\033[33m"
+#blue="\033[34m"
+magenta="\033[35m"
+cyan="\033[36m"
+
+## https://www.whonix.org/wiki/Main/Project_Signing_Key#cite_note-7
+adrelanos_signify="untrusted comment: Patrick Schleizer adrelanos@whonix.org signify public key
+RWQ6KRormNEETq+M8IysxRe/HAWlqZRlO8u7ACIiv5poAW0ztsirOjCQ"
+## https://www.whonix.org/wiki/KVM/Project_Signing_Key#cite_note-4
+hulahoop_signify="untrusted comment: signify public key
+RWT2GZDQkp1NtTAC1IoQHUsyb/AQ2LIQF82cygQU+riOpPWSq730A/rq"
+########################
+## END DEFAULT VALUES ##
+########################
+
+################
+## BEGIN MISC ##
+################
+## This is just a simple wrapper around 'command -v' to avoid
+## spamming '>/dev/null' throughout this function. This also guards
+## against aliases and functions.
+## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
+has(){ _cmd="$(command -v "${1}")" 2>/dev/null || return 1
+  [ -x "${_cmd}" ] || return 1
+}
+
+dirname() {
+  ## Usage: dirname "path"
+
+  ## If '$1' is empty set 'dir' to '.', else '$1'.
+  dir=${1:-.}
+
+  ## Strip all trailing forward-slashes '/' from
+  ## the end of the string.
+  #
+  ## "${dir##*[!/]}": Remove all non-forward-slashes
+  ## from the start of the string, leaving us with only
+  ## the trailing slashes.
+  ## "${dir%%"${}"}": Remove the result of the above
+  ## substitution (a string of forward slashes) from the
+  ## end of the original string.
+  dir=${dir%%"${dir##*[!/]}"}
+
+  ## If the variable *does not* contain any forward slashes
+  ## set its value to '.'.
+  [ "${dir##*/*}" ] && dir=.
+
+  ## Remove everything *after* the last forward-slash '/'.
+  dir=${dir%/*}
+
+  ## Again, strip all trailing forward-slashes '/' from
+  ## the end of the string (see above).
+  dir=${dir%%"${dir##*[!/]}"}
+
+  ## Print the resulting string and if it is empty,
+  ## print '/'.
+  printf '%s\n' "${dir:-/}"
+}
+
+
+## Capitalize only the first char of a string.
+capitalize_first_char(){
+  echo "${1:-}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1'
+}
+
+
+## Block running as root.
+not_as_root(){
+  [ "$(id -u)" -eq 0 ] && die 1 "Running as root, aborting."
+}
+
+
+## Wrapper that supports su, sudo, doas
+root_cmd(){
+  test -z "${1:-}" && die 1 "Failed to pass arguments to root_cmd."
+  if test "${dry_run}" = "1"; then
+    log info "Skipping running root command '${sucmd} ${*}' because dry_run is set."
+    return 0
+  fi
+  if test -n "${sucmd_quote:-}"; then
+    true "sucmd_quote"
+    # shellcheck disable=SC2016
+    ${sucmd} '${@}'
+  else
+    ${sucmd} "${@}"
+  fi
+}
+
+
+## Check if variable is integer
+is_integer(){
+  printf %d "${1}" >/dev/null 2>&1 || return 1
+}
+
+
+## Checks if the target is valid.
+## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
+## this is not perfect but it is better than nothing
+is_addr_port(){
+  addr_port="${1}"
+  port="${addr_port##*:}"
+  addr="${addr_port%%:*}"
+
+  ## Support only IPv4 x.x.x.x:y
+  if [ "$(echo "${addr_port}" | tr -cd "." | wc -c)" != 3 ] ||
+    [ "$(echo "${addr_port}" | tr -cd ":" | wc -c)" != 1 ] ||
+    [ "${port}" = "${addr}" ]; then
+    die 2 "Invalid address:port assignment: ${addr_port}"
+  fi
+
+  is_integer "${port}" ||
+    die 2 "Invalid port '${port}', not an integer."
+
+  if [ "${port}" -gt 0 ] && [ "${port}" -le 65535 ]; then
+    true "Valid port '${port}'"
+  else
+    die 2 "Invalid port '${port}', not within range: 0-65535."
+  fi
+
+  for quad in $(printf '%s\n' "${addr}" | tr "." " "); do
+    is_integer "${quad}" ||
+      die 2 "Invalid address '${addr}', '${quad}' is not an integer."
+    if [ "${quad}" -ge 0 ] && [ "${quad}" -le 255 ]; then
+      true "Valid quad '${quad}'"
+    else
+      die 2 "Invalid address '${addr}', '${quad}' not within range: 0-255."
+    fi
+  done
+}
+
+
+## Get host os and other necessary information.
+get_os(){
+  ## Source: pfetch: https://github.com/dylanaraps/pfetch/blob/master/pfetch
+  os="$(uname -s)"
+  kernel="$(uname -r)"
+  arch="$(uname -m)"
+
+  case ${os} in
+    Linux*)
+      if test -f /usr/share/kicksecure/marker; then
+        distro="Kicksecure"
+        distro_version=$(cat /etc/kicksecure_version)
+      elif test -f /usr/share/whonix/marker; then
+        distro="Whonix"
+        distro_version=$(cat /etc/whonix_version)
+      elif has lsb_release; then
+        distro=$(lsb_release -sd)
+        distro_version=$(lsb_release -sc)
+      elif test -f /etc/os-release; then
+        while IFS='=' read -r key val; do
+          case "${key}" in
+            (PRETTY_NAME) distro=${val}
+              ;;
+            (VERSION_ID) distro_version=${val}
+              ;;
+          esac
+        done < /etc/os-release
+      else
+        has crux && distro=$(crux)
+        has guix && distro='Guix System'
+      fi
+      distro=${distro##[\"\']}
+      distro=${distro%%[\"\']}
+      case ${PATH} in (*/bedrock/cross/*) distro='Bedrock Linux' ;; esac
+      if [ "${WSLENV:-}" ]; then
+        distro="${distro}${WSLENV+ on Windows 10 [WSL2]}"
+      elif [ -z "${kernel%%*-Microsoft}" ]; then
+        distro="${distro} on Windows 10 [WSL1]"
+      fi
+    ;;
+    Haiku) distro=$(uname -sv);;
+    Minix|DragonFly) distro="${os} ${kernel}";;
+    SunOS) IFS='(' read -r distro _ < /etc/release;;
+    OpenBSD*) distro="$(uname -sr)";;
+    FreeBSD) distro="${os} $(freebsd-version)";;
+    *) distro="${os} ${kernel}";;
+  esac
+  log notice "Detected system: ${distro} ${distro_version}."
+  log notice "Detected CPU architecture: ${arch}."
+}
+
+##############
+## END MISC ##
+##############
+
+##########################
+## BEGIN OPTION PARSING ##
+##########################
+
+## Begin parsing options.
+## function should be called before the case statement to assign the options
+## to a temporary variable
+begin_optparse(){
+  ## options ended
+  test -z "${1:-}" && return 1
+  shift_n=""
+  ## save opt orig for error message to understand which opt failed
+  opt_orig="${1}"
+  # shellcheck disable=SC2034
+  ## need to pass the second positional parameter cause maybe it is an argument
+  arg_possible="${2}"
+  clean_opt "${1}" || return 1
+}
+
+
+## Get arguments from options that require them.
+## if option requires argument, check if it was provided, if true, assign the
+## arg to the opt. If $arg was already assigned, and if valid, will use it for
+## the key value
+## usage: get_arg key
+get_arg(){
+  true "BEGIN get_arg(): '${*}'"
+  ## if argument is empty or starts with '-', fail as it possibly is an option
+  case "${arg:-}" in
+    ""|-*)
+      die 2 "Option '${opt_orig}' requires an argument."
+      ;;
+  esac
+  set_arg "${1}" "${arg}"
+
+  ## shift positional argument two times, as this option demands argument,
+  ## unless they are separated by equal sign '='
+  ## shift_n default value was assigned when trimming dashes '--' from the
+  ## options. If shift_n is equal to zero, '--option arg', if shift_n is not
+  ## equal to zero, '--option=arg'
+  if test -z "${shift_n}"; then
+    shift_n=2
+  fi
+  true "END get_arg(): '${*}'"
+}
+
+
+## Single source to set opts, can later be used to print the options parsed
+## usage: set_arg variable value
+set_arg(){
+  true "BEGIN set_arg(): '${*}'"
+  ## Check if variable had already a value assigned. Expanding to empty value
+  ## is necessary to avoid eval failing because of unset parameter if variable
+  ## didn't have a value assigned before.
+  # shellcheck disable=SC2016
+  eval previous_value="$(printf '${%s:-}' "${1}")"
+
+  ## Escaping quotes is needed because else it fails if the argument is quoted
+  # shellcheck disable=SC2140
+  eval "${1}"="\"${2}\""
+
+  ## variable used for --getopt
+  if test -z "${arg_saved:-}"; then
+    arg_saved="${1}=\"${2}\""
+  else
+    if test -z "${previous_value:-}"; then
+      ## If didn't add to the end of the list
+      arg_saved="${arg_saved}\n${1}=\"${2}\""
+    else
+      ## If had, replace existing value.
+      arg_saved="$(printf %s"${arg_saved}" | sed "s|^${1}=.*$|${1}=\"${2}\"|")"
+    fi
+  fi
+  true "BEGIN set_arg(): '${*}'"
+}
+
+
+## Clean options.
+## '--option=value' should shift once and '--option value' should shift twice
+## but at this point it is not possible to be sure if option requires an
+## argument, reset shift to zero, at the end, if it is still 0, it will be
+## assigned to one, has to be zero here so we can check later if option
+## argument is separated by space ' ' or equal sign '='
+clean_opt(){
+  case "${opt_orig}" in
+    "")
+      ## options ended
+      return 1
+      ;;
+    --)
+      ## stop option parsing
+      shift 1
+      return 1
+      ;;
+    --*=*)
+      ## long option '--sleep=1'
+      opt="${opt_orig%=*}"
+      opt="${opt#*--}"
+      arg="${opt_orig#*=}"
+      shift_n=1
+      ;;
+    -*=*)
+      ## short option '-s=1'
+      opt="${opt_orig%=*}"
+      opt="${opt#*-}"
+      arg="${opt_orig#*=}"
+      shift_n=1
+      ;;
+    --*)
+      ## long option '--sleep 1'
+      opt="${opt_orig#*--}"
+      arg="${arg_possible}"
+      ;;
+    -*)
+      ## short option '-s 1'
+      opt="${opt_orig#*-}"
+      arg="${arg_possible}"
+      ;;
+    *)
+      ## not an option
+      usage 2
+      ;;
+  esac
+}
+
+
+## Check if argument is within range
+## usage:
+## $ range_arg key "1" "2" "3" "4" "5"
+## $ range_arg key "a" "b" "c" "A" "B" "C"
+range_arg(){
+  key="${1:-}"
+  eval var='$'"${key}"
+  shift 1
+  list="${*:-}"
+  #range="${list#"${1} "}"
+  if [ -n "${var:-}" ]; then
+    success=0
+    for tests in ${list:-}; do
+      ## only evaluate if matches all chars
+      [ "${var:-}" = "${tests}" ] && success=1 && break
+    done
+    ## if not within range, fail and show the fixed range that can be used
+    if [ ${success} -eq 0 ]; then
+      die 2 "Option '${key}' can't be '${var:-}'. Possible values: '${list}'."
+    fi
+  fi
+}
+
+
+## check if option has value, if not, error out
+## this is intended to be used with required options
+check_opt_filled(){
+  key="${1}"
+  eval val='$'"${key:-}"
+  ! test -n "${val}" && die 2 "${key} is missing."
+}
+########################
+## END OPTION PARSING ##
+########################
+
+###################
+## BEGIN LOGGING ##
+###################
+
+## Logging mechanism with easy customization of message format as well as
+## standardization on how the messages are delivered.
+## usage: log [info|notice|warn|error] "X occurred."
+log(){
+  log_type="${1}"
+  ## capitalize log level
+  log_type_up="$(echo "${log_type}" | tr "[:lower:]" "[:upper:]")"
+  shift 1
+  ## escape printf reserved char '%'
+  log_content="$(echo "${*}" | sed "s/%/%%/g")"
+  ## set formatting based on log level
+  case "${log_type}" in
+    bug)
+      log_color="${yellow}"
+      ;;
+    error)
+      log_color="${red}"
+      ;;
+    warn)
+      log_color="${magenta}"
+      ;;
+    info)
+      log_color="${cyan}"
+      ;;
+    notice)
+      log_color="${green}"
+      ;;
+    *)
+      log bug "Unsupported log type: '${log_type}'."
+      die 1 "Please report this bug."
+  esac
+  ## uniform log format
+  log_color="${bold}${log_color}"
+  log_full="${me}: [${log_color}${log_type_up}${nocolor}]: ${log_content}"
+  ## error logs are the minimum and should always be printed, even if
+  ## failing to assign a correct log type
+  ## send bugs and error to stdout and stderr
+  case "${log_type}" in
+    bug)
+      #printf %s"${log_full:+$log_full }Please report this bug.\n" 1>&2
+      printf %s"${log_full} Please report this bug.\n" 1>&2
+      return 0
+      ;;
+    error)
+      printf %s"${log_full}\n" 1>&2
+      return 0
+      ;;
+  esac
+  ## reverse importance order is required, excluding 'error'
+  all_log_levels="warn notice info debug"
+  if echo " ${all_log_levels} " | grep -o ".* ${log_level} " \
+    | grep -q " ${log_type}"
+  then
+    case "${log_type}" in
+      warn)
+        ## send warning to stdout and stderr
+        printf %s"${log_full}\n" 1>&2
+        ;;
+      *)
+        printf %s"${log_full}\n"
+        ;;
+    esac
+  fi
+}
+
+
+## For one liners 'log error; die'
+## 'log' should not handle exits, because then it would not be possible
+## to log consecutive errors on multiple lines, making die more suitable
+## usage: die # "msg"
+## where '#' is the exit code.
+die(){
+  log error "${2}"
+  log error "Aborting installer."
+  exit "${1}"
+}
+
+
+## Wrapper to log command before running to avoid duplication of code
+log_run(){
+  ## Extra spaces appearing when breaking log_run on multiple lines.
+  log info "Executing: $ $(echo "${1}" | tr -s " ")"
+  if test "${dry_run}" = "1"; then
+    true "Skipping running above logged command because dry_run is set."
+    return 0
+  fi
+  # shellcheck disable=SC2086
+  ${1} || return 1
+}
+
+
+## Useful to get runtime mid run to log easily
+get_elapsed_time(){
+  printf '%s\n' "$(($(date +%s) - start_time))"
+}
+
+
+## Log elapsed time, the name explains itself.
+log_time(){
+  log info "Elapsed time: $(get_elapsed_time)s."
+}
+
+
+## wrappet to end the exit trap.
+end_exit(){
+  ## Reset exit trap.
+  trap - EXIT HUP INT QUIT ABRT ALRM TERM
+  ## Kill tail PID.
+  if test -n "${tail_pid:-}"; then
+    ## Sleep less than a second so the file descriptors have enough time to
+    ## output all the logs to the screen before the background job is killed.
+    sleep 0.3
+    # shellcheck disable=SC2086
+    kill -9 ${tail_pid}
+  fi
+  ## Exit with desired exit code.
+  exit "${last_exit}"
+}
+
+
+## Handle exit trap with line it failed and its exit code.
+handle_exit(){
+  true "BEGIN handle_exit() with args: $*"
+  last_exit="${1}"
+  line_number="${2:-0}"
+  log_time
+  ## Exit without errors.
+  test "${last_exit}" = "0" && end_exit
+  ## Exit with errors.
+  log error "Current script: ${0}"
+  if test -n "${BASH_COMMAND:-}"; then
+    log error "Function executed: ${FUNCNAME[1]}"
+    log error "Command executed: ${BASH_COMMAND}"
+  fi
+  ## some shells have a bug that displays line 1 as LINENO
+  if test "${line_number}" -gt 2; then
+    log bug "At line: ${line_number}."
+    ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
+    ## Simple version that doesn't indicate the error line.
+    # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
+    ## Easy version for wasting resources and better readability.
+    line_above="$(pr -tn "${0}" | tail -n+$((line_number - 4)) | head -n4)"
+    line_error="$(pr -tn "${0}" | tail -n+$((line_number)) | head -n1)"
+    line_below="$(pr -tn "${0}" | tail -n+$((line_number + 1)) | head -n4)"
+    printf '%s\n*%s\n%s\n' "${line_above}" "${line_error}" "${line_below}"
+    ## Too complex.
+    # awk 'NR>L-4 && NR<L+4 { printf " %-5d%3s %s\n",NR,(NR==L?">>>":""),$0 }' L="${line_number}" "${0}" >&2
+  else
+    if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
+      signal_code=$((last_exit-128))
+      signal_caught="$(kill -l "${signal_code}")"
+      log error "Received ${signal_caught} signal."
+    fi
+  fi
+  ## Print exit code.
+  log error "Exit code: ${last_exit}."
+  end_exit
+}
+
+
+#################
+## END LOGGING ##
+#################
+
+###########################
+## BEGIN SCRIPT SPECIFIC ##
+###########################
+
+## Get necessary packages for your host system. to be able to set the guest.
+get_host_pkgs(){
+  case "${os}" in
+    Linux*)
+      case "${distro}" in
+        "Debian"*|"Tails"*)
+          true "Debian"
+          install_package_debian_common
+          install_pkg netcat-openbsd
+          install_virtualbox_debian
+          install_signify signify-openbsd
+          ;;
+        "Linux Mint"*|"LinuxMint"*|"mint"*)
+          true "Mint"
+          install_package_debian_common
+          install_pkg netcat-openbsd
+          install_virtualbox_ubuntu
+          install_signify signify-openbsd
+          ;;
+        *"buntu"*)
+          true "Ubuntu"
+          if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
+            die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
+          fi
+          install_package_debian_common
+          install_pkg netcat-openbsd
+          install_virtualbox_ubuntu
+          install_signify signify-openbsd
+          ;;
+        "Kicksecure"|"Whonix")
+          true "Kicksecure/Whonix"
+          install_package_debian_common
+          install_pkg netcat-openbsd
+          install_virtualbox_kicksecure
+          install_signify signify-openbsd
+          ;;
+        "Arch"*|"Artix"*|"ArcoLinux"*)
+          die 101 "Unsupported system."
+          ;;
+        "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
+          die 101 "Unsupported system."
+          ;;
+        *)
+          die 101 "Unsupported system."
+          ;;
+      esac
+    ;;
+    "OpenBSD"*)
+      die 101 "Unsupported system."
+      ;;
+    "NetBSD"*)
+      die 101 "Unsupported system."
+      ;;
+    "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
+      die 101 "Unsupported system."
+      ;;
+    *)
+      die 101 "Unsupported system."
+      ;;
+  esac
+}
+
+
+get_independent_host_pkgs(){
+  ## Platform independent packages
+  if has signify-openbsd; then
+    ## fix Debian unconventional naming
+    signify(){ signify-openbsd "${@}"; }
+  fi
+
+  has timeout || die 1 "Timeout utility is missing."
+  has curl || install_pkg curl
+  test_pkg curl
+  has rsync || install_pkg rsync
+  test_pkg rsync
+
+  while true; do
+    has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
+    test_pkg virt-what && nested_virt_tool="virt-what" && break
+    install_pkg virt-what && nested_virt_tool="virt-what" && break
+    break
+  done
+  if test -z "${nested_virt_tool:-}"; then
+    ## no hard fail, not a requirement, good to have only.
+    log warn "Program to detect nested virtualization not found."
+  else
+    ## Check if we are a guest of virtualization.
+    if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
+      log warn "Nested virtualization detected, possibly a user mistake."
+      log warn "For more information about nested virtualization see:"
+      log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
+    fi
+  fi
+}
+
+
+## Install package only if not installed already.
+install_pkg(){
+  pkgs="${*}"
+  pkg_not_installed=""
+  for pkg in ${pkgs}; do
+    ## Tst if package exists as a binary or a library, using different tools.
+    # shellcheck disable=SC2086
+    if ! has "${pkg}" &&
+      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
+    then
+      pkg_not_installed="${pkg_not_installed} ${pkg}"
+    fi
+  done
+
+  if test -n "${pkg_not_installed}"; then
+    if test "${dry_run}" = "1"; then
+      log notice "Installing package(s):${pkg_not_installed}."
+      log info "Skipping installing packages because dry_run is set."
+      return 0
+    fi
+    log notice "Updating package list."
+    # shellcheck disable=SC2086
+    log_run "root_cmd ${pkg_mngr_update}"
+    log notice "Installing package(s):${pkg_not_installed}."
+    # shellcheck disable=SC2086
+    log_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
+  fi
+}
+
+
+## Used to test for a 2nd time if packages exist or not, if not,
+## install_pkg() failed above and best thing to do is abort because of missing
+## dependencies.
+test_pkg(){
+  pkgs="${*}"
+  pkg_not_installed=""
+  for pkg in ${pkgs}; do
+    if ! has "${pkg}" &&
+      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
+    then
+      pkg_not_installed="${pkg_not_installed} ${pkg}"
+    fi
+  done
+
+  if test -n "${pkg_not_installed}"; then
+    die 1 "Failed to locate package(s):${pkg_not_installed}."
+  fi
+}
+
+
+## Check if VM exists on VirtualBox
+check_vm_exists_virtualbox(){
+  case "${guest}" in
+    whonix)
+      ## Test if machine exists.
+      workstation_exists=0
+      gateway_exists=0
+      if vboxmanage showvminfo \
+        "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1
+      then
+        gateway_exists=1
+      fi
+      if vboxmanage showvminfo \
+        "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
+      then
+        workstation_exists=1
+      fi
+      ## Find discrepancies.
+      if test "${workstation_exists}" = "0" &&
+        test "${gateway_exists}" = "1"
+      then
+        log warn "Gateway exists but Workstation doesn't."
+      fi
+      if test "${workstation_exists}" = "1" &&
+        test "${gateway_exists}" = "0"
+      then
+        log warn "Workstation exists but Gateway doesn't."
+      fi
+      ## If either one of the Guests exists, procede.
+      if test "${workstation_exists}" = "1" ||
+        test "${gateway_exists}" = "1"
+      then
+        log notice "Virtual Machine(s) were imported previously."
+        if test "${reimport}" = "1"; then
+          ## Remove Gateway if it exists.
+          if test "${gateway_exists}" = "1"; then
+            ## Do not remove gateway if import_only is set to workstation
+            if test "${import_only}" = "workstation"; then
+              log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
+              log info "If you wish to reimport both machines, do not specify import_only."
+            else
+              log warn "Deleting previously imported gateway because reimport is set."
+              log_run "vboxmanage unregistervm \
+                ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+            fi
+          fi
+          ## Remove Workstation if it exists.
+          if test "${workstation_exists}" = "1"; then
+            ## Do not remove workstation if import_only is set to gateway
+            if test "${import_only}" = "gateway"; then
+              log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
+              log info "If you wish to reimport both machines, do not specify import_only."
+            else
+              log warn "Deleting previously imported workstation because reimport is set."
+              log_run "vboxmanage unregistervm \
+                ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+            fi
+          fi
+        elif test -n "${import_only}"; then
+          ## reimport was not set and the import_only is set to the same
+          ## machine that already exists.
+          if test "${gateway_exists}" = "1" &&
+            test "${import_only}" = "gateway"
+          then
+            die 1 "import_only was set to 'gateway', but it already exists and reimport was not set."
+          elif test "${workstation_exists}" = "1" &&
+            test "${import_only}" = "workstation"
+          then
+            die 1 "import_only was set to 'workstation', but it already exists and reimport was not set."
+          fi
+        else
+          ## One of the guests doesn't exist, but neither reimport nor
+          ## import-only was not set.
+          if test "${workstation_exists}" = "0" ||
+            test "${gateway_exists}" = "0"
+          then
+            test "${workstation_exists}" = "0" &&
+              die 1 "Workstation can't be started because it doesn't exist, try '--import-only=workstation'."
+            test "${gateway_exists}" = "0" &&
+              die 1 "Gateway can't be started because it doesn't exist, try '--import-only=gateway'."
+          fi
+          ## VMs already exist, check if user wants to start them.
+          log info "Checking if user wants to start Virtual Machine(s) now."
+          check_guest_boot
+        fi
+      fi
+      ;;
+    kicksecure)
+      if vboxmanage showvminfo \
+        "${guest_pretty}-${interface_all_caps}" >/dev/null 2>&1
+      then
+        log notice "Virtual Machine(s) were imported previously."
+        if test "${reimport}" = "1"; then
+          ## If VMs exists and reimport is set, remove VMs as they are gonna
+          ## be imported later by main.
+          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
+          log_run "vboxmanage unregistervm \
+            ${guest_pretty}-${interface_all_caps} --delete"
+        else
+          ## VMs already exist, check if user wants to start them.
+          log info "Checking if user wants to start Virtual Machine(s) now."
+          check_guest_boot
+        fi
+      fi
+      ;;
+  esac
+}
+
+
+## Check if VM exists using hypervisor tools.
+check_vm_exists(){
+  log notice "Checking if Virtual Machine(s) were already imported."
+  case "${hypervisor}" in
+    virtualbox)
+      check_vm_exists_virtualbox
+      ;;
+    kvm)
+      return 0
+      ;;
+  esac
+}
+
+
+## Check if guest should start or not
+check_guest_boot(){
+  log info "Virtual Machine(s) already exist."
+  log info "If you'd like to redownload the image, read about --redownload (safe)."
+  log info "If you'd like to reimport the image, read about --reimport (danger)."
+  ## Skip guest boot
+  if test "${no_boot}" = "1"; then
+    log notice "no_boot is set."
+    log notice "User declined to start Virtual Machine(s) via command line."
+    log notice "Virtual Machine(s) can be started manually."
+    exit
+  fi
+  ## Default to start guest without interaction
+  if test "${non_interactive}" = "1"; then
+    start_guest
+    exit
+  fi
+  ## Ask user to start guest or not
+  case "${guest}" in
+    whonix)
+      log notice "Available guest: ${guest_pretty}-Gateway-${interface_all_caps}"
+      log notice "Available guest: ${guest_pretty}-Workstation-${interface_all_caps}"
+      ;;
+    kicksecure)
+      log notice "Available guest: ${guest_pretty}-${interface_all_caps}"
+      ;;
+  esac
+  log notice "Do you want to start the Virtual Machine(s) now? [y/n] (default: yes): "
+  printf '%s' "Your answer: "
+  read -r response
+  log notice "User replied '${response}'."
+  case ${response} in
+    ""|[Yy]|[Yy][Ee][Ss])
+      log notice "User accepted to start Virtual Machine(s)."
+      start_guest
+      ;;
+    *)
+      log notice "User declined to start Virtual Machine(s)."
+      log notice "Virtual Machine(s) can be started manually."
+      ;;
+  esac
+  ## Last phase, should exit here every time.
+  exit
+}
+
+
+import_guest(){
+  if test "${no_import}" = "1"; then
+    log notice "Not importing guest because no_import is set."
+    exit 0
+  fi
+
+  case "${hypervisor}" in
+    virtualbox)
+      import_virtualbox
+      ;;
+    kvm)
+      import_kvm
+      ;;
+  esac
+}
+
+## Import VirtualBox images
+import_virtualbox(){
+  log notice "Importing Virtual Machine(s)."
+  ## Check how many systems to import.
+  ## vsys 0: gateway
+  ## vsys 1: workstation
+  vm_purge="purgeme"
+  case "${import_only}" in
+    workstation)
+      vbox_arg="--vsys 0 --eula accept --vmname ${vm_purge} --vsys 1 --eula accept"
+      ;;
+    gateway)
+      vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept --vmname ${vm_purge}"
+      ;;
+    "")
+      case "${guest}" in
+        whonix)
+          ## if importing whonix, import 2 virtual systems
+          vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept"
+        ;;
+        kicksecure)
+          vbox_arg="--vsys 0 --eula accept"
+        ;;
+      esac
+      ;;
+  esac
+  ## import VirtualBox image
+  # shellcheck disable=SC2086
+  log_run "vboxmanage import \
+    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
+    die 105 "Failed to import virtual machines."
+
+  ## VirtualBox does not accept any command to import a single virtual system
+  ## out from an ova with multiple ones.
+  ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
+  if test -n "${import_only}"; then
+    log_run "vboxmanage unregistervm ${vm_purge} --delete" ||
+      die 1 "Failed to remove extraneous virtual system."
+  fi
+
+  log notice "You can now open the VirtualBox application to use ${guest}."
+}
+
+
+## Import KVM images
+import_kvm(){
+  ## placeholder
+  log notice "KVM import not coded, ending run."
+  exit 0
+}
+
+
+start_guest(){
+  case "${hypervisor}" in
+    virtualbox)
+      start_virtualbox
+      ;;
+    kvm)
+      start_kvm
+      ;;
+  esac
+}
+
+## Start the hypervisor with the desired guest
+start_virtualbox(){
+  log notice "Starting Virtual Machine(s)."
+  case "${guest}" in
+    whonix)
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-Gateway-${interface_all_caps}" || return 1
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-Workstation-${interface_all_caps}" || return 1
+      ;;
+    kicksecure)
+      log_run "vboxmanage startvm \
+        ${guest_pretty}-${interface_all_caps}" || return 1
+      ;;
+  esac
+}
+
+
+install_package_debian_common(){
+  pkg_mngr="apt-get"
+  pkg_mngr_install="${pkg_mngr} install --yes"
+  pkg_mngr_update="${pkg_mngr} update --yes"
+  pkg_mngr_check_installed="dpkg -s"
+}
+
+
+## End installation of VirtualBox on Debian and derived systems.
+install_virtualbox_debian_common_end(){
+  has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
+  log_run "root_cmd adduser ${USER} vboxusers" || {
+    die 1 "Failed to add user '${USER}' to group 'vboxusers'."
+  }
+}
+
+
+## Install VirtualBox on Debian
+install_virtualbox_debian(){
+  has vboxmanage && return 0
+  if grep -v "#" /etc/apt/sources.list /etc/apt/sources.list.d/*.list | \
+    grep -e "://fasttrack.debian.net" \
+    -e grep "://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
+  then
+    log info "Skipped adding fasttrack because it was already found."
+  else
+    install_pkg apt-transport-https
+    install_pkg fasttrack-archive-keyring
+    test_pkg fasttrack-archive-keyring
+    log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
+    echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
+  fi
+  install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
+  install_virtualbox_debian_common_end
+}
+
+
+## Install VirtualBox on Ubuntu
+install_virtualbox_ubuntu(){
+  has vboxmanage && return 0
+  install_pkg virtualbox linux-headers-generic
+  install_virtualbox_debian_common_end
+}
+
+
+## Install VirtualBox on Kicksecure
+install_virtualbox_kicksecure(){
+  has vboxmanage && return 0
+  install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
+  install_virtualbox_debian_common_end
+}
+
+
+## Helper to install signify on different systems.
+install_signify(){
+  pkg_name="${1:-signify}"
+  has "${pkg_name}" && return 0
+  install_pkg "${pkg_name}"
+  test_pkg "${pkg_name}"
+}
+
+
+## Test if user accepts the license, if not, abort.
+check_license(){
+  if [ "${non_interactive}" = "1" ]; then
+    log notice "License agreed by the user by setting non_interactive."
+    return 0
+  fi
+
+  log notice "The license will be show in some seconds."
+  test "${dry_run}" != "1" && sleep 6
+
+  ## Whiptail is the Debian version of Dialog with much less features.
+  ## Dialog types problems:
+  ## - whiptail does not allow to set default option with scrolltext on.
+  ## - dialog leaves empty lines on exit.
+  while true; do
+    has dialog && dialog_box="dialog" && break
+    has whiptail && dialog_box="whiptail" && break
+    break
+  done
+
+  case "${dialog_box}" in
+    dialog)
+      ## output-fd to stdout because currently 'main 2>&1 | tee file' if used
+      ## and makes the dialog fail to recognize the characters as it is
+      ## receiving from stderr and writing to stdout.
+      dialog --erase-on-exit --no-shadow \
+        --title "${dialog_title}" \
+        --yes-label "Agree" \
+        --no-label "Disagree" \
+        --output-fd 1 \
+        --yesno "${license}" 640 480 || return 1
+      log notice "User agreed with the license."
+      ;;
+    whiptail)
+      ## When text is too long and scrolltext is needed, the yesno box
+      ## does not display a default item. (note: --default-item is for items
+      ## in the box to be selected as menu for example, not for buttons).
+      whiptail \
+        --scrolltext \
+        --title "${dialog_title}" \
+        --yes-button "Agree" \
+        --no-button "Disagree" \
+        --yesno "${license}" 24 80 || return 1
+      log notice "User agreed with the license."
+      ;;
+    *)
+      printf '%s\n' "${license}"
+      printf '%s' "Do you agree with the license(s)? (yes/no): "
+      read -r license_agreement
+      case "${license_agreement}" in
+        [yY][eE][sS])
+          log notice "User agreed with the license."
+          ;;
+        *)
+          log warn "User replied '${license_agreement}'."
+          return 1
+          ;;
+      esac
+      ;;
+  esac
+}
+
+
+## Get utilities from a pool of known utilities and use the first one found.
+get_utilities(){
+  while true; do
+    has sha512sum && checkhash="sha512sum" && break
+    has shasum && checkhash="shasum -a 512" && break
+    has sha512 && checkhash="sha512" && break
+    has openssl && checkhash="openssl dgst -sha512 -r" && break
+    has digest && checkhash="digest -a sha512" && break
+    test -z "${checkhash}" && {
+      die 1 "Failed to find program that checks SHA512 hash sum."
+    }
+  done
+
+  ## curl|rsync
+  transfer_utility=rsync
+  case "${transfer_utility}" in
+    rsync)
+      rsync=1
+      ;;
+    curl)
+      curl=1
+      ;;
+  esac
+  ## 45m
+  transfer_max_time_large_file="2700"
+  ## 3m
+  transfer_max_time_small_file="180"
+  ## 10m
+  transfer_io_timeout="600"
+  ## 3m
+  transfer_connect_timeout="180"
+  transfer_size_test_connection="200K"
+  transfer_size_small_file="2K"
+  transfer_size_large_file="3G"
+  case ${transfer_utility} in
+    curl)
+      ## Maximum time in seconds that we allow the whole operation to take.
+      ## Option works but as rsync doesn't have it, we are using timeout
+      ## utility from coreutils.
+      #transfer_max_time_opt="--max-time"
+      ## Curl does not have I/O timeout.
+      transfer_io_timeout_opt=""
+      ## Maximum time in seconds that we allow curl's connection to take.
+      ## This only limits the connection phase, so if curl's connect in the
+      ## given period, it will continue.
+      transfer_connect_timeout_opt="--connect-timeout ${transfer_connect_timeout}"
+      ## curl max-filesize is not a definitive barrier:
+      ## The file size is not always known prior to download, and for
+      ## such files this option has no effect even if the file transfer ends
+      ## up  being  larger than this given limit.
+      transfer_size_opt="--max-filesize"
+      transfer_dryrun_opt=""
+      transfer_output_dir_opt="--output-dir"
+      transfer_output_file_opt="--remote-name"
+      transfer_verbosity_opt=""
+      transfer_speed_optimization_opt=""
+      ;;
+    rsync*)
+      ## Rsync does not have an option to set maximum time for of operation.
+      ## Option works but as rsync doesn't have it, we are using timeout
+      ## utility from coreutils.
+      #transfer_max_time_opt=""
+      ## If no data is transferred in the specified time, rsync will exit.
+      transfer_io_timeout_opt="--timeout ${transfer_io_timeout}"
+      ## Amount of time the client will wait for its connection to a server
+      ## to succeed.
+      ## Error when using this option:
+      ##   The --contimeout option may only be used when connecting to an
+      ##   rsync daemon.
+      #transfer_connect_timeout_opt="--contimeout ${transfer_connect_timeout}"
+      transfer_size_opt="--max-size"
+      transfer_dryrun_opt="--dry-run"
+      transfer_output_dir_opt=""
+      transfer_output_file_opt=""
+      transfer_verbosity_opt="--no-motd --progress --verbose --verbose"
+      transfer_speed_optimization_opt="--compress --partial"
+      ;;
+  esac
+
+  while true; do
+    has sudo && sucmd=sudo && break
+    has doas && sucmd=doas && break
+    has su && sucmd="su -c" && sucmd_quote=1 && break
+    test -z "${sucmd}" && {
+      die 1 "Failed to find program to run as another user."
+    }
+  done
+
+  log info "Testing root login"
+  root_cmd echo hello >/dev/null || {
+    die 1 "Failed to run test command as root."
+  }
+}
+
+
+## Set default traps
+set_trap(){
+  ## Sometimes ps is not available, default to sh.
+  if ! has ps; then
+    log warn "Missing program 'ps' to detect shell."
+    log warn "Will assume shell is 'sh'."
+    curr_shell="sh"
+  else
+    curr_shell="$(ps | awk "/ $$ /" | awk '{print $4}')"
+  fi
+  ## Get current shell from current process
+  ## If the process if the file name, get its shell from shebang
+  ## sometimes the process name is the base name of the script with some
+  ## missing letters.
+  case "${0##*/}" in
+    ${curr_shell}*)
+      ## necessary glob because /bin/sh makes the file name
+      ## appear with one letter less
+      shebang="$(head -1 "${0}")"
+      curr_shell="${shebang##*/}"
+      ;;
+  esac
+  case "${curr_shell}" in
+    *bash|*ksh|*zsh)
+      # shellcheck disable=SC2039
+      if test "${curr_shell}" = "bash"; then
+        set -o errtrace
+      fi
+      # shellcheck disable=SC2039
+      trap 'handle_exit $? ${LINENO:-}' ERR
+      ;;
+  esac
+  trap 'handle_exit $? ${LINENO:-}' EXIT HUP INT QUIT ABRT ALRM TERM
+}
+
+
+## Check if system status is supported
+get_system_stat(){
+  if [ "${arch}" != "x86_64" ]; then
+    log error "Only supported architecture is x86_64, your's is ${arch}."
+    return 101
+  fi
+
+  ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
+  ## TODO
+  ## min_ram_mb not used currently because less than total 4GB is too low
+  ## already
+  # shellcheck disable=SC2034
+  case "${interface}" in
+    xfce)
+      min_ram_mb="3328"
+      ;;
+    cli)
+      min_ram_mb="1024"
+      ;;
+  esac
+
+  ## 4GB RAM machine reports 3844Mi and 4031MB
+  total_mem="$(free --mega | awk '/Mem:/{print $2}')"
+  ## capped to 4200MB to report that 4GB RAM on the host is too little
+  if [ "${total_mem}" -lt "4200" ]; then
+    log warn "Your systems has a low amount of total RAM: ${total_mem}."
+    log warn "You may encounter problems using a desktop environment."
+  fi
+
+  free_space="$(df --output=avail -BG "${directory_prefix}" |
+                awk '/G$/{print substr($1, 1, length($1)-1)}')"
+  if [ "${free_space}" -lt 10 ]; then
+    log error "You need at least 10G of available space, you only have ${free_space}G."
+    return 101
+  fi
+}
+
+
+## Sanity checks that should be called before execution of main
+pre_check(){
+  get_os
+  get_utilities
+
+  ## Functions below are difficult to emulate
+  if test "${dry_run}" = "1"; then
+    log info "Skipping rest or pre_check() because dry_run is set."
+    return 0
+  fi
+
+  get_system_stat
+  get_virtualization
+  get_host_pkgs
+  get_independent_host_pkgs
+}
+
+
+## Generate SOCKS credentials for stream isolation
+get_proxy_cred(){
+  test "${transfer_utility}" != "curl" && return 0
+  test -z "${transfer_proxy_suffix:-}" && return 0
+  proxy_user="anonym"
+  proxy_pass="${1:?}"
+  printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
+}
+
+
+## Test if can connect to SOCKS proxy and expect the correct tor reply.
+check_tor_proxy(){
+  log notice "Testing SOCKS proxy: ${proxy}."
+  # proxy_port="${proxy##*:}"
+  # proxy_addr="${proxy%%:*}"
+  ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
+  case "${transfer_utility}" in
+    curl)
+      cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-errors --max-time 3 --head http://${proxy}"
+      ;;
+    rsync*)
+      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync --dry-run rsync://fakeurl"
+      ;;
+  esac
+  # shellcheck disable=SC2086
+  response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
+  expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
+  ## Globs are necessary to match patterns in the event the header has more
+  ## characters them expected but still has the expected string.
+  ## Rsync header response example:
+  ##   bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
+  case "${response_header}" in
+    *"${expected_response_header}"*)
+      log info "Proxy response header:"
+      log info "${response_header}."
+      log notice "Connected to tor SOCKS proxy successfully."
+      return 0
+      ;;
+    *)
+      log info "Proxy response header:"
+      log info "${response_header}."
+      log error "Unexpected proxy response, maybe not a tor proxy?"
+      return 1
+  esac
+}
+
+
+## Set transference proxy depending on transfer utility.
+## usage: set_transfer_proxy ${proxy}
+set_transfer_proxy(){
+  proxy_port="${1##*:}"
+  proxy_addr="${1%%:*}"
+  ## Used for transfers that only curl can do.
+  curl_transfer_proxy="--proxy socks5h://${1}"
+  ## Set transfer proxy per utility.
+  case "${transfer_utility}" in
+    curl)
+      transfer_proxy_prefix=""
+      transfer_proxy_suffix="--proxy socks5h://${1}"
+      ;;
+    rsync*)
+      transfer_proxy_suffix=""
+      if has torsocks; then
+        transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
+      elif has nc; then
+        ## needs to be nc.openbsd
+        # shellcheck disable=SC2089
+        transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
+      else
+        log warn "Neither 'torsocks' not 'nc' (netcat-openbsd) is installed."
+        die 1 "Failed to find program to proxy connections with rsync."
+      fi
+      ;;
+  esac
+}
+
+
+## Useful to test if it is a SOCKS proxy before attempting to make requests.
+## If connection to proxy fails, abort to avoid leaks.
+torify_conn(){
+  ## curl and many other viable applications do not support SOCKS proxy to
+  ## connect with Unix Domain Socket:
+  ##   https://curl.se/mail/archive-2021-03/0013.html
+  if test -n "${socks_proxy:-}"; then
+    proxy="${socks_proxy}"
+    set_transfer_proxy "${proxy}"
+  elif test -n "${TOR_SOCKS_PORT:-}"; then
+    proxy="${TOR_SOCKS_HOST:-127.0.0.1}:${TOR_SOCKS_PORT}"
+    set_transfer_proxy "${proxy}"
+  else
+    ## Stream Isolation will be enforced get_proxy_cred()
+    log warn "Missing SOCKS proxy for torified connections."
+    log warn "Trying tor defaults: TBB (9150) and system tor (9050)."
+    proxy="127.0.0.1:9050"
+    set_transfer_proxy ${proxy}
+    if ! check_tor_proxy; then
+      proxy="127.0.0.1:9050"
+      set_transfer_proxy ${proxy}
+    else
+      return 0
+    fi
+  fi
+  check_tor_proxy || die 2 "Can't connect to SOCKS proxy."
+}
+
+
+## Set version by user input or by querying the API
+get_version(){
+  log notice "Searching for guest version."
+  if test -n "${guest_version:-}"; then
+    log info "User input version."
+    return 0
+  fi
+  log info "Acquiring guest version from API."
+  log info "API host: ${1}"
+  cmd_raw_version="curl ${curl_transfer_proxy:-} $(get_proxy_cred version) \
+      ${curl_opt_ssl:-} \
+      --max-time ${transfer_max_time_small_file} \
+      --max-filesize ${transfer_size_small_file} \
+      --url ${1}"
+  ## this is necessary because we log will not be printed as the command is
+  ## assigned to a variable at 'raw_version=$()'.
+  if test "${dry_run}" = "1"; then
+    log_run "${cmd_raw_version}"
+    return 0
+  fi
+  # shellcheck disable=SC2046,SC2086
+  raw_version="$(${cmd_raw_version})"
+  # shellcheck disable=SC2046,SC2086
+  guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
+  ## Distrust the API version
+  ## Block anything that is not made purely out of numbers and dots
+  ## Not printing queried version to avoid it showing a very long version
+  ## that could inhibit the user from seeing the error message.
+  ## The user would still see a failed exit code.
+  [ "${guest_version%%*[^0-9.]*}" ] ||
+    die 1 "Invalid guest version: contains unexpected characters."
+  ## block string containing more than 12 chars
+  [ "${#guest_version}" -le 12 ] ||
+    die 1 "Invalid guest version: contains more than 12 characters."
+}
+
+
+## Helper for download_files() to make it less repetitive.
+## usage: get_file small|large $url
+get_file(){
+  size="${1}"
+  url="${2}"
+  ## Round is only used to get a different password every time.
+  test -z "${round:-}" && round=10
+  round=$((round+1))
+
+  case "${size}" in
+    small)
+      download_opt_prefix="timeout --foreground ${transfer_max_time_small_file}"
+      download_opt="${transfer_size_opt} ${transfer_size_small_file}"
+      ;;
+    large)
+      download_opt_prefix="timeout --foreground ${transfer_max_time_large_file}"
+      download_opt="${transfer_speed_optimization_opt} ${transfer_size_opt} ${transfer_size_large_file}"
+      ;;
+    *)
+      log bug "Missing size option for get_file()."
+      ;;
+  esac
+  # shellcheck disable=SC2046,SC2086
+  download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+
+  log notice "Downloading ${url:-}."
+  log_run "${download_opt_full}" || return 1
+}
+
+
+## Check if files were already downloaded, if not, try to download everything
+## and only if succeeds, set download flag.
+download_files(){
+  log_time
+
+  log notice "Downloads will be stored in the directory: '${directory_prefix}'."
+  get_file large "${url_guest_file}.${guest_file_ext}" || return 1
+  get_file small "${url_guest_file}.sha512sums.sig" || return 1
+  get_file small "${url_guest_file}.sha512sums" || return 1
+
+  log notice "Checking if files exists locally."
+  if test "${dry_run}" = "1" || {
+    test -f "${directory_prefix}/${guest_file}.${guest_file_ext}" &&
+    test -f "${directory_prefix}/${guest_file}.sha512sums.sig" &&
+    test -f "${directory_prefix}/${guest_file}.sha512sums"
+  }
+  then
+    log_time
+    log_run "touch ${download_flag}"
+  else
+    die 103 "Failed to download files."
+  fi
+}
+
+
+## https://en.wikipedia.org/wiki/X86_virtualization
+get_virtualization(){
+  ## Check if virtualization is enabled.
+  ## Check CPU flags for capability
+  virt_flag="$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | grep -wo -E '(vmx|svm)' || true)"
+
+  case "${virt_flag:=}" in
+    vmx) brand=intel;;
+    svm) brand=amd;;
+  esac
+
+#  if compgen -G "/sys/kernel/iommu_groups/*/devices/*" > /dev/null; then
+#    log notice "${brand}'s I/O Virtualization Technology is enabled in the BIOS/UEFI"
+#  else
+#    log warn "${brand}'s I/O Virtualization Technology is not enabled in the BIOS/UEFI"
+#  fi
+
+  case "${virt_flag:=}" in
+    vmx|svm)
+      log notice "Your CPU supports virtualization: ${brand}: ${virt_flag}."
+      return 0
+      ;;
+    "")
+      log warn "Virtualization availability can be a false negative."
+        log warn "No virtualization flag found."
+        return 0
+        ;;
+      *)
+      log warn "Virtualization availability can be a false negative."
+      log warn "Unknown virtualization flag: ${virt_flag}."
+      return 0
+      ## let's not hard fail here, let the user do it later.
+      #return 101
+      ;;
+  esac
+
+
+  ## msr is blocked by security-misc. If no other solution is found,
+  ## remove the rest of of this function.
+  ## $ modprobe msr
+  ## /bin/disabled-msr-by-security-misc: ERROR: This CPU MSR kernel module is disabled by package security-misc by default. See the configuration file /etc/modprobe.d/30_security-misc.conf | args:
+  ## modprobe: ERROR: ../libkmod/libkmod-module.c:990 command_do() Error running install command '/bin/disabled-msr-by-security-misc' for module msr: retcode 1
+  ## modprobe: ERROR: could not insert 'msr': Invalid argument
+
+  install_pkg msr-tools
+  test_pkg msr-tools
+  # https://bazaar.launchpad.net/~cpu-checker-dev/cpu-checker/trunk/view/head:/kvm-ok
+  # kvm-ok - check whether the CPU we're running on supports KVM acceleration
+  # Copyright (C) 2008-2010 Canonical Ltd.
+  #
+  # Authors:
+  #  Dustin Kirkland <kirkland@canonical.com>
+  #  Kees Cook <kees.cook@canonical.com>
+  #
+  # This program is free software: you can redistribute it and/or modify
+  # it under the terms of the GNU General Public License version 3,
+  # as published by the Free Software Foundation.
+  #
+  # This program is distributed in the hope that it will be useful,
+  # but WITHOUT ANY WARRANTY; without even the implied warranty of
+  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  # GNU General Public License for more details.
+  #
+  # You should have received a copy of the GNU General Public License
+  # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  ## Print verdict
+  verdict() {
+    case "${1}" in
+      0)
+        log notice "Virtualization can be used."
+        log warn "Virtualization availability can be a false negative."
+        return 0
+        ;;
+      1)
+        log warn "Virtualization can NOT be used."
+        log warn "Virtualization availability can be a false negative."
+        return 0
+        ## let's not hard fail here, let the user do it later.
+        #return 1
+        ;;
+      2)
+        log warn "Virtualization can be used, but not enabled."
+        log warn "Virtualization availability can be a false negative."
+        return 0
+        ## let's not hard fail here, let the user do it later.
+        #return 1
+        ;;
+    esac
+  }
+
+  ## Check CPU flags for capability
+  virt=$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo |
+         grep -wo -E '(vmx|svm)')
+  if test -z "${virt}"; then
+    log error "Your CPU does not support Virtualization."
+    verdict 1
+  fi
+  [ "${virt}" = "vmx" ] && brand="intel"
+  [ "${virt}" = "svm" ] && brand="amd"
+
+  ## Now, check that the device exists
+  if test -e /dev/kvm; then
+    log notice "Device /dev/kvm exists"
+    verdict 0
+  else
+    log warn "Device /dev/kvm does not exist"
+    log warn "hint: sudo modprobe kvm_$brand"
+  fi
+
+  ## Prepare MSR access
+  msr="/dev/cpu/0/msr"
+  if root_cmd test ! -r "${msr}"; then
+    root_cmd modprobe msr ||
+      die 1 "Could not add module 'msr' to the kernel."
+  fi
+  if root_cmd test ! -r "${msr}"; then
+    log error "Cannot read: '${msr}'"
+    return 1
+  fi
+
+  log notice "Your CPU supports Virtualization extensions."
+
+  virt_disabled=0
+  ## check brand-specific registers
+  if [ "${virt}" = "vmx" ]; then
+    virt_bit=$(root_cmd rdmsr --bitfield 0:0 0x3a 2>/dev/null || true)
+    if [ "${virt_bit}" = "1" ]; then
+      ## and FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX clear (no tboot)
+      virt_bit=$(root_cmd rdmsr --bitfield 2:2 0x3a 2>/dev/null || true)
+      [ "${virt_bit}" = "0" ] && virt_disabled=1
+    fi
+  elif [ "${virt}" = "svm" ]; then
+    virt_bit=$(root_cmd rdmsr --bitfield 4:4 0xc0010114 2>/dev/null || true)
+    [ "${virt_bit}" = "1" ] && virt_disabled=1
+  else
+    log error "Unknown virtualization extension: ${virt}"
+    verdict 1
+  fi
+
+  if [ "${virt_disabled}" -eq 1 ]; then
+    log warn "'${virt}' is disabled by your BIOS"
+    log warn "Enter your BIOS setup and enable Virtualization Technology (VT),"
+    log warn "      and then reboot your system."
+    verdict 2
+  fi
+
+  verdict 0
+}
+
+#########################
+## END SCRIPT SPECIFIC ##
+#########################
+
+################
+## BEGIN MAIN ##
+################
+get_download_links(){
+  ## Set upstream links as base, especially for API.
+  ## clearnet project domain
+  site_clearnet_whonix="whonix.org"
+  ## onion project domain
+  site_onion_whonix="dds6qkxpwdeubwucdiaord2xgbbeyds25rbsgr73tbfpqpt4a6vjwsyd.onion"
+  ## clearnet project domain
+  site_clearnet_kicksecure="kicksecure.com"
+  ## onion project domain
+  site_onion_kicksecure="w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+
+  case "${guest}" in
+    whonix)
+      site_clearnet="${site_clearnet_whonix}"
+      site_onion="${site_onion_whonix}"
+      ;;
+    kicksecure)
+      site_clearnet="${site_clearnet_kicksecure}"
+      site_onion="${site_onion_kicksecure}"
+      ;;
+  esac
+
+  ## ${variable+string} means use string as value if variable is not empty.
+  ## get download links by mirror of choice.
+  case "${mirror}" in
+    "")
+      ## no mirror chosen, use default values.
+      ## Force mirror to be used.
+      site_download_clearnet="mirrors.dotsrc.org/${guest}"
+      site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
+      ;;
+    0)
+      site_download_clearnet="${curl+download.}${site_clearnet}${rsync+/${guest}}"
+      site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
+      ;;
+    1)
+      site_download_clearnet="mirrors.dotsrc.org/${guest}"
+      site_download_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
+      ;;
+    2)
+      site_download_clearnet="mirror.koljasagorski.de/${guest}"
+      site_download_onion=""
+      ;;
+    3)
+      site_download_clearnet="quantum-mirror.hu/mirrors/pub/${guest}"
+      site_download_onion=""
+      ;;
+    4)
+      ## does not have TLS for Rsync
+      ## When using rsync-ssl, this message appears:
+      ##   rsync: did not see server greeting
+      die 1 "Mirror ${mirror} doesn't support TLS for rsync."
+      site_download_clearnet="ftp.icm.edu.pl/pub/Linux/dist/${guest}"
+      site_download_onion=""
+      ;;
+    5)
+      die 1 "Mirror ${mirror} is currently using an invalid certificate."
+      site_download_clearnet="mirror.gigenet.com/${guest}"
+      site_download_onion=""
+      ;;
+    *)
+      ## range_arg should have catch this error before, just safeguarding.
+      log bug "Invalid mirror number: '${mirror}'."
+      ;;
+  esac
+
+  case "${transfer_utility}" in
+    curl)
+      protocol_prefix_clearnet="https"
+      protocol_prefix_onion="http"
+      ;;
+    rsync)
+      protocol_prefix_clearnet="rsync"
+      protocol_prefix_onion="rsync"
+      ;;
+  esac
+
+  ## clearnet download url
+  url_download_clearnet="${protocol_prefix_clearnet}://${site_download_clearnet}"
+  ## onion download url
+  url_download_onion="${protocol_prefix_onion}://${site_download_onion}"
+
+
+  case "${onion}" in
+    1)
+      log info "Onion preferred."
+      ## always torify onion connections
+      torify_conn
+      curl_opt_ssl=""
+      ## use to test internet connection
+      url_origin="${protocol_prefix_onion}://www.${site_onion}"
+      ## url to download files from
+      test -n "${site_download_onion}" ||
+        die 1 "Mirror ${mirror} doesn't provide an onion service."
+      url_download="${url_download_onion}"
+      ## use to query version
+      url_version_domain="http://www.${site_onion}"
+      ;;
+
+    *)
+      log info "Clearnet preferred."
+      ## only torify to clearnet is SOCKS proxy is specified
+      test "${transfer_utility}" = "rsync" && transfer_utility="rsync-ssl"
+      test -n "${socks_proxy}" && torify_conn
+      curl_opt_ssl="--tlsv1.3 --proto =https"
+      ## use to test internet connection
+      url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
+      ## url to download files from
+      url_download="${url_download_clearnet}"
+      ## use to query version
+      url_version_domain="https://www.${site_clearnet}"
+      ;;
+  esac
+
+
+  case "${hypervisor}" in
+    virtualbox)
+      if test "${testers}" = "1"; then
+        url_version_template="VersionTesters"
+      else
+        url_version_template="VersionNew"
+      fi
+      ## image signer
+      signify_key="${adrelanos_signify}"
+      ## url directory to find files of the selected hypervisor
+      url_domain="${url_download}/ova"
+      ## image file extension
+      guest_file_ext="ova"
+      ## function to call when importing guest
+      ;;
+
+    kvm)
+      if test "${testers}" = "1"; then
+        die 1 "KVM does not have testers version."
+        #url_version_template=""
+      else
+        url_version_template="Version_KVM"
+      fi
+      ## image signer
+      signify_key="${hulahoop_signify}"
+      ## url directory to find files of the selected hypervisor
+      url_domain="${url_download}/libvirt"
+      ## image file extension
+      guest_file_ext="Intel_AMD64.qcow2.libvirt.xz"
+      ## function to call when importing guest
+      ## TODO
+      ;;
+  esac
+
+  url_version_prefix="w/index.php?title=Template:"
+  url_version_suffix="&stable=0&action=raw"
+  url_version="${url_version_domain}/${url_version_prefix}${url_version_template}${url_version_suffix}"
+}
+
+
+## Test if files should be downloaded
+should_download(){
+  if test "${redownload}" = "1"; then
+    ## Do not print further messages as it was already printed before.
+    ## Occurs if the should_download() function was called more than once.
+    test "${download_msg_done:-}" = "1" && return 0
+    download_msg_done=1
+    ## Download if redownload option is set.
+    log notice "Downloading files because redownload is set."
+    return 0
+  elif test -f "${download_flag:-}"; then
+    ## Do not download if flag exists.
+    log notice "Skipping download because flag exists: ${download_flag}."
+    return 1
+  fi
+  ## Download as not obstacles prohibit it.
+  return 0
+}
+
+
+## Check signature of signed checksum.
+check_signature(){
+  log notice "Signify signature:\n${signify_key}"
+  log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
+  echo "${signify_key}" | signify -V -p - \
+   -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
+  log notice "Signature matches."
+}
+
+
+## Check hash sum.
+check_hash(){
+  log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
+  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
+  log notice "Checksum matches."
+}
+
+
+## Check integrity of files
+check_integrity(){
+  log notice "Doing integrity checks."
+  if test "${dry_run}" = "1"; then
+    log info "Skipping integrity checks because dry_run is set."
+    return 0
+  fi
+  check_signature || die 104 "Failed to verify signature."
+  check_hash || die 104 "Failed hash checking."
+}
+
+
+## Self explanatory name, make everything after option parsing.
+main(){
+  ###############
+  ## BEGIN PRE ##
+  ###############
+  log notice "Saving logs to: '${log_file}'."
+  log info "Starting main function."
+
+  guest_pretty="$(capitalize_first_char "${guest}")"
+  interface_pretty="$(capitalize_first_char "${interface}")"
+  interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
+  hypervisor_pretty="$(capitalize_first_char "${hypervisor}")"
+
+  log info "Parsed options:"
+  for item in ${arg_saved}; do
+    log info "  ${item}"
+  done
+
+  log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
+  if test "${non_interactive}" != "1"; then
+    log notice "If you wish to cancel installation, press Ctrl+C."
+  fi
+  ## The license function sleeps for some seconds to give time to abort
+  check_license || die 100 "User disagreed with the license."
+
+  pre_check
+  log_time
+
+  ## Get all links to download files and settings
+  get_download_links
+
+  ## Check if VM were already imported, if true then ask to start
+  check_vm_exists
+  #############
+  ## END PRE ##
+  #############
+
+  ####################
+  ## BEGIN DOWNLOAD ##
+  ####################
+  ## Skip making internet requests if flag already exists and user
+  ## specified the desired version.
+  ## If version is set, use it now to set the download flag path.
+  if test -n "${guest_version}"; then
+    guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
+    download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
+  fi
+
+
+  if should_download; then
+    if test "${dry_run}" != "1"; then
+      log notice "Testing internet connection..."
+      cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
+      log info "Executing: $ ${cmd_check_internet}"
+      ${cmd_check_internet} >/dev/null ||
+        die $? "Can't connect to ${url_origin}, perhaps no internet?"
+      log notice "Connection to ${url_origin} succeeded."
+    fi
+    get_version "${url_version}"
+    log notice "Version: ${guest_version}."
+    guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
+    download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
+    url_domain="${url_domain}/${guest_version:?}"
+    url_guest_file="${url_domain}/${guest_file}"
+
+    ## Check again for download flag after version was queried.
+    if should_download; then
+      download_files || die 103 "Failed to download files."
+    fi
+  else
+    log notice "Version: ${guest_version}."
+  fi
+  ##################
+  ## END DOWNLOAD ##
+  ##################
+
+  ##########################################
+  ## BEGIN VERIFICATION, IMPORT AND START ##
+  ##########################################
+  check_integrity
+  import_guest
+  check_guest_boot
+  ########################################
+  ## END VERIFICATION, IMPORT AND START ##
+  ########################################
+}
+
+
+## Print usage message and exit with set exit code, depending if usage was
+## called by [-h|--help] or because user tried and invalid option.
+usage(){
+  printf %s"Usage: ${me} [options...]
+ -g, --guest=<guest> Set guest. Options: kicksecure, whonix (default)
+ -u, --guest-version=<version>
+                     Set guest version, else query from API.
+ -i, --interface=<interface>
+                     Set interface. Options: cli, xfce (default)
+ -m, --hypervisor=<platform>
+                     Set virtualization. Options: kvm, virtualbox (default)
+ -o, --onion         Download files over onion.
+ -s, --socks-proxy=<proxy>
+                     Set TCP SOCKS proxy for onion client connections.
+                       (default: TOR_SOCKS_HOST:TOR_SOCKS_PORT, if not set, try
+                       TBB proxy at 9150, else try system tor proxy at 9050)
+ -l, --log-level=<level>
+                     Set log level. Options: debug, info,
+                       notice (default), warn, error.
+ -V, --version       Show version and quit.
+ -h, --help          Show help for commands and quit.
+Developer options:
+ --no-show-errors    Don't print errors.
+ --allow-errors      Don't exit on errors. Dirty mode.
+ --mirror=<number>   Set mirror acording to number index. Choose closest
+                       mirror to you if not using onion for faster downloads.
+                       Not that if not choosing mirror, defaults to whonix.org
+                       for plainnet and dotsrc.org correspondent for onion.
+                       Mirrors index:
+                         0 [DE] download.whonix.org (onion available)
+                         1 [DK] mirrors.dotsrc.org (onion available)
+                         2 [DE] mirror.koljasagorski.de
+                         3 [HU] quantum-mirror.hu
+                         4 [PL] ftp.icm.edu.pl
+                         5 [US] mirrors.gigenet.com
+ --redownload        Redo the download of the guest instead of stopping if it
+                       was already succesfully downloaded.
+ --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
+                       Options: workstation and gateway'.
+ --no-import         Don't import guest. Default is to import.
+ --reimport          Redo the import of the guest to the hypervisor. Will try
+                       to import already existing files if found. This option
+                       requires --destroy-existing-guest as pledge.
+ -k, --no-boot       Don't boot guest at the end of run. Default is to start.
+ --destroy-existing-guest
+                     Required pledge for --reimport.
+ -P, --directory-prefix=<dir>
+                     Set absolute path to directory prefix to save files to.
+                       The directory must already exist and have read and
+                       write capabilities for the calling user. If you change
+                       this directory, but the previously downloaded files
+                       are not changed to the new directory, the download
+                       start again. \$HOME/installer-dist-download (default).
+ -n, --non-interactive
+                     Set non-interactive mode, license will be accepted.
+ -D, --dev           Se development mode. Set version to download empty image.
+ --testers           Set testers version to be downloaded.
+ -d, --dry-run       Fake run, log commands to info level without executing.
+ -t, --getopt        Show parsed options and quit.
+File name:
+  The default file name is installer-dist. Some basic options can be set as
+  the file name if they follow the format 'guest-installer-interface'.
+  Anything different than the default name or the allowed format is rejected.
+  Command line options override the file name definition.
+"
+  exit "${1:-0}"
+}
+
+
+## Set default values for variables.
+set_default(){
+  directory_prefix=""
+  set_arg directory_prefix "${HOME}/installer-dist-download"
+  guest=""
+  set_arg guest whonix
+  hypervisor=""
+  set_arg hypervisor virtualbox
+  interface=""
+  set_arg interface xfce
+  log_level=""
+  set_arg log_level notice
+  guest_version=""
+  socks_proxy=""
+  onion=""
+  non_interactive=""
+  dev="" dry_run=""
+  getversion=""
+  getopt=""
+  no_import=""
+  no_boot=""
+  redownload=""
+  reimport=""
+  import_only=""
+  destroy_existing_guest=""
+  testers=""
+  allow_errors=""
+  no_show_errors=""
+  mirror=""
+}
+
+
+## Parse script name.
+parse_name(){
+  ## if using default file name, ignore the rest
+  test "${me}" = "installer-dist" && return 0
+  ## check if file name is valid
+  case "${me}" in
+    whonix-installer-xfce | whonix-installer-cli | \
+        kicksecure-installer-xfce | kicksecure-installer-cli )
+      log info "Valid script name ${me}, using its name to set options."
+      ;;
+    *)
+      log error "Invalid script name '${me}'."
+      log error "If you don't know why this happened, rename this script to"
+      log error "  installer-dist and use command-line options instead."
+      return 2
+  esac
+  ## assign values according to script name
+  set_arg guest "$(echo "${me}" | cut -d "-" -f1)"
+  set_arg interface "$(echo "${me}" | cut -d "-" -f3)"
+  #set_arg hypervisor "$(echo "${me}" | cut -d "-" -f3)"
+  log info "Assigned guest and interface according to script name ${me}."
+  return 0
+}
+
+
+## Parse command-line options.
+parse_opt(){
+  #test -z "${1:-}" && usage 2
+  while true; do
+    begin_optparse "${1:-}" "${2:-}" || break
+    # shellcheck disable=SC2034
+    case "${opt}" in
+      P|directory-prefix)
+        get_arg directory_prefix
+        ;;
+      o|onion)
+        set_arg onion 1
+        ;;
+      s|socks-proxy)
+        get_arg socks_proxy
+        ;;
+      l|log-level)
+        get_arg log_level
+        ;;
+      g|guest)
+        get_arg guest
+        ;;
+      u|guest-version)
+        get_arg guest_version
+        ;;
+      i|interface)
+        get_arg interface
+        ;;
+      m|hypervisor)
+        get_arg hypervisor
+        ;;
+      mirror)
+        get_arg mirror
+        ;;
+      import-only)
+        get_arg import_only
+        ;;
+      allow-errors)
+        set_arg allow_errors 1
+        ;;
+      no-show-errors)
+        set_arg no_show_errors 1
+        ;;
+      redownload)
+        set_arg redownload 1
+        ;;
+      reimport)
+        set_arg reimport 1
+        ;;
+      destroy-existing-guest)
+        set_arg destroy_existing_guest 1
+        ;;
+      n|non-interactive)
+        set_arg non_interactive 1
+        ;;
+      k|no-boot)
+        set_arg no_boot 1
+        ;;
+      no-import)
+        set_arg no_import 1
+        ;;
+      D|dev)
+        set_arg dev 1
+        ;;
+      testers)
+        set_arg testers 1
+        ;;
+      t|getopt)
+        set_arg getopt 1
+        ;;
+      d|dry-run)
+        set_arg dry_run 1
+        ;;
+      V|version)
+        set_arg getversion 1
+        ;;
+      h|help)
+        usage 0
+        ;;
+      *)
+        die 2 "Invalid option: '${opt_orig}'."
+        ;;
+    esac
+    shift "${shift_n:-1}"
+  done
+
+  ## Put last newline after last argument of arg_saved.
+  arg_saved="$(printf %s"${arg_saved}\n")"
+  ## Test if options are valid
+  range_arg log_level error warn notice info debug
+  [ "${log_level}" = "debug" ] && set -o xtrace
+  range_arg guest whonix kicksecure
+  range_arg interface cli xfce
+  range_arg hypervisor kvm virtualbox
+  range_arg import_only workstation gateway
+  if test "${guest}" != "whonix" && test -n "${import_only}"; then
+    die 1 "The option import_only can only be set when the guest is whonix."
+  fi
+  test -n "${mirror}" && range_arg mirror 0 1 2 3 4 5
+
+  test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
+
+  if test "${reimport}" = "1"; then
+    if test -z "${destroy_existing_guest}"; then
+      log error "The option --reimport requires --destroy-existing-guest."
+      log error "The option --destroy-existing-guest was not set."
+      die 1 "User mistake, read the documentation to understand how to use the options."
+    fi
+  fi
+
+  if test -n "${directory_prefix}"; then
+    ## Remove trailing slash from directory.
+    directory_prefix="${directory_prefix%*/}"
+    ## Only accept an absolute path.
+    if [ "${directory_prefix}" = "${directory_prefix#/}" ]; then
+      log error "Invalid directory prefix: '${directory_prefix}'."
+      die 1 "Directory prefix can not be a relative path, must be an absolute path."
+    fi
+
+    ## Test if parent directory exists.
+    directory_prefix_parent="$(dirname "${directory_prefix}")"
+    if ! test -d "${directory_prefix_parent}"; then
+      die 1 "Directory doesn't exist: '${directory_prefix_parent}'."
+    fi
+    ## Not possible to check if parent dir is writable because if the prefix
+    ## is set to '~/', the parent '/home' is not writable.
+
+    log info "Creating directory: '${directory_prefix}'."
+    mkdir -p "${directory_prefix}" ||
+      die 1 "Failed to created directory: '${directory_prefix}'."
+    test -w "${directory_prefix}" ||
+      die 1 "Directory isn't writable: '${directory_prefix}'."
+    test -r "${directory_prefix}" ||
+      die 1 "Directory isn't readable: '${directory_prefix}'."
+
+    log_dir_main="${directory_prefix}/logs"
+
+    ## Log to integer increasinly to avoid leaking other information such
+    ## as PID or date (even if UTC).
+    if ! test -d "${log_dir_main}/1"; then
+      log_dir_cur="${log_dir_main}/1"
+    else
+      last_run_integer="$(echo "${log_dir_main}"/* | awk '{print NF}')"
+      cur_run_integer=$((last_run_integer+1))
+      log_dir_cur="${log_dir_main}/${cur_run_integer}"
+    fi
+    log_file="${log_dir_cur}/log"
+
+    ## If the commands below fail, it should have failed earlier for the
+    ## parent directory permissions, not below.
+    mkdir -p "${log_dir_cur}"
+    cp "${0}" "${log_dir_cur}"
+    touch "${log_file}"
+  fi
+
+  # shellcheck disable=SC2194
+  if test "${getopt}" = "1"; then
+    printf '%s\n' "${arg_saved}"
+    exit 0
+  fi
+  if test "${getversion}" = "1"; then
+    printf '%s\n' "${me} ${version}"
+    exit 0
+  fi
+  if test "${dev}" = "1"; then
+    if test -z "${guest_version}"; then
+      log info "Setting dev software version."
+      guest_version="16.0.4.2"
+    fi
+  fi
+  if test "${dry_run}" = "1"; then
+    if test -z "${guest_version}"; then
+      log info "dry_run set, commands will be printed and not executed"
+      log info "Faking software version because of dry_run."
+      guest_version="16.0.4.2"
+    fi
+  fi
+  if test "${allow_errors}" = "1"; then
+    set +o errexit
+  fi
+
+  log info "Option parsing ended."
+}
+
+
+## Logging mechanism.
+log_term_and_file(){
+  ## Send fd3 to the terminal
+  if test -t 1 && has tty; then
+    true "exec 3>$(tty)"
+    exec 3>>"$(tty)"
+  else
+    true "Output is not being sent to the terminal because either tty program does not exist of because terminal is not connected to stdout."
+  fi
+  ## Current problem is that command-line option is necessary to hide stderr
+  ## by sending it to /dev/null, while the desired method would be to avoid
+  ## this workaround and simply be able to redirect with 2>/dev/null.
+  ## Send f21/stdout to log file.
+  true "exec 1>>${log_file}"
+  exec 1>>"${log_file}"
+  ## Send fd2/stderr to log file by default.
+  true "exec 2>>${log_file}"
+  exec 2>>"${log_file}"
+  ## If no_show_errors is set, send fd2/stderr to /dev/null.
+  if test "${no_show_errors}" = "1"; then
+    true "exec 2>/dev/null"
+    exec 2>/dev/null
+  fi
+  ## Bash has built-in feature to redirect xtrace to the specified file.
+  if test "${curr_shell}" = "bash"; then
+    # shellcheck disable=SC2039
+    true "exec 9>>${log_file}.xtrace"
+    exec 9>>"${log_file}.xtrace"
+    export BASH_XTRACEFD=9
+    set -o xtrace
+  fi
+  ## Copy output of log file to fd3 and send process to the background.
+  true "tail -f ${log_file} >&3 &"
+  tail -f "${log_file}" >&3 &
+  ## Get background job PID.
+  tail_pid="${!}"
+}
+
+
+## Wrapper to call all necessary functions in one.
+run_installer(){
+  ## Set default values.
+  set_default
+  ## Set trap for common signals.
+  set_trap
+  ## Parse script name for wanted values.
+  parse_name
+  ## Parse command-line options.
+  parse_opt "${@}"
+  ## Logging mechanism.
+  log_term_and_file
+  ## Start main function.
+  main
+}
+
+
+## Run the install script.
+run_installer "${@}"

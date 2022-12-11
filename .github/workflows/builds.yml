@@ -1,0 +1,27 @@
+name: docker build
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-22.04
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - image: debian:stable
+                    - image: debian:testing
+                    - image: debian:unstable
+                    - image: ubuntu:latest
+
+        container:
+            image: ${{ matrix.image }}
+
+        steps:
+            - uses: actions/checkout@v1
+            - run: cat /etc/os-release
+            - run: apt-get update -y && apt-get install -y psmisc
+            - run: bash ./usr/bin/installer-dist -n -l debug -k -D
+            - run: cat ~/installer-dist-download/log
+            - run: cat ~/installer-dist-download/log.xtrace
+
+# vim: sw=4

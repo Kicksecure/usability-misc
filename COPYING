@@ -1,7 +1,24 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
-Copyright: 2012 - 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+Copyright: 2012-2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+License: GPL-3+-with-additional-terms-1
+
+Files: usr/bin/installer-dist
+Copyright: 2022-2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+           2022-2022 grass <grass@danwin.1210.de>
+           2021-2022 nyxnor <nyxnor@protonmail.com>
+           2016-2019 Dylan Araps
+           2008-2010 Canonical Ltd.
+License: GPL-3+-with-additional-terms-1
+
+Files: usr/share/bash-completion/completions/installer-dist
+ usr/share/zsh/vendor-completions/_installer-dist
+ man/installer-dist.1.ronn
+Copyright: 2022-2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+           2022-2022 grass <grass@danwin.1210.de>
+License: GPL-3+-with-additional-terms-1
+
 License: GPL-3+-with-additional-terms-1
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
