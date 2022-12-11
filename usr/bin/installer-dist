@@ -1240,7 +1240,6 @@ set_trap(){
       curr_shell="${shebang##*/}"
       ;;
   esac
-  printf '%s\n' "${curr_shell}"
   log notice "Current shell: '${curr_shell}'"
   exit 0
 
