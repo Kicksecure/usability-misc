@@ -608,7 +608,8 @@ get_host_pkgs(){
           ;;
         *"buntu"*)
           true "Ubuntu"
-          if [ $(echo "${distro_version}" | tr -d "." | tr -d '"') -lt 220400 ]; then
+          # shellcheck disable=SC2046
+          if [ $(echo "${distro_version}" | tr -d "." | tr -d '"') -lt 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
