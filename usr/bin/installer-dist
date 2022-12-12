@@ -454,10 +454,13 @@ log(){
       log bug "Unsupported log type: '${log_type}'."
       die 1 "Please report this bug."
   esac
-  ## uniform log format
+  ## Set log color.
   log_color="${bold}${log_color}"
-  test -n "${NO_COLOR:-}" && log_color=""
-
+  ## Disable colors if some environment variables are present.
+  if test -n "${NO_COLOR:-}" || test -n "${ANSI_COLORS_DISABLED:-}"; then
+    log_color=""
+  fi
+  ## uniform log format
   log_full="${me}: [${log_color}${log_type_up}${nocolor}]: ${log_content}"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
