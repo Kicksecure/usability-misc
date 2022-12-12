@@ -78,6 +78,7 @@ get_colors(){
     cyan=""
     return 0
   fi
+
   # shellcheck disable=SC2034
   nocolor="\033[0m"
   bold="\033[1m"
