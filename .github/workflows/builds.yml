@@ -30,6 +30,7 @@ jobs:
                 include:
                     - image: debian:stable
                     - image: ubuntu:latest
+                    - image: linuxmintd:mint21-amd64
 
         container:
             image: ${{ matrix.image }}
