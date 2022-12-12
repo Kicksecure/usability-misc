@@ -61,18 +61,36 @@ all_args="${*}"
 start_time="$(date +%s)"
 
 ## colors
-# shellcheck disable=SC2034
-nocolor="\033[0m"
-bold="\033[1m"
-#nobold="\033[22m"
-#underline="\033[4m"
-#nounderline="\033[24m"
-red="\033[31m"
-green="\033[32m"
-yellow="\033[33m"
-#blue="\033[34m"
-magenta="\033[35m"
-cyan="\033[36m"
+get_colors(){
+  ## Disable colors if some environment variables are present.
+  if test -n "${NO_COLOR:-}" || test -n "${ANSI_COLORS_DISABLED:-}"; then
+    # shellcheck disable=SC2034
+    nocolor=""
+    bold=""
+    #nobold=""
+    #underline=""
+    #nounderline=""
+    red=""
+    green=""
+    yellow=""
+    #blue=""
+    magenta=""
+    cyan=""
+    return 0
+  fi
+  # shellcheck disable=SC2034
+  nocolor="\033[0m"
+  bold="\033[1m"
+  #nobold="\033[22m"
+  #underline="\033[4m"
+  #nounderline="\033[24m"
+  red="\033[31m"
+  green="\033[32m"
+  yellow="\033[33m"
+  #blue="\033[34m"
+  magenta="\033[35m"
+  cyan="\033[36m"
+}
 
 ## https://www.whonix.org/wiki/Main/Project_Signing_Key#cite_note-7
 adrelanos_signify="untrusted comment: Patrick Schleizer adrelanos@whonix.org signify public key
@@ -456,10 +474,6 @@ log(){
   esac
   ## Set log color.
   log_color="${bold}${log_color}"
-  ## Disable colors if some environment variables are present.
-  if test -n "${NO_COLOR:-}" || test -n "${ANSI_COLORS_DISABLED:-}"; then
-    log_color=""
-  fi
   ## uniform log format
   log_full="${me}: [${log_color}${log_type_up}${nocolor}]: ${log_content}"
   ## error logs are the minimum and should always be printed, even if
@@ -2041,6 +2055,7 @@ File name:
 
 ## Set default values for variables.
 set_default(){
+  get_colors
   xtrace=""
   directory_prefix=""
   set_arg directory_prefix "${HOME}/installer-dist-download"
