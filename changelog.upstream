@@ -1,3 +1,73 @@
+commit e3a5a0fa059317a9ad62f43873017a49462ca183
+Merge: e4c2dd5 b349d34
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 11 09:01:34 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit b349d3415a4554a81caa84d128683bf956c650fa
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 01:15:51 2022 +0000
+
+    print logs at the end hopefully
+
+commit 983944bdc3bf94efc993d9d40f4d1e803559d877
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 01:10:51 2022 +0000
+
+    identify problem with tty not being connected to terminal
+
+commit e4c2dd5cec917d3330c0771ab8ff8d52edaa0aa4
+Merge: 73ee6e5 b68bb05
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:51:03 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit f664ac9e4e0c8f52c497659410cfa7af27219fed
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:50:35 2022 +0000
+
+    remove newline
+
+commit b68bb0592ac8f1150ccae881e733f7e9e3a4975d
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:49:30 2022 +0000
+
+    fix build not having ps
+
+commit 73ee6e511d4b7e94912d332738df7da06159d6ed
+Merge: 93d03d6 eaa74d8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:39:27 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit eaa74d85c9f7e0fb134d15058184b7fff7e84615
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:32:47 2022 +0000
+
+    beautify output of exec
+
+commit 93d03d6f23ce018ae7fcaf1aede6dd5e555c5e95
+Merge: 837acd5 bddc2a5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:16:49 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit bddc2a5f95a97639cffa6d6fffefc32da05e65c3
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:15:30 2022 +0000
+
+    fix build path
+
+commit 837acd599f588452e60f1f3eda14be3d734d63cc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:05:53 2022 -0500
+
+    bumped changelog version
+
 commit 89bdb177d224f07bd4512d59c5df1d240e07044a
 Merge: e7e3048 368f8fe
 Author: Patrick Schleizer <adrelanos@whonix.org>
