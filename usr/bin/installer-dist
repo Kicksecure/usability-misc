@@ -2359,8 +2359,5 @@ run_installer(){
   main
 }
 
-root_cmd apt-get update
-exit
-
 ## Run the install script.
 run_installer "${@}"
