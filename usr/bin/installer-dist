@@ -1948,7 +1948,10 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving Installer log to: '${log_file_simple}'."
+  log notice "Saving Installer user log to: '${log_file_simple}'."
+  if [ ! "${log_file_xtrace}" = "" ]; then
+    log notice "Saving Installer debug log to: '${log_file_xtrace}'."
+  fi
   log info "Starting main function."
 
   guest_pretty="$(capitalize_first_char "${guest}")"
