@@ -1948,7 +1948,7 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving Installer user log to: '${log_file_simple}'."
+  log notice "Saving Installer user log to: '${log_file_user}'."
   if test -f "${log_file_debug}"; then
     log notice "Saving Installer debug log to: '${log_file_debug}'."
   fi
@@ -2311,14 +2311,14 @@ parse_opt(){
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"
     fi
-    log_file_simple="${log_dir_cur}/log.user.txt"
+    log_file_user="${log_dir_cur}/log.user.txt"
     log_file_debug="${log_dir_cur}/log.debug.txt"
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
     mkdir -p "${log_dir_cur}"
     cp "${0}" "${log_dir_cur}"
-    touch "${log_file_simple}"
+    touch "${log_file_user}"
   fi
 
   # shellcheck disable=SC2194
@@ -2367,11 +2367,11 @@ log_term_and_file(){
   ## by sending it to /dev/null, while the desired method would be to avoid
   ## this workaround and simply be able to redirect with 2>/dev/null.
   ## Send f21/stdout to log file.
-  true "exec 1>>${log_file_simple}"
-  exec 1>>"${log_file_simple}"
+  true "exec 1>>${log_file_user}"
+  exec 1>>"${log_file_user}"
   ## Send fd2/stderr to log file by default.
-  true "exec 2>>${log_file_simple}"
-  exec 2>>"${log_file_simple}"
+  true "exec 2>>${log_file_user}"
+  exec 2>>"${log_file_user}"
   ## If no_show_errors is set, send fd2/stderr to /dev/null.
   if test "${no_show_errors}" = "1"; then
     true "exec 2>/dev/null"
@@ -2387,8 +2387,8 @@ log_term_and_file(){
     xtrace=1
   fi
   ## Copy output of log file to fd3 and send process to the background.
-  true "tail -f ${log_file_simple} >&3 &"
-  tail -f "${log_file_simple}" >&3 &
+  true "tail -f ${log_file_user} >&3 &"
+  tail -f "${log_file_user}" >&3 &
   ## Get background job PID.
   tail_pid="$!"
 }
