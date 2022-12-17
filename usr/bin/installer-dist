@@ -739,13 +739,16 @@ get_independent_host_pkgs(){
   done
   if test -z "${nested_virt_tool:-}"; then
     ## no hard fail, not a requirement, good to have only.
-    log warn "Program to detect nested virtualization not found."
+    log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
   else
     ## Check if we are a guest of virtualization.
     if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
-      log warn "Nested virtualization detected, possibly a user mistake."
-      log warn "For more information about nested virtualization see:"
-      log warn "  ${url_version_domain}/wiki/Nested_Virtualization"
+      log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
+- Possibly a user mistake.
+- This installer is designed to run on the host operating system.
+- This installer is not designed to be run inside virtual machines.
+- For more information about nested virtualization see:
+  ${url_version_domain}/wiki/Nested_Virtualization"
     fi
   fi
 }
