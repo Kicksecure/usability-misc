@@ -462,6 +462,10 @@ check_opt_filled(){
 ## standardization on how the messages are delivered.
 ## usage: log [info|notice|warn|error] "X occurred."
 log(){
+  ## XXX
+  if [ -z "${xtrace:-}" ]; then
+    xtrace=""
+  fi
   ## Avoid clogging output if log() is working alright.
   if test "${xtrace}" = "1"; then
     true "Removing xtrace for log() function."
@@ -2242,9 +2246,6 @@ parse_opt(){
   arg_saved="$(printf %s"${arg_saved}\n")"
   ## Test if options are valid
   range_arg log_level error warn notice info debug
-  if [ -z "${xtrace:-}" ]; then
-    xtrace=""
-  fi
   if [ "${log_level}" = "debug" ]; then
     xtrace=1
     set -o xtrace
