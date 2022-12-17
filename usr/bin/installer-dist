@@ -249,6 +249,7 @@ get_os(){
     FreeBSD) distro="${os} $(freebsd-version)";;
     *) distro="${os} ${kernel}";;
   esac
+  distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
   log notice "Detected system: ${distro} ${distro_version}."
   log notice "Detected CPU architecture: ${arch}."
 }
@@ -611,7 +612,7 @@ get_host_pkgs(){
           ;;
         *"buntu"*)
           true "Ubuntu"
-          if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
+          if [ ! ${distro_version_without_dot} -ge 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
