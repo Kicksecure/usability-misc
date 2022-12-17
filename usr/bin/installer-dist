@@ -742,7 +742,9 @@ get_independent_host_pkgs(){
     log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
   else
     ## Check if we are a guest of virtualization.
+    nested_virtualization_detected=""
     if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
+      nested_virtualization_detected=true
       log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
 - Possibly a user mistake.
 - This installer is designed to run on the host operating system.
