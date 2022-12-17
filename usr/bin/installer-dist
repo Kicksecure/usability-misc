@@ -1948,7 +1948,7 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving logs to: '${log_file}'."
+  log notice "Saving Installer logs to: '${log_file}'."
   log info "Starting main function."
 
   guest_pretty="$(capitalize_first_char "${guest}")"
