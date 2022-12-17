@@ -2379,7 +2379,7 @@ log_term_and_file(){
   log_file_xtrace=""
   ## Bash has built-in feature to redirect xtrace to the specified file.
   if test "${curr_shell}" = "bash"; then
-    log_file_xtrace="${log_file_simple}.xtrace"
+    log_file_xtrace="${log_file_simple}.debug"
     # shellcheck disable=SC2039
     true "exec 9>>${log_file_xtrace}"
     exec 9>>"${log_file_xtrace}"
