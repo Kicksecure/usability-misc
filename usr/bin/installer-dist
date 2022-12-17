@@ -1949,8 +1949,8 @@ main(){
   ## BEGIN PRE ##
   ###############
   log notice "Saving Installer user log to: '${log_file_simple}'."
-  if [ ! "${log_file_xtrace}" = "" ]; then
-    log notice "Saving Installer debug log to: '${log_file_xtrace}'."
+  if [ ! "${log_file_debug}" = "" ]; then
+    log notice "Saving Installer debug log to: '${log_file_debug}'."
   fi
   log info "Starting main function."
 
@@ -2376,13 +2376,13 @@ log_term_and_file(){
     true "exec 2>/dev/null"
     exec 2>/dev/null
   fi
-  log_file_xtrace=""
+  log_file_debug=""
   ## Bash has built-in feature to redirect xtrace to the specified file.
   if test "${curr_shell}" = "bash"; then
-    log_file_xtrace="${log_file_simple}.debug"
+    log_file_debug="${log_file_simple}.debug"
     # shellcheck disable=SC2039
-    true "exec 9>>${log_file_xtrace}"
-    exec 9>>"${log_file_xtrace}"
+    true "exec 9>>${log_file_debug}"
+    exec 9>>"${log_file_debug}"
     export BASH_XTRACEFD=9
     set -o xtrace
     xtrace=1
