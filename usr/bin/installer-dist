@@ -738,7 +738,7 @@ get_independent_host_pkgs(){
     break
   done
   if test -z "${nested_virt_tool:-}"; then
-    ## no hard fail, not a requirement, good to have only.
+    ## No hard fail, not a requirement, good to have only.
     log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
   else
     ## Check if we are a guest of virtualization.
