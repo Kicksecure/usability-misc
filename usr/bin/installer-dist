@@ -241,6 +241,11 @@ get_os(){
       elif [ -z "${kernel%%*-Microsoft}" ]; then
         distro="${distro} on Windows 10 [WSL1]"
       fi
+      if [ -z "$distro_version" ]; then
+         if test -f /etc/debian_version ; then
+            distro_version="$(cat /etc/debian_version)"
+         fi
+      fi
     ;;
     Haiku) distro=$(uname -sv);;
     Minix|DragonFly) distro="${os} ${kernel}";;
