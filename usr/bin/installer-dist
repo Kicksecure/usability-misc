@@ -68,8 +68,8 @@ get_colors(){
     nocolor=""
     bold=""
     #nobold=""
-    #underline=""
-    #nounderline=""
+    underline=""
+    nounderline=""
     red=""
     green=""
     yellow=""
@@ -83,8 +83,8 @@ get_colors(){
   nocolor="\033[0m"
   bold="\033[1m"
   #nobold="\033[22m"
-  #underline="\033[4m"
-  #nounderline="\033[24m"
+  underline="\033[4m"
+  nounderline="\033[24m"
   red="\033[31m"
   green="\033[32m"
   yellow="\033[33m"
@@ -1361,7 +1361,7 @@ get_system_stat(){
   total_mem="$((total_mem_kB/1000))"
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
-    log warn "Your systems has a low amount of total RAM: ${total_mem}. See:"
+    log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: ${total_mem} MB. See:"
     log warn "${url_version_domain}/wiki/RAM"
   fi
 
@@ -1608,23 +1608,30 @@ get_virtualization(){
 
   case "${virt_flag:=}" in
     vmx|svm)
-      log notice "Your CPU supports virtualization: ${brand}: ${virt_flag}."
+      log notice "${underline}Virtualization Support Test:${nounderline} Your CPU supports virtualization: ${brand}: ${virt_flag}."
+      virt_detection_success=true
       return 0
       ;;
     "")
-        log warn "No virtualization flag found."
-        log warn "(The virtualization detection is imperfect might be unreliable and show a false negative.)"
-        return 0
+        log warn "${underline}Virtualization Support Test:${nounderline} No virtualization flag found."
+        virt_detection_success=false
         ;;
       *)
-      log warn "Unknown virtualization flag: ${virt_flag}."
-      log warn "(The virtualization detection is imperfect might be unreliable and show a false negative.)"
-      return 0
-      ## let's not hard fail here, let the user do it later.
-      #return 101
+      log warn "${underline}Virtualization Support Test:${nounderline} Unknown virtualization flag: ${virt_flag}."
+      virt_detection_success=false
       ;;
   esac
 
+  if [ "$virt_detection_success" = "false" ]; then
+    log warn "(The virtualization detection is imperfect and might show a false negative warning.)"
+    if [ "${hypervisor}" = "virtualbox" ]; then
+      log warn "See user documentation on how to enable virtualization:"
+      log warn "${url_version_domain}/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
+    fi
+    return 0
+    ## Let's not hard fail here, let the user do it later.
+    #return 101
+  fi
 
   ## msr is blocked by security-misc. If no other solution is found,
   ## remove the rest of of this function.
