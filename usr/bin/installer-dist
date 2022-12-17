@@ -607,6 +607,7 @@ handle_exit(){
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
     log bug "At line: ${line_number}."
+    echo ""
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
     # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
@@ -617,6 +618,10 @@ handle_exit(){
     printf '%s\n*%s\n%s\n' "${line_above}" "${line_error}" "${line_below}"
     ## Too complex.
     # awk 'NR>L-4 && NR<L+4 { printf " %-5d%3s %s\n",NR,(NR==L?">>>":""),$0 }' L="${line_number}" "${0}" >&2
+    echo ""
+    log error "Please include the user log and the debug log in your bug report."
+    log error "(For file locations where to find these logs, see above.)"
+    echo ""
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
