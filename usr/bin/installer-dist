@@ -1023,19 +1023,33 @@ install_virtualbox_debian_common_end(){
 ## Install VirtualBox on Debian
 install_virtualbox_debian(){
   has vboxmanage && return 0
-  if grep -v "#" /etc/apt/sources.list /etc/apt/sources.list.d/*.list | \
-    grep -e "://fasttrack.debian.net" \
-    -e grep "://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
-  then
-    log info "Skipped adding fasttrack because it was already found."
-  else
-    install_pkg apt-transport-https
-    install_pkg fasttrack-archive-keyring
-    test_pkg fasttrack-archive-keyring
-    log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
-    echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
+
+  local fasttrack_repository_add file_name str1 str2
+  fasttrack_repository_add=true
+  str1="://fasttrack.debian.net"
+  str2="://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
+
+  for file_name in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
+    if ! test -f "$file_name" ; then
+      continue
+    fi
+    if grep -v "#" "$file_name" | grep --quiet -e "$str1" -e "$str2" ; then
+      log info "Skipped adding fasttrack because it was already found."
+      fasttrack_repository_add=false
+      break
+    fi
+  done
+  if [ "$fasttrack_repository_add" = "true" ]; then
+      install_pkg apt-transport-https
+      install_pkg fasttrack-archive-keyring
+      test_pkg fasttrack-archive-keyring
+      log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
+      echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
   fi
+
+  ## TODO: user might have installed virtualbox earlier but omitted to install kernel headers. In that case, this is never reached.
   install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
+
   install_virtualbox_debian_common_end
 }
 
@@ -2331,6 +2345,9 @@ run_installer(){
   main
 }
 
+install_virtualbox_debian
+## TODO
+exit
 
 ## Run the install script.
 run_installer "${@}"
