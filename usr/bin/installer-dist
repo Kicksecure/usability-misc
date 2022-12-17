@@ -1075,7 +1075,9 @@ install_virtualbox_debian_common_end(){
 install_virtualbox_debian(){
   has vboxmanage && return 0
 
-  local fasttrack_repository_add file_name str1 str2
+  ## XXX: bash vs sh
+  #local fasttrack_repository_add file_name str1 str2
+
   fasttrack_repository_add=true
   str1="://fasttrack.debian.net"
   str2="://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
