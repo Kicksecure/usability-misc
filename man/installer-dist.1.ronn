@@ -193,6 +193,8 @@ code to ease debugging.
 
     106     Failed to start virtual machines due to expected virtualization issues.
 
+    107     Failed to start virtual machines due to unexpected issues.
+
 ## AUTHOR
 
 This man page was written by grass (grass@danwin1210.de).

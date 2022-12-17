@@ -547,6 +547,8 @@ die(){
   log error "${2}"
   if [ "${1}" = "106" ]; then
      true
+  elif [ "${1}" = "107" ]; then
+     true
   else
      log error "Aborting installer."
   fi
@@ -606,6 +608,8 @@ handle_exit(){
   test "${last_exit}" = "0" && end_exit
   ## Virtual Machine expected start issues.
   test "${last_exit}" = "106" && end_exit
+  ## Virtual Machine unexpected start issues.
+  test "${last_exit}" = "107" && end_exit
   ## Exit with errors.
   log notice "Current script: ${0}"
   # shellcheck disable=SC3028
@@ -1083,6 +1087,11 @@ virtualbox_start_failed() {
 - The installer succeeded with download and import but failed to start the virtual machines.
 - This is likely happening due to the virtualization related warnings that have been reported above."
   fi
+  die 107 "Virtual Machine start failed.
+- The installer succeeded with download and import,
+- but failed to start the virtual machines.
+- See user documentation:
+  ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
 
 
