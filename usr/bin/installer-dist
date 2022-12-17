@@ -1102,12 +1102,8 @@ install_virtualbox_debian(){
     fi
   done
   if [ "$fasttrack_repository_add" = "true" ]; then
-      install_pkg apt-transport-https
-      test_pkg apt-transport-https
-      install_pkg ca-certificates
-      test_pkg ca-certificates
-      install_pkg fasttrack-archive-keyring
-      test_pkg fasttrack-archive-keyring
+      install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
+      test_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
       log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
       echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
   fi
