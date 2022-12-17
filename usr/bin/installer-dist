@@ -626,7 +626,7 @@ get_host_pkgs(){
           ;;
         *"buntu"*)
           true "Ubuntu"
-          if [ ! ${distro_version_without_dot} -ge 2204 ]; then
+          if [ ! "${distro_version_without_dot}" -ge 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
