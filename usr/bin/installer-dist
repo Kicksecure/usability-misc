@@ -165,6 +165,7 @@ not_as_root(){
 su_wrapper() {
     user="$1"; shift
     cmd="$1"; shift
+    echo "$user" -s "$(which -- "$cmd")" -- "$@"
     su "$user" -s "$(which -- "$cmd")" -- "$@"
 }
 
@@ -176,11 +177,14 @@ root_cmd(){
     log info "Skipping running root command '${sucmd} ${*}' because dry_run is set."
     return 0
   fi
+  log notice "Running command:"
   if [ "${sucmd}" = "su" ] ; then
     su_wrapper root "$@"
   elif [ "${sucmd}" = "sudo" ] ; then
+    echo sudo -- "${@}"
     sudo -- "${@}"
   elif [ "${sucmd}" = "doas" ] ; then
+    echo doas -u root -- "${@}"
     doas -u root -- "${@}"
   else
     die 1 "Function root_cmd does not support sucmd '${sucmd}'."
