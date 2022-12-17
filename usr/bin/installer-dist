@@ -934,7 +934,7 @@ check_guest_boot(){
       log notice "Available guest: ${guest_pretty}-${interface_all_caps}"
       ;;
   esac
-  log notice "Do you want to start the Virtual Machine(s) now? [y/n] (default: yes): "
+  log notice "Do you want to start the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
   printf '%s' "Your answer: "
   read -r response
   log notice "User replied '${response}'."
@@ -945,7 +945,7 @@ check_guest_boot(){
       ;;
     *)
       log notice "User declined to start Virtual Machine(s)."
-      log notice "Virtual Machine(s) can be started manually."
+      log notice "The ${guest_pretty} Virtual Machine(s) can be started manually."
       ;;
   esac
   ## Last phase, should exit here every time.
@@ -1009,7 +1009,7 @@ import_virtualbox(){
       die 1 "Failed to remove extraneous virtual system."
   fi
 
-  log notice "You can now open the VirtualBox application to use ${guest}."
+  log notice "You can now open the VirtualBox application to use ${guest_pretty}."
 }
 
 
