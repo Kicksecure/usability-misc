@@ -2279,6 +2279,8 @@ log_term_and_file(){
     exec 3>>"$(tty)"
   else
     true "Output is not being sent to the terminal because either tty program does not exist of because terminal is not connected to stdout."
+    ## Required for GitHub CI.
+    return 0
   fi
   ## Current problem is that command-line option is necessary to hide stderr
   ## by sending it to /dev/null, while the desired method would be to avoid
@@ -2306,7 +2308,7 @@ log_term_and_file(){
   true "tail -f ${log_file} >&3 &"
   tail -f "${log_file}" >&3 &
   ## Get background job PID.
-  tail_pid="${!}"
+  tail_pid="$!"
 }
 
 
