@@ -745,7 +745,7 @@ get_independent_host_pkgs(){
     if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
       log warn "Nested virtualization detected, possibly a user mistake."
       log warn "For more information about nested virtualization see:"
-      log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
+      log warn "  ${url_version_domain}/wiki/Nested_Virtualization"
     fi
   fi
 }
