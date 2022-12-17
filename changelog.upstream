@@ -1,9 +1,563 @@
+commit 110f358c8bc3974866a2ccdb7ccf5969f4f2ecc4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:40:33 2022 -0500
+
+    genmkfile manpages
+
+commit 1ab26b2d6ba188a1fe9e41dd0bc1bdb8446ce047
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:29:29 2022 -0500
+
+    better error handling in case starting VirtualBox VMs fails due to unexpected reasons
+
+commit cc29737ab1dc8fe439bca82562ef438563d03222
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:21:44 2022 -0500
+
+    man
+
+commit 9f6e1381c3653806efa2e30762d63fe1afc8e255
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:20:57 2022 -0500
+
+    refactoring
+
+commit 185b1ea2081a7399ca759c2065ec5cef8614142e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:11:40 2022 -0500
+
+    a failing vboxmanage startvm is not considered a bug if virtualization detection failed
+
+commit a968d9f8ec1f49de477ab5f8cf865b230c1cddf0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:56:24 2022 -0500
+
+    nested_virtualization_detected
+
+commit abf4eec2d5312e5226e69483682f242596b14c38
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:54:52 2022 -0500
+
+    typo
+
+commit 95165dae9293b9cace69d8b418415e05cbb0625f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:49:56 2022 -0500
+
+    improve output if nested virtualization is detected
+
+commit 5f656fd349f73c03a5d94d57bbeb3f3abdcad49a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:40:19 2022 -0500
+
+    output
+
+commit 29bafaf64fbacc8ab2fa874c31633505aa9f7e84
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:35:49 2022 -0500
+
+    do not hardcode domain name
+
+commit d09c7043331b0ece80b5cbf7e3a8c4a329561285
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:30:40 2022 -0500
+
+    show which root commands are executed on the user's system for transparency
+
+commit a8f90ed69d8a172311175dd2a3e874a7fa88810d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:22:32 2022 -0500
+
+    improve RAM and virtualization test output
+
+commit ccc9b323395054ccef9ecc152a0fb29d95aab660
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:05:57 2022 -0500
+
+    refactoring
+
+commit cff09cec93ba2278c7aa76f289a6d8ee26ec526c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:56:20 2022 -0500
+
+    output
+
+commit a33406a6a18de796543cb3943283731ba744fc28
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:46:54 2022 -0500
+
+    refactoring
+
+commit 0a4f44d90a409c0c8effb24f52bbcbd1e1bc5fe2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:39:36 2022 -0500
+
+    improve output in case of errors
+
+commit 04780a5161b6c863bfb3e9bba68dcdf316d4b47d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:21:30 2022 -0500
+
+    shellcheck
+
+commit 720acc85e8abecfb8258aa3c906b9584191c6146
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:19:40 2022 -0500
+
+    request logs to be included in bug reports
+
+commit 7d25959ba4b39f3d87518197eaa1ac05f083cd4d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:04:57 2022 -0500
+
+    refactoring
+
+commit 7cdca77106735b66d0acfb22f7c4a19c6756bc07
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:04:26 2022 -0500
+
+    fix
+
+commit 05df1bf91a1b1deb354ea8a63a2d225c9515ce59
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:03:36 2022 -0500
+
+    rename
+
+commit 109a6f95cc20d6ce65f6f8dd4491d682a59efc0b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:03:20 2022 -0500
+
+    refactoring
+
+commit 8fb9ca1949429723a8e7265f6656aa9a0e3fc0d3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:02:13 2022 -0500
+
+    refactoring
+
+commit b96845ca14a1fe55c69e70d7046146ba1429e5f2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:01:35 2022 -0500
+
+    rename
+
+commit b0000d9ee80a4e1009976aea93e522f1e34330c3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:01:04 2022 -0500
+
+    rename
+
+commit 67b2feae1a720ee4568ded277383d117a5343560
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:00:28 2022 -0500
+
+    point user to debug log
+
+commit e2d758352113e2cf6d73de9614a5f0de1a594bb1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:55:59 2022 -0500
+
+    refactoring
+
+commit e40b9a3d2d50aef1588b3a2ff835779cd0a45079
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:53:12 2022 -0500
+
+    refactoring
+
+commit b6dd4f838a31d53b06bc9ac40e0c46edd5531445
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:48:43 2022 -0500
+
+    output
+
+commit df81a58cfe32f936d8158ead83aa430c3eda7923
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:46:45 2022 -0500
+
+    set shebang to bash for better error handling
+
+commit 6186644fd8621a610fd5d63cc7b1171484660e61
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:41:56 2022 -0500
+
+    output
+
+commit ebfd8bac1f8e40876fdec32c3d55e3260bc7ae9c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:29:54 2022 -0500
+
+    test_pkg
+
+commit 50bcbacb3eae44ed447c9920c236f7963b2dff56
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:23:53 2022 -0500
+
+    improve root_cmd
+
+commit d112387452d77673d3598ac17abc7b72887c4ecc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:22:06 2022 -0500
+
+    fix doas support
+
+commit aa31104968aa0239bb8c828d823a4f6ebada59da
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:08:06 2022 -0500
+
+    fix
+
+commit 25e3772783bfc9331e476884d82c2d15cbc4c8f9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:06:57 2022 -0500
+
+    fix
+
+commit bd0a2190fd1ee519b6065e0846ab53cae5cfc2d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:06:22 2022 -0500
+
+    fix
+
+commit d998dd6fc77230e3120b1270641e22fe0da1e082
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:04:41 2022 -0500
+
+    fix
+
+commit 37a1b668715440a1b8320181480bdc6f061ba27a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:00:57 2022 -0500
+
+    fix
+
+commit a2237b594a724f754d29d977fc3f0213cfa1e8e8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:55:13 2022 -0500
+
+    fix
+
+commit 184e16bbfadf8192bd8d4de0f68565f53dea937c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:52:31 2022 -0500
+
+    fix
+
+commit 8d083f994879563cec1cfdffef66362ea740bc11
+Merge: 3f0010a 498da70
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:47:32 2022 -0500
+
+    Merge remote-tracking branch 'nyxnor/master'
+
+commit 3f0010a45fea35511a0f8e38323c108a85601f78
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:30:49 2022 -0500
+
+    CI
+
+commit 7216aaa1d7a46ffc660c7e43f7894925a7048144
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:25:18 2022 -0500
+
+    fix
+
+commit 56e89722bf65ef3aa803e335f0b4ef48943b2718
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:23:54 2022 -0500
+
+    quotes
+
+commit c872a9017d6d2ce2bc3f2a221a56ebd24b94ad35
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:20:22 2022 -0500
+
+    install ca-certificates
+
+commit d3c65504efa1457e7bee370a6b45a9f1c73f026d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:16:02 2022 -0500
+
+    .
+
+commit fec1da877bc316962a5dd9d11c8fd9583061b854
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:13:01 2022 -0500
+
+    fix su support
+
+commit 8694d2388f466d87969d8e9b83fe90bb9ffe002b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:41:58 2022 -0500
+
+    guard against /etc/os-release not containing VERSION_ID
+
+commit 61a259a92b32e98313bbb01c9d9ffa35a275ce13
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:28:47 2022 -0500
+
+    fix
+
+commit 734be2dca37314c4c8bada233f0d054c2f6f10ee
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:26:36 2022 -0500
+
+    typo
+
+commit aa23f28bbdb084047afc07175c5be0435af915fd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:26:20 2022 -0500
+
+    fix fasttrack repository detection
+
+commit 8c10d18e0d462bcb508cbe7e4c57be3a4502e491
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:01:56 2022 -0500
+
+    fix Ubuntu version detection
+
+commit 9ffe04953313f4f781a04bbfa2679520f0318393
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 05:54:24 2022 -0500
+
+    CI
+
+commit 2afea30d0519c37e536466c4b14bc3ae0db5933b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 05:46:04 2022 -0500
+
+    CI
+
+commit ca783a56d9e504429820fa377e40d7058a50a38a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 16 18:57:40 2022 -0500
+
+    bumped changelog version
+
+commit 498da7094e3d6dc879712623e0adcd921490e6d7
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 19:08:49 2022 +0000
+
+    set note why ubuntu has the version set
+
+commit b417b6c3e8eaa9f5d6c47b2b4c45472aa378683a
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:57:04 2022 +0000
+
+    .
+
+commit a055827975441625098f9528988a660b5addbf29
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:54:06 2022 +0000
+
+    try mint latest
+
+commit b52f67349ae18ec023936a582601dcb63c4c5a1e
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:44:00 2022 +0000
+
+    try linux mint 3rd party image
+
+commit d914dac437e8b1fc7a16cb0b715a551a4339a2e1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:40:46 2022 +0000
+
+    better handling of disabled colors
+
+commit 5de4bf29c400e1c2c3bcbe0a98be5bdb33d79e7d
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:35:03 2022 +0000
+
+    add another environment variable to disable colors
+
+commit 05e66472fff6b2775a4d75efdca6842a52c98023
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:55:40 2022 +0000
+
+    fix build with checking out repo before paths-filter
+
+commit 1d73d324bb2515b154f21577115e94d70f9aeca1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:49:40 2022 +0000
+
+    newline to test build only if file is modified
+
+commit 55b314899d7be991094a790f421f5e9d47b436cd
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:48:40 2022 +0000
+
+    try another gh action checkout version
+
+commit 278445546ff2b137ca03361abf85dfaa9ae81e11
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:45:20 2022 +0000
+
+    add support for no color
+
+commit 64d5e976e79681c8399bee63e0a52e207a52cbeb
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:39:11 2022 +0000
+
+    fix yml syntax
+
+commit f38ee7fd47afd015f2035585ba71a2f4b312cbed
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:36:10 2022 +0000
+
+    run build only if installer was changed
+
+commit e25dfba9f19b8cfb4792cd15fafc26dff2f95876
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:56:32 2022 +0000
+
+    build fails without sudo
+
+commit edbb15f5620fc5b2482897a36813d556800cb76b
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:55:01 2022 +0000
+
+    fix yml syntax
+
+commit 08ff5762faf041d248c98882615ad7c6e52e6e9e
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:53:16 2022 +0000
+
+    test without sudo
+
+commit f86d9c4582e4a7c148dcaf4843e0a48c6fe49aa0
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:46:36 2022 +0000
+
+    remove debug lines from build
+
+commit a57ffb410c4c64bfa777dde85dffa8f06d950e23
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:42:55 2022 +0000
+
+    fix shellcheck
+
+commit 446657c1388fb3ebe62f05cd4031b6bf1888f336
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:38:21 2022 +0000
+
+    fix build with ca
+
+commit 32d214de66fa99c08ed28cd8e261b5bd62c8d669
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:33:50 2022 +0000
+
+    fix shellcheck
+
+commit 90b54c9fe7bb47f446e86542b93c28879a6f08bc
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:26:17 2022 +0000
+
+    use portable id to get user
+
+commit d638bbff4775c555ed8285e942707e23182e8e56
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:20:57 2022 +0000
+
+    try to get username
+
+commit bde7c44d1e95dde1499da0c8bd7e75d8694629cf
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:10:30 2022 +0000
+
+    misc
+
+commit d4a38b11fc50a8e574e92ecefacee16f46c53c52
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:05:56 2022 +0000
+
+    try with sudo
+
+commit 05f7ef6b35d64571aaaad3a3d2e32a4a6f26d41c
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:01:34 2022 +0000
+
+    fix build exiting
+
+commit fd5c598c1792d74a082dae034a81c6a7c1738e96
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:59:38 2022 +0000
+
+    remove extra line
+
+commit 65fd34c49ddf23959911ec25054258a7570f3483
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:54:07 2022 +0000
+
+    remove ps dependency
+
+commit c528e0f7e59fec63c42da61bd8ba22cf2e97696f
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:29:16 2022 +0000
+
+    fix unbound variable distro_version
+
+commit 2f16b91a19b8870beaab7014665ecdaa375f5f66
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:25:46 2022 +0000
+
+    print env vars
+
+commit 6cbeba6ff62b2922d48b7431bfeb4526c5c3f9ef
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:43:29 2022 +0000
+
+    better bash
+
+commit 6449a0b9543d072b75096ee4a4a475dd4e326286
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:40:44 2022 +0000
+
+    better method to check if shell is bash
+
+commit 48617e845d381921d5b25ded44df82f0c3f8cea2
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:34:08 2022 +0000
+
+    set shell for the workflow
+
+commit 1c1a39665643f3c69a5437133f9f0ad91de14536
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:31:27 2022 +0000
+
+    fix ubuntu version check
+
+commit 82e30f89075905ed2f031ef0cb78b671e89d22cf
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:26:53 2022 +0000
+
+    remove sudo from workflow
+
+commit 0c3b398afa0579158058e26637ba6449beff3c1f
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:24:33 2022 +0000
+
+    add test case for workflow
+
 commit e3a5a0fa059317a9ad62f43873017a49462ca183
 Merge: e4c2dd5 b349d34
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Dec 11 09:01:34 2022 -0500
 
     Merge remote-tracking branch 'grass/installer'
+
+commit f986e16fb0e2e3ed4cce837673c075c11d7fed21
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 11:12:47 2022 +0000
+
+    fix tty problem for build workflow
+
+commit 25a930d8193254fee239e0c3ed8bd7b291214635
+Merge: 8008cc7 b349d34
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 09:11:32 2022 +0000
+
+    Merge remote-tracking branch 'bitbucket/installer'
 
 commit b349d3415a4554a81caa84d128683bf956c650fa
 Author: grass <grass@danwin1210.de>
@@ -1067,6 +1621,12 @@ Date:   Sun Nov 13 23:51:01 2022 +0000
     - Virtualbox/KVM(unfinished)
     - CLI/XFCE
     - onion/clearnet
+
+commit 8008cc7465e8f59e93305638b1e4e8cb862ac174
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Tue Nov 1 18:19:11 2022 +0000
+
+    improve scurl-download to behave like wget
 
 commit 5cc192896ae669430362648c967e1e752686016b
 Author: Patrick Schleizer <adrelanos@whonix.org>
