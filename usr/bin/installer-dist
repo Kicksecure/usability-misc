@@ -1361,8 +1361,8 @@ get_system_stat(){
   total_mem="$((total_mem_kB/1000))"
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
-    log warn "Your systems has a low amount of total RAM: ${total_mem}."
-    log warn "You may encounter problems using a desktop environment."
+    log warn "Your systems has a low amount of total RAM: ${total_mem}. See:"
+    log warn "${url_version_domain}/wiki/RAM"
   fi
 
   free_space="$(df --output=avail -BG "${directory_prefix}" |
@@ -1377,7 +1377,6 @@ get_system_stat(){
 ## Sanity checks that should be called before execution of main
 pre_check(){
   get_os
-  get_utilities
   get_system_stat
 
   ## Functions below are difficult to emulate
@@ -1983,9 +1982,6 @@ main(){
   pre_check
   log_time
 
-  ## Get all links to download files and settings
-  get_download_links
-
   ## Check if VM were already imported, if true then ask to start
   check_vm_exists
   #############
@@ -2415,6 +2411,10 @@ run_installer(){
   parse_opt "${@}"
   ## Logging mechanism.
   log_term_and_file
+
+  get_utilities
+  get_download_links
+
   ## Start main function.
   main
 }
