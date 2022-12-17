@@ -2311,8 +2311,8 @@ parse_opt(){
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"
     fi
-    log_file_simple="${log_dir_cur}/log.user"
-    log_file_debug="${log_dir_cur}/log.debug"
+    log_file_simple="${log_dir_cur}/log.user.txt"
+    log_file_debug="${log_dir_cur}/log.debug.txt"
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
