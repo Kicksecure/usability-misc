@@ -472,6 +472,7 @@ log(){
   log_type_up="$(echo "${log_type}" | tr "[:lower:]" "[:upper:]")"
   shift 1
   ## escape printf reserved char '%'
+  # shellcheck disable=SC2001
   log_content="$(echo "${*}" | sed "s/%/%%/g")"
   ## set formatting based on log level
   case "${log_type}" in
