@@ -180,6 +180,8 @@ root_cmd(){
     su_wrapper root "$@"
   elif [ "${sucmd}" = "sudo" ] ; then
     sudo -- "${@}"
+  elif [ "${sucmd}" = "doas" ] ; then
+    doas -u root -- "${@}"
   else
     ${sucmd} -- "${@}"
   fi
