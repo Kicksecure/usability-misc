@@ -1613,13 +1613,13 @@ get_virtualization(){
       return 0
       ;;
     "")
-      log warn "Virtualization availability can be a false negative."
         log warn "No virtualization flag found."
+        log warn "(The virtualization detection is imperfect might be unreliable and show a false negative.)"
         return 0
         ;;
       *)
-      log warn "Virtualization availability can be a false negative."
       log warn "Unknown virtualization flag: ${virt_flag}."
+      log warn "(The virtualization detection is imperfect might be unreliable and show a false negative.)"
       return 0
       ## let's not hard fail here, let the user do it later.
       #return 101
