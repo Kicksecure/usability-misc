@@ -2389,6 +2389,7 @@ log_term_and_file(){
 
 ## Wrapper to call all necessary functions in one.
 run_installer(){
+  get_colors
   ## Set default values.
   set_default
   ## Set trap for common signals.
