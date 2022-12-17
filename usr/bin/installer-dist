@@ -2345,9 +2345,5 @@ run_installer(){
   main
 }
 
-install_virtualbox_debian
-## TODO
-exit
-
 ## Run the install script.
 run_installer "${@}"
