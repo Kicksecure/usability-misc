@@ -549,6 +549,12 @@ die(){
   exit "${1}"
 }
 
+error_exit(){
+  log error "${2}"
+  trap - EXIT
+  exit "${1}"
+}
+
 
 ## Wrapper to log command before running to avoid duplication of code
 log_run(){
@@ -1060,15 +1066,23 @@ start_virtualbox(){
   case "${guest}" in
     whonix)
       log_run "vboxmanage startvm \
-        ${guest_pretty}-Gateway-${interface_all_caps}" || return 1
+        ${guest_pretty}-Gateway-${interface_all_caps}" || virtualbox_start_failed
       log_run "vboxmanage startvm \
-        ${guest_pretty}-Workstation-${interface_all_caps}" || return 1
+        ${guest_pretty}-Workstation-${interface_all_caps}" || virtualbox_start_failed
       ;;
     kicksecure)
       log_run "vboxmanage startvm \
-        ${guest_pretty}-${interface_all_caps}" || return 1
+        ${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
       ;;
   esac
+}
+
+virtualbox_start_failed() {
+  if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
+    error_exit 1 "Virtual Machine start failed.
+- The installer succeeded with download and import but failed to start the virtual machines.
+- This is likely happening due to the virtualization related warnings that have been reported above."
+  fi
 }
 
 
