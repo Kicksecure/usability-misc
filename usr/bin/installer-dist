@@ -2242,6 +2242,9 @@ parse_opt(){
   arg_saved="$(printf %s"${arg_saved}\n")"
   ## Test if options are valid
   range_arg log_level error warn notice info debug
+  if [ -z "${xtrace:-}" ]; then
+    xtrace=""
+  fi
   if [ "${log_level}" = "debug" ]; then
     xtrace=1
     set -o xtrace
