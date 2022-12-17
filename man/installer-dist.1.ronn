@@ -191,6 +191,8 @@ code to ease debugging.
 
     105     Failed to import virtual machines.
 
+    106     Failed to start virtual machines due to expected virtualization issues.
+
 ## AUTHOR
 
 This man page was written by grass (grass@danwin1210.de).
