@@ -545,13 +545,11 @@ log(){
 ## where '#' is the exit code.
 die(){
   log error "${2}"
-  log error "Aborting installer."
-  exit "${1}"
-}
-
-error_exit(){
-  log error "${2}"
-  trap - EXIT
+  if [ "${1}" = "106" ]; then
+     true
+  else
+     log error "Aborting installer."
+  fi
   exit "${1}"
 }
 
@@ -606,6 +604,8 @@ handle_exit(){
   log_time
   ## Exit without errors.
   test "${last_exit}" = "0" && end_exit
+  ## Virtual Machine expected start issues.
+  test "${last_exit}" = "106" && end_exit
   ## Exit with errors.
   log notice "Current script: ${0}"
   # shellcheck disable=SC3028
@@ -1079,7 +1079,7 @@ start_virtualbox(){
 
 virtualbox_start_failed() {
   if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
-    error_exit 1 "Virtual Machine start failed.
+    die 106 "Virtual Machine start failed.
 - The installer succeeded with download and import but failed to start the virtual machines.
 - This is likely happening due to the virtualization related warnings that have been reported above."
   fi
