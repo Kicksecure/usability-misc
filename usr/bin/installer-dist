@@ -1055,6 +1055,7 @@ install_virtualbox_debian(){
   done
   if [ "$fasttrack_repository_add" = "true" ]; then
       install_pkg apt-transport-https
+      install_pkg ca-certificates
       install_pkg fasttrack-archive-keyring
       test_pkg fasttrack-archive-keyring
       log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
