@@ -141,6 +141,15 @@ not_as_root(){
 }
 
 
+## Thanks to VasiliNovikov!
+## https://stackoverflow.com/a/32966744/2605155
+su_wrapper() {
+    user="$1"; shift
+    cmd="$1"; shift
+    su "$user" -s "$(which -- "$cmd")" -- "$@"
+}
+
+
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
   test -z "${1:-}" && die 1 "Failed to pass arguments to root_cmd."
@@ -148,12 +157,12 @@ root_cmd(){
     log info "Skipping running root command '${sucmd} ${*}' because dry_run is set."
     return 0
   fi
-  if test -n "${sucmd_quote:-}"; then
-    true "sucmd_quote"
-    # shellcheck disable=SC2016
-    ${sucmd} '${@}'
+  if [ "${sucmd}" = "su" ] ; then
+    su_wrapper root "$@"
+  elif [ "${sucmd}" = "sudo" ] ; then
+    sudo -- "${@}"
   else
-    ${sucmd} "${@}"
+    ${sucmd} -- "${@}"
   fi
 }
 
@@ -1229,7 +1238,7 @@ get_utilities(){
   while true; do
     has sudo && sucmd=sudo && break
     has doas && sucmd=doas && break
-    has su && sucmd="su -c" && sucmd_quote=1 && break
+    has su && sucmd=su && break
     test -z "${sucmd}" && {
       die 1 "Failed to find program to run as another user."
     }
@@ -2349,6 +2358,9 @@ run_installer(){
   ## Start main function.
   main
 }
+
+root_cmd apt-get update
+exit
 
 ## Run the install script.
 run_installer "${@}"
