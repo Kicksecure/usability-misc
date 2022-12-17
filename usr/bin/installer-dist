@@ -692,7 +692,7 @@ install_pkg(){
   pkgs="${*}"
   pkg_not_installed=""
   for pkg in ${pkgs}; do
-    ## Tst if package exists as a binary or a library, using different tools.
+    ## Test if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
     if ! has "${pkg}" &&
       ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
