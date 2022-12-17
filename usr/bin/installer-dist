@@ -1366,7 +1366,7 @@ get_system_stat(){
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
     log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: ${total_mem} MB. See:"
-    log warn "${url_version_domain}/wiki/RAM"
+    log warn "  ${url_version_domain}/wiki/RAM"
   fi
 
   free_space="$(df --output=avail -BG "${directory_prefix}" |
@@ -1630,7 +1630,7 @@ get_virtualization(){
     log warn "(The virtualization detection is imperfect and might show a false negative warning.)"
     if [ "${hypervisor}" = "virtualbox" ]; then
       log warn "See user documentation on how to enable virtualization:"
-      log warn "${url_version_domain}/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
+      log warn "  ${url_version_domain}/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
     fi
     return 0
     ## Let's not hard fail here, let the user do it later.
