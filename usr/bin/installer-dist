@@ -1090,7 +1090,9 @@ install_virtualbox_debian(){
   done
   if [ "$fasttrack_repository_add" = "true" ]; then
       install_pkg apt-transport-https
+      test_pkg apt-transport-https
       install_pkg ca-certificates
+      test_pkg ca-certificates
       install_pkg fasttrack-archive-keyring
       test_pkg fasttrack-archive-keyring
       log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
@@ -1099,6 +1101,7 @@ install_virtualbox_debian(){
 
   ## TODO: user might have installed virtualbox earlier but omitted to install kernel headers. In that case, this is never reached.
   install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
+  test_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
 
   install_virtualbox_debian_common_end
 }
