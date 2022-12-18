@@ -207,6 +207,8 @@ get_os(){
   kernel="$(uname -r)"
   arch="$(uname -m)"
 
+  distro=""
+  distro_version=""
   case ${os} in
     Linux*)
       if test -f /usr/share/kicksecure/marker; then
