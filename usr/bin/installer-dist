@@ -160,35 +160,27 @@ not_as_root(){
 }
 
 
-## Thanks to VasiliNovikov!
-## https://stackoverflow.com/a/32966744/2605155
-su_wrapper() {
-    user="$1"; shift
-    cmd="$1"; shift
-    echo "$user" -s "$(which -- "$cmd")" -- "$@"
-    su "$user" -s "$(which -- "$cmd")" -- "$@"
-}
-
-
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
   test -z "${1:-}" && die 1 "Failed to pass arguments to root_cmd."
-  if test "${dry_run}" = "1"; then
-    log info "Skipping running root command '${sucmd} ${*}' because dry_run is set."
-    return 0
-  fi
-  log notice "Running command:"
-  if [ "${sucmd}" = "su" ] ; then
-    su_wrapper root "$@"
-  elif [ "${sucmd}" = "sudo" ] ; then
-    echo sudo -- "${@}"
-    sudo -- "${@}"
-  elif [ "${sucmd}" = "doas" ] ; then
-    echo doas -u root -- "${@}"
-    doas -u root -- "${@}"
-  else
-    die 1 "Function root_cmd does not support sucmd '${sucmd}'."
-  fi
+  case "${sucmd}" in
+    su)
+      ## Thanks to Congelli501 for su to not mess with quotes.
+      ## https://stackoverflow.com/a/32966744/2605155
+      cmd="$(which -- "${1}")"
+      shift
+      log_run su root -s "${cmd}" -- "${@}"
+      ;;
+    sudo)
+      log_run sudo -- "${@}"
+      ;;
+    doas)
+      log_run doas -u root -- "${@}"
+      ;;
+    *)
+      die 1 "Function root_cmd does not support sucmd '${sucmd}'."
+      ;;
+  esac
 }
 
 
@@ -545,13 +537,18 @@ log(){
 ## where '#' is the exit code.
 die(){
   log error "${2}"
-  if [ "${1}" = "106" ]; then
-     true
-  elif [ "${1}" = "107" ]; then
-     true
-  else
-     log error "Aborting installer."
+  if test "${allow_errors}" = "1"; then
+    log warn "Skipping exiting now with code '${1}' because allow_errors is set."
+    return 0
   fi
+  case "${1}" in
+    106|107)
+      true
+      ;;
+    *)
+      log error "Aborting installer."
+      ;;
+  esac
   exit "${1}"
 }
 
@@ -559,13 +556,12 @@ die(){
 ## Wrapper to log command before running to avoid duplication of code
 log_run(){
   ## Extra spaces appearing when breaking log_run on multiple lines.
-  log info "Executing: $ $(echo "${1}" | tr -s " ")"
+  log notice "Executing: $ $(echo "${@}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
     true "Skipping running above logged command because dry_run is set."
     return 0
   fi
-  # shellcheck disable=SC2086
-  ${1} || return 1
+  "${@}" || return 1
 }
 
 
@@ -628,8 +624,7 @@ handle_exit(){
     log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
     log error "If not already reported, please report this bug!"
     echo ""
-    log bug "At line: ${line_number}."
-    echo ""
+    log error "Error ocurred in line: ${line_number}."
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
     # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
@@ -670,35 +665,28 @@ get_host_pkgs(){
   case "${os}" in
     Linux*)
       case "${distro}" in
-        "Debian"*|"Tails"*)
-          true "Debian"
+        "Debian"*|"Tails"*|"Kicksecure"|"Whonix")
+          true "${distro}"
           install_package_debian_common
           install_pkg netcat-openbsd
           install_virtualbox_debian
           install_signify signify-openbsd
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
-          true "Mint"
+          true "${distro}"
           install_package_debian_common
           install_pkg netcat-openbsd
           install_virtualbox_ubuntu
           install_signify signify-openbsd
           ;;
         *"buntu"*)
-          true "Ubuntu"
+          true "${distro}"
           if [ ! "${distro_version_without_dot}" -ge 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
           install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
-          ;;
-        "Kicksecure"|"Whonix")
-          true "Kicksecure/Whonix"
-          install_package_debian_common
-          install_pkg netcat-openbsd
-          install_virtualbox_kicksecure
           install_signify signify-openbsd
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
@@ -737,9 +725,7 @@ get_independent_host_pkgs(){
 
   has timeout || die 1 "Timeout utility is missing."
   has curl || install_pkg curl
-  test_pkg curl
   has rsync || install_pkg rsync
-  test_pkg rsync
 
   while true; do
     has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
@@ -788,10 +774,12 @@ install_pkg(){
     fi
     log notice "Updating package list."
     # shellcheck disable=SC2086
-    log_run "root_cmd ${pkg_mngr_update}"
+    root_cmd ${pkg_mngr_update}
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
-    log_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
+    root_cmd ${pkg_mngr_install} ${pkg_not_installed}
+    ## Test if installation worked.
+    test_pkg "${pkg_not_installed}"
   fi
 }
 
@@ -1100,13 +1088,14 @@ install_package_debian_common(){
   pkg_mngr_install="${pkg_mngr} install --yes"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
   pkg_mngr_check_installed="dpkg -s"
+  dpkg --audit || die 1 "Auditing dpkg database returned non-zero exit code."
 }
 
 
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  log_run "root_cmd adduser $(id -nu) vboxusers" || {
+  root_cmd adduser "$(id -nu)" vboxusers || {
     die 1 "Failed to add user '$(id -nu)' to group 'vboxusers'."
   }
 }
@@ -1116,33 +1105,61 @@ install_virtualbox_debian_common_end(){
 install_virtualbox_debian(){
   has vboxmanage && return 0
 
-  ## XXX: bash vs sh
-  #local fasttrack_repository_add file_name str1 str2
+  fasttrack_clearnet="://fasttrack.debian.net"
+  fasttrack_onion="://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
+  fasttrack_found=""
+  apt_torified=""
+  apt_onion=""
+  for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
+    test -f "${file}" || continue
 
-  fasttrack_repository_add=true
-  str1="://fasttrack.debian.net"
-  str2="://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
-
-  for file_name in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
-    if ! test -f "$file_name" ; then
-      continue
+    if grep -v "#" "${file}" | grep -q \
+      -e "://${fasttrack_clearnet}" \
+      -e "://${fasttrack_onion}"
+    then
+      fasttrack_found=1
     fi
-    if grep -v "#" "$file_name" | grep --quiet -e "$str1" -e "$str2" ; then
-      log info "Skipped adding fasttrack because it was already found."
-      fasttrack_repository_add=false
-      break
+
+    if grep -v "#" "${file}" | grep -q -F -e "tor://" -e "tor+"; then
+      apt_torified=1
+    fi
+
+    if grep -q -v "#" "${file}" | grep -q -F ".onion"; then
+      apt_onion=1
     fi
   done
-  if [ "$fasttrack_repository_add" = "true" ]; then
-      install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
-      test_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
-      log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
-      echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
+
+  if test "${fasttrack_found}" = "1"; then
+    log info "Skipped adding fasttrack because it was already found."
+  else
+    if test "${apt_torified}" = "1"; then
+      log info "Apt is supposed to be torified, checking apt-transport-tor exists."
+      test_pkg apt-transport-tor
+    fi
+    log notice "Installing packages for fasttrack repository"
+    install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
+
+    ## If user has onion repositories configured, prefer it.
+    if test "${apt_onion}"; then
+      log notice "Adding Fasttrack's onion repository."
+      fasttrack_url="tor+http://${fasttrack_onion}"
+    ## If user has torified repositories configured, prefer it.
+    elif test "${apt_torified}"; then
+      log notice "Adding Fasttrack's torified clearnet repository."
+      fasttrack_url="tor+https://${fasttrack_clearnet}"
+    ## If user doesn't have torified repositoris, use clearnet one.
+    else
+      log notice "Adding Fasttrack's clearnet repository."
+      fasttrack_url="https://${fasttrack_clearnet}"
+    fi
+
+    log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
+    echo "deb ${fasttrack_url}/debian/ bullseye-fasttrack main contrib non-free" | \
+      root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
   fi
 
   ## TODO: user might have installed virtualbox earlier but omitted to install kernel headers. In that case, this is never reached.
   install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
-  test_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
 
   install_virtualbox_debian_common_end
 }
@@ -1169,7 +1186,6 @@ install_signify(){
   pkg_name="${1:-signify}"
   has "${pkg_name}" && return 0
   install_pkg "${pkg_name}"
-  test_pkg "${pkg_name}"
 }
 
 
@@ -1325,9 +1341,8 @@ get_utilities(){
   done
 
   log info "Testing root login"
-  root_cmd echo hello >/dev/null || {
+  root_cmd echo "Succesfull root login" ||
     die 1 "Failed to run test command as root."
-  }
 }
 
 
@@ -1348,7 +1363,7 @@ set_trap(){
       curr_shell="${shebang##*/}"
       ;;
   esac
-  log notice "Current shell: '${curr_shell}'"
+  log info "Current shell: '${curr_shell}'"
   case "${curr_shell}" in
     *bash|*ksh|*zsh)
       # shellcheck disable=SC2039
@@ -1367,8 +1382,7 @@ set_trap(){
 ## Check if system status is supported
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    log error "Only supported architecture is x86_64, your's is ${arch}."
-    return 101
+    die 101 "Only supported architecture is x86_64, your's is ${arch}."
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
@@ -1400,8 +1414,7 @@ get_system_stat(){
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
-    log error "You need at least 10G of available space, you only have ${free_space}G."
-    return 101
+    die 101 "You need at least 10G of available space, you only have ${free_space}G."
   fi
 }
 
@@ -1645,10 +1658,10 @@ get_virtualization(){
       return 0
       ;;
     "")
-        log warn "${underline}Virtualization Support Test:${nounderline} No virtualization flag found."
-        virt_detection_success=false
-        ;;
-      *)
+      log warn "${underline}Virtualization Support Test:${nounderline} No virtualization flag found."
+      virt_detection_success=false
+      ;;
+    *)
       log warn "${underline}Virtualization Support Test:${nounderline} Unknown virtualization flag: ${virt_flag}."
       virt_detection_success=false
       ;;
@@ -1673,7 +1686,6 @@ get_virtualization(){
   ## modprobe: ERROR: could not insert 'msr': Invalid argument
 
   install_pkg msr-tools
-  test_pkg msr-tools
   # https://bazaar.launchpad.net/~cpu-checker-dev/cpu-checker/trunk/view/head:/kvm-ok
   # kvm-ok - check whether the CPU we're running on supports KVM acceleration
   # Copyright (C) 2008-2010 Canonical Ltd.
@@ -1995,9 +2007,9 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving Installer user log to: '${log_file_user}'."
+  log notice "Saving user log to: '${log_file_user}'."
   if test -f "${log_file_debug}"; then
-    log notice "Saving Installer debug log to: '${log_file_debug}'."
+    log notice "Saving debug log to: '${log_file_debug}'."
   fi
   log info "Starting main function."
 
@@ -2355,8 +2367,8 @@ parse_opt(){
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"
     fi
-    log_file_user="${log_dir_cur}/log.user.txt"
-    log_file_debug="${log_dir_cur}/log.debug.txt"
+    log_file_user="${log_dir_cur}/user.log"
+    log_file_debug="${log_dir_cur}/debug.log"
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
@@ -2429,10 +2441,16 @@ log_term_and_file(){
     export BASH_XTRACEFD=9
     set -o xtrace
     xtrace=1
+    touch "${log_file_debug}"
   fi
   ## Copy output of log file to fd3 and send process to the background.
-  true "tail -f ${log_file_user} >&3 &"
-  tail -f "${log_file_user}" >&3 &
+  if test -f "${log_file_debug}" && test "${log_level}" = "debug"; then
+    true "tail -qf ${log_file_debug} ${log_file_user} >&3 &"
+    tail -qf "${log_file_debug}" "${log_file_user}" >&3 &
+  else
+    true "tail -f ${log_file_user} >&3 &"
+    tail -f "${log_file_user}" >&3 &
+  fi
   ## Get background job PID.
   tail_pid="$!"
 }
