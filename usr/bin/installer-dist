@@ -110,7 +110,8 @@ RWT2GZDQkp1NtTAC1IoQHUsyb/AQ2LIQF82cygQU+riOpPWSq730A/rq"
 ## spamming '>/dev/null' throughout this function. This also guards
 ## against aliases and functions.
 ## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
-has(){ _cmd="$(command -v "${1}")" 2>/dev/null || return 1
+has(){
+  _cmd="$(command -v "${1}")" 2>/dev/null || return 1
   [ -x "${_cmd}" ] || return 1
 }
 
@@ -799,7 +800,8 @@ test_pkg(){
   done
 
   if test -n "${pkg_not_installed}"; then
-    die 1 "Failed to locate package(s):${pkg_not_installed}."
+    log error "Failed to locate package(s):${pkg_not_installed}."
+    return 1
   fi
 }
 
@@ -846,8 +848,8 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported gateway because reimport is set."
-              log_run "vboxmanage unregistervm \
-                ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+              log_run vboxmanage unregistervm \
+                ${guest_pretty}-Gateway-${interface_all_caps} --delete
             fi
           fi
           ## Remove Workstation if it exists.
@@ -858,8 +860,8 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported workstation because reimport is set."
-              log_run "vboxmanage unregistervm \
-                ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+              log_run vboxmanage unregistervm \
+                ${guest_pretty}-Workstation-${interface_all_caps} --delete
             fi
           fi
         elif test -n "${import_only}"; then
@@ -900,8 +902,8 @@ check_vm_exists_virtualbox(){
           ## If VMs exists and reimport is set, remove VMs as they are gonna
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          log_run "vboxmanage unregistervm \
-            ${guest_pretty}-${interface_all_caps} --delete"
+          log_run vboxmanage unregistervm \
+            ${guest_pretty}-${interface_all_caps} --delete
         else
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -1017,15 +1019,15 @@ import_virtualbox(){
   esac
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run "vboxmanage import \
-    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
+  log_run vboxmanage import \
+    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg} ||
     die 105 "Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
-    log_run "vboxmanage unregistervm ${vm_purge} --delete" ||
+    log_run vboxmanage unregistervm ${vm_purge} --delete ||
       die 1 "Failed to remove extraneous virtual system."
   fi
 
@@ -1057,14 +1059,14 @@ start_virtualbox(){
   log notice "Starting Virtual Machine(s)."
   case "${guest}" in
     whonix)
-      log_run "vboxmanage startvm \
-        ${guest_pretty}-Gateway-${interface_all_caps}" || virtualbox_start_failed
-      log_run "vboxmanage startvm \
-        ${guest_pretty}-Workstation-${interface_all_caps}" || virtualbox_start_failed
+      log_run vboxmanage startvm \
+        ${guest_pretty}-Gateway-${interface_all_caps} || virtualbox_start_failed
+      log_run vboxmanage startvm \
+        ${guest_pretty}-Workstation-${interface_all_caps} || virtualbox_start_failed
       ;;
     kicksecure)
-      log_run "vboxmanage startvm \
-        ${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
+      log_run vboxmanage startvm \
+        ${guest_pretty}-${interface_all_caps} || virtualbox_start_failed
       ;;
   esac
 }
@@ -1088,7 +1090,14 @@ install_package_debian_common(){
   pkg_mngr_install="${pkg_mngr} install --yes"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
   pkg_mngr_check_installed="dpkg -s"
-  dpkg --audit || die 1 "Auditing dpkg database returned non-zero exit code."
+  ## 'dpkg --audit' does not return non-zero exit code on failure.
+  dpkg_audit_output="$(dpkg --audit 2>&1)"
+  if test -n "${dpkg_audit_output}"; then
+    log error "Auditing dpkg database returned non-zero exit code."
+    log error "Learn how to fix this issue at:"
+    log error "  https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT"
+    return 1
+  fi
 }
 
 
@@ -1101,15 +1110,13 @@ install_virtualbox_debian_common_end(){
 }
 
 
-## Install VirtualBox on Debian
-install_virtualbox_debian(){
-  has vboxmanage && return 0
-
-  fasttrack_clearnet="://fasttrack.debian.net"
-  fasttrack_onion="://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
+install_fasttrack_repository_debian(){
+  fasttrack_clearnet="fasttrack.debian.net"
+  fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_found=""
   apt_torified=""
   apt_onion=""
+
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     test -f "${file}" || continue
 
@@ -1133,6 +1140,10 @@ install_virtualbox_debian(){
     log info "Skipped adding fasttrack because it was already found."
   else
     if test "${apt_torified}" = "1"; then
+      ## If apt-transport-tor is not installed, we shouldn't, because we got
+      ## a false positive that updates should be torified. Not sure when this
+      ## could happen in reality, but a hard fail is necessary as explained
+      ## per the points above.
       log info "Apt is supposed to be torified, checking apt-transport-tor exists."
       test_pkg apt-transport-tor
     fi
@@ -1155,11 +1166,35 @@ install_virtualbox_debian(){
 
     log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
     echo "deb ${fasttrack_url}/debian/ bullseye-fasttrack main contrib non-free" | \
-      root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
+      root_cmd tee /etc/apt/sources.list.d/fasttrack.list
+  fi
+}
+
+
+## Install VirtualBox on Debian
+install_virtualbox_debian(){
+  has_vboxmanage=0
+  has_linux_headers=0
+  linux_headers="linux-headers-$(dpkg --print-architecture)"
+  has vboxmanage && has_vboxmanage=1
+  test_pkg "${linux_headers}" && has_linux_headers=1
+
+  if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
+    log notice "vboxmanage and ${linux_headers}"
+    install_virtualbox_debian_common_end
+    return 0
   fi
 
-  ## TODO: user might have installed virtualbox earlier but omitted to install kernel headers. In that case, this is never reached.
-  install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
+  if test "${has_linux_headers}" != "1"; then
+    log notice "Preparing to install ${linux_headers}"
+    install_pkg "${linux_headers}"
+  fi
+
+  if test "${has_vboxmanage}" != "1"; then
+    log notice "Preparing to install VirtualBox"
+    install_fasttrack_repository_debian
+    install_pkg virtualbox
+  fi
 
   install_virtualbox_debian_common_end
 }
@@ -1167,16 +1202,11 @@ install_virtualbox_debian(){
 
 ## Install VirtualBox on Ubuntu
 install_virtualbox_ubuntu(){
-  has vboxmanage && return 0
+  if has vboxmanage && test_pkg linux-headers-generic; then
+    install_virtualbox_debian_common_end
+    return 0
+  fi
   install_pkg virtualbox linux-headers-generic
-  install_virtualbox_debian_common_end
-}
-
-
-## Install VirtualBox on Kicksecure
-install_virtualbox_kicksecure(){
-  has vboxmanage && return 0
-  install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
   install_virtualbox_debian_common_end
 }
 
@@ -1559,7 +1589,7 @@ get_version(){
   ## this is necessary because we log will not be printed as the command is
   ## assigned to a variable at 'raw_version=$()'.
   if test "${dry_run}" = "1"; then
-    log_run "${cmd_raw_version}"
+    log_run ${cmd_raw_version}
     return 0
   fi
   # shellcheck disable=SC2046,SC2086
@@ -1605,7 +1635,7 @@ get_file(){
   download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   log notice "Downloading ${url:-}."
-  log_run "${download_opt_full}" || return 1
+  log_run ${download_opt_full} || return 1
 }
 
 
@@ -1627,7 +1657,7 @@ download_files(){
   }
   then
     log_time
-    log_run "touch ${download_flag}"
+    log_run touch ${download_flag}
   else
     die 103 "Failed to download files."
   fi
