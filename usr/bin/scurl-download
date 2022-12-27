@@ -36,4 +36,4 @@ for res in "$@"; do
   opt="$opt $def_opt $res"
 done
 
-echo scurl --location $opt
+scurl --location $opt
