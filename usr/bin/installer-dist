@@ -1021,7 +1021,7 @@ import_virtualbox(){
   ## import VirtualBox image
   # shellcheck disable=SC2086
   log_run vboxmanage import \
-    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg} ||
+    "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
     die 105 "Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
