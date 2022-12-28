@@ -557,11 +557,12 @@ die(){
 ## Wrapper to log command before running to avoid duplication of code
 log_run(){
   ## Extra spaces appearing when breaking log_run on multiple lines.
-  log notice "Executing: $ $(echo "${@}" | tr -s " ")"
+  command_without_extrarenous_spaces="$(echo "${@}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
-    true "Skipping running above logged command because dry_run is set."
+    log notice "Skipping: $ ${command_without_extrarenous_spaces}"
     return 0
   fi
+  log notice "Executing: $ ${command_without_extrarenous_spaces}"
   "${@}" || return 1
 }
 
