@@ -849,7 +849,7 @@ check_vm_exists_virtualbox(){
             else
               log warn "Deleting previously imported gateway because reimport is set."
               log_run vboxmanage unregistervm \
-                ${guest_pretty}-Gateway-${interface_all_caps} --delete
+                "${guest_pretty}-Gateway-${interface_all_caps}" --delete
             fi
           fi
           ## Remove Workstation if it exists.
@@ -861,7 +861,7 @@ check_vm_exists_virtualbox(){
             else
               log warn "Deleting previously imported workstation because reimport is set."
               log_run vboxmanage unregistervm \
-                ${guest_pretty}-Workstation-${interface_all_caps} --delete
+                "${guest_pretty}-Workstation-${interface_all_caps}" --delete
             fi
           fi
         elif test -n "${import_only}"; then
@@ -903,7 +903,7 @@ check_vm_exists_virtualbox(){
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
           log_run vboxmanage unregistervm \
-            ${guest_pretty}-${interface_all_caps} --delete
+            "${guest_pretty}-${interface_all_caps}" --delete
         else
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -1060,13 +1060,13 @@ start_virtualbox(){
   case "${guest}" in
     whonix)
       log_run vboxmanage startvm \
-        ${guest_pretty}-Gateway-${interface_all_caps} || virtualbox_start_failed
+        "${guest_pretty}-Gateway-${interface_all_caps}" || virtualbox_start_failed
       log_run vboxmanage startvm \
-        ${guest_pretty}-Workstation-${interface_all_caps} || virtualbox_start_failed
+        "${guest_pretty}-Workstation-${interface_all_caps}" || virtualbox_start_failed
       ;;
     kicksecure)
       log_run vboxmanage startvm \
-        ${guest_pretty}-${interface_all_caps} || virtualbox_start_failed
+        "${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
       ;;
   esac
 }
