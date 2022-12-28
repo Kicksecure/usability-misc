@@ -1590,10 +1590,11 @@ get_version(){
   ## this is necessary because we log will not be printed as the command is
   ## assigned to a variable at 'raw_version=$()'.
   if test "${dry_run}" = "1"; then
+    # shellcheck disable=SC2086
     log_run ${cmd_raw_version}
     return 0
   fi
-  # shellcheck disable=SC2046,SC2086
+  # shellcheck disable=SC2086
   raw_version="$(${cmd_raw_version})"
   # shellcheck disable=SC2046,SC2086
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
@@ -1636,6 +1637,7 @@ get_file(){
   download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   log notice "Downloading ${url:-}."
+  # shellcheck disable=SC2086
   log_run ${download_opt_full} || return 1
 }
 
