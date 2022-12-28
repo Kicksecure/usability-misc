@@ -1657,7 +1657,7 @@ download_files(){
   }
   then
     log_time
-    log_run touch ${download_flag}
+    log_run touch "${download_flag}"
   else
     die 103 "Failed to download files."
   fi
