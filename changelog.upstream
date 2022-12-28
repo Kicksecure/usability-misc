@@ -1,3 +1,44 @@
+commit 2977eb2184bb4a46694d1bc97b59b7e9c71ecff9
+Merge: 0fb4c06 39c4a96
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:01:20 2022 -0500
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 0fb4c06d6ab85d6125054205bc0869fa72180b95
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 27 05:49:15 2022 -0500
+
+    fix
+
+commit 39c4a967ae1c7ec5179d7ccb14f9e4746f7ca5d2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Dec 26 21:23:39 2022 +0000
+
+    fix log_run and fasstrack repo adding only if necessary
+
+commit bb245685c0515dfed6c252cd5b0411ad305596e4
+Merge: 59fc481 acd1d69
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 21 08:29:13 2022 -0500
+
+    Merge remote-tracking branch 'grass/master'
+
+commit acd1d69f0c7ca32de2f677ac73458b40f5aa33b9
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 18 23:39:49 2022 +0000
+
+    changes to su, xtrace, fasttrack
+    no su function
+    xtrace printed to screen
+    fasttrack torified or +onionized repository
+
+commit 59fc481deb1dfd99c92384da69f342a63d3deb51
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:40:58 2022 -0500
+
+    bumped changelog version
+
 commit 110f358c8bc3974866a2ccdb7ccf5969f4f2ecc4
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Dec 17 11:40:33 2022 -0500
