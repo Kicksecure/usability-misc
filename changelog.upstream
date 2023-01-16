@@ -1,3 +1,1403 @@
+commit 4769bd4b287dd08b9d980824dc475c08278861f4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:44:05 2022 -0500
+
+    shellcheck
+
+commit 0fc394979e46760731bcd3c584c216a53d3db0ed
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:39:18 2022 -0500
+
+    quotes
+
+commit 127ff67c090f7ad353e6c4370062be96abef4a8d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:28:27 2022 -0500
+
+    refactoring
+
+commit 175824851b7450f3bbba846c1e1de31d1ac5f9f2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:19:36 2022 -0500
+
+    quotes
+
+commit 2e72d4a021610fee8f24aa8737fabe482f90e874
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:18:12 2022 -0500
+
+    quotes
+
+commit e1ffeadd0f148673c06c0b8126941e84f6d791ac
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:06:01 2022 -0500
+
+    bumped changelog version
+
+commit 2977eb2184bb4a46694d1bc97b59b7e9c71ecff9
+Merge: 0fb4c06 39c4a96
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:01:20 2022 -0500
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 0fb4c06d6ab85d6125054205bc0869fa72180b95
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 27 05:49:15 2022 -0500
+
+    fix
+
+commit 39c4a967ae1c7ec5179d7ccb14f9e4746f7ca5d2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Dec 26 21:23:39 2022 +0000
+
+    fix log_run and fasstrack repo adding only if necessary
+
+commit bb245685c0515dfed6c252cd5b0411ad305596e4
+Merge: 59fc481 acd1d69
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 21 08:29:13 2022 -0500
+
+    Merge remote-tracking branch 'grass/master'
+
+commit acd1d69f0c7ca32de2f677ac73458b40f5aa33b9
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 18 23:39:49 2022 +0000
+
+    changes to su, xtrace, fasttrack
+    no su function
+    xtrace printed to screen
+    fasttrack torified or +onionized repository
+
+commit 59fc481deb1dfd99c92384da69f342a63d3deb51
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:40:58 2022 -0500
+
+    bumped changelog version
+
+commit 110f358c8bc3974866a2ccdb7ccf5969f4f2ecc4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:40:33 2022 -0500
+
+    genmkfile manpages
+
+commit 1ab26b2d6ba188a1fe9e41dd0bc1bdb8446ce047
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:29:29 2022 -0500
+
+    better error handling in case starting VirtualBox VMs fails due to unexpected reasons
+
+commit cc29737ab1dc8fe439bca82562ef438563d03222
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:21:44 2022 -0500
+
+    man
+
+commit 9f6e1381c3653806efa2e30762d63fe1afc8e255
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:20:57 2022 -0500
+
+    refactoring
+
+commit 185b1ea2081a7399ca759c2065ec5cef8614142e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 11:11:40 2022 -0500
+
+    a failing vboxmanage startvm is not considered a bug if virtualization detection failed
+
+commit a968d9f8ec1f49de477ab5f8cf865b230c1cddf0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:56:24 2022 -0500
+
+    nested_virtualization_detected
+
+commit abf4eec2d5312e5226e69483682f242596b14c38
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:54:52 2022 -0500
+
+    typo
+
+commit 95165dae9293b9cace69d8b418415e05cbb0625f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:49:56 2022 -0500
+
+    improve output if nested virtualization is detected
+
+commit 5f656fd349f73c03a5d94d57bbeb3f3abdcad49a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:40:19 2022 -0500
+
+    output
+
+commit 29bafaf64fbacc8ab2fa874c31633505aa9f7e84
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:35:49 2022 -0500
+
+    do not hardcode domain name
+
+commit d09c7043331b0ece80b5cbf7e3a8c4a329561285
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:30:40 2022 -0500
+
+    show which root commands are executed on the user's system for transparency
+
+commit a8f90ed69d8a172311175dd2a3e874a7fa88810d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:22:32 2022 -0500
+
+    improve RAM and virtualization test output
+
+commit ccc9b323395054ccef9ecc152a0fb29d95aab660
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 10:05:57 2022 -0500
+
+    refactoring
+
+commit cff09cec93ba2278c7aa76f289a6d8ee26ec526c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:56:20 2022 -0500
+
+    output
+
+commit a33406a6a18de796543cb3943283731ba744fc28
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:46:54 2022 -0500
+
+    refactoring
+
+commit 0a4f44d90a409c0c8effb24f52bbcbd1e1bc5fe2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:39:36 2022 -0500
+
+    improve output in case of errors
+
+commit 04780a5161b6c863bfb3e9bba68dcdf316d4b47d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:21:30 2022 -0500
+
+    shellcheck
+
+commit 720acc85e8abecfb8258aa3c906b9584191c6146
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:19:40 2022 -0500
+
+    request logs to be included in bug reports
+
+commit 7d25959ba4b39f3d87518197eaa1ac05f083cd4d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:04:57 2022 -0500
+
+    refactoring
+
+commit 7cdca77106735b66d0acfb22f7c4a19c6756bc07
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:04:26 2022 -0500
+
+    fix
+
+commit 05df1bf91a1b1deb354ea8a63a2d225c9515ce59
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:03:36 2022 -0500
+
+    rename
+
+commit 109a6f95cc20d6ce65f6f8dd4491d682a59efc0b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:03:20 2022 -0500
+
+    refactoring
+
+commit 8fb9ca1949429723a8e7265f6656aa9a0e3fc0d3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:02:13 2022 -0500
+
+    refactoring
+
+commit b96845ca14a1fe55c69e70d7046146ba1429e5f2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:01:35 2022 -0500
+
+    rename
+
+commit b0000d9ee80a4e1009976aea93e522f1e34330c3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:01:04 2022 -0500
+
+    rename
+
+commit 67b2feae1a720ee4568ded277383d117a5343560
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 09:00:28 2022 -0500
+
+    point user to debug log
+
+commit e2d758352113e2cf6d73de9614a5f0de1a594bb1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:55:59 2022 -0500
+
+    refactoring
+
+commit e40b9a3d2d50aef1588b3a2ff835779cd0a45079
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:53:12 2022 -0500
+
+    refactoring
+
+commit b6dd4f838a31d53b06bc9ac40e0c46edd5531445
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:48:43 2022 -0500
+
+    output
+
+commit df81a58cfe32f936d8158ead83aa430c3eda7923
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:46:45 2022 -0500
+
+    set shebang to bash for better error handling
+
+commit 6186644fd8621a610fd5d63cc7b1171484660e61
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:41:56 2022 -0500
+
+    output
+
+commit ebfd8bac1f8e40876fdec32c3d55e3260bc7ae9c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:29:54 2022 -0500
+
+    test_pkg
+
+commit 50bcbacb3eae44ed447c9920c236f7963b2dff56
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:23:53 2022 -0500
+
+    improve root_cmd
+
+commit d112387452d77673d3598ac17abc7b72887c4ecc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:22:06 2022 -0500
+
+    fix doas support
+
+commit aa31104968aa0239bb8c828d823a4f6ebada59da
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:08:06 2022 -0500
+
+    fix
+
+commit 25e3772783bfc9331e476884d82c2d15cbc4c8f9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:06:57 2022 -0500
+
+    fix
+
+commit bd0a2190fd1ee519b6065e0846ab53cae5cfc2d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:06:22 2022 -0500
+
+    fix
+
+commit d998dd6fc77230e3120b1270641e22fe0da1e082
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:04:41 2022 -0500
+
+    fix
+
+commit 37a1b668715440a1b8320181480bdc6f061ba27a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 08:00:57 2022 -0500
+
+    fix
+
+commit a2237b594a724f754d29d977fc3f0213cfa1e8e8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:55:13 2022 -0500
+
+    fix
+
+commit 184e16bbfadf8192bd8d4de0f68565f53dea937c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:52:31 2022 -0500
+
+    fix
+
+commit 8d083f994879563cec1cfdffef66362ea740bc11
+Merge: 3f0010a 498da70
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:47:32 2022 -0500
+
+    Merge remote-tracking branch 'nyxnor/master'
+
+commit 3f0010a45fea35511a0f8e38323c108a85601f78
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:30:49 2022 -0500
+
+    CI
+
+commit 7216aaa1d7a46ffc660c7e43f7894925a7048144
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:25:18 2022 -0500
+
+    fix
+
+commit 56e89722bf65ef3aa803e335f0b4ef48943b2718
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:23:54 2022 -0500
+
+    quotes
+
+commit c872a9017d6d2ce2bc3f2a221a56ebd24b94ad35
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:20:22 2022 -0500
+
+    install ca-certificates
+
+commit d3c65504efa1457e7bee370a6b45a9f1c73f026d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:16:02 2022 -0500
+
+    .
+
+commit fec1da877bc316962a5dd9d11c8fd9583061b854
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 07:13:01 2022 -0500
+
+    fix su support
+
+commit 8694d2388f466d87969d8e9b83fe90bb9ffe002b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:41:58 2022 -0500
+
+    guard against /etc/os-release not containing VERSION_ID
+
+commit 61a259a92b32e98313bbb01c9d9ffa35a275ce13
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:28:47 2022 -0500
+
+    fix
+
+commit 734be2dca37314c4c8bada233f0d054c2f6f10ee
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:26:36 2022 -0500
+
+    typo
+
+commit aa23f28bbdb084047afc07175c5be0435af915fd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:26:20 2022 -0500
+
+    fix fasttrack repository detection
+
+commit 8c10d18e0d462bcb508cbe7e4c57be3a4502e491
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 06:01:56 2022 -0500
+
+    fix Ubuntu version detection
+
+commit 9ffe04953313f4f781a04bbfa2679520f0318393
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 05:54:24 2022 -0500
+
+    CI
+
+commit 2afea30d0519c37e536466c4b14bc3ae0db5933b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 17 05:46:04 2022 -0500
+
+    CI
+
+commit ca783a56d9e504429820fa377e40d7058a50a38a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 16 18:57:40 2022 -0500
+
+    bumped changelog version
+
+commit 498da7094e3d6dc879712623e0adcd921490e6d7
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 19:08:49 2022 +0000
+
+    set note why ubuntu has the version set
+
+commit b417b6c3e8eaa9f5d6c47b2b4c45472aa378683a
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:57:04 2022 +0000
+
+    .
+
+commit a055827975441625098f9528988a660b5addbf29
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:54:06 2022 +0000
+
+    try mint latest
+
+commit b52f67349ae18ec023936a582601dcb63c4c5a1e
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:44:00 2022 +0000
+
+    try linux mint 3rd party image
+
+commit d914dac437e8b1fc7a16cb0b715a551a4339a2e1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:40:46 2022 +0000
+
+    better handling of disabled colors
+
+commit 5de4bf29c400e1c2c3bcbe0a98be5bdb33d79e7d
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Dec 12 18:35:03 2022 +0000
+
+    add another environment variable to disable colors
+
+commit 05e66472fff6b2775a4d75efdca6842a52c98023
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:55:40 2022 +0000
+
+    fix build with checking out repo before paths-filter
+
+commit 1d73d324bb2515b154f21577115e94d70f9aeca1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:49:40 2022 +0000
+
+    newline to test build only if file is modified
+
+commit 55b314899d7be991094a790f421f5e9d47b436cd
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:48:40 2022 +0000
+
+    try another gh action checkout version
+
+commit 278445546ff2b137ca03361abf85dfaa9ae81e11
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:45:20 2022 +0000
+
+    add support for no color
+
+commit 64d5e976e79681c8399bee63e0a52e207a52cbeb
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:39:11 2022 +0000
+
+    fix yml syntax
+
+commit f38ee7fd47afd015f2035585ba71a2f4b312cbed
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 20:36:10 2022 +0000
+
+    run build only if installer was changed
+
+commit e25dfba9f19b8cfb4792cd15fafc26dff2f95876
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:56:32 2022 +0000
+
+    build fails without sudo
+
+commit edbb15f5620fc5b2482897a36813d556800cb76b
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:55:01 2022 +0000
+
+    fix yml syntax
+
+commit 08ff5762faf041d248c98882615ad7c6e52e6e9e
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:53:16 2022 +0000
+
+    test without sudo
+
+commit f86d9c4582e4a7c148dcaf4843e0a48c6fe49aa0
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:46:36 2022 +0000
+
+    remove debug lines from build
+
+commit a57ffb410c4c64bfa777dde85dffa8f06d950e23
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:42:55 2022 +0000
+
+    fix shellcheck
+
+commit 446657c1388fb3ebe62f05cd4031b6bf1888f336
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:38:21 2022 +0000
+
+    fix build with ca
+
+commit 32d214de66fa99c08ed28cd8e261b5bd62c8d669
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:33:50 2022 +0000
+
+    fix shellcheck
+
+commit 90b54c9fe7bb47f446e86542b93c28879a6f08bc
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:26:17 2022 +0000
+
+    use portable id to get user
+
+commit d638bbff4775c555ed8285e942707e23182e8e56
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:20:57 2022 +0000
+
+    try to get username
+
+commit bde7c44d1e95dde1499da0c8bd7e75d8694629cf
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:10:30 2022 +0000
+
+    misc
+
+commit d4a38b11fc50a8e574e92ecefacee16f46c53c52
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:05:56 2022 +0000
+
+    try with sudo
+
+commit 05f7ef6b35d64571aaaad3a3d2e32a4a6f26d41c
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 17:01:34 2022 +0000
+
+    fix build exiting
+
+commit fd5c598c1792d74a082dae034a81c6a7c1738e96
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:59:38 2022 +0000
+
+    remove extra line
+
+commit 65fd34c49ddf23959911ec25054258a7570f3483
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:54:07 2022 +0000
+
+    remove ps dependency
+
+commit c528e0f7e59fec63c42da61bd8ba22cf2e97696f
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:29:16 2022 +0000
+
+    fix unbound variable distro_version
+
+commit 2f16b91a19b8870beaab7014665ecdaa375f5f66
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 16:25:46 2022 +0000
+
+    print env vars
+
+commit 6cbeba6ff62b2922d48b7431bfeb4526c5c3f9ef
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:43:29 2022 +0000
+
+    better bash
+
+commit 6449a0b9543d072b75096ee4a4a475dd4e326286
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:40:44 2022 +0000
+
+    better method to check if shell is bash
+
+commit 48617e845d381921d5b25ded44df82f0c3f8cea2
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:34:08 2022 +0000
+
+    set shell for the workflow
+
+commit 1c1a39665643f3c69a5437133f9f0ad91de14536
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:31:27 2022 +0000
+
+    fix ubuntu version check
+
+commit 82e30f89075905ed2f031ef0cb78b671e89d22cf
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:26:53 2022 +0000
+
+    remove sudo from workflow
+
+commit 0c3b398afa0579158058e26637ba6449beff3c1f
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 15:24:33 2022 +0000
+
+    add test case for workflow
+
+commit e3a5a0fa059317a9ad62f43873017a49462ca183
+Merge: e4c2dd5 b349d34
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 11 09:01:34 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit f986e16fb0e2e3ed4cce837673c075c11d7fed21
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 11:12:47 2022 +0000
+
+    fix tty problem for build workflow
+
+commit 25a930d8193254fee239e0c3ed8bd7b291214635
+Merge: 8008cc7 b349d34
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Sun Dec 11 09:11:32 2022 +0000
+
+    Merge remote-tracking branch 'bitbucket/installer'
+
+commit b349d3415a4554a81caa84d128683bf956c650fa
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 01:15:51 2022 +0000
+
+    print logs at the end hopefully
+
+commit 983944bdc3bf94efc993d9d40f4d1e803559d877
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 01:10:51 2022 +0000
+
+    identify problem with tty not being connected to terminal
+
+commit e4c2dd5cec917d3330c0771ab8ff8d52edaa0aa4
+Merge: 73ee6e5 b68bb05
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:51:03 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit f664ac9e4e0c8f52c497659410cfa7af27219fed
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:50:35 2022 +0000
+
+    remove newline
+
+commit b68bb0592ac8f1150ccae881e733f7e9e3a4975d
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:49:30 2022 +0000
+
+    fix build not having ps
+
+commit 73ee6e511d4b7e94912d332738df7da06159d6ed
+Merge: 93d03d6 eaa74d8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:39:27 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit eaa74d85c9f7e0fb134d15058184b7fff7e84615
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:32:47 2022 +0000
+
+    beautify output of exec
+
+commit 93d03d6f23ce018ae7fcaf1aede6dd5e555c5e95
+Merge: 837acd5 bddc2a5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:16:49 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit bddc2a5f95a97639cffa6d6fffefc32da05e65c3
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:15:30 2022 +0000
+
+    fix build path
+
+commit 837acd599f588452e60f1f3eda14be3d734d63cc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:05:53 2022 -0500
+
+    bumped changelog version
+
+commit 89bdb177d224f07bd4512d59c5df1d240e07044a
+Merge: e7e3048 368f8fe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 10 19:05:02 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 368f8fe991324693c9724ff45a8862ec53e4746b
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:03:24 2022 +0000
+
+    live again
+
+commit 51b32b9328283dfd415b05bb9bdf3434f9bd9e71
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 11 00:00:02 2022 +0000
+
+    destroy will to live
+
+commit fb9593813a2f24f01f0bac3cf06d5ddba3c5abc9
+Author: grass <grass@danwin1210.de>
+Date:   Sat Dec 10 22:52:40 2022 +0000
+
+    add CI workflow for GH actions
+
+commit 63adee8457cfc741815b4dd8bf6ba4c7d7f44afb
+Author: grass <grass@danwin1210.de>
+Date:   Sat Dec 10 22:52:05 2022 +0000
+
+    better logging xtrace for bash and fix mint
+
+commit 9f276db21c8361532a49b04b54a4c9a9e2f4ee79
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 19:16:34 2022 +0000
+
+    fix help message ordering
+
+commit e7e30482d234ad176a3a3cefba1e7df0a2672608
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 12:04:14 2022 -0500
+
+    bumped changelog version
+
+commit 79445b59b867abc7c485fa0f99379a2306a479e1
+Merge: 47d1215 3fe47a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 12:03:47 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 3fe47a3a5dc82f909eefc6779113c91b15c424d6
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 16:55:09 2022 +0000
+
+    allow multiple process to be killed
+
+commit dc07d990fab559243fb17f81319be52cef26d375
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 15:40:22 2022 +0000
+
+    clean run_installer into more functions
+
+commit 47d1215fe8e1e698e6820b388ecc24742dda7880
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 10:07:47 2022 -0500
+
+    bumped changelog version
+
+commit d72af776b4315892fc91bd86779d1ad1f62e51ea
+Merge: 75ac6d4 a663588
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 10:07:29 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit a6635880ea1e046f46cbbb96ec2086f4e2ad276f
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 15:04:11 2022 +0000
+
+    fix end exit for options that doesn't hit main
+
+commit e61f0a1b8df836aaabbccba250887ea1d1058898
+Author: grass <grass@danwin1210.de>
+Date:   Wed Dec 7 14:45:06 2022 +0000
+
+    improve logging mechanism
+
+commit 75ac6d4d5aff01926dba1819893ada67b796f4f0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 08:15:28 2022 -0500
+
+    bumped changelog version
+
+commit 5e70e4d81e494e66b296f89136b1ac332e8a738d
+Merge: f59a6d7 b0303fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 7 07:58:32 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit b0303fc33d0327de5b257f6fb2843d1bca87cfeb
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 18:43:22 2022 +0000
+
+    change date logging to increasing number
+
+commit 37d3ecd48553a1e136dd7196572a49b068cd9c15
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 18:07:38 2022 +0000
+
+    fix date to be utc
+
+commit c6c7353f18e8414c38021f6a3d97ccb07f60d197
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 17:47:03 2022 +0000
+
+    add comments to explain import_only functionality
+
+commit 4ebd1bed4f1330b5403635283d52777fa8f53a46
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 17:40:28 2022 +0000
+
+    fix import_only to only manage the specified vm
+
+commit 51ee45680e506092d5df2538db4f008fd59fe28a
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:40:11 2022 +0000
+
+    fix mirror wrong subdir
+
+commit b0db53bc1460d0bf2c709fbd55286074035e640f
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:37:56 2022 +0000
+
+    explain problem with current logging to file implementation
+
+commit 25bd9b01db37b0c0c387bd3bcb603b8ba447b0c4
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:35:28 2022 +0000
+
+    typo
+
+commit 140766098af61df572740bade31956c403d20a16
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:34:40 2022 +0000
+
+    fix dialog failing due to parent script redirection
+
+commit 0629f82efee865c452bc12e3ebd34aa071b777d2
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 14:03:22 2022 +0000
+
+    fix mirror zsh completion
+
+commit 60aa51c2b6f7f3a48c8452b7f3939507ff83d0ca
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 13:18:53 2022 +0000
+
+    fix zsh completion of --import-only
+
+commit 7300782af1a62c76e09bbe16109855353255657b
+Author: grass <grass@danwin1210.de>
+Date:   Tue Dec 6 13:16:32 2022 +0000
+
+    fix get_arg quitting by unhandled case
+    if opt=value was being used, it was returning false, making the script
+        abort.
+
+commit c5c40f77c91b8d1679994aefe1d093c5c25e5383
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 4 22:40:44 2022 +0000
+
+    add import-only
+
+commit 48939c89ec8c9fd549f87ec68425b2703d8077eb
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 4 21:58:50 2022 +0000
+
+    add mode to log to file and option to not show errors
+
+commit faeaf3da5e21db9240ff85d2cbf5de921f6b4bb2
+Author: grass <grass@danwin1210.de>
+Date:   Fri Dec 2 18:36:23 2022 +0000
+
+    add commit hash placeholdre for distribution
+
+commit c80b535d853b4f557836acf1678a7f8b20e5065e
+Author: grass <grass@danwin1210.de>
+Date:   Fri Dec 2 18:19:31 2022 +0000
+
+    uncomment pre_check functions
+
+commit ca853fd9c5ec6ad5047744d61d2d1e28fd4852e2
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 22:55:58 2022 +0000
+
+    add mirrors option
+
+commit 649773ab0e8940b0f09d97785552b192c66cdd02
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 19:03:45 2022 +0000
+
+    fix spelling mistake
+
+commit d22cb017257c7858ab0f8f6af3b5e31bc556f788
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:57:57 2022 +0000
+
+    fix not informing about what package is missing
+
+commit 5c475bbf801b8558936b14f79ba139b20e5e53ec
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:49:21 2022 +0000
+
+    fix netcat-openbsd pkg name
+
+commit 08d5cac4b84cbe17510ca5ec357d4fc8868e2c65
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:23:36 2022 +0000
+
+    add allow errors (dirty mode)
+
+commit 9ce47675440c24c8c74ec853c0361e597aca8fdd
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 18:14:14 2022 +0000
+
+    fix pre check
+
+commit f59a6d7d95c60bc96ef57ef182bf525826237792
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 1 13:05:24 2022 -0500
+
+    bumped changelog version
+
+commit 82a9775d54b821db368a314a8d323a7c34b81611
+Author: grass <grass@danwin1210.de>
+Date:   Thu Dec 1 16:14:45 2022 +0000
+
+    add testers mode
+
+commit eae3601622155facf7146d7918e711e647ecc251
+Merge: 2a8a1df 302754f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 1 09:03:51 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 2a8a1df7fee72e5880858a3df5ab9b8d6b6d9165
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Nov 30 14:37:55 2022 -0500
+
+    bumped changelog version
+
+commit 7ca9ffa8934d8e9957cd43458e99b57c1b6f1450
+Merge: edaecb1 6a16463
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Nov 30 13:42:00 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 302754f5f225252881d28147075e91d8955d21a9
+Author: grass <grass@danwin1210.de>
+Date:   Wed Nov 30 18:39:02 2022 +0000
+
+    fix not failing on the first download error
+
+commit 6a16463132750cf819901d99b964f72d4bf6a849
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 21:44:17 2022 +0000
+
+    misc changes
+
+commit 71e66384b454aa030570d7bdb5c1ddcab3407a7d
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 20:46:38 2022 +0000
+
+    add no-import
+
+commit 9a11cec5b928121042bbe1bf8a4cafb96d4dd284
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 18:29:39 2022 +0000
+
+    fix zsh completion
+
+commit 04981ecfd889d9f418b8def70980e786b1374b27
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 16:17:23 2022 +0000
+
+    explain why the log_run can't be encapsulated
+
+commit edaecb1af7def15f57da835f8a44b41e6f13d6e7
+Merge: 2e77c3b 4f8cd0d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 07:25:15 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 4f8cd0d43c157826219c1990f05f7484515da251
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 12:15:37 2022 +0000
+
+    improve testing variable length
+
+commit 2357aaef1e3eb77f372dfa6b78dab870a6e2049d
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 11:25:45 2022 +0000
+
+    remove unused shellcheck
+
+commit 2e77c3be4ef2d2f2b148fe6101a3ad32b84e013f
+Merge: 5de7697 6209ae0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 06:17:28 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 8d54469b19d267361adbf72f01c8d44cf3ded6b5
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 11:14:36 2022 +0000
+
+    fix curl printing too much information
+
+commit 6209ae0ddd25f2e5b46ca42a9b67ebdf23f5eada
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 11:11:28 2022 +0000
+
+    fix not printing cmd to test internet connection
+
+commit 5de7697bff52f5b790cfd154725ee234d16eb886
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 04:20:54 2022 -0500
+
+    bumped changelog version
+
+commit af049aa0843c207567bae25bc1ca60bd33a3a4ef
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 04:20:53 2022 -0500
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit 32336600e44f668547ff3cfafd9c41a61ab19e35
+Merge: dcfba7a 9f2e81d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 29 04:16:18 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 9f2e81d409a719e74a6580f581db815bde15a843
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 01:00:09 2022 +0000
+
+    fix compression and partial not being used
+
+commit 6b4ac3a26823247e87a7d5d2441b4a23d6e76a52
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 00:57:01 2022 +0000
+
+    fix timeout not accepting user signals
+
+commit 640c7ce164041793920e524c03f4c4d5d61267d1
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 00:39:40 2022 +0000
+
+    print pid
+
+commit ed148ce63c4fb0b146a5c0144ccbd55fbb351da6
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 29 00:30:57 2022 +0000
+
+    change rsync option from inplace to simply partial
+
+commit 07c8e5f0680188f686147b8ff7fa97cbd42a51e7
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 20:20:03 2022 +0000
+
+    add optimizations for transfers
+
+commit 93a285add5bdf15367a6ce9e4e554007a251be9c
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 18:44:03 2022 +0000
+
+    fix timeout of transfer
+    Each program has different timeout options that work in different ways.
+    Implement program specific timeouts when possible and resort to external
+    core utils utility to ensure the maximum timeout is enforced.
+
+commit e4c6cdf6d3d08af9053a18bf45a24a74c1fd46ce
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 14:00:29 2022 +0000
+
+    fix shellcheck warnings
+
+commit 0888453794c32917bc398af50ee30b72df0090f2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 13:54:14 2022 +0000
+
+    fix variable mispelling
+
+commit 61d7a6f9a03775e57f3d6114ed67c0276b5a404d
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 28 13:52:48 2022 +0000
+
+    fix rsync now showing progress
+
+commit dcfba7a2d7931195e8a69c8aecebc281b96be888
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 28 06:58:21 2022 -0500
+
+    bumped changelog version
+
+commit 0e74860c37430f4712494e33031cb4f4936bf4b6
+Merge: 7dc5af2 e726b83
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 28 06:55:11 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit e726b83763a8a77caae2831a5c5fc6e2e9876bc6
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 23:43:52 2022 +0000
+
+    fix max size for whonix xfce images
+    current version 16.0.8.2 is already 2.1Gib and version 16.0.8.9 is at
+    2.2GiB.
+
+commit b22ad9f64bb9f00c2e743a636235efd8bc51138b
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 22:51:50 2022 +0000
+
+    fix rsync now showing while file was skipped
+
+commit 7dc5af2b2886efae56b51b93420989c76324696f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 16:12:35 2022 -0500
+
+    bumped changelog version
+
+commit 2b736869694298b133e55effb79c2914192aca96
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 20:32:24 2022 +0000
+
+    revert printing testing internet command
+    dumps too much data and only useful for testing
+
+commit 1314b5efb64d8b17043d6f1fc5305e62316fed26
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 20:19:01 2022 +0000
+
+    fix download links
+
+commit ba6136ea4e87708f01efe501fa7aa339f4559ce4
+Merge: bc67fa0 b6f2f7c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 14:33:18 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit b6f2f7c7f353b709685395ddb87fa2f722af6ed5
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 16:48:11 2022 +0000
+
+    fix testing connnection without proxy
+
+commit bc67fa00feee75392f68865034b4be70a62159a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 07:32:57 2022 -0500
+
+    bumped changelog version
+
+commit fe492b3d1a407b6cfdea04df04bcc4870dea24ef
+Merge: 9bf9e09 8f247d9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 07:28:09 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 8f247d9330e26db18246f0668367efe8093bc26b
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 27 12:05:57 2022 +0000
+
+    fix rsync with torsocks
+
+commit 9bf9e0971aa145907e496dac85bd308548f719a4
+Merge: ffe1164 5fa0ff3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 27 05:38:19 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 5fa0ff3eb027f682af1bb22a9069345611e06079
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 23:55:57 2022 +0000
+
+    fix missing test key
+
+commit 49c1b7a4792c29ad4897d0465a7aeeddfe721930
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 18:37:06 2022 +0000
+
+    fix problem if ws/gw exists and the other counterpart doesn't
+
+commit b57c7f650557253f590a68e4c08dbb6ee3c99e77
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:47:35 2022 +0000
+
+    fix shell completion files to complet
+
+commit 5465ca7f0dd0069c8d5328fc642c84afccaf89eb
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:41:37 2022 +0000
+
+    fix testing if package is installed
+
+commit 198664fd801422e2ca7eb27037316f0864ffc9ff
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:29:24 2022 +0000
+
+    add extrace space
+
+commit 4de402387801896ca0d6d4f6d0b589a3783cc44d
+Author: grass <grass@danwin1210.de>
+Date:   Fri Nov 25 17:26:17 2022 +0000
+
+    fix rsync downloads
+    other relevant changes:
+    - fix cmd to check proxy evaluation
+    - better check directory prefix validity
+
+commit bf6bd7f779b5728c60896bdce6c1e859e476b096
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 24 23:25:48 2022 +0000
+
+    improve transfer utility with rsync
+
+commit 879bbc41b7eb564a71a8c91fe1dd3dc6ab74a478
+Author: grass <grass@danwin1210.de>
+Date:   Thu Nov 24 20:33:02 2022 +0000
+
+    add rsync as transfer util (unfinished)
+
+commit ffe1164c369d3d8cc56f8d373b6c15165fe2d0f9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 23:58:52 2022 -0500
+
+    bumped changelog version
+
+commit c97ed5b0bfd4a481eec1a7949ce72b140a8ff3bd
+Merge: 99564b8 c0b787e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 23:58:32 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 99564b85aebe945d6a5175adb05d96a3f9fc76fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 23:48:53 2022 -0500
+
+    bumped changelog version
+
+commit c0b787eb07b2f7f621106f1199bb452bb1e65745
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 21:52:30 2022 +0000
+
+    fix duplication of variable definition
+    Previously was required because the code was not allowing empty var when
+    using set_arg, which happened on the first definition of a variable.
+
+commit 961aea8198f1606f88c0bc81e28d24128247191b
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 20:18:38 2022 +0000
+
+    add mention about redownload and reimport when booting guest
+
+commit e2d57ad198c0b6e0174a4719f4f1d572b36d067c
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 20:14:31 2022 +0000
+
+    add pledge for reimport
+
+commit 8d7649dcc70f149f5abf7aad61d97d3fe5cb2e67
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 18:26:11 2022 +0000
+
+    add reimport option
+    ability to reimport over existing vms, leads to data loss,
+    requires more warnings.
+
+commit 66eaeccc4f8f9037506221bcf30ac3ee217b6aa4
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 17:12:11 2022 +0000
+
+    add separate sections to help discern the steps
+
+commit ecae8998050ed4eeea337ea00950b57a4a9f71d8
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 15:45:52 2022 +0000
+
+    add --redownload
+
+commit 41d2a2ad772bd86e207868cb26563efb7aabafc4
+Merge: fe270da 6a8a72a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 22 06:24:51 2022 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 966f51efb2f9739ef1b07ef84cd094decbe8d0e0
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 11:01:13 2022 +0000
+
+    fix dialog types comments
+
+commit 0a18b1015d16271c42de3d3298cf4269580ead8f
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 10:58:20 2022 +0000
+
+    prefer dialog over whiptail
+    problems with dialogs:
+    - dialog prints empty lines on exit
+    - whiptail does not set default option when scroll text is neeed
+
+commit c2c91cabe4011115a97524b76c7257d8992f3dd9
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 10:48:15 2022 +0000
+
+    fix directory prefix by creating directory
+
+commit 541667a24fc2d89e8bff13763a4ea5059a5c3ee2
+Author: grass <grass@danwin1210.de>
+Date:   Tue Nov 22 10:38:32 2022 +0000
+
+    change default directory prefix
+
+commit 83c18c47140635dde614415d76059b221b068813
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 17:41:27 2022 +0000
+
+    fix pre_check problems during dry-run
+
+commit 6a8a72ae5eeff143c6cdb7eff0317179aba2fe42
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 16:00:43 2022 +0000
+
+    fix pre_check not quitting when there is not enough space
+
+commit 838a3f04b23e2cd772c952f14dae960bbdada163
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 15:06:29 2022 +0000
+
+    skip starting vms if dry-run is set
+
+commit 7aa149ee72b3b89ca16a9c0fa4f1adc61e684ed7
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 14:36:39 2022 +0000
+
+    inform which machines are gonna be started
+
+commit 7cb68bbd363f3b4ad113594f9f20c6dd007a6a3a
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 14:27:49 2022 +0000
+
+    improve boot of vms
+
+commit 161653190bcd6289b33cfd64be4f11768134c51f
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 14:11:43 2022 +0000
+
+    change aborting if vm exists to allow booting vm
+
+commit 81c63261d8756e05b95ffa7dbee2b65f3114eae2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 12:21:06 2022 +0000
+
+    ask to start/boot guest at the end of the run
+
+commit ea1159ea33cbea75bc2886ee97ef94e5d30b8c37
+Author: grass <grass@danwin1210.de>
+Date:   Mon Nov 21 11:24:55 2022 +0000
+
+    log verbatim commands
+
+commit f33028e7404bfe50e8691a40415192e5b6787952
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 20 23:05:43 2022 +0000
+
+    dev mode, nested virt detection
+
+commit 96e3eed8f8e1e451b466293a0b87b92b08191c07
+Author: grass <grass@danwin1210.de>
+Date:   Sun Nov 20 09:52:27 2022 +0000
+
+    fix pre_check not quitting when failing
+
+commit fe270da2ac9dd258c87218cb6f71ea749c1b0d38
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 18 11:48:49 2022 -0500
+
+    bumped changelog version
+
 commit e0d8c8244129f770467b75c642ae2d957da6b924
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 18 11:36:11 2022 -0500
@@ -298,6 +1698,12 @@ Date:   Sun Nov 13 23:51:01 2022 +0000
     - Virtualbox/KVM(unfinished)
     - CLI/XFCE
     - onion/clearnet
+
+commit 8008cc7465e8f59e93305638b1e4e8cb862ac174
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Tue Nov 1 18:19:11 2022 +0000
+
+    improve scurl-download to behave like wget
 
 commit 5cc192896ae669430362648c967e1e752686016b
 Author: Patrick Schleizer <adrelanos@whonix.org>

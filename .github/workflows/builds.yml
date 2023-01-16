@@ -1,27 +1,52 @@
 name: docker build
-on: [push, pull_request]
+on:
+    push:
+        paths:
+            - 'usr/bin/installer-dist'
 
 jobs:
+    changes:
+        runs-on: ubuntu-22.04
+        permissions: 
+            pull-requests: read
+        outputs:
+            build: ${{ steps.filter.outputs.build }}
+        steps:
+            - uses: actions/checkout@v3
+            - uses: dorny/paths-filter@v2
+              id: filter
+              with:
+                filters: |
+                    build:
+                        - 'usr/bin/installer-dist'
+
     build:
+        needs: changes
+        if: ${{ needs.changes.outputs.build == 'true' }}
+        ## Github takes too long to set the corrent latest image, this is
+        ## why we set it manually.
+        ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         runs-on: ubuntu-22.04
         strategy:
             fail-fast: false
             matrix:
                 include:
                     - image: debian:stable
-                    - image: debian:testing
-                    - image: debian:unstable
                     - image: ubuntu:latest
+                    - image: linuxmintd/mint21-amd64:latest
 
         container:
             image: ${{ matrix.image }}
 
         steps:
-            - uses: actions/checkout@v1
-            - run: cat /etc/os-release
-            - run: apt-get update -y && apt-get install -y psmisc
-            - run: bash ./usr/bin/installer-dist -n -l debug -k -D
-            - run: cat ~/installer-dist-download/log
-            - run: cat ~/installer-dist-download/log.xtrace
+            - uses: actions/checkout@v3
+            - name: System information
+              run: cat /etc/os-release; uname -a; echo "${PATH}"
+            - name: System Basic Packages
+              run: apt-get update -y && apt-get install -y shellcheck sudo
+            - name: Run Installer
+              run: bash ./usr/bin/installer-dist -n -l debug -k -D
+            - name: Run Installer ShellCheck
+              run: shellcheck usr/bin/installer-dist
 
 # vim: sw=4

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ## vim: set sw=2 sts=2 ts=2 et :
 ##
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
@@ -61,18 +61,37 @@ all_args="${*}"
 start_time="$(date +%s)"
 
 ## colors
-# shellcheck disable=SC2034
-nocolor="\033[0m"
-bold="\033[1m"
-#nobold="\033[22m"
-#underline="\033[4m"
-#nounderline="\033[24m"
-red="\033[31m"
-green="\033[32m"
-yellow="\033[33m"
-#blue="\033[34m"
-magenta="\033[35m"
-cyan="\033[36m"
+get_colors(){
+  ## Disable colors if some environment variables are present.
+  if test -n "${NO_COLOR:-}" || test -n "${ANSI_COLORS_DISABLED:-}"; then
+    # shellcheck disable=SC2034
+    nocolor=""
+    bold=""
+    #nobold=""
+    underline=""
+    nounderline=""
+    red=""
+    green=""
+    yellow=""
+    #blue=""
+    magenta=""
+    cyan=""
+    return 0
+  fi
+
+  # shellcheck disable=SC2034
+  nocolor="\033[0m"
+  bold="\033[1m"
+  #nobold="\033[22m"
+  underline="\033[4m"
+  nounderline="\033[24m"
+  red="\033[31m"
+  green="\033[32m"
+  yellow="\033[33m"
+  #blue="\033[34m"
+  magenta="\033[35m"
+  cyan="\033[36m"
+}
 
 ## https://www.whonix.org/wiki/Main/Project_Signing_Key#cite_note-7
 adrelanos_signify="untrusted comment: Patrick Schleizer adrelanos@whonix.org signify public key
@@ -91,7 +110,8 @@ RWT2GZDQkp1NtTAC1IoQHUsyb/AQ2LIQF82cygQU+riOpPWSq730A/rq"
 ## spamming '>/dev/null' throughout this function. This also guards
 ## against aliases and functions.
 ## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
-has(){ _cmd="$(command -v "${1}")" 2>/dev/null || return 1
+has(){
+  _cmd="$(command -v "${1}")" 2>/dev/null || return 1
   [ -x "${_cmd}" ] || return 1
 }
 
@@ -144,17 +164,24 @@ not_as_root(){
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
   test -z "${1:-}" && die 1 "Failed to pass arguments to root_cmd."
-  if test "${dry_run}" = "1"; then
-    log info "Skipping running root command '${sucmd} ${*}' because dry_run is set."
-    return 0
-  fi
-  if test -n "${sucmd_quote:-}"; then
-    true "sucmd_quote"
-    # shellcheck disable=SC2016
-    ${sucmd} '${@}'
-  else
-    ${sucmd} "${@}"
-  fi
+  case "${sucmd}" in
+    su)
+      ## Thanks to Congelli501 for su to not mess with quotes.
+      ## https://stackoverflow.com/a/32966744/2605155
+      cmd="$(which -- "${1}")"
+      shift
+      log_run su root -s "${cmd}" -- "${@}"
+      ;;
+    sudo)
+      log_run sudo -- "${@}"
+      ;;
+    doas)
+      log_run doas -u root -- "${@}"
+      ;;
+    *)
+      die 1 "Function root_cmd does not support sucmd '${sucmd}'."
+      ;;
+  esac
 }
 
 
@@ -241,6 +268,11 @@ get_os(){
       elif [ -z "${kernel%%*-Microsoft}" ]; then
         distro="${distro} on Windows 10 [WSL1]"
       fi
+      if [ -z "${distro_version:-}" ]; then
+         if test -f /etc/debian_version ; then
+            distro_version="$(cat /etc/debian_version)"
+         fi
+      fi
     ;;
     Haiku) distro=$(uname -sv);;
     Minix|DragonFly) distro="${os} ${kernel}";;
@@ -249,6 +281,7 @@ get_os(){
     FreeBSD) distro="${os} $(freebsd-version)";;
     *) distro="${os} ${kernel}";;
   esac
+  distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
   log notice "Detected system: ${distro} ${distro_version}."
   log notice "Detected CPU architecture: ${arch}."
 }
@@ -426,11 +459,17 @@ check_opt_filled(){
 ## standardization on how the messages are delivered.
 ## usage: log [info|notice|warn|error] "X occurred."
 log(){
+  ## Avoid clogging output if log() is working alright.
+  if test "${xtrace}" = "1"; then
+    true "Removing xtrace for log() function."
+    set +o xtrace
+  fi
   log_type="${1}"
   ## capitalize log level
   log_type_up="$(echo "${log_type}" | tr "[:lower:]" "[:upper:]")"
   shift 1
   ## escape printf reserved char '%'
+  # shellcheck disable=SC2001
   log_content="$(echo "${*}" | sed "s/%/%%/g")"
   ## set formatting based on log level
   case "${log_type}" in
@@ -462,7 +501,7 @@ log(){
   case "${log_type}" in
     bug)
       #printf %s"${log_full:+$log_full }Please report this bug.\n" 1>&2
-      printf %s"${log_full} Please report this bug.\n" 1>&2
+      printf %s"${log_full}" 1>&2
       return 0
       ;;
     error)
@@ -485,6 +524,10 @@ log(){
         ;;
     esac
   fi
+
+  if test "${xtrace}" = "1"; then
+    set -o xtrace
+  fi
 }
 
 
@@ -495,7 +538,18 @@ log(){
 ## where '#' is the exit code.
 die(){
   log error "${2}"
-  log error "Aborting installer."
+  if test "${allow_errors}" = "1"; then
+    log warn "Skipping exiting now with code '${1}' because allow_errors is set."
+    return 0
+  fi
+  case "${1}" in
+    106|107)
+      true
+      ;;
+    *)
+      log error "Aborting installer."
+      ;;
+  esac
   exit "${1}"
 }
 
@@ -503,13 +557,13 @@ die(){
 ## Wrapper to log command before running to avoid duplication of code
 log_run(){
   ## Extra spaces appearing when breaking log_run on multiple lines.
-  log info "Executing: $ $(echo "${1}" | tr -s " ")"
+  command_without_extrarenous_spaces="$(echo "${@}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
-    true "Skipping running above logged command because dry_run is set."
+    log notice "Skipping: $ ${command_without_extrarenous_spaces}"
     return 0
   fi
-  # shellcheck disable=SC2086
-  ${1} || return 1
+  log notice "Executing: $ ${command_without_extrarenous_spaces}"
+  "${@}" || return 1
 }
 
 
@@ -550,15 +604,29 @@ handle_exit(){
   log_time
   ## Exit without errors.
   test "${last_exit}" = "0" && end_exit
+  ## Virtual Machine expected start issues.
+  test "${last_exit}" = "106" && end_exit
+  ## Virtual Machine unexpected start issues.
+  test "${last_exit}" = "107" && end_exit
   ## Exit with errors.
-  log error "Current script: ${0}"
+  log notice "Current script: ${0}"
+  # shellcheck disable=SC3028
   if test -n "${BASH_COMMAND:-}"; then
-    log error "Function executed: ${FUNCNAME[1]}"
-    log error "Command executed: ${BASH_COMMAND}"
+    # shellcheck disable=SC2039,3028,3054
+    log notice "Function executed: ${FUNCNAME[1]}"
+    # shellcheck disable=SC2039,3028,3054
+    log notice "Command executed: ${BASH_COMMAND}"
   fi
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
-    log bug "At line: ${line_number}."
+    log error "Error detected. Installer aborted."
+    log error "No panic. Nothing is broken. Just some rare condition has been hit."
+    log error "There is likely a solution for this problem."
+    log error "Try again. If this issue is transient (not happening again) it can be safely ignored."
+    log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
+    log error "If not already reported, please report this bug!"
+    echo ""
+    log error "Error ocurred in line: ${line_number}."
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
     # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
@@ -569,6 +637,10 @@ handle_exit(){
     printf '%s\n*%s\n%s\n' "${line_above}" "${line_error}" "${line_below}"
     ## Too complex.
     # awk 'NR>L-4 && NR<L+4 { printf " %-5d%3s %s\n",NR,(NR==L?">>>":""),$0 }' L="${line_number}" "${0}" >&2
+    echo ""
+    log error "Please include the user log and the debug log in your bug report."
+    log error "(For file locations where to find these logs, see above.)"
+    echo ""
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
@@ -595,35 +667,28 @@ get_host_pkgs(){
   case "${os}" in
     Linux*)
       case "${distro}" in
-        "Debian"*|"Tails"*)
-          true "Debian"
+        "Debian"*|"Tails"*|"Kicksecure"|"Whonix")
+          true "${distro}"
           install_package_debian_common
           install_pkg netcat-openbsd
           install_virtualbox_debian
           install_signify signify-openbsd
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
-          true "Mint"
+          true "${distro}"
           install_package_debian_common
           install_pkg netcat-openbsd
           install_virtualbox_ubuntu
           install_signify signify-openbsd
           ;;
         *"buntu"*)
-          true "Ubuntu"
-          if [ "$(echo "${distro_version}" | tr -d ".")" -lt 2204 ]; then
+          true "${distro}"
+          if [ ! "${distro_version_without_dot}" -ge 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
           install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
-          ;;
-        "Kicksecure"|"Whonix")
-          true "Kicksecure/Whonix"
-          install_package_debian_common
-          install_pkg netcat-openbsd
-          install_virtualbox_kicksecure
           install_signify signify-openbsd
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
@@ -662,9 +727,7 @@ get_independent_host_pkgs(){
 
   has timeout || die 1 "Timeout utility is missing."
   has curl || install_pkg curl
-  test_pkg curl
   has rsync || install_pkg rsync
-  test_pkg rsync
 
   while true; do
     has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
@@ -673,14 +736,19 @@ get_independent_host_pkgs(){
     break
   done
   if test -z "${nested_virt_tool:-}"; then
-    ## no hard fail, not a requirement, good to have only.
-    log warn "Program to detect nested virtualization not found."
+    ## No hard fail, not a requirement, good to have only.
+    log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
   else
     ## Check if we are a guest of virtualization.
+    nested_virtualization_detected=""
     if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
-      log warn "Nested virtualization detected, possibly a user mistake."
-      log warn "For more information about nested virtualization see:"
-      log warn "  https://www.kicksecure.com/wiki/Nested_Virtualization"
+      nested_virtualization_detected=true
+      log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
+- Possibly a user mistake.
+- This installer is designed to run on the host operating system.
+- This installer is not designed to be run inside virtual machines.
+- For more information about nested virtualization see:
+  ${url_version_domain}/wiki/Nested_Virtualization"
     fi
   fi
 }
@@ -691,7 +759,7 @@ install_pkg(){
   pkgs="${*}"
   pkg_not_installed=""
   for pkg in ${pkgs}; do
-    ## Tst if package exists as a binary or a library, using different tools.
+    ## Test if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
     if ! has "${pkg}" &&
       ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
@@ -708,10 +776,12 @@ install_pkg(){
     fi
     log notice "Updating package list."
     # shellcheck disable=SC2086
-    log_run "root_cmd ${pkg_mngr_update}"
+    root_cmd ${pkg_mngr_update}
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
-    log_run "root_cmd ${pkg_mngr_install} ${pkg_not_installed}"
+    root_cmd ${pkg_mngr_install} ${pkg_not_installed}
+    ## Test if installation worked.
+    test_pkg "${pkg_not_installed}"
   fi
 }
 
@@ -731,7 +801,8 @@ test_pkg(){
   done
 
   if test -n "${pkg_not_installed}"; then
-    die 1 "Failed to locate package(s):${pkg_not_installed}."
+    log error "Failed to locate package(s):${pkg_not_installed}."
+    return 1
   fi
 }
 
@@ -778,8 +849,8 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported gateway because reimport is set."
-              log_run "vboxmanage unregistervm \
-                ${guest_pretty}-Gateway-${interface_all_caps} --delete"
+              log_run vboxmanage unregistervm \
+                "${guest_pretty}-Gateway-${interface_all_caps}" --delete
             fi
           fi
           ## Remove Workstation if it exists.
@@ -790,8 +861,8 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported workstation because reimport is set."
-              log_run "vboxmanage unregistervm \
-                ${guest_pretty}-Workstation-${interface_all_caps} --delete"
+              log_run vboxmanage unregistervm \
+                "${guest_pretty}-Workstation-${interface_all_caps}" --delete
             fi
           fi
         elif test -n "${import_only}"; then
@@ -832,8 +903,8 @@ check_vm_exists_virtualbox(){
           ## If VMs exists and reimport is set, remove VMs as they are gonna
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          log_run "vboxmanage unregistervm \
-            ${guest_pretty}-${interface_all_caps} --delete"
+          log_run vboxmanage unregistervm \
+            "${guest_pretty}-${interface_all_caps}" --delete
         else
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -886,7 +957,7 @@ check_guest_boot(){
       log notice "Available guest: ${guest_pretty}-${interface_all_caps}"
       ;;
   esac
-  log notice "Do you want to start the Virtual Machine(s) now? [y/n] (default: yes): "
+  log notice "Do you want to start the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
   printf '%s' "Your answer: "
   read -r response
   log notice "User replied '${response}'."
@@ -897,7 +968,7 @@ check_guest_boot(){
       ;;
     *)
       log notice "User declined to start Virtual Machine(s)."
-      log notice "Virtual Machine(s) can be started manually."
+      log notice "The ${guest_pretty} Virtual Machine(s) can be started manually."
       ;;
   esac
   ## Last phase, should exit here every time.
@@ -949,19 +1020,19 @@ import_virtualbox(){
   esac
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run "vboxmanage import \
-    ${directory_prefix}/${guest_file}.${guest_file_ext} ${vbox_arg}" ||
+  log_run vboxmanage import \
+    "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
     die 105 "Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
-    log_run "vboxmanage unregistervm ${vm_purge} --delete" ||
+    log_run vboxmanage unregistervm ${vm_purge} --delete ||
       die 1 "Failed to remove extraneous virtual system."
   fi
 
-  log notice "You can now open the VirtualBox application to use ${guest}."
+  log notice "You can now open the VirtualBox application to use ${guest_pretty}."
 }
 
 
@@ -989,68 +1060,154 @@ start_virtualbox(){
   log notice "Starting Virtual Machine(s)."
   case "${guest}" in
     whonix)
-      log_run "vboxmanage startvm \
-        ${guest_pretty}-Gateway-${interface_all_caps}" || return 1
-      log_run "vboxmanage startvm \
-        ${guest_pretty}-Workstation-${interface_all_caps}" || return 1
+      log_run vboxmanage startvm \
+        "${guest_pretty}-Gateway-${interface_all_caps}" || virtualbox_start_failed
+      log_run vboxmanage startvm \
+        "${guest_pretty}-Workstation-${interface_all_caps}" || virtualbox_start_failed
       ;;
     kicksecure)
-      log_run "vboxmanage startvm \
-        ${guest_pretty}-${interface_all_caps}" || return 1
+      log_run vboxmanage startvm \
+        "${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
       ;;
   esac
+}
+
+virtualbox_start_failed() {
+  if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
+    die 106 "Virtual Machine start failed.
+- The installer succeeded with download and import but failed to start the virtual machines.
+- This is likely happening due to the virtualization related warnings that have been reported above."
+  fi
+  die 107 "Virtual Machine start failed.
+- The installer succeeded with download and import,
+- but failed to start the virtual machines.
+- See user documentation:
+  ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
 
 
 install_package_debian_common(){
   pkg_mngr="apt-get"
   pkg_mngr_install="${pkg_mngr} install --yes"
-  pkg_mngr_update="${pkg_mngr} update --yes"
+  pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
   pkg_mngr_check_installed="dpkg -s"
+  ## 'dpkg --audit' does not return non-zero exit code on failure.
+  dpkg_audit_output="$(dpkg --audit 2>&1)"
+  if test -n "${dpkg_audit_output}"; then
+    log error "Auditing dpkg database returned non-zero exit code."
+    log error "Learn how to fix this issue at:"
+    log error "  https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT"
+    return 1
+  fi
 }
 
 
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  log_run "root_cmd adduser ${USER} vboxusers" || {
-    die 1 "Failed to add user '${USER}' to group 'vboxusers'."
+  root_cmd adduser "$(id -nu)" vboxusers || {
+    die 1 "Failed to add user '$(id -nu)' to group 'vboxusers'."
   }
+}
+
+
+install_fasttrack_repository_debian(){
+  fasttrack_clearnet="fasttrack.debian.net"
+  fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
+  fasttrack_found=""
+  apt_torified=""
+  apt_onion=""
+
+  for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
+    test -f "${file}" || continue
+
+    if grep -v "#" "${file}" | grep -q \
+      -e "://${fasttrack_clearnet}" \
+      -e "://${fasttrack_onion}"
+    then
+      fasttrack_found=1
+    fi
+
+    if grep -v "#" "${file}" | grep -q -F -e "tor://" -e "tor+"; then
+      apt_torified=1
+    fi
+
+    if grep -q -v "#" "${file}" | grep -q -F ".onion"; then
+      apt_onion=1
+    fi
+  done
+
+  if test "${fasttrack_found}" = "1"; then
+    log info "Skipped adding fasttrack because it was already found."
+  else
+    if test "${apt_torified}" = "1"; then
+      ## If apt-transport-tor is not installed, we shouldn't, because we got
+      ## a false positive that updates should be torified. Not sure when this
+      ## could happen in reality, but a hard fail is necessary as explained
+      ## per the points above.
+      log info "Apt is supposed to be torified, checking apt-transport-tor exists."
+      test_pkg apt-transport-tor
+    fi
+    log notice "Installing packages for fasttrack repository"
+    install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
+
+    ## If user has onion repositories configured, prefer it.
+    if test "${apt_onion}"; then
+      log notice "Adding Fasttrack's onion repository."
+      fasttrack_url="tor+http://${fasttrack_onion}"
+    ## If user has torified repositories configured, prefer it.
+    elif test "${apt_torified}"; then
+      log notice "Adding Fasttrack's torified clearnet repository."
+      fasttrack_url="tor+https://${fasttrack_clearnet}"
+    ## If user doesn't have torified repositoris, use clearnet one.
+    else
+      log notice "Adding Fasttrack's clearnet repository."
+      fasttrack_url="https://${fasttrack_clearnet}"
+    fi
+
+    log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
+    echo "deb ${fasttrack_url}/debian/ bullseye-fasttrack main contrib non-free" | \
+      root_cmd tee /etc/apt/sources.list.d/fasttrack.list
+  fi
 }
 
 
 ## Install VirtualBox on Debian
 install_virtualbox_debian(){
-  has vboxmanage && return 0
-  if grep -v "#" /etc/apt/sources.list /etc/apt/sources.list.d/*.list | \
-    grep -e "://fasttrack.debian.net" \
-    -e grep "://5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
-  then
-    log info "Skipped adding fasttrack because it was already found."
-  else
-    install_pkg apt-transport-https
-    install_pkg fasttrack-archive-keyring
-    test_pkg fasttrack-archive-keyring
-    log info "Adding fasttrack repo to /etc/apt/sources.list.d/fasttrack.list"
-    echo 'deb https://fasttrack.debian.net/debian/ bullseye-fasttrack main contrib non-free' | root_cmd tee /etc/apt/sources.list.d/fasttrack.list >/dev/null
+  has_vboxmanage=0
+  has_linux_headers=0
+  linux_headers="linux-headers-$(dpkg --print-architecture)"
+  has vboxmanage && has_vboxmanage=1
+  test_pkg "${linux_headers}" && has_linux_headers=1
+
+  if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
+    log notice "vboxmanage and ${linux_headers}"
+    install_virtualbox_debian_common_end
+    return 0
   fi
-  install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
+
+  if test "${has_linux_headers}" != "1"; then
+    log notice "Preparing to install ${linux_headers}"
+    install_pkg "${linux_headers}"
+  fi
+
+  if test "${has_vboxmanage}" != "1"; then
+    log notice "Preparing to install VirtualBox"
+    install_fasttrack_repository_debian
+    install_pkg virtualbox
+  fi
+
   install_virtualbox_debian_common_end
 }
 
 
 ## Install VirtualBox on Ubuntu
 install_virtualbox_ubuntu(){
-  has vboxmanage && return 0
+  if has vboxmanage && test_pkg linux-headers-generic; then
+    install_virtualbox_debian_common_end
+    return 0
+  fi
   install_pkg virtualbox linux-headers-generic
-  install_virtualbox_debian_common_end
-}
-
-
-## Install VirtualBox on Kicksecure
-install_virtualbox_kicksecure(){
-  has vboxmanage && return 0
-  install_pkg virtualbox "linux-headers-$(dpkg --print-architecture)"
   install_virtualbox_debian_common_end
 }
 
@@ -1060,7 +1217,6 @@ install_signify(){
   pkg_name="${1:-signify}"
   has "${pkg_name}" && return 0
   install_pkg "${pkg_name}"
-  test_pkg "${pkg_name}"
 }
 
 
@@ -1209,29 +1365,23 @@ get_utilities(){
   while true; do
     has sudo && sucmd=sudo && break
     has doas && sucmd=doas && break
-    has su && sucmd="su -c" && sucmd_quote=1 && break
+    has su && sucmd=su && break
     test -z "${sucmd}" && {
       die 1 "Failed to find program to run as another user."
     }
   done
 
   log info "Testing root login"
-  root_cmd echo hello >/dev/null || {
+  root_cmd echo "Succesfull root login" ||
     die 1 "Failed to run test command as root."
-  }
 }
 
 
 ## Set default traps
 set_trap(){
+  log info "Current PATH: ${PATH}"
   ## Sometimes ps is not available, default to sh.
-  if ! has ps; then
-    log warn "Missing program 'ps' to detect shell."
-    log warn "Will assume shell is 'sh'."
-    curr_shell="sh"
-  else
-    curr_shell="$(ps | awk "/ $$ /" | awk '{print $4}')"
-  fi
+  curr_shell="$(cat /proc/$$/comm)"
   ## Get current shell from current process
   ## If the process if the file name, get its shell from shebang
   ## sometimes the process name is the base name of the script with some
@@ -1244,13 +1394,15 @@ set_trap(){
       curr_shell="${shebang##*/}"
       ;;
   esac
+  log info "Current shell: '${curr_shell}'"
   case "${curr_shell}" in
     *bash|*ksh|*zsh)
       # shellcheck disable=SC2039
       if test "${curr_shell}" = "bash"; then
+        # shellcheck disable=SC2039,3040
         set -o errtrace
       fi
-      # shellcheck disable=SC2039
+      # shellcheck disable=SC2039,3047
       trap 'handle_exit $? ${LINENO:-}' ERR
       ;;
   esac
@@ -1261,8 +1413,7 @@ set_trap(){
 ## Check if system status is supported
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    log error "Only supported architecture is x86_64, your's is ${arch}."
-    return 101
+    die 101 "Only supported architecture is x86_64, your's is ${arch}."
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
@@ -1280,18 +1431,21 @@ get_system_stat(){
   esac
 
   ## 4GB RAM machine reports 3844Mi and 4031MB
-  total_mem="$(free --mega | awk '/Mem:/{print $2}')"
+  ## /proc/meminfo replies in kB
+  ## https://ux.stackexchange.com/a/13850
+  total_mem_kB="$(awk '/MemTotal/{print $2}' /proc/meminfo)"
+  ## convert kB to MB
+  total_mem="$((total_mem_kB/1000))"
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
-    log warn "Your systems has a low amount of total RAM: ${total_mem}."
-    log warn "You may encounter problems using a desktop environment."
+    log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: ${total_mem} MB. See:"
+    log warn "  ${url_version_domain}/wiki/RAM"
   fi
 
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
   if [ "${free_space}" -lt 10 ]; then
-    log error "You need at least 10G of available space, you only have ${free_space}G."
-    return 101
+    die 101 "You need at least 10G of available space, you only have ${free_space}G."
   fi
 }
 
@@ -1299,7 +1453,7 @@ get_system_stat(){
 ## Sanity checks that should be called before execution of main
 pre_check(){
   get_os
-  get_utilities
+  get_system_stat
 
   ## Functions below are difficult to emulate
   if test "${dry_run}" = "1"; then
@@ -1307,7 +1461,6 @@ pre_check(){
     return 0
   fi
 
-  get_system_stat
   get_virtualization
   get_host_pkgs
   get_independent_host_pkgs
@@ -1437,10 +1590,11 @@ get_version(){
   ## this is necessary because we log will not be printed as the command is
   ## assigned to a variable at 'raw_version=$()'.
   if test "${dry_run}" = "1"; then
-    log_run "${cmd_raw_version}"
+    # shellcheck disable=SC2086
+    log_run ${cmd_raw_version}
     return 0
   fi
-  # shellcheck disable=SC2046,SC2086
+  # shellcheck disable=SC2086
   raw_version="$(${cmd_raw_version})"
   # shellcheck disable=SC2046,SC2086
   guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
@@ -1483,7 +1637,8 @@ get_file(){
   download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   log notice "Downloading ${url:-}."
-  log_run "${download_opt_full}" || return 1
+  # shellcheck disable=SC2086
+  log_run ${download_opt_full} || return 1
 }
 
 
@@ -1505,7 +1660,7 @@ download_files(){
   }
   then
     log_time
-    log_run "touch ${download_flag}"
+    log_run touch "${download_flag}"
   else
     die 103 "Failed to download files."
   fi
@@ -1531,23 +1686,30 @@ get_virtualization(){
 
   case "${virt_flag:=}" in
     vmx|svm)
-      log notice "Your CPU supports virtualization: ${brand}: ${virt_flag}."
+      log notice "${underline}Virtualization Support Test:${nounderline} Your CPU supports virtualization: ${brand}: ${virt_flag}."
+      virt_detection_success=true
       return 0
       ;;
     "")
-      log warn "Virtualization availability can be a false negative."
-        log warn "No virtualization flag found."
-        return 0
-        ;;
-      *)
-      log warn "Virtualization availability can be a false negative."
-      log warn "Unknown virtualization flag: ${virt_flag}."
-      return 0
-      ## let's not hard fail here, let the user do it later.
-      #return 101
+      log warn "${underline}Virtualization Support Test:${nounderline} No virtualization flag found."
+      virt_detection_success=false
+      ;;
+    *)
+      log warn "${underline}Virtualization Support Test:${nounderline} Unknown virtualization flag: ${virt_flag}."
+      virt_detection_success=false
       ;;
   esac
 
+  if [ "$virt_detection_success" = "false" ]; then
+    log warn "(The virtualization detection is imperfect and might show a false negative warning.)"
+    if [ "${hypervisor}" = "virtualbox" ]; then
+      log warn "See user documentation on how to enable virtualization:"
+      log warn "  ${url_version_domain}/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
+    fi
+    return 0
+    ## Let's not hard fail here, let the user do it later.
+    #return 101
+  fi
 
   ## msr is blocked by security-misc. If no other solution is found,
   ## remove the rest of of this function.
@@ -1557,7 +1719,6 @@ get_virtualization(){
   ## modprobe: ERROR: could not insert 'msr': Invalid argument
 
   install_pkg msr-tools
-  test_pkg msr-tools
   # https://bazaar.launchpad.net/~cpu-checker-dev/cpu-checker/trunk/view/head:/kvm-ok
   # kvm-ok - check whether the CPU we're running on supports KVM acceleration
   # Copyright (C) 2008-2010 Canonical Ltd.
@@ -1879,7 +2040,10 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving logs to: '${log_file}'."
+  log notice "Saving user log to: '${log_file_user}'."
+  if test -f "${log_file_debug}"; then
+    log notice "Saving debug log to: '${log_file_debug}'."
+  fi
   log info "Starting main function."
 
   guest_pretty="$(capitalize_first_char "${guest}")"
@@ -1901,9 +2065,6 @@ main(){
 
   pre_check
   log_time
-
-  ## Get all links to download files and settings
-  get_download_links
 
   ## Check if VM were already imported, if true then ask to start
   check_vm_exists
@@ -2033,6 +2194,8 @@ File name:
 
 ## Set default values for variables.
 set_default(){
+  get_colors
+  xtrace=""
   directory_prefix=""
   set_arg directory_prefix "${HOME}/installer-dist-download"
   guest=""
@@ -2178,7 +2341,10 @@ parse_opt(){
   arg_saved="$(printf %s"${arg_saved}\n")"
   ## Test if options are valid
   range_arg log_level error warn notice info debug
-  [ "${log_level}" = "debug" ] && set -o xtrace
+  if [ "${log_level}" = "debug" ]; then
+    xtrace=1
+    set -o xtrace
+  fi
   range_arg guest whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
@@ -2234,13 +2400,14 @@ parse_opt(){
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"
     fi
-    log_file="${log_dir_cur}/log"
+    log_file_user="${log_dir_cur}/user.log"
+    log_file_debug="${log_dir_cur}/debug.log"
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
     mkdir -p "${log_dir_cur}"
     cp "${0}" "${log_dir_cur}"
-    touch "${log_file}"
+    touch "${log_file_user}"
   fi
 
   # shellcheck disable=SC2194
@@ -2267,6 +2434,8 @@ parse_opt(){
   fi
   if test "${allow_errors}" = "1"; then
     set +o errexit
+    # shellcheck disable=SC2039,3040
+    test "${curr_shell}" = "bash" && set +o errtrace
   fi
 
   log info "Option parsing ended."
@@ -2275,22 +2444,23 @@ parse_opt(){
 
 ## Logging mechanism.
 log_term_and_file(){
-  ## Send fd3 to the terminal
-  if test -t 1 && has tty; then
-    true "exec 3>$(tty)"
-    exec 3>>"$(tty)"
-  else
-    true "Output is not being sent to the terminal because either tty program does not exist of because terminal is not connected to stdout."
+  ## Discover if terminal is attached to stdout
+  if ! test -t 1; then
+    log warn "Output is not being sent to the terminal because terminal is not connected to stdout."
+    return 0
   fi
+  ## Send fd3 to the terminal
+  true "exec 3>$(tty)"
+  exec 3>>"$(tty)"
   ## Current problem is that command-line option is necessary to hide stderr
   ## by sending it to /dev/null, while the desired method would be to avoid
   ## this workaround and simply be able to redirect with 2>/dev/null.
   ## Send f21/stdout to log file.
-  true "exec 1>>${log_file}"
-  exec 1>>"${log_file}"
+  true "exec 1>>${log_file_user}"
+  exec 1>>"${log_file_user}"
   ## Send fd2/stderr to log file by default.
-  true "exec 2>>${log_file}"
-  exec 2>>"${log_file}"
+  true "exec 2>>${log_file_user}"
+  exec 2>>"${log_file_user}"
   ## If no_show_errors is set, send fd2/stderr to /dev/null.
   if test "${no_show_errors}" = "1"; then
     true "exec 2>/dev/null"
@@ -2299,16 +2469,23 @@ log_term_and_file(){
   ## Bash has built-in feature to redirect xtrace to the specified file.
   if test "${curr_shell}" = "bash"; then
     # shellcheck disable=SC2039
-    true "exec 9>>${log_file}.xtrace"
-    exec 9>>"${log_file}.xtrace"
+    true "exec 9>>${log_file_debug}"
+    exec 9>>"${log_file_debug}"
     export BASH_XTRACEFD=9
     set -o xtrace
+    xtrace=1
+    touch "${log_file_debug}"
   fi
   ## Copy output of log file to fd3 and send process to the background.
-  true "tail -f ${log_file} >&3 &"
-  tail -f "${log_file}" >&3 &
+  if test -f "${log_file_debug}" && test "${log_level}" = "debug"; then
+    true "tail -qf ${log_file_debug} ${log_file_user} >&3 &"
+    tail -qf "${log_file_debug}" "${log_file_user}" >&3 &
+  else
+    true "tail -f ${log_file_user} >&3 &"
+    tail -f "${log_file_user}" >&3 &
+  fi
   ## Get background job PID.
-  tail_pid="${!}"
+  tail_pid="$!"
 }
 
 
@@ -2324,6 +2501,10 @@ run_installer(){
   parse_opt "${@}"
   ## Logging mechanism.
   log_term_and_file
+
+  get_utilities
+  get_download_links
+
   ## Start main function.
   main
 }
