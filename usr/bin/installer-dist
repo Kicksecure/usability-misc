@@ -340,7 +340,6 @@ get_arg(){
 ## Single source to set opts, can later be used to print the options parsed
 ## usage: set_arg variable value
 set_arg(){
-  true "BEGIN set_arg(): '${*}'"
   ## Check if variable had already a value assigned. Expanding to empty value
   ## is necessary to avoid eval failing because of unset parameter if variable
   ## didn't have a value assigned before.
@@ -363,7 +362,7 @@ set_arg(){
       arg_saved="$(printf %s"${arg_saved}" | sed "s|^${1}=.*$|${1}=\"${2}\"|")"
     fi
   fi
-  true "BEGIN set_arg(): '${*}'"
+  true "END set_arg(): '${*}'"
 }
 
 
@@ -1131,7 +1130,7 @@ install_fasttrack_repository_debian(){
       apt_torified=1
     fi
 
-    if grep -q -v "#" "${file}" | grep -q -F ".onion"; then
+    if grep -v "#" "${file}" | grep -q -F ".onion"; then
       apt_onion=1
     fi
   done
@@ -1164,6 +1163,7 @@ install_fasttrack_repository_debian(){
       fasttrack_url="https://${fasttrack_clearnet}"
     fi
 
+    log notice "Fasttrack URL: ${fasttrack_url}"
     log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
     echo "deb ${fasttrack_url}/debian/ bullseye-fasttrack main contrib non-free" | \
       root_cmd tee /etc/apt/sources.list.d/fasttrack.list
@@ -1453,6 +1453,8 @@ get_system_stat(){
 pre_check(){
   get_os
   get_system_stat
+  get_host_pkgs
+  get_independent_host_pkgs
 
   ## Functions below are difficult to emulate
   if test "${dry_run}" = "1"; then
@@ -1461,8 +1463,6 @@ pre_check(){
   fi
 
   get_virtualization
-  get_host_pkgs
-  get_independent_host_pkgs
 }
 
 
