@@ -1,3 +1,62 @@
+commit 6be6822e3a6e960b04cc841efed148575ab11a25
+Merge: 2b28072 3246991
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 16 11:14:17 2023 -0500
+
+    Merge remote-tracking branch 'grass/installer'
+
+commit 3246991859c35e37489d6e99ed3b95904d60054e
+Merge: fb3c25e cc3043d
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jan 16 15:55:24 2023 +0000
+
+    Merge branch 'master' into installer
+    
+    * master:
+      fix fasttrack onion insertion
+
+commit fb3c25e0560064f637cbbda550ae68667e305e32
+Merge: 5b76e9c 2b28072
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jan 16 15:53:53 2023 +0000
+
+    Merge remote-tracking branch 'kicksecure/master' into installer
+    
+    * kicksecure/master: (115 commits)
+      bumped changelog version
+      shellcheck
+      quotes
+      refactoring
+      quotes
+      quotes
+      bumped changelog version
+      fix
+      fix log_run and fasstrack repo adding only if necessary
+      changes to su, xtrace, fasttrack no su function xtrace printed to screen fasttrack torified or +onionized repository
+      bumped changelog version
+      genmkfile manpages
+      better error handling in case starting VirtualBox VMs fails due to unexpected reasons
+      man
+      refactoring
+      a failing vboxmanage startvm is not considered a bug if virtualization detection failed
+      nested_virtualization_detected
+      typo
+      improve output if nested virtualization is detected
+      output
+      ...
+
+commit cc3043dfc20e8c1193605809e331e1291c3c4988
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jan 16 15:45:10 2023 +0000
+
+    fix fasttrack onion insertion
+
+commit 2b280726ddf2874b1305101308fbff7cd31bdb1d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 28 05:44:23 2022 -0500
+
+    bumped changelog version
+
 commit 4769bd4b287dd08b9d980824dc475c08278861f4
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Dec 28 05:44:05 2022 -0500
@@ -68,6 +127,12 @@ Date:   Sun Dec 18 23:39:49 2022 +0000
     no su function
     xtrace printed to screen
     fasttrack torified or +onionized repository
+
+commit 5b76e9c2f3b699f15953ec30e5dfdbcda1be5a92
+Author: grass <grass@danwin1210.de>
+Date:   Sun Dec 18 17:18:43 2022 +0000
+
+    deal with testing not having complete /etc/os-release
 
 commit 59fc481deb1dfd99c92384da69f342a63d3deb51
 Author: Patrick Schleizer <adrelanos@whonix.org>
