@@ -24,6 +24,9 @@ is unset and if mousepad is installed.
 Disable sudo default lecture.
 /etc/sudoers.d/sudo-lecture-disable
 
+Add pwfeedback to sudo Defaults so password asterisks are shown while typing.
+/etc/sudoers.d/pwfeedback
+
 xfce4-terminal:
 
 * Disables automatic scroll on output when manually scrolled up to make
