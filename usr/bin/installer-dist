@@ -245,8 +245,8 @@ get_os(){
         distro="Whonix"
         distro_version=$(cat /etc/whonix_version)
       elif has lsb_release; then
-        distro=$(lsb_release -sd)
-        distro_version=$(lsb_release -sc)
+        distro=$(lsb_release --short --description || lsb_release -sd)
+        distro_version=$(lsb_release --short --release || lsb_release -sr)
       elif test -f /etc/os-release; then
         while IFS='=' read -r key val; do
           case "${key}" in
@@ -268,11 +268,6 @@ get_os(){
       elif [ -z "${kernel%%*-Microsoft}" ]; then
         distro="${distro} on Windows 10 [WSL1]"
       fi
-      if [ -z "${distro_version:-}" ]; then
-         if test -f /etc/debian_version ; then
-            distro_version="$(cat /etc/debian_version)"
-         fi
-      fi
     ;;
     Haiku) distro=$(uname -sv);;
     Minix|DragonFly) distro="${os} ${kernel}";;
@@ -281,9 +276,22 @@ get_os(){
     FreeBSD) distro="${os} $(freebsd-version)";;
     *) distro="${os} ${kernel}";;
   esac
+  log notice "Detected architecture: ${arch}."
+  log notice "Detected system: ${os}."
+  log notice "Decteted distribution: ${distro}."
+  log notice "Decteted distribution version: ${distro_version}."
+  ## This at last so the user can hopefully post his system info from the
+  ## logs before the error below.
+  if [ -z "${distro_version}" ]; then
+    die 101 "Failed to find ditribution version."
+    ## it will fail later on get_host_pkgs if the system is not supported.
+    ## but distro version needs to be checked here because it can occur
+    ## frequently when the release of the distribution is still unstable.
+    ## Also because we check for distribution version to abort if necessary.
+  fi
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
-  log notice "Detected system: ${distro} ${distro_version}."
-  log notice "Detected CPU architecture: ${arch}."
+  is_integer "${distro_version_without_dot}" ||
+     die 101 "Distro version without dot is still not a number: '${distro_version_without_dot}'"
 }
 
 ##############
@@ -682,7 +690,7 @@ get_host_pkgs(){
           ;;
         *"buntu"*)
           true "${distro}"
-          if [ ! "${distro_version_without_dot}" -ge 2204 ]; then
+          if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
