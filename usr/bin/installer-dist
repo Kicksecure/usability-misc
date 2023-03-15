@@ -625,7 +625,7 @@ handle_exit(){
     log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
     log error "If not already reported, please report this bug!"
     echo ""
-    log error "Error ocurred in line: ${line_number}."
+    log error "Error occurred in line: ${line_number}."
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
     # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
@@ -1038,7 +1038,7 @@ import_virtualbox(){
 ## Import KVM images
 import_kvm(){
   ## placeholder
-  log notice "KVM import not coded, ending run."
+  log notice "KVM import feature does not exist. Ending run."
   exit 0
 }
 
@@ -1158,7 +1158,7 @@ install_fasttrack_repository_debian(){
     elif test "${apt_torified}"; then
       log notice "Adding Fasttrack's torified clearnet repository."
       fasttrack_url="tor+https://${fasttrack_clearnet}"
-    ## If user doesn't have torified repositoris, use clearnet one.
+    ## If user doesn't have torified repositories, use clearnet one.
     else
       log notice "Adding Fasttrack's clearnet repository."
       fasttrack_url="https://${fasttrack_clearnet}"
@@ -1372,7 +1372,7 @@ get_utilities(){
   done
 
   log info "Testing root login"
-  root_cmd echo "Succesfull root login" ||
+  root_cmd echo "Successful root login" ||
     die 1 "Failed to run test command as root."
 }
 
@@ -2090,7 +2090,7 @@ main(){
       cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
       log info "Executing: $ ${cmd_check_internet}"
       ${cmd_check_internet} >/dev/null ||
-        die $? "Can't connect to ${url_origin}, perhaps no internet?"
+        die $? "Cannot connect to ${url_origin}, perhaps no internet?"
       log notice "Connection to ${url_origin} succeeded."
     fi
     get_version "${url_version}"
@@ -2147,7 +2147,7 @@ usage(){
 Developer options:
  --no-show-errors    Don't print errors.
  --allow-errors      Don't exit on errors. Dirty mode.
- --mirror=<number>   Set mirror acording to number index. Choose closest
+ --mirror=<number>   Set mirror according to number index. Choose closest
                        mirror to you if not using onion for faster downloads.
                        Not that if not choosing mirror, defaults to whonix.org
                        for plainnet and dotsrc.org correspondent for onion.
@@ -2159,7 +2159,7 @@ Developer options:
                          4 [PL] ftp.icm.edu.pl
                          5 [US] mirrors.gigenet.com
  --redownload        Redo the download of the guest instead of stopping if it
-                       was already succesfully downloaded.
+                       was already successfully downloaded.
  --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
                        Options: workstation and gateway'.
  --no-import         Don't import guest. Default is to import.
@@ -2391,7 +2391,7 @@ parse_opt(){
 
     log_dir_main="${directory_prefix}/logs"
 
-    ## Log to integer increasinly to avoid leaking other information such
+    ## Log to incrementing integer to avoid leaking other information such
     ## as PID or date (even if UTC).
     if ! test -d "${log_dir_main}/1"; then
       log_dir_cur="${log_dir_main}/1"
