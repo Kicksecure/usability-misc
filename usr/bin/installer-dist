@@ -1121,10 +1121,8 @@ install_package_debian_common(){
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  id_of_user="$(id --name --user)" ||
-    die 1 "Failed to run 'id --name --user'."
-  root_cmd adduser "$id_of_user" vboxusers ||
-    die 1 "Failed to add user '$id_of_user' to group 'vboxusers'."
+  id_of_user="$(id --name --user)" || die 1 "Failed to run 'id --name --user'."
+  root_cmd adduser "$id_of_user" vboxusers || die 1 "Failed to add user '$id_of_user' to group 'vboxusers'."
 }
 
 
