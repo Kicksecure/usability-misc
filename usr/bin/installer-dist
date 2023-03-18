@@ -1996,7 +1996,6 @@ get_download_links(){
   ## onion download url
   url_download_onion="${protocol_prefix_onion}://${site_download_onion}"
 
-
   case "${onion}" in
     1)
       log info "Onion preferred."
