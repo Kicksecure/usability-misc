@@ -725,8 +725,10 @@ get_independent_host_pkgs(){
   fi
 
   has timeout || die 1 "Timeout utility is missing."
-  has curl || install_pkg curl
-  has rsync || install_pkg rsync
+  has curl || install_pkg curl openssl
+  ## Otherwise there will be an error message by rsync-ssl:
+  ## Failed to find on your path: openssl stunnel4 stunnel
+  has rsync || install_pkg rsync openssl
 
   while true; do
     has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
