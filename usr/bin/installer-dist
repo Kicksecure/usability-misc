@@ -794,7 +794,8 @@ The user is advised to attempt to debug this.
 3. Once this has been fixed fixed, re-run this installer."
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_install} ${pkg_not_installed}
+    root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
+      die 1 "Failed to install ${pkg_not_installed}."
     ## Test if installation worked.
     test_pkg "${pkg_not_installed}"
   fi
@@ -1183,7 +1184,8 @@ install_fasttrack_repository_debian(){
     log notice "Fasttrack URL: ${fasttrack_url}"
     log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
     echo "deb ${fasttrack_url}/debian/ bullseye-fasttrack main contrib non-free" | \
-      root_cmd tee /etc/apt/sources.list.d/fasttrack.list
+      root_cmd tee /etc/apt/sources.list.d/fasttrack.list ||
+        die 1 "Failed to write to /etc/apt/sources.list.d/fasttrack.list."
   fi
 }
 
@@ -1805,7 +1807,7 @@ get_virtualization(){
 
   ## Check CPU flags for capability
   virt=$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo |
-         grep -wo -E '(vmx|svm)')
+         grep -wo -E '(vmx|svm)') || true
   if test -z "${virt}"; then
     log error "Your CPU does not support Virtualization."
     verdict 1
