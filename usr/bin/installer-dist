@@ -775,7 +775,8 @@ install_pkg(){
     fi
     log notice "Updating package list."
     # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_update}
+    root_cmd ${pkg_mngr_update} ||
+      die 1 "Could not update package lists. This issue is most likely not caused by this installer."
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed}
@@ -1569,7 +1570,8 @@ torify_conn(){
       return 0
     fi
   fi
-  check_tor_proxy || die 2 "Can't connect to SOCKS proxy."
+  ## TODO
+  #check_tor_proxy || die 2 "Can't connect to SOCKS proxy."
 }
 
 
