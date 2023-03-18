@@ -1122,7 +1122,7 @@ install_package_debian_common(){
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
   root_cmd adduser "$(id --name --user)" vboxusers || {
-    die 1 "Failed to add user '$(id --name --user)' to group 'vboxusers'."
+    die 1 "Failed to add user to group 'vboxusers'."
   }
 }
 
