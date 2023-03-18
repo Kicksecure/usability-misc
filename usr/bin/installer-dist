@@ -1596,14 +1596,19 @@ torify_conn(){
       return 0
     fi
   fi
-  ## TODO
   check_tor_proxy || die 2 "\
 Cannot connect to Tor SOCKS proxy.
 - This issue is most likely not caused by this installer.
 - This issue is likely caused by a missing software, configuration or network issues.
 
 Note, that for torification of connections an already functional Tor connection is required.
-This installer cannot help to set up a functional Tor connection. This must be done by the system administrator."
+
+- A) An already installed and running system Tor (little-t-tor). Or,
+- B) An already installed and running TBB (Tor Browser Bundle).
+
+This installer cannot help to set up a functional Tor connection. This must be done by the system administrator.
+
+When manually running above cmd_check_proxy it needs to include the expected_response_header."
 }
 
 
