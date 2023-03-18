@@ -1493,7 +1493,7 @@ get_proxy_cred(){
 }
 
 
-## Test if can connect to SOCKS proxy and expect the correct tor reply.
+## Test if can connect to SOCKS proxy and expect the correct Tor reply.
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
   # proxy_port="${proxy##*:}"
@@ -1518,13 +1518,13 @@ check_tor_proxy(){
     *"${expected_response_header}"*)
       log info "Proxy response header:"
       log info "${response_header}."
-      log notice "Connected to tor SOCKS proxy successfully."
+      log notice "Connected to Tor SOCKS proxy successfully."
       return 0
       ;;
     *)
       log info "Proxy response header:"
       log info "${response_header}."
-      log error "Unexpected proxy response, maybe not a tor proxy?"
+      log error "Unexpected proxy response, maybe not a Tor proxy?"
       return 1
   esac
 }
@@ -1575,7 +1575,7 @@ torify_conn(){
   else
     ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
-    log warn "Trying tor defaults: TBB (9150) and system tor (9050)."
+    log warn "Trying Tor defaults: TBB (Tor Browser Bundle) (port: 9150) and system Tor (little-t-tor) (port: 9050)."
     proxy="127.0.0.1:9050"
     set_transfer_proxy ${proxy}
     if ! check_tor_proxy; then
@@ -1587,7 +1587,7 @@ torify_conn(){
   fi
   ## TODO
   check_tor_proxy || die 2 "\
-Cannot connect to SOCKS proxy.
+Cannot connect to Tor SOCKS proxy.
 - This issue is most likely not caused by this installer.
 - This issue is likely caused by a missing software, configuration or network issues."
 }
@@ -2158,7 +2158,8 @@ usage(){
  -s, --socks-proxy=<proxy>
                      Set TCP SOCKS proxy for onion client connections.
                        (default: TOR_SOCKS_HOST:TOR_SOCKS_PORT, if not set, try
-                       TBB proxy at 9150, else try system tor proxy at 9050)
+                       TBB (Tor Browser Bundle) proxy at port 9150,
+                       else try system Tor (little-t-tor) proxy at port 9050.)
  -l, --log-level=<level>
                      Set log level. Options: debug, info,
                        notice (default), warn, error.
