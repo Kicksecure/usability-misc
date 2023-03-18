@@ -2000,30 +2000,30 @@ get_download_links(){
   case "${onion}" in
     1)
       log info "Onion preferred."
-      ## always torify onion connections
+      ## Always torify onion connections.
       torify_conn
       curl_opt_ssl=""
-      ## use to test internet connection
+      ## Used to test internet connection.
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
-      ## url to download files from
+      ## URL to download files from.
       test -n "${site_download_onion}" ||
         die 1 "Mirror ${mirror} doesn't provide an onion service."
       url_download="${url_download_onion}"
-      ## use to query version
+      ## Used to query version number.
       url_version_domain="http://www.${site_onion}"
       ;;
 
     *)
       log info "Clearnet preferred."
-      ## only torify to clearnet is SOCKS proxy is specified
+      ## Only torify clearnet if SOCKS proxy is specified.
       test "${transfer_utility}" = "rsync" && transfer_utility="rsync-ssl"
       test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
-      ## use to test internet connection
+      ## Used to test internet connection.
       url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
-      ## url to download files from
+      ## URL to download files from.
       url_download="${url_download_clearnet}"
-      ## use to query version
+      ## Used to query version number.
       url_version_domain="https://www.${site_clearnet}"
       ;;
   esac
