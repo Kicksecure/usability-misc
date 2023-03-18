@@ -1526,8 +1526,8 @@ check_tor_proxy(){
       return 0
       ;;
     *)
-      log info "Proxy response header:"
-      log info "'${actual_response_header}'"
+      log info "actual_response_header:"
+      log error "'${actual_response_header}'"
       log error "Unexpected proxy response, maybe not a Tor proxy?"
       return 1
   esac
