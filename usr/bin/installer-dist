@@ -1586,7 +1586,7 @@ torify_conn(){
     fi
   fi
   ## TODO
-  check_tor_proxy || die 2 "Can't connect to SOCKS proxy."
+  check_tor_proxy || die 2 "Cannot connect to SOCKS proxy."
 }
 
 
