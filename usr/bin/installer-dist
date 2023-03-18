@@ -795,7 +795,7 @@ The user is advised to attempt to debug this.
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
-      die 1 "Failed to install ${pkg_not_installed}."
+      die 1 "Failed to install package${pkg_not_installed}."
     ## Test if installation worked.
     test_pkg "${pkg_not_installed}"
   fi
