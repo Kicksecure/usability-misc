@@ -776,7 +776,22 @@ install_pkg(){
     log notice "Updating package list."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_update} ||
-      die 1 "Could not update package lists. This issue is most likely not caused by this installer."
+      die 1 "Could not update package lists.
+- This issue is most likely not caused by this installer.
+- This is most likely a package manager configuration or network issue.
+
+This is the command which the installer has just run that failed:
+
+$command_without_extrarenous_spaces
+
+The user is advised to attempt to debug this.
+
+1. Run above command.
+
+2. If there is an issue, use search engines, documentation and if needed contract the support of
+   your operating system.
+
+3. Once this has been fixed fixed, re-run this installer."
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed}
