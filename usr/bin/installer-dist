@@ -1104,7 +1104,7 @@ virtualbox_start_failed() {
 
 install_package_debian_common(){
   pkg_mngr="apt-get"
-  pkg_mngr_install="${pkg_mngr} install --yes"
+  pkg_mngr_install="${pkg_mngr} install --yes --no-install-recommends"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
   pkg_mngr_check_installed="dpkg -s"
   ## 'dpkg --audit' does not return non-zero exit code on failure.
