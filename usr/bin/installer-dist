@@ -433,7 +433,7 @@ range_arg(){
     done
     ## if not within range, fail and show the fixed range that can be used
     if [ ${success} -eq 0 ]; then
-      die 2 "Option '${key}' can't be '${var:-}'. Possible values: '${list}'."
+      die 2 "Option '${key}' cannot be '${var:-}'. Possible values: '${list}'."
     fi
   fi
 }
@@ -884,9 +884,9 @@ check_vm_exists_virtualbox(){
             test "${gateway_exists}" = "0"
           then
             test "${workstation_exists}" = "0" &&
-              die 1 "Workstation can't be started because it doesn't exist, try '--import-only=workstation'."
+              die 1 "Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
             test "${gateway_exists}" = "0" &&
-              die 1 "Gateway can't be started because it doesn't exist, try '--import-only=gateway'."
+              die 1 "Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
           fi
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
