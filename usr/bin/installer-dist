@@ -1176,7 +1176,7 @@ install_fasttrack_repository_debian(){
   log notice "Installing packages required for backports and fasttrack repository."
   install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
 
-  if [ "${backports_found}" = "1" ] && [ "${fasttrack_found}" = "1" ]
+  if [ "${backports_found}" = "1" ] && [ "${fasttrack_found}" = "1" ]; then
     log info "Skipped adding additional APT repositories because backports and fasttrack was already found."
     return 0
   fi
