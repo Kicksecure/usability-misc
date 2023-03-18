@@ -1579,7 +1579,7 @@ torify_conn(){
     proxy="127.0.0.1:9050"
     set_transfer_proxy ${proxy}
     if ! check_tor_proxy; then
-      proxy="127.0.0.1:9050"
+      proxy="127.0.0.1:9150"
       set_transfer_proxy ${proxy}
     else
       return 0
