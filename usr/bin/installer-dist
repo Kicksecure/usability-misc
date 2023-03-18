@@ -1496,6 +1496,9 @@ get_proxy_cred(){
 ## Test if can connect to SOCKS proxy and expect the correct Tor reply.
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
+  expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
+  log info "expected_response_header:"
+  log info "'$expected_response_header'"
   # proxy_port="${proxy##*:}"
   # proxy_addr="${proxy%%:*}"
   ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
@@ -1504,26 +1507,27 @@ check_tor_proxy(){
       cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-errors --max-time 3 --head http://${proxy}"
       ;;
     rsync*)
-      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync --dry-run rsync://fakeurl"
+      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync --dry-run rsync://${proxy}"
       ;;
   esac
+  log info "cmd_check_proxy:"
+  log info "$cmd_check_proxy"
   # shellcheck disable=SC2086
-  response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
-  expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
+  actual_response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
   ## Globs are necessary to match patterns in the event the header has more
   ## characters them expected but still has the expected string.
   ## Rsync header response example:
   ##   bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
-  case "${response_header}" in
+  case "${actual_response_header}" in
     *"${expected_response_header}"*)
-      log info "Proxy response header:"
-      log info "${response_header}."
+      log info "actual_response_header:"
+      log info "'${actual_response_header}'"
       log notice "Connected to Tor SOCKS proxy successfully."
       return 0
       ;;
     *)
       log info "Proxy response header:"
-      log info "${response_header}."
+      log info "'${actual_response_header}'"
       log error "Unexpected proxy response, maybe not a Tor proxy?"
       return 1
   esac
