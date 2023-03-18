@@ -1128,7 +1128,7 @@ install_virtualbox_debian_common_end(){
 
 install_fasttrack_repository_debian(){
   backports_found=""
-  backports_clearnet="deb.debian.org/debian"
+  backports_clearnet="deb.debian.org"
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
 
   fasttrack_clearnet="fasttrack.debian.net"
