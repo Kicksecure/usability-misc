@@ -725,10 +725,18 @@ get_independent_host_pkgs(){
   fi
 
   has timeout || die 1 "Timeout utility is missing."
-  has curl || install_pkg curl openssl
+  has curl || install_pkg curl
+  has rsync || install_pkg rsync
+
+  ## Install openssl and ca-certificates.
+  ## openssl is required:
   ## Otherwise there will be an error message by rsync-ssl:
   ## Failed to find on your path: openssl stunnel4 stunnel
-  has rsync || install_pkg rsync openssl
+  ## ca-certificates is required:
+  ## Otherwise rsync-ssl will fail TLS verification.
+  ## XXX: Strictly speaking packages openssl ca-certificates are only required
+  ##      if using clearnet. I.e. not required when using --onion.
+  install_pkg openssl ca-certificates
 
   while true; do
     has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
