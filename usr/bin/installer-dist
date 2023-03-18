@@ -1575,7 +1575,7 @@ torify_conn(){
   else
     ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
-    log warn "Trying Tor defaults: TBB (Tor Browser Bundle) (port: 9150) and system Tor (little-t-tor) (port: 9050)."
+    log warn "Trying Tor defaults: system Tor (little-t-tor) (port: 9050) and TBB (Tor Browser Bundle) (port: 9150)."
     proxy="127.0.0.1:9050"
     set_transfer_proxy ${proxy}
     if ! check_tor_proxy; then
