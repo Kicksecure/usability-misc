@@ -1127,6 +1127,7 @@ install_virtualbox_debian_common_end(){
 
 
 install_fasttrack_repository_debian(){
+  backports_found=""
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_found=""
@@ -1135,6 +1136,12 @@ install_fasttrack_repository_debian(){
 
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     test -f "${file}" || continue
+
+    if grep -v "#" "${file}" | grep -q \
+      -e "backports"
+    then
+      backports_found=1
+    fi
 
     if grep -v "#" "${file}" | grep -q \
       -e "://${fasttrack_clearnet}" \
@@ -1152,20 +1159,33 @@ install_fasttrack_repository_debian(){
     fi
   done
 
+  if test "${apt_torified}" = "1"; then
+    ## If apt-transport-tor is not installed, we shouldn't, because we got
+    ## a false positive that updates should be torified. Not sure when this
+    ## could happen in reality, but a hard fail is necessary as explained
+    ## per the points above.
+    log info "APT is supposed to be torified, checking if package apt-transport-tor is installed."
+    test_pkg apt-transport-tor ||
+      die 1 "APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
+  fi
+
+  log notice "Installing packages required for backports and fasttrack repository."
+  install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
+
+  if [ "${backports_found}" = "1" ] && [ "${fasttrack_found}" = "1" ]
+    log info "Skipped adding additional APT repositories because backports and fasttrack was already found."
+    return 0
+  fi
+
+  if test "${backports_found}" = "1"; then
+    log info "Skipped adding backports because it was already found."
+  else
+    ## TODO
+  fi
+
   if test "${fasttrack_found}" = "1"; then
     log info "Skipped adding fasttrack because it was already found."
   else
-    if test "${apt_torified}" = "1"; then
-      ## If apt-transport-tor is not installed, we shouldn't, because we got
-      ## a false positive that updates should be torified. Not sure when this
-      ## could happen in reality, but a hard fail is necessary as explained
-      ## per the points above.
-      log info "Apt is supposed to be torified, checking apt-transport-tor exists."
-      test_pkg apt-transport-tor
-    fi
-    log notice "Installing packages for fasttrack repository"
-    install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
-
     ## If user has onion repositories configured, prefer it.
     if test "${apt_onion}"; then
       log notice "Adding Fasttrack's onion repository."
