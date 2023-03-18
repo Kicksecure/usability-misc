@@ -1128,9 +1128,13 @@ install_virtualbox_debian_common_end(){
 
 install_fasttrack_repository_debian(){
   backports_found=""
+  backports_clearnet="deb.debian.org/debian"
+  backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
+
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_found=""
+
   apt_torified=""
   apt_onion=""
 
@@ -1180,7 +1184,25 @@ install_fasttrack_repository_debian(){
   if test "${backports_found}" = "1"; then
     log info "Skipped adding backports because it was already found."
   else
-    ## TODO
+    ## If user has onion repositories configured, prefer it.
+    if test "${apt_onion}"; then
+      log notice "Adding backports onion repository."
+      backports_url="tor+http://${backports_onion}"
+    ## If user has torified repositories configured, prefer it.
+    elif test "${apt_torified}"; then
+      log notice "Adding backports torified clearnet repository."
+      backports_url="tor+https://${backports_clearnet}"
+    ## If user doesn't have torified repositories, use clearnet one.
+    else
+      log notice "Adding backports clearnet repository."
+      backports_url="https://${backports_clearnet}"
+    fi
+
+    log notice "backports URL: ${backports_url}"
+    log notice "Adding backports repository to /etc/apt/sources.list.d/backports.list"
+    echo "deb ${backports_url}/debian/ bullseye-backports main contrib non-free" | \
+      root_cmd tee /etc/apt/sources.list.d/backports.list ||
+        die 1 "Failed to write to /etc/apt/sources.list.d/backports.list."
   fi
 
   if test "${fasttrack_found}" = "1"; then
