@@ -1482,7 +1482,7 @@ set_trap(){
 ## Check if system status is supported
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    die 101 "Only supported architecture is x86_64, your's is ${arch}."
+    die 101 "Only supported architecture is x86_64, yours is ${arch}."
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
