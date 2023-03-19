@@ -1513,6 +1513,8 @@ get_system_stat(){
 
   free_space="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
+
+  ## TODO: do not hardcode 10 GB - Kicksecure vs Whonix
   if [ "${free_space}" -lt 10 ]; then
     die 101 "You need at least 10G of available space, you only have ${free_space}G."
   fi
