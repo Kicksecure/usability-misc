@@ -1521,7 +1521,7 @@ get_system_stat(){
   fi
 
   if [ "${free_space_available}" -lt "$free_space_required" ]; then
-    die 101 "You need at least ${free_space_required}G of available space, you only have ${free_space_available}G."
+    die 101 "You need at least ${free_space_required}G of free disk space available, you only have ${free_space_available}G."
   fi
 }
 
