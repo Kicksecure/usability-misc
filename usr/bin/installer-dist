@@ -1511,7 +1511,8 @@ get_system_stat(){
     log warn "  ${url_version_domain}/wiki/RAM"
   fi
 
-  free_space_available="$(df --output=avail -BG "${directory_prefix}" |
+  df_output="$(df --output=avail -BG "${directory_prefix}")"
+  free_space_available="$(echo "$df_output" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
 
   ## TODO: do not hardcode 10 GB - Kicksecure vs Whonix
@@ -1521,7 +1522,17 @@ get_system_stat(){
   fi
 
   if [ "${free_space_available}" -lt "$free_space_required" ]; then
-    die 101 "You need at least ${free_space_required}G of free disk space available, you only have ${free_space_available}G."
+    die 101 "\
+Free Disk Space Check: Failed! Insufficient free disk space!
+
+- available: ${free_space_available}G
+- required : ${free_space_required}G
+
+Debugging information:
+- df_command:
+df --output=avail -BG \"${directory_prefix}\"
+- df_output:
+$df_output"
   fi
 }
 
