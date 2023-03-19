@@ -1511,12 +1511,17 @@ get_system_stat(){
     log warn "  ${url_version_domain}/wiki/RAM"
   fi
 
-  free_space="$(df --output=avail -BG "${directory_prefix}" |
+  free_space_available="$(df --output=avail -BG "${directory_prefix}" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
 
   ## TODO: do not hardcode 10 GB - Kicksecure vs Whonix
-  if [ "${free_space}" -lt 10 ]; then
-    die 101 "You need at least 10G of available space, you only have ${free_space}G."
+  free_space_required="10"
+  if test "${dev}" = "1"; then
+    free_space_required="1"
+  fi
+
+  if [ "${free_space_available}" -lt "$free_space_required" ]; then
+    die 101 "You need at least ${free_space_required}G of available space, you only have ${free_space_available}G."
   fi
 }
 
