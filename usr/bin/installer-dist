@@ -1523,7 +1523,7 @@ get_system_stat(){
 
   if [ "${free_space_available}" -lt "$free_space_required" ]; then
     die 101 "\
-Free Disk Space Check: Failed! Insufficient free disk space!
+${underline}Free Disk Space Check:${nounderline} Failed! Insufficient free disk space!
 
 - available: ${free_space_available}G
 - required : ${free_space_required}G
