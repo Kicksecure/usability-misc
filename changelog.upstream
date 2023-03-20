@@ -1,3 +1,45 @@
+commit 2f9f156a94e48e37e34acfc0cee28bd194540437
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Mar 19 20:02:00 2023 -0400
+
+    output
+
+commit f973dceb70ac50071c8a698f3a44abb7abcce3bf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Mar 19 19:55:16 2023 -0400
+
+    improve free disk space check
+
+commit afc14848fb985967caf0fa15a17961accbff2e9a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Mar 19 19:46:01 2023 -0400
+
+    output
+
+commit 52a4cde8996d9c47273b7690a2dee0da27f3b9e9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Mar 19 18:05:13 2023 -0400
+
+    lower disk space requirements when using --dev
+
+commit 15581da88bb3a3d8499efdd79303a0d241e84e31
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Mar 19 18:02:10 2023 -0400
+
+    comment
+
+commit 55d85ae903218eeed808b84a64f248c0eb4dd175
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Mar 19 18:01:27 2023 -0400
+
+    typo
+
+commit 195924d003c5836b8bd741ab895d68c2c413a005
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 18 07:25:01 2023 -0400
+
+    bumped changelog version
+
 commit 9f1047e55572b5a1b9a8d0e10692f967d5f9cf71
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Mar 18 07:20:01 2023 -0400
