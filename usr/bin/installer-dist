@@ -1673,6 +1673,14 @@ set_transfer_proxy(){
 ## Useful to test if it is a SOCKS proxy before attempting to make requests.
 ## If connection to proxy fails, abort to avoid leaks.
 torify_conn(){
+  if ! has tor; then
+    log warn "System tor binary (little-t-tor) was not found on the system."
+    log warn "Unless your SOCKS connection is made available by the Tor Browser"
+    log warn "  or by your uplink network, the proxy check mail fail."
+    log warn "The installer with torified connections depends on a working SOCKS proxy,"
+    log warn "  it won't configure the proxy, only establish the connection."
+    log warn "If the proxy connection fails, try installing 'tor' on your system."
+  fi
   ## curl and many other viable applications do not support SOCKS proxy to
   ## connect with Unix Domain Socket:
   ##   https://curl.se/mail/archive-2021-03/0013.html
