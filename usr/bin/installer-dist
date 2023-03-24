@@ -669,7 +669,7 @@ handle_exit(){
 ## BEGIN SCRIPT SPECIFIC ##
 ###########################
 
-## Get necessary packages for your host system. to be able to set the guest.
+## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
   case "${os}" in
     Linux*)
@@ -677,16 +677,12 @@ get_host_pkgs(){
         "Debian"*|"Tails"*|"Kicksecure"|"Whonix")
           true "${distro}"
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_debian
-          install_signify signify-openbsd
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
           true "${distro}"
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
           ;;
         *"buntu"*)
           true "${distro}"
@@ -694,9 +690,7 @@ get_host_pkgs(){
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
           die 101 "Unsupported system."
@@ -778,9 +772,7 @@ install_pkg(){
   for pkg in ${pkgs}; do
     ## Test if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
-    if ! has "${pkg}" &&
-      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
-    then
+    if ! has "${pkg}" && ! ${pkg_mngr_check_installed} "${pkg}"; then
       pkg_not_installed="${pkg_not_installed} ${pkg}"
     fi
   done
@@ -1117,11 +1109,21 @@ virtualbox_start_failed() {
 }
 
 
+## https://stackoverflow.com/a/54239534
+check_installed_debian(){
+  status="$(dpgk-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
+  if test "$?" != 0 || test "$status" != "installed"; then
+    return 1
+  fi
+  return 0
+}
+
+
 install_package_debian_common(){
   pkg_mngr="apt-get"
   pkg_mngr_install="${pkg_mngr} install --yes --no-install-recommends"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
-  pkg_mngr_check_installed="dpkg -s"
+  pkg_mngr_check_installed="check_installed_debian"
   ## 'dpkg --audit' does not return non-zero exit code on failure.
   dpkg_audit_output="$(dpkg --audit 2>&1)"
   if test -n "${dpkg_audit_output}"; then
@@ -1130,6 +1132,9 @@ install_package_debian_common(){
     log error "  https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT"
     return 1
   fi
+
+  install_pkg torsocks
+  install_signify signify-openbsd
 }
 
 
@@ -1197,19 +1202,19 @@ install_fasttrack_repository_debian(){
   fi
 
   if test "${backports_found}" = "1"; then
-    log info "Skipped adding backports because it was already found."
+    log info "Skipped adding Backports because it was already found."
   else
     ## If user has onion repositories configured, prefer it.
     if test "${apt_onion}"; then
-      log notice "Adding backports onion repository."
+      log notice "Adding Backports onion repository."
       backports_url="tor+http://${backports_onion}"
     ## If user has torified repositories configured, prefer it.
     elif test "${apt_torified}"; then
-      log notice "Adding backports torified clearnet repository."
+      log notice "Adding Backports torified clearnet repository."
       backports_url="tor+https://${backports_clearnet}"
     ## If user doesn't have torified repositories, use clearnet one.
     else
-      log notice "Adding backports clearnet repository."
+      log notice "Adding Backports clearnet repository."
       backports_url="https://${backports_clearnet}"
     fi
 
@@ -1221,7 +1226,7 @@ install_fasttrack_repository_debian(){
   fi
 
   if test "${fasttrack_found}" = "1"; then
-    log info "Skipped adding fasttrack because it was already found."
+    log info "Skipped adding Fasttrack because it was already found."
   else
     ## If user has onion repositories configured, prefer it.
     if test "${apt_onion}"; then
@@ -1605,17 +1610,7 @@ check_tor_proxy(){
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
   log info "Expected response header:"
   log info "'$expected_response_header'"
-  # proxy_port="${proxy##*:}"
-  # proxy_addr="${proxy%%:*}"
-  ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
-  case "${transfer_utility}" in
-    curl)
-      cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-errors --max-time 3 --head http://${proxy}"
-      ;;
-    rsync*)
-      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync --dry-run rsync://${proxy}"
-      ;;
-  esac
+  cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-error --max-time 3 --head http://${proxy}"
   log info "Command used to check if proxy is functional:"
   log info "$cmd_check_proxy"
   # shellcheck disable=SC2086
@@ -1662,16 +1657,7 @@ set_transfer_proxy(){
       ;;
     rsync*)
       transfer_proxy_suffix=""
-      if has torsocks; then
-        transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
-      elif has nc; then
-        ## needs to be nc.openbsd
-        # shellcheck disable=SC2089
-        transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
-      else
-        log warn "Neither 'torsocks' not 'nc' (netcat-openbsd) is installed."
-        die 1 "Failed to find program to proxy connections with rsync."
-      fi
+      transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
       ;;
   esac
 }
