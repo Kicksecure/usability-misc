@@ -1301,7 +1301,7 @@ check_license(){
     return 0
   fi
 
-  log notice "The license will be show in some seconds."
+  log notice "The license will be shown in some seconds."
   test "${dry_run}" != "1" && sleep 6
 
   ## Whiptail is the Debian version of Dialog with much less features.
@@ -1571,6 +1571,13 @@ pre_check(){
   get_system_stat
   get_host_pkgs
   get_independent_host_pkgs
+
+  ## onion=1 -- Always torify onion connections.
+  ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
+  case "${onion}" in
+    1) torify_conn;;
+    *) test -n "${socks_proxy}" && torify_conn;;
+  esac
 
   ## Functions below are difficult to emulate
   if test "${dry_run}" = "1"; then
@@ -2061,8 +2068,6 @@ get_download_links(){
   case "${onion}" in
     1)
       log info "Onion preferred."
-      ## Always torify onion connections.
-      torify_conn
       curl_opt_ssl=""
       ## Used to test internet connection.
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
@@ -2076,9 +2081,7 @@ get_download_links(){
 
     *)
       log info "Clearnet preferred."
-      ## Only torify clearnet if SOCKS proxy is specified.
       test "${transfer_utility}" = "rsync" && transfer_utility="rsync-ssl"
-      test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
       ## Used to test internet connection.
       url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
@@ -2209,6 +2212,7 @@ main(){
   check_license || die 100 "User disagreed with the license."
 
   pre_check
+
   log_time
 
   ## Check if VM were already imported, if true then ask to start
