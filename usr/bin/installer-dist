@@ -1112,7 +1112,7 @@ virtualbox_start_failed() {
 
 ## https://stackoverflow.com/a/54239534
 check_installed_debian(){
-  status="$(dpgk-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
+  status="$(dpkg-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
   if test "$?" != 0 || test "$status" != "installed"; then
     return 1
   fi
