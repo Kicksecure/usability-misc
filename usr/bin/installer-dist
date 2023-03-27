@@ -1256,9 +1256,11 @@ install_fasttrack_repository_debian(){
 install_virtualbox_debian(){
   has_vboxmanage=0
   has_linux_headers=0
+  has_virtualbox_qt=0
   linux_headers="linux-headers-$(dpkg --print-architecture)"
   has vboxmanage && has_vboxmanage=1
-  test_pkg "${linux_headers}" && has_linux_headers=1
+  test_pkg "${linux_headers}" 2>/dev/null && has_linux_headers=1
+  has virtualboxvm && has_virtualbox_qt=1
 
   if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
     log notice "vboxmanage and ${linux_headers}"
@@ -1274,7 +1276,14 @@ install_virtualbox_debian(){
   if test "${has_vboxmanage}" != "1"; then
     log notice "Preparing to install VirtualBox"
     install_fasttrack_repository_debian
-    install_pkg virtualbox virtualbox-qt
+    fasttrack_added=1
+    install_pkg virtualbox
+  fi
+  if test "${has_virtualbox_qt}"; then
+    log notice "Preparing to install VirtualBox-QT"
+    test "${fasttrack_added-}" != 1 && install_fasttrack_repository_debian
+    install_pkg virtualbox-qt
+
   fi
 
   install_virtualbox_debian_common_end
