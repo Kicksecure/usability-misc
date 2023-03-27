@@ -157,7 +157,7 @@ capitalize_first_char(){
 
 ## Block running as root.
 not_as_root(){
-  [ "$(id -u)" -eq 0 ] && die 1 "Running as root, aborting."
+  [ "$(id -u)" -eq 0 ] && die 1 "Running as root."
 }
 
 
@@ -2629,6 +2629,7 @@ log_term_and_file(){
 run_installer(){
   ## Set default values.
   set_default
+  not_as_root
   ## Set trap for common signals.
   set_trap
   ## Parse script name for wanted values.
