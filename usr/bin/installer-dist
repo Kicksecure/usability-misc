@@ -1274,7 +1274,7 @@ install_virtualbox_debian(){
   if test "${has_vboxmanage}" != "1"; then
     log notice "Preparing to install VirtualBox"
     install_fasttrack_repository_debian
-    install_pkg virtualbox
+    install_pkg virtualbox virtualbox-qt
   fi
 
   install_virtualbox_debian_common_end
