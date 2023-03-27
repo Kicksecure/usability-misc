@@ -157,7 +157,8 @@ capitalize_first_char(){
 
 ## Block running as root.
 not_as_root(){
-  [ "$(id -u)" -eq 0 ] && die 1 "Running as root."
+  test "$(id -u)" = "0" && die 1 "Running as root."
+  return 0
 }
 
 
