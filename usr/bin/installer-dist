@@ -1,5 +1,5 @@
 #!/bin/bash
-## vim: set sw=2 sts=2 ts=2 et :
+## vim:sw=2:sts=2:ts=2:et:spell:
 ##
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
@@ -157,7 +157,8 @@ capitalize_first_char(){
 
 ## Block running as root.
 not_as_root(){
-  [ "$(id -u)" -eq 0 ] && die 1 "Running as root, aborting."
+  test "$(id -u)" = "0" && die 1 "Running as root."
+  return 0
 }
 
 
@@ -245,8 +246,8 @@ get_os(){
         distro="Whonix"
         distro_version=$(cat /etc/whonix_version)
       elif has lsb_release; then
-        distro=$(lsb_release -sd)
-        distro_version=$(lsb_release -sc)
+        distro=$(lsb_release --short --description || lsb_release -sd)
+        distro_version=$(lsb_release --short --release || lsb_release -sr)
       elif test -f /etc/os-release; then
         while IFS='=' read -r key val; do
           case "${key}" in
@@ -268,11 +269,6 @@ get_os(){
       elif [ -z "${kernel%%*-Microsoft}" ]; then
         distro="${distro} on Windows 10 [WSL1]"
       fi
-      if [ -z "${distro_version:-}" ]; then
-         if test -f /etc/debian_version ; then
-            distro_version="$(cat /etc/debian_version)"
-         fi
-      fi
     ;;
     Haiku) distro=$(uname -sv);;
     Minix|DragonFly) distro="${os} ${kernel}";;
@@ -281,9 +277,22 @@ get_os(){
     FreeBSD) distro="${os} $(freebsd-version)";;
     *) distro="${os} ${kernel}";;
   esac
+  log notice "Detected architecture: ${arch}."
+  log notice "Detected system: ${os}."
+  log notice "Decteted distribution: ${distro}."
+  log notice "Decteted distribution version: ${distro_version}."
+  ## This at last so the user can hopefully post his system info from the
+  ## logs before the error below.
+  if [ -z "${distro_version}" ]; then
+    die 101 "Failed to find ditribution version."
+    ## it will fail later on get_host_pkgs if the system is not supported.
+    ## but distro version needs to be checked here because it can occur
+    ## frequently when the release of the distribution is still unstable.
+    ## Also because we check for distribution version to abort if necessary.
+  fi
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
-  log notice "Detected system: ${distro} ${distro_version}."
-  log notice "Detected CPU architecture: ${arch}."
+  is_integer "${distro_version_without_dot}" ||
+     die 101 "Distro version without dot is still not a number: '${distro_version_without_dot}'"
 }
 
 ##############
@@ -661,7 +670,7 @@ handle_exit(){
 ## BEGIN SCRIPT SPECIFIC ##
 ###########################
 
-## Get necessary packages for your host system. to be able to set the guest.
+## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
   case "${os}" in
     Linux*)
@@ -669,26 +678,20 @@ get_host_pkgs(){
         "Debian"*|"Tails"*|"Kicksecure"|"Whonix")
           true "${distro}"
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_debian
-          install_signify signify-openbsd
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
           true "${distro}"
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
           ;;
         *"buntu"*)
           true "${distro}"
-          if [ ! "${distro_version_without_dot}" -ge 2204 ]; then
+          if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
           die 101 "Unsupported system."
@@ -770,9 +773,7 @@ install_pkg(){
   for pkg in ${pkgs}; do
     ## Test if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
-    if ! has "${pkg}" &&
-      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
-    then
+    if ! has "${pkg}" && ! ${pkg_mngr_check_installed} "${pkg}"; then
       pkg_not_installed="${pkg_not_installed} ${pkg}"
     fi
   done
@@ -794,13 +795,10 @@ This is the command which the installer has just run that failed:
 
 $command_without_extrarenous_spaces
 
-The user is advised to attempt to debug this.
-
+The user is advised to attempt to debug this with the following steps:
 1. Run above command.
-
-2. If there is an issue, use search engines, documentation and if needed contract the support of
-   your operating system.
-
+2. If there is an issue, use search engines, documentation and if needed
+   contact the support of your operating system.
 3. Once this has been fixed fixed, re-run this installer."
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
@@ -1112,11 +1110,21 @@ virtualbox_start_failed() {
 }
 
 
+## https://stackoverflow.com/a/54239534
+check_installed_debian(){
+  status="$(dpkg-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
+  if test "$?" != 0 || test "$status" != "installed"; then
+    return 1
+  fi
+  return 0
+}
+
+
 install_package_debian_common(){
   pkg_mngr="apt-get"
   pkg_mngr_install="${pkg_mngr} install --yes --no-install-recommends"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
-  pkg_mngr_check_installed="dpkg -s"
+  pkg_mngr_check_installed="check_installed_debian"
   ## 'dpkg --audit' does not return non-zero exit code on failure.
   dpkg_audit_output="$(dpkg --audit 2>&1)"
   if test -n "${dpkg_audit_output}"; then
@@ -1125,6 +1133,9 @@ install_package_debian_common(){
     log error "  https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT"
     return 1
   fi
+
+  install_pkg torsocks
+  install_signify signify-openbsd
 }
 
 
@@ -1192,19 +1203,19 @@ install_fasttrack_repository_debian(){
   fi
 
   if test "${backports_found}" = "1"; then
-    log info "Skipped adding backports because it was already found."
+    log info "Skipped adding Backports because it was already found."
   else
     ## If user has onion repositories configured, prefer it.
     if test "${apt_onion}"; then
-      log notice "Adding backports onion repository."
+      log notice "Adding Backports onion repository."
       backports_url="tor+http://${backports_onion}"
     ## If user has torified repositories configured, prefer it.
     elif test "${apt_torified}"; then
-      log notice "Adding backports torified clearnet repository."
+      log notice "Adding Backports torified clearnet repository."
       backports_url="tor+https://${backports_clearnet}"
     ## If user doesn't have torified repositories, use clearnet one.
     else
-      log notice "Adding backports clearnet repository."
+      log notice "Adding Backports clearnet repository."
       backports_url="https://${backports_clearnet}"
     fi
 
@@ -1216,7 +1227,7 @@ install_fasttrack_repository_debian(){
   fi
 
   if test "${fasttrack_found}" = "1"; then
-    log info "Skipped adding fasttrack because it was already found."
+    log info "Skipped adding Fasttrack because it was already found."
   else
     ## If user has onion repositories configured, prefer it.
     if test "${apt_onion}"; then
@@ -1245,9 +1256,11 @@ install_fasttrack_repository_debian(){
 install_virtualbox_debian(){
   has_vboxmanage=0
   has_linux_headers=0
+  has_virtualbox_qt=0
   linux_headers="linux-headers-$(dpkg --print-architecture)"
   has vboxmanage && has_vboxmanage=1
-  test_pkg "${linux_headers}" && has_linux_headers=1
+  test_pkg "${linux_headers}" 2>/dev/null && has_linux_headers=1
+  has virtualboxvm && has_virtualbox_qt=1
 
   if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
     log notice "vboxmanage and ${linux_headers}"
@@ -1263,7 +1276,14 @@ install_virtualbox_debian(){
   if test "${has_vboxmanage}" != "1"; then
     log notice "Preparing to install VirtualBox"
     install_fasttrack_repository_debian
+    fasttrack_added=1
     install_pkg virtualbox
+  fi
+  if test "${has_virtualbox_qt}"; then
+    log notice "Preparing to install VirtualBox-QT"
+    test "${fasttrack_added-}" != 1 && install_fasttrack_repository_debian
+    install_pkg virtualbox-qt
+
   fi
 
   install_virtualbox_debian_common_end
@@ -1296,7 +1316,7 @@ check_license(){
     return 0
   fi
 
-  log notice "The license will be show in some seconds."
+  log notice "The license will be shown in some seconds."
   test "${dry_run}" != "1" && sleep 6
 
   ## Whiptail is the Debian version of Dialog with much less features.
@@ -1517,6 +1537,29 @@ get_system_stat(){
 
   ## TODO: do not hardcode 10 GB - Kicksecure vs Whonix
   free_space_required="10"
+  ## Free space require set to approximately double the image size (2023-03-21)
+  case "${guest}" in
+    whonix)
+      case "${interface}" in
+        xfce)
+          free_space_required="5"
+          ;;
+        cli)
+          free_space_required="3"
+          ;;
+      esac
+      ;;
+    kicksecure)
+      case "${interface}" in
+        xfce)
+          free_space_required="2"
+          ;;
+        cli)
+          free_space_required="1"
+          ;;
+      esac
+      ;;
+  esac
   if test "${dev}" = "1"; then
     free_space_required="1"
   fi
@@ -1529,9 +1572,9 @@ ${underline}Free Disk Space Check:${nounderline} Failed! Insufficient free disk 
 - required : ${free_space_required}G
 
 Debugging information:
-- df_command:
+- Command to test the available free space on ${directory_prefix}:
 df --output=avail -BG \"${directory_prefix}\"
-- df_output:
+- Available free space result:
 $df_output"
   fi
 }
@@ -1543,6 +1586,13 @@ pre_check(){
   get_system_stat
   get_host_pkgs
   get_independent_host_pkgs
+
+  ## onion=1 -- Always torify onion connections.
+  ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
+  case "${onion}" in
+    1) torify_conn;;
+    *) test -n "${socks_proxy}" && torify_conn;;
+  esac
 
   ## Functions below are difficult to emulate
   if test "${dry_run}" = "1"; then
@@ -1568,20 +1618,10 @@ get_proxy_cred(){
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
-  log info "expected_response_header:"
+  log info "Expected response header:"
   log info "'$expected_response_header'"
-  # proxy_port="${proxy##*:}"
-  # proxy_addr="${proxy%%:*}"
-  ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
-  case "${transfer_utility}" in
-    curl)
-      cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-errors --max-time 3 --head http://${proxy}"
-      ;;
-    rsync*)
-      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync --dry-run rsync://${proxy}"
-      ;;
-  esac
-  log info "cmd_check_proxy:"
+  cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-error --max-time 3 --head http://${proxy}"
+  log info "Command used to check if proxy is functional:"
   log info "$cmd_check_proxy"
   # shellcheck disable=SC2086
   actual_response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
@@ -1591,7 +1631,7 @@ check_tor_proxy(){
   ##   bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
   case "${actual_response_header}" in
     *"${expected_response_header}"*)
-      log info "actual_response_header:"
+      log info "Received header:"
       log info "'${actual_response_header}'"
       log notice "Connected to Tor SOCKS proxy successfully."
       return 0
@@ -1601,11 +1641,11 @@ check_tor_proxy(){
 Unexpected proxy response, maybe not a Tor proxy?
 
 Debugging information:
-- cmd_check_proxy:
+- Command used to check if proxy is functional:
 '$cmd_check_proxy'
-- expected_response_header:
+- Expected response header:
 '$expected_response_header'
-- actual_response_header:
+- Received header:
 '${actual_response_header}'"
       return 1
   esac
@@ -1627,16 +1667,7 @@ set_transfer_proxy(){
       ;;
     rsync*)
       transfer_proxy_suffix=""
-      if has torsocks; then
-        transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
-      elif has nc; then
-        ## needs to be nc.openbsd
-        # shellcheck disable=SC2089
-        transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
-      else
-        log warn "Neither 'torsocks' not 'nc' (netcat-openbsd) is installed."
-        die 1 "Failed to find program to proxy connections with rsync."
-      fi
+      transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
       ;;
   esac
 }
@@ -1645,6 +1676,14 @@ set_transfer_proxy(){
 ## Useful to test if it is a SOCKS proxy before attempting to make requests.
 ## If connection to proxy fails, abort to avoid leaks.
 torify_conn(){
+  if ! has tor; then
+    log warn "System tor binary (little-t-tor) was not found on the system."
+    log warn "Unless your SOCKS connection is made available by the Tor Browser"
+    log warn "  or by your uplink network, the proxy check mail fail."
+    log warn "The installer with torified connections depends on a working SOCKS proxy,"
+    log warn "  it won't configure the proxy, only establish the connection."
+    log warn "If the proxy connection fails, try installing 'tor' on your system."
+  fi
   ## curl and many other viable applications do not support SOCKS proxy to
   ## connect with Unix Domain Socket:
   ##   https://curl.se/mail/archive-2021-03/0013.html
@@ -2025,8 +2064,6 @@ get_download_links(){
   case "${onion}" in
     1)
       log info "Onion preferred."
-      ## Always torify onion connections.
-      torify_conn
       curl_opt_ssl=""
       ## Used to test internet connection.
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
@@ -2040,9 +2077,7 @@ get_download_links(){
 
     *)
       log info "Clearnet preferred."
-      ## Only torify clearnet if SOCKS proxy is specified.
       test "${transfer_utility}" = "rsync" && transfer_utility="rsync-ssl"
-      test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
       ## Used to test internet connection.
       url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
@@ -2173,6 +2208,7 @@ main(){
   check_license || die 100 "User disagreed with the license."
 
   pre_check
+
   log_time
 
   ## Check if VM were already imported, if true then ask to start
@@ -2603,6 +2639,7 @@ log_term_and_file(){
 run_installer(){
   ## Set default values.
   set_default
+  not_as_root
   ## Set trap for common signals.
   set_trap
   ## Parse script name for wanted values.
