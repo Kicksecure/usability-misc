@@ -7,7 +7,7 @@ on:
 jobs:
     changes:
         runs-on: ubuntu-22.04
-        permissions: 
+        permissions:
             pull-requests: read
         outputs:
             build: ${{ steps.filter.outputs.build }}
@@ -44,8 +44,12 @@ jobs:
               run: cat /etc/os-release; uname -a; echo "${PATH}"
             - name: System Basic Packages
               run: apt-get update -y && apt-get install -y shellcheck sudo
+            - name: Normal user with sudo privileges
+              run: |
+                  useradd user
+                  chown -R user:user .
             - name: Run Installer
-              run: bash ./usr/bin/installer-dist -n -l debug -k -D
+              run: su -s /bin/bash -c '/usr/bin/installer-dist -n -l debug -k -D'
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
 
