@@ -22,8 +22,8 @@ jobs:
 
     build:
         needs: changes
-        if: ${{ needs.changes.outputs.build == 'true' }}
-        ## Github takes too long to set the corrent latest image, this is
+        if: ${{ (needs.changes.outputs.build == 'true') || (contains(github.event.head_commit.message, 'please build') }}
+        ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         runs-on: ubuntu-22.04
@@ -49,7 +49,7 @@ jobs:
                   useradd user
                   chown -R user:user .
             - name: Run Installer
-              run: su -s /bin/bash -c '/usr/bin/installer-dist -n -l debug -k -D'
+              run: su -s /bin/bash -c 'usr/bin/installer-dist -n -l debug -k -D'
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
 
