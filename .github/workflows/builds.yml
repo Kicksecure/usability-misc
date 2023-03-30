@@ -46,10 +46,10 @@ jobs:
               run: apt-get update -y && apt-get install -y shellcheck sudo
             - name: Normal user with sudo privileges
               run: |
-                  useradd user
-                  chown -R user:user .
+                  adduser --gecos "" --disabled-password user
+                  usermod -aG sudo user
             - name: Run Installer
-              run: su -s /bin/bash -c 'usr/bin/installer-dist -n -l debug -k -D'
+              run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
 
