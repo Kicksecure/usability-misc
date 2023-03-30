@@ -22,7 +22,7 @@ jobs:
 
     build:
         needs: changes
-        if: ${{ (needs.changes.outputs.build == 'true') || (contains(github.event.head_commit.message, 'please build')) }}
+        if: ${{ (needs.changes.outputs.build == 'true') || contains(github.event.head_commit.message, 'please build') }}
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
