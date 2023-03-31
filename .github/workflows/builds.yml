@@ -19,10 +19,11 @@ jobs:
                 filters: |
                     build:
                         - 'usr/bin/installer-dist'
+                        - '.github/workflows/builds.yml'
 
     build:
         needs: changes
-        if: ${{ (needs.changes.outputs.build == 'true') || contains(github.event.head_commit.message, 'please build') }}
+        if: ${{ (needs.changes.outputs.build == 'true') }}
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
@@ -41,13 +42,14 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: System information
-              run: cat /etc/os-release; uname -a; echo "${PATH}"
+              run: cat /etc/os-release; uname -a; echo "${PATH}"; cat /etc/sudoers; ls /etc/sudoers.d;
             - name: System Basic Packages
               run: apt-get update -y && apt-get install -y shellcheck sudo
             - name: Normal user with sudo privileges
               run: |
                   adduser --gecos "" --disabled-password user
                   usermod -aG sudo user
+                  echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
             - name: Run Installer
               run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D
             - name: Run Installer ShellCheck
