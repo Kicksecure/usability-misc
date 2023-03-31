@@ -3,7 +3,7 @@ on:
     push:
         paths:
             - 'usr/bin/installer-dist'
-            - '.github/workflows/builds.yml'
+            # - '.github/workflows/builds.yml'
 
 jobs:
     changes:
@@ -20,12 +20,13 @@ jobs:
                 filters: |
                     - installer:
                         - 'usr/bin/installer-dist'
-                    - builds:
-                        - '.github/workflows/builds.yml'
+                    # - builds:
+                    #     - '.github/workflows/builds.yml'
 
     build:
         needs: changes
-        if: ${{ (needs.changes.outputs.builds == 'true') || (needs.changes.outputs.installer == 'true') }}
+        if: ${{ (needs.changes.outputs.installer == 'true') }}
+        # if: ${{ (needs.changes.outputs.builds == 'true') || (needs.changes.outputs.installer == 'true') }}
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
