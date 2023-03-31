@@ -1,5 +1,5 @@
 #!/bin/bash
-## vim: set sw=2 sts=2 ts=2 et :
+## vim:sw=2:sts=2:ts=2:et:spell:
 ##
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
@@ -158,7 +158,8 @@ capitalize_first_char(){
 
 ## Block running as root.
 not_as_root(){
-  [ "$(id -u)" -eq 0 ] && die 1 "Running as root, aborting."
+  test "$(id -u)" = "0" && die 1 "Running as root."
+  return 0
 }
 
 
@@ -246,8 +247,8 @@ get_os(){
         distro="Whonix"
         distro_version=$(cat /etc/whonix_version)
       elif has lsb_release; then
-        distro=$(lsb_release -sd)
-        distro_version=$(lsb_release -sc)
+        distro=$(lsb_release --short --description || lsb_release -sd)
+        distro_version=$(lsb_release --short --release || lsb_release -sr)
       elif test -f /etc/os-release; then
         while IFS='=' read -r key val; do
           case "${key}" in
@@ -269,11 +270,6 @@ get_os(){
       elif [ -z "${kernel%%*-Microsoft}" ]; then
         distro="${distro} on Windows 10 [WSL1]"
       fi
-      if [ -z "${distro_version:-}" ]; then
-         if test -f /etc/debian_version ; then
-            distro_version="$(cat /etc/debian_version)"
-         fi
-      fi
     ;;
     Haiku) distro=$(uname -sv);;
     Minix|DragonFly) distro="${os} ${kernel}";;
@@ -282,9 +278,22 @@ get_os(){
     FreeBSD) distro="${os} $(freebsd-version)";;
     *) distro="${os} ${kernel}";;
   esac
+  log notice "Detected architecture: ${arch}."
+  log notice "Detected system: ${os}."
+  log notice "Decteted distribution: ${distro}."
+  log notice "Decteted distribution version: ${distro_version}."
+  ## This at last so the user can hopefully post his system info from the
+  ## logs before the error below.
+  if [ -z "${distro_version}" ]; then
+    die 101 "Failed to find ditribution version."
+    ## it will fail later on get_host_pkgs if the system is not supported.
+    ## but distro version needs to be checked here because it can occur
+    ## frequently when the release of the distribution is still unstable.
+    ## Also because we check for distribution version to abort if necessary.
+  fi
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
-  log notice "Detected system: ${distro} ${distro_version}."
-  log notice "Detected CPU architecture: ${arch}."
+  is_integer "${distro_version_without_dot}" ||
+     die 101 "Distro version without dot is still not a number: '${distro_version_without_dot}'"
 }
 
 ##############
@@ -434,7 +443,7 @@ range_arg(){
     done
     ## if not within range, fail and show the fixed range that can be used
     if [ ${success} -eq 0 ]; then
-      die 2 "Option '${key}' can't be '${var:-}'. Possible values: '${list}'."
+      die 2 "Option '${key}' cannot be '${var:-}'. Possible values: '${list}'."
     fi
   fi
 }
@@ -626,7 +635,7 @@ handle_exit(){
     log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
     log error "If not already reported, please report this bug!"
     echo ""
-    log error "Error ocurred in line: ${line_number}."
+    log error "Error occurred in line: ${line_number}."
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
     # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
@@ -662,7 +671,7 @@ handle_exit(){
 ## BEGIN SCRIPT SPECIFIC ##
 ###########################
 
-## Get necessary packages for your host system. to be able to set the guest.
+## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
   case "${os}" in
     Linux*)
@@ -670,26 +679,20 @@ get_host_pkgs(){
         "Debian"*|"Tails"*|"Kicksecure"|"Whonix")
           true "${distro}"
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_debian
-          install_signify signify-openbsd
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
           true "${distro}"
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
           ;;
         *"buntu"*)
           true "${distro}"
-          if [ ! "${distro_version_without_dot}" -ge 2204 ]; then
+          if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
           fi
           install_package_debian_common
-          install_pkg netcat-openbsd
           install_virtualbox_ubuntu
-          install_signify signify-openbsd
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
           die 101 "Unsupported system."
@@ -729,6 +732,16 @@ get_independent_host_pkgs(){
   has curl || install_pkg curl
   has rsync || install_pkg rsync
 
+  ## Install openssl and ca-certificates.
+  ## openssl is required:
+  ## Otherwise there will be an error message by rsync-ssl:
+  ## Failed to find on your path: openssl stunnel4 stunnel
+  ## ca-certificates is required:
+  ## Otherwise rsync-ssl will fail TLS verification.
+  ## XXX: Strictly speaking packages openssl ca-certificates are only required
+  ##      if using clearnet. I.e. not required when using --onion.
+  install_pkg openssl ca-certificates
+
   while true; do
     has systemd-detect-virt && nested_virt_tool="systemd-detect-virt" && break
     test_pkg virt-what && nested_virt_tool="virt-what" && break
@@ -761,9 +774,7 @@ install_pkg(){
   for pkg in ${pkgs}; do
     ## Test if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
-    if ! has "${pkg}" &&
-      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
-    then
+    if ! has "${pkg}" && ! ${pkg_mngr_check_installed} "${pkg}"; then
       pkg_not_installed="${pkg_not_installed} ${pkg}"
     fi
   done
@@ -776,10 +787,24 @@ install_pkg(){
     fi
     log notice "Updating package list."
     # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_update}
+    root_cmd ${pkg_mngr_update} ||
+      die 1 "Could not update package lists.
+- This issue is most likely not caused by this installer.
+- This is most likely a package manager configuration or network issue.
+
+This is the command which the installer has just run that failed:
+
+$command_without_extrarenous_spaces
+
+The user is advised to attempt to debug this with the following steps:
+1. Run above command.
+2. If there is an issue, use search engines, documentation and if needed
+   contact the support of your operating system.
+3. Once this has been fixed fixed, re-run this installer."
     log notice "Installing package(s):${pkg_not_installed}."
     # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_install} ${pkg_not_installed}
+    root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
+      die 1 "Failed to install package${pkg_not_installed}."
     ## Test if installation worked.
     test_pkg "${pkg_not_installed}"
   fi
@@ -884,9 +909,9 @@ check_vm_exists_virtualbox(){
             test "${gateway_exists}" = "0"
           then
             test "${workstation_exists}" = "0" &&
-              die 1 "Workstation can't be started because it doesn't exist, try '--import-only=workstation'."
+              die 1 "Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
             test "${gateway_exists}" = "0" &&
-              die 1 "Gateway can't be started because it doesn't exist, try '--import-only=gateway'."
+              die 1 "Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
           fi
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -1039,7 +1064,7 @@ import_virtualbox(){
 ## Import KVM images
 import_kvm(){
   ## placeholder
-  log notice "KVM import not coded, ending run."
+  log notice "KVM import feature does not exist. Ending run."
   exit 0
 }
 
@@ -1086,11 +1111,21 @@ virtualbox_start_failed() {
 }
 
 
+## https://stackoverflow.com/a/54239534
+check_installed_debian(){
+  status="$(dpkg-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
+  if test "$?" != 0 || test "$status" != "installed"; then
+    return 1
+  fi
+  return 0
+}
+
+
 install_package_debian_common(){
   pkg_mngr="apt-get"
-  pkg_mngr_install="${pkg_mngr} install --yes"
+  pkg_mngr_install="${pkg_mngr} install --yes --no-install-recommends"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
-  pkg_mngr_check_installed="dpkg -s"
+  pkg_mngr_check_installed="check_installed_debian"
   ## 'dpkg --audit' does not return non-zero exit code on failure.
   dpkg_audit_output="$(dpkg --audit 2>&1)"
   if test -n "${dpkg_audit_output}"; then
@@ -1099,27 +1134,40 @@ install_package_debian_common(){
     log error "  https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT"
     return 1
   fi
+
+  install_pkg torsocks
+  install_signify signify-openbsd
 }
 
 
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
-  root_cmd adduser "$(id -nu)" vboxusers || {
-    die 1 "Failed to add user '$(id -nu)' to group 'vboxusers'."
-  }
+  id_of_user="$(id --name --user)" || die 1 "Failed to run 'id --name --user'."
+  root_cmd adduser "$id_of_user" vboxusers || die 1 "Failed to add user '$id_of_user' to group 'vboxusers'."
 }
 
 
 install_fasttrack_repository_debian(){
+  backports_found=""
+  backports_clearnet="deb.debian.org"
+  backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
+
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_found=""
+
   apt_torified=""
   apt_onion=""
 
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     test -f "${file}" || continue
+
+    if grep -v "#" "${file}" | grep -q \
+      -e "backports"
+    then
+      backports_found=1
+    fi
 
     if grep -v "#" "${file}" | grep -q \
       -e "://${fasttrack_clearnet}" \
@@ -1137,20 +1185,51 @@ install_fasttrack_repository_debian(){
     fi
   done
 
-  if test "${fasttrack_found}" = "1"; then
-    log info "Skipped adding fasttrack because it was already found."
-  else
-    if test "${apt_torified}" = "1"; then
-      ## If apt-transport-tor is not installed, we shouldn't, because we got
-      ## a false positive that updates should be torified. Not sure when this
-      ## could happen in reality, but a hard fail is necessary as explained
-      ## per the points above.
-      log info "Apt is supposed to be torified, checking apt-transport-tor exists."
-      test_pkg apt-transport-tor
-    fi
-    log notice "Installing packages for fasttrack repository"
-    install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
+  if test "${apt_torified}" = "1"; then
+    ## If apt-transport-tor is not installed, we shouldn't, because we got
+    ## a false positive that updates should be torified. Not sure when this
+    ## could happen in reality, but a hard fail is necessary as explained
+    ## per the points above.
+    log info "APT is supposed to be torified, checking if package apt-transport-tor is installed."
+    test_pkg apt-transport-tor ||
+      die 1 "APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
+  fi
 
+  log notice "Installing packages required for backports and fasttrack repository."
+  install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
+
+  if [ "${backports_found}" = "1" ] && [ "${fasttrack_found}" = "1" ]; then
+    log info "Skipped adding additional APT repositories because backports and fasttrack was already found."
+    return 0
+  fi
+
+  if test "${backports_found}" = "1"; then
+    log info "Skipped adding Backports because it was already found."
+  else
+    ## If user has onion repositories configured, prefer it.
+    if test "${apt_onion}"; then
+      log notice "Adding Backports onion repository."
+      backports_url="tor+http://${backports_onion}"
+    ## If user has torified repositories configured, prefer it.
+    elif test "${apt_torified}"; then
+      log notice "Adding Backports torified clearnet repository."
+      backports_url="tor+https://${backports_clearnet}"
+    ## If user doesn't have torified repositories, use clearnet one.
+    else
+      log notice "Adding Backports clearnet repository."
+      backports_url="https://${backports_clearnet}"
+    fi
+
+    log notice "backports URL: ${backports_url}"
+    log notice "Adding backports repository to /etc/apt/sources.list.d/backports.list"
+    echo "deb ${backports_url}/debian/ bullseye-backports main contrib non-free" | \
+      root_cmd tee /etc/apt/sources.list.d/backports.list ||
+        die 1 "Failed to write to /etc/apt/sources.list.d/backports.list."
+  fi
+
+  if test "${fasttrack_found}" = "1"; then
+    log info "Skipped adding Fasttrack because it was already found."
+  else
     ## If user has onion repositories configured, prefer it.
     if test "${apt_onion}"; then
       log notice "Adding Fasttrack's onion repository."
@@ -1159,7 +1238,7 @@ install_fasttrack_repository_debian(){
     elif test "${apt_torified}"; then
       log notice "Adding Fasttrack's torified clearnet repository."
       fasttrack_url="tor+https://${fasttrack_clearnet}"
-    ## If user doesn't have torified repositoris, use clearnet one.
+    ## If user doesn't have torified repositories, use clearnet one.
     else
       log notice "Adding Fasttrack's clearnet repository."
       fasttrack_url="https://${fasttrack_clearnet}"
@@ -1168,7 +1247,8 @@ install_fasttrack_repository_debian(){
     log notice "Fasttrack URL: ${fasttrack_url}"
     log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
     echo "deb ${fasttrack_url}/debian/ bullseye-fasttrack main contrib non-free" | \
-      root_cmd tee /etc/apt/sources.list.d/fasttrack.list
+      root_cmd tee /etc/apt/sources.list.d/fasttrack.list ||
+        die 1 "Failed to write to /etc/apt/sources.list.d/fasttrack.list."
   fi
 }
 
@@ -1177,9 +1257,11 @@ install_fasttrack_repository_debian(){
 install_virtualbox_debian(){
   has_vboxmanage=0
   has_linux_headers=0
+  has_virtualbox_qt=0
   linux_headers="linux-headers-$(dpkg --print-architecture)"
   has vboxmanage && has_vboxmanage=1
-  test_pkg "${linux_headers}" && has_linux_headers=1
+  test_pkg "${linux_headers}" 2>/dev/null && has_linux_headers=1
+  has virtualboxvm && has_virtualbox_qt=1
 
   if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
     log notice "vboxmanage and ${linux_headers}"
@@ -1195,7 +1277,14 @@ install_virtualbox_debian(){
   if test "${has_vboxmanage}" != "1"; then
     log notice "Preparing to install VirtualBox"
     install_fasttrack_repository_debian
+    fasttrack_added=1
     install_pkg virtualbox
+  fi
+  if test "${has_virtualbox_qt}"; then
+    log notice "Preparing to install VirtualBox-QT"
+    test "${fasttrack_added-}" != 1 && install_fasttrack_repository_debian
+    install_pkg virtualbox-qt
+
   fi
 
   install_virtualbox_debian_common_end
@@ -1228,7 +1317,7 @@ check_license(){
     return 0
   fi
 
-  log notice "The license will be show in some seconds."
+  log notice "The license will be shown in some seconds."
   test "${dry_run}" != "1" && sleep 6
 
   ## Whiptail is the Debian version of Dialog with much less features.
@@ -1373,7 +1462,7 @@ get_utilities(){
   done
 
   log info "Testing root login"
-  root_cmd echo "Succesfull root login" ||
+  root_cmd echo "Successful root login" ||
     die 1 "Failed to run test command as root."
 }
 
@@ -1414,7 +1503,7 @@ set_trap(){
 ## Check if system status is supported
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    die 101 "Only supported architecture is x86_64, your's is ${arch}."
+    die 101 "Only supported architecture is x86_64, yours is ${arch}."
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
@@ -1443,10 +1532,51 @@ get_system_stat(){
     log warn "  ${url_version_domain}/wiki/RAM"
   fi
 
-  free_space="$(df --output=avail -BG "${directory_prefix}" |
+  df_output="$(df --output=avail -BG "${directory_prefix}")"
+  free_space_available="$(echo "$df_output" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
-  if [ "${free_space}" -lt 10 ]; then
-    die 101 "You need at least 10G of available space, you only have ${free_space}G."
+
+  ## TODO: do not hardcode 10 GB - Kicksecure vs Whonix
+  free_space_required="10"
+  ## Free space require set to approximately double the image size (2023-03-21)
+  case "${guest}" in
+    whonix)
+      case "${interface}" in
+        xfce)
+          free_space_required="5"
+          ;;
+        cli)
+          free_space_required="3"
+          ;;
+      esac
+      ;;
+    kicksecure)
+      case "${interface}" in
+        xfce)
+          free_space_required="2"
+          ;;
+        cli)
+          free_space_required="1"
+          ;;
+      esac
+      ;;
+  esac
+  if test "${dev}" = "1"; then
+    free_space_required="1"
+  fi
+
+  if [ "${free_space_available}" -lt "$free_space_required" ]; then
+    die 101 "\
+${underline}Free Disk Space Check:${nounderline} Failed! Insufficient free disk space!
+
+- available: ${free_space_available}G
+- required : ${free_space_required}G
+
+Debugging information:
+- Command to test the available free space on ${directory_prefix}:
+df --output=avail -BG \"${directory_prefix}\"
+- Available free space result:
+$df_output"
   fi
 }
 
@@ -1457,6 +1587,13 @@ pre_check(){
   get_system_stat
   get_host_pkgs
   get_independent_host_pkgs
+
+  ## onion=1 -- Always torify onion connections.
+  ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
+  case "${onion}" in
+    1) torify_conn;;
+    *) test -n "${socks_proxy}" && torify_conn;;
+  esac
 
   ## Functions below are difficult to emulate
   if test "${dry_run}" = "1"; then
@@ -1478,38 +1615,39 @@ get_proxy_cred(){
 }
 
 
-## Test if can connect to SOCKS proxy and expect the correct tor reply.
+## Test if can connect to SOCKS proxy and expect the correct Tor reply.
 check_tor_proxy(){
   log notice "Testing SOCKS proxy: ${proxy}."
-  # proxy_port="${proxy##*:}"
-  # proxy_addr="${proxy%%:*}"
-  ## Same effect as: echo "GET" | nc ${proxy_addr} ${proxy_port}
-  case "${transfer_utility}" in
-    curl)
-      cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-errors --max-time 3 --head http://${proxy}"
-      ;;
-    rsync*)
-      cmd_check_proxy="RSYNC_PROXY=${proxy} rsync --dry-run rsync://fakeurl"
-      ;;
-  esac
-  # shellcheck disable=SC2086
-  response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
+  log info "Expected response header:"
+  log info "'$expected_response_header'"
+  cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-error --max-time 3 --head http://${proxy}"
+  log info "Command used to check if proxy is functional:"
+  log info "$cmd_check_proxy"
+  # shellcheck disable=SC2086
+  actual_response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
   ## Globs are necessary to match patterns in the event the header has more
   ## characters them expected but still has the expected string.
   ## Rsync header response example:
   ##   bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
-  case "${response_header}" in
+  case "${actual_response_header}" in
     *"${expected_response_header}"*)
-      log info "Proxy response header:"
-      log info "${response_header}."
-      log notice "Connected to tor SOCKS proxy successfully."
+      log info "Received header:"
+      log info "'${actual_response_header}'"
+      log notice "Connected to Tor SOCKS proxy successfully."
       return 0
       ;;
     *)
-      log info "Proxy response header:"
-      log info "${response_header}."
-      log error "Unexpected proxy response, maybe not a tor proxy?"
+      log error "\
+Unexpected proxy response, maybe not a Tor proxy?
+
+Debugging information:
+- Command used to check if proxy is functional:
+'$cmd_check_proxy'
+- Expected response header:
+'$expected_response_header'
+- Received header:
+'${actual_response_header}'"
       return 1
   esac
 }
@@ -1530,16 +1668,7 @@ set_transfer_proxy(){
       ;;
     rsync*)
       transfer_proxy_suffix=""
-      if has torsocks; then
-        transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
-      elif has nc; then
-        ## needs to be nc.openbsd
-        # shellcheck disable=SC2089
-        transfer_proxy_prefix="RSYNC_CONNECT_PROG='nc -X 5 -x ${1}'"
-      else
-        log warn "Neither 'torsocks' not 'nc' (netcat-openbsd) is installed."
-        die 1 "Failed to find program to proxy connections with rsync."
-      fi
+      transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
       ;;
   esac
 }
@@ -1548,6 +1677,14 @@ set_transfer_proxy(){
 ## Useful to test if it is a SOCKS proxy before attempting to make requests.
 ## If connection to proxy fails, abort to avoid leaks.
 torify_conn(){
+  if ! has tor; then
+    log warn "System tor binary (little-t-tor) was not found on the system."
+    log warn "Unless your SOCKS connection is made available by the Tor Browser"
+    log warn "  or by your uplink network, the proxy check mail fail."
+    log warn "The installer with torified connections depends on a working SOCKS proxy,"
+    log warn "  it won't configure the proxy, only establish the connection."
+    log warn "If the proxy connection fails, try installing 'tor' on your system."
+  fi
   ## curl and many other viable applications do not support SOCKS proxy to
   ## connect with Unix Domain Socket:
   ##   https://curl.se/mail/archive-2021-03/0013.html
@@ -1560,17 +1697,29 @@ torify_conn(){
   else
     ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
-    log warn "Trying tor defaults: TBB (9150) and system tor (9050)."
+    log warn "Trying Tor defaults: system Tor (little-t-tor) (port: 9050) and TBB (Tor Browser Bundle) (port: 9150)."
     proxy="127.0.0.1:9050"
     set_transfer_proxy ${proxy}
     if ! check_tor_proxy; then
-      proxy="127.0.0.1:9050"
+      proxy="127.0.0.1:9150"
       set_transfer_proxy ${proxy}
     else
       return 0
     fi
   fi
-  check_tor_proxy || die 2 "Can't connect to SOCKS proxy."
+  check_tor_proxy || die 2 "\
+Cannot connect to Tor SOCKS proxy.
+- This issue is most likely not caused by this installer.
+- This issue is likely caused by a missing software, configuration or network issues.
+
+Note, that for torification of connections an already functional Tor connection is required.
+
+- A) An already installed and running system Tor (little-t-tor). Or,
+- B) An already installed and running TBB (Tor Browser Bundle).
+
+This installer cannot help to set up a functional Tor connection. This must be done by the system administrator.
+
+When manually running above cmd_check_proxy it needs to include the expected_response_header."
 }
 
 
@@ -1767,7 +1916,7 @@ get_virtualization(){
 
   ## Check CPU flags for capability
   virt=$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo |
-         grep -wo -E '(vmx|svm)')
+         grep -wo -E '(vmx|svm)') || true
   if test -z "${virt}"; then
     log error "Your CPU does not support Virtualization."
     verdict 1
@@ -1913,34 +2062,29 @@ get_download_links(){
   ## onion download url
   url_download_onion="${protocol_prefix_onion}://${site_download_onion}"
 
-
   case "${onion}" in
     1)
       log info "Onion preferred."
-      ## always torify onion connections
-      torify_conn
       curl_opt_ssl=""
-      ## use to test internet connection
+      ## Used to test internet connection.
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
-      ## url to download files from
+      ## URL to download files from.
       test -n "${site_download_onion}" ||
         die 1 "Mirror ${mirror} doesn't provide an onion service."
       url_download="${url_download_onion}"
-      ## use to query version
+      ## Used to query version number.
       url_version_domain="http://www.${site_onion}"
       ;;
 
     *)
       log info "Clearnet preferred."
-      ## only torify to clearnet is SOCKS proxy is specified
       test "${transfer_utility}" = "rsync" && transfer_utility="rsync-ssl"
-      test -n "${socks_proxy}" && torify_conn
       curl_opt_ssl="--tlsv1.3 --proto =https"
-      ## use to test internet connection
+      ## Used to test internet connection.
       url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
-      ## url to download files from
+      ## URL to download files from.
       url_download="${url_download_clearnet}"
-      ## use to query version
+      ## Used to query version number.
       url_version_domain="https://www.${site_clearnet}"
       ;;
   esac
@@ -2065,6 +2209,7 @@ main(){
   check_license || die 100 "User disagreed with the license."
 
   pre_check
+
   log_time
 
   ## Check if VM were already imported, if true then ask to start
@@ -2091,7 +2236,7 @@ main(){
       cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
       log info "Executing: $ ${cmd_check_internet}"
       ${cmd_check_internet} >/dev/null ||
-        die $? "Can't connect to ${url_origin}, perhaps no internet?"
+        die $? "Cannot connect to ${url_origin}, perhaps no internet?"
       log notice "Connection to ${url_origin} succeeded."
     fi
     get_version "${url_version}"
@@ -2139,7 +2284,8 @@ usage(){
  -s, --socks-proxy=<proxy>
                      Set TCP SOCKS proxy for onion client connections.
                        (default: TOR_SOCKS_HOST:TOR_SOCKS_PORT, if not set, try
-                       TBB proxy at 9150, else try system tor proxy at 9050)
+                       TBB (Tor Browser Bundle) proxy at port 9150,
+                       else try system Tor (little-t-tor) proxy at port 9050.)
  -l, --log-level=<level>
                      Set log level. Options: debug, info,
                        notice (default), warn, error.
@@ -2148,7 +2294,7 @@ usage(){
 Developer options:
  --no-show-errors    Don't print errors.
  --allow-errors      Don't exit on errors. Dirty mode.
- --mirror=<number>   Set mirror acording to number index. Choose closest
+ --mirror=<number>   Set mirror according to number index. Choose closest
                        mirror to you if not using onion for faster downloads.
                        Not that if not choosing mirror, defaults to whonix.org
                        for plainnet and dotsrc.org correspondent for onion.
@@ -2160,7 +2306,7 @@ Developer options:
                          4 [PL] ftp.icm.edu.pl
                          5 [US] mirrors.gigenet.com
  --redownload        Redo the download of the guest instead of stopping if it
-                       was already succesfully downloaded.
+                       was already successfully downloaded.
  --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
                        Options: workstation and gateway'.
  --no-import         Don't import guest. Default is to import.
@@ -2392,7 +2538,7 @@ parse_opt(){
 
     log_dir_main="${directory_prefix}/logs"
 
-    ## Log to integer increasinly to avoid leaking other information such
+    ## Log to incrementing integer to avoid leaking other information such
     ## as PID or date (even if UTC).
     if ! test -d "${log_dir_main}/1"; then
       log_dir_cur="${log_dir_main}/1"
@@ -2494,6 +2640,7 @@ log_term_and_file(){
 run_installer(){
   ## Set default values.
   set_default
+  not_as_root
   ## Set trap for common signals.
   set_trap
   ## Parse script name for wanted values.
