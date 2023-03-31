@@ -24,8 +24,8 @@ jobs:
                         - '.github/workflows/builds.yml'
 
     build:
-        needs: changes
-        if: ${{ (needs.changes.outputs.installer == 'true') }}
+        # needs: changes
+        # if: ${{ (needs.changes.outputs.installer == 'true') }}
         # if: ${{ (needs.changes.outputs.installer == 'true' || needs.changes.outputs.builds == 'true') }}
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
