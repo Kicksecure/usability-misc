@@ -1,9 +1,10 @@
 name: docker build
-on:
-    push:
-        paths:
-            - 'usr/bin/installer-dist'
-            - '.github/workflows/builds.yml'
+on: [push]
+# on:
+#     push:
+#         paths:
+#             - 'usr/bin/installer-dist'
+#             - '.github/workflows/builds.yml'
 
 jobs:
     changes:
