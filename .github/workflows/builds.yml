@@ -3,6 +3,7 @@ on:
     push:
         paths:
             - 'usr/bin/installer-dist'
+            - '.github/workflows/builds.yml'
 
 jobs:
     changes:
