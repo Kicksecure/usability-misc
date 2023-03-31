@@ -9,6 +9,7 @@
 set -o errexit
 set -o nounset
 
+
 dialog_title="License agreement (scroll with arrows)"
 license="
 Please do NOT continue unless you understand everything!

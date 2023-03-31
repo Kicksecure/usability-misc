@@ -1,10 +1,9 @@
 name: docker build
-on: [push]
-# on:
-#     push:
-#         paths:
-#             - 'usr/bin/installer-dist'
-#             - '.github/workflows/builds.yml'
+on:
+    push:
+        paths:
+            - 'usr/bin/installer-dist'
+            - '.github/workflows/builds.yml'
 
 jobs:
     changes:
@@ -26,8 +25,8 @@ jobs:
 
     build:
         needs: changes
-        # if: ${{ (needs.changes.outputs.installer == 'true') }}
-        if: ${{ (needs.changes.outputs.installer == 'true') || (needs.changes.outputs.builds == 'true') }}
+        if: ${{ (needs.changes.outputs.installer == 'true') }}
+        # if: ${{ (needs.changes.outputs.installer == 'true' || needs.changes.outputs.builds == 'true') }}
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
