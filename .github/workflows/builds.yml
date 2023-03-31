@@ -7,7 +7,7 @@ on:
 jobs:
     changes:
         runs-on: ubuntu-22.04
-        permissions: 
+        permissions:
             pull-requests: read
         outputs:
             build: ${{ steps.filter.outputs.build }}
@@ -22,8 +22,8 @@ jobs:
 
     build:
         needs: changes
-        if: ${{ needs.changes.outputs.build == 'true' }}
-        ## Github takes too long to set the corrent latest image, this is
+        if: ${{ (needs.changes.outputs.build == 'true') || contains(github.event.head_commit.message, 'please build') }}
+        ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         runs-on: ubuntu-22.04
@@ -44,8 +44,12 @@ jobs:
               run: cat /etc/os-release; uname -a; echo "${PATH}"
             - name: System Basic Packages
               run: apt-get update -y && apt-get install -y shellcheck sudo
+            - name: Normal user with sudo privileges
+              run: |
+                  adduser --gecos "" --disabled-password user
+                  usermod -aG sudo user
             - name: Run Installer
-              run: bash ./usr/bin/installer-dist -n -l debug -k -D
+              run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
 

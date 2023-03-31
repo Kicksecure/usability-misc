@@ -6,6 +6,7 @@
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
+
 set -o errexit
 set -o nounset
 
