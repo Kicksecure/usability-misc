@@ -21,7 +21,7 @@ jobs:
                     installer:
                         - 'usr/bin/installer-dist'
                     builds:
-                        - '.github/workflow/builds.yml'
+                        - '.github/workflows/builds.yml'
 
     build:
         needs: changes
