@@ -6,9 +6,9 @@
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
-
 set -o errexit
 set -o nounset
+
 
 dialog_title="License agreement (scroll with arrows)"
 license="
