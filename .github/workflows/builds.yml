@@ -12,7 +12,8 @@ jobs:
         permissions:
             pull-requests: read
         outputs:
-            build: ${{ steps.filter.outputs.build }}
+            builds: ${{ steps.filter.outputs.builds }}
+            installer: ${{ steps.filter.outputs.installer }}
         steps:
             - uses: actions/checkout@v3
             - uses: dorny/paths-filter@v2
