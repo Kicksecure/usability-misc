@@ -1,3 +1,294 @@
+commit aec797f2967d967ffa4fc1b932f7e0f469f49a62
+Merge: 13f7c36 72fdfa1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 6 11:00:55 2023 +0000
+
+    Merge remote-tracking branch 'nyxnor/master'
+
+commit 72fdfa1cd79841364cc6a3a7f64d35c2a1c54a87
+Merge: 13f7c36 119884d
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Apr 3 15:47:41 2023 +0000
+
+    Merge branch 'master' into ci-update
+
+commit 119884df48d792bdb8ad118a1cfb418f228571e2
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Apr 3 15:42:31 2023 +0000
+
+    Add missing installer output to CI
+
+commit 65f382d0ccba1d3f4adf6ca99e04a72085b7f9f6
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Apr 3 15:37:34 2023 +0000
+
+    Add needs directive to CI
+
+commit 13f7c360efec2db57ffd3dbe7e8576220427ad2a
+Merge: 548be7b c7c5926
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Mar 31 12:53:34 2023 +0000
+
+    Merge remote-tracking branch 'nyxnor/master'
+
+commit 4a39f510178e8f9587c701df1d0bb05f20177c00
+Merge: 33ccb5a a63e805
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:48:37 2023 +0000
+
+    Merge remote-tracking branch 'bitbucket/master'
+
+commit 33ccb5ab58ef502ac4b2e56b8e6d2a243a1ca9a2
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:48:17 2023 +0000
+
+    libtpms0 is already a dependency of virtualbox
+
+commit 1837c0b2f8fe76c7abd053f4e79412e29f5bce3f
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:43:21 2023 +0000
+
+    Trigger build
+
+commit 5d51ceb74f9c8c806282b69f93cdef59f85f272d
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:40:53 2023 +0000
+
+    Fix missing dependency
+
+commit dbeb6e7e187dbccac97919260f0bd253b47b5f93
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:34:56 2023 +0000
+
+    Fix build ordering
+
+commit 4cb897850d36f897e3d6db6b8c93c6b1261dbeb7
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:33:15 2023 +0000
+
+    Trigger build
+
+commit 184d0f5eb3a44d337a0d316f97ac7e2829b6ded0
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:31:20 2023 +0000
+
+    Trigger build
+
+commit 3459dbd2a33581e714128ba6c9b63c3e331734a0
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:26:23 2023 +0000
+
+    Trigger build
+
+commit 985dfaa44426c1168571db2d742767a0672ebb47
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:23:10 2023 +0000
+
+    Trigger build
+
+commit e80170fa87cd298b8a397d2aeb3c210c4aaac5b2
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:19:37 2023 +0000
+
+    Typo in workflow path
+
+commit 0b6cb4e3225074e86818f4a7b62f81ca3d85cb1d
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:17:52 2023 +0000
+
+    Trigger build
+
+commit 2a1b67098b9daead6e6aa8a3b54648c1ef99ba92
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:14:56 2023 +0000
+
+    Give another try to filter files
+
+commit 99247d48e13b65f4673313f980d5aa971214f275
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:10:37 2023 +0000
+
+    Trigger build
+
+commit 922d507c472a289786717946ffff2576e52be5e8
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:07:29 2023 +0000
+
+    Trigger build
+
+commit 86808c4c56cd6a9878a4bdcba0a2f330a3443c97
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:05:44 2023 +0000
+
+    Undo changes to the CI build
+    Not working, build is being skipped.
+    Related: https://github.com/actions/runner/issues/491
+
+commit d633943eb10579c2df8e47a253ab02ac789edb5b
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 09:04:01 2023 +0000
+
+    Trigger build
+
+commit e8d334ab055d8859287d7754204d1ddfe7c1cb61
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 08:59:05 2023 +0000
+
+    Fix missing path on CI build
+
+commit d941e39abdf6a0f5cab2631e67c4d9f22f278773
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 08:57:02 2023 +0000
+
+    Improve CI build detection
+
+commit fe413bbe8516b6190ff42c7b17a6a9fc38e87cfc
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Mar 31 08:52:10 2023 +0000
+
+    Fix sudoers configuration
+
+commit c7c5926f3e73e24e1da4ef45098d7e1383e0a3e1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Mar 30 15:08:59 2023 +0000
+
+    Fix build user
+
+commit 9809ab6d00117d1ade43d6e42dc1740b59f96879
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Mar 30 14:53:59 2023 +0000
+
+    Trigger build the dumb way
+
+commit 132532c84416f3c0c0c86dc35facaf6a4840569a
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Mar 30 14:53:06 2023 +0000
+
+    Remove extraneous parentheses from CI
+    
+    please build
+
+commit 67318a9be9e4d7d2eea122c1b296cb33c0874a97
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Mar 30 14:51:56 2023 +0000
+
+    Fix build syntax
+
+commit 809838f800d44ce67ae0281bdc4ef52f9f38995a
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Mar 30 14:49:55 2023 +0000
+
+    Trigger build with message
+    
+    please build
+
+commit a5977ced5cb51458634c9abbb22b04a82a2b5f33
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Mar 30 14:44:09 2023 +0000
+
+    Trigger build
+
+commit fbf0b156c3d99a693d0e03623ef2e4e93aa188a9
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Mar 30 14:38:51 2023 +0000
+
+    Fix installer build running as root
+
+commit 548be7b3c35c41be19170f4155cae60c339cd13f
+Merge: 4ed3000 a63e805
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Mar 30 09:18:39 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit a63e805c54603f61d9f488d07f334ddc538c5d2d
+Author: grass <grass@danwin1210.de>
+Date:   Mon Mar 27 18:24:38 2023 +0000
+
+    Improve has vbox-qt is checked
+
+commit adc679631f9b5a0d760b983e5920895e96dc980d
+Author: grass <grass@danwin1210.de>
+Date:   Mon Mar 27 18:15:22 2023 +0000
+
+    Fix VirtualBox graphical interface installation
+    Previously it used to be installed as a recommendation by the virtualbox
+    package, but not was we are using 'apt --no-install-recommends', it
+    needs to be explicitly specified.
+
+commit 61128a8f98ba10d5db0c6148bac69bf8aa40b8ee
+Author: grass <grass@danwin1210.de>
+Date:   Mon Mar 27 17:56:03 2023 +0000
+
+    Fix dpgk typo
+
+commit 7ec117bdcc2cbc8739e9f07213415c2b6dfc5e57
+Author: grass <grass@danwin1210.de>
+Date:   Mon Mar 27 17:15:19 2023 +0000
+
+    Fix not_as_root stopping the script
+    
+    Tests return exit code and 'set -e' stops the script.
+
+commit e92e692c743dd5e74de8244e20ff943dbd200176
+Author: grass <grass@danwin1210.de>
+Date:   Mon Mar 27 17:09:54 2023 +0000
+
+    Block calling the script as root
+    
+    Didn't break, it was just insecure.
+
+commit d52e002b6d10b3d9a12d640e37dbe3b568574475
+Author: grass <grass@danwin1210.de>
+Date:   Fri Mar 24 17:44:13 2023 +0000
+
+    Fix function to check if package is installed
+    Unfortunately, there is no reliable exit code on Debian to check if a
+    package is installed, therefore the changes below are necessary.
+
+commit 279a88057533c46c9d5931ec7455944dfc78e518
+Author: grass <grass@danwin1210.de>
+Date:   Fri Mar 24 09:33:13 2023 +0000
+
+    Fix order of call to torify_conn()
+    The function was being called before the license check, and as no
+    package is tried to be installed before the license, it was failing to
+    check the proxy.
+
+commit 26ed3f41ddac2da3030280582b33a180c61ecf13
+Author: grass <grass@danwin1210.de>
+Date:   Tue Mar 21 20:29:04 2023 +0000
+
+    Warning about missing tor binary
+
+commit ca5238ee4352f97e922884ebb746b0b5fb31ad16
+Author: grass <grass@danwin1210.de>
+Date:   Tue Mar 21 19:21:56 2023 +0000
+
+    Miscellaneous fixes for readability
+
+commit a3af0a87edeb195d3ed78a88a8d25135650dc3ae
+Merge: ab19e80 4ed3000
+Author: grass <grass@danwin1210.de>
+Date:   Tue Mar 21 18:10:46 2023 +0000
+
+    Merge remote-tracking branch 'kicksecure/master'
+    
+    * kicksecure/master:
+      bumped changelog version
+      output
+      improve free disk space check
+      output
+      lower disk space requirements when using --dev
+      comment
+      typo
+
+commit 4ed300049f95b214600302ae73329adba5f30e6d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Mar 19 20:02:43 2023 -0400
+
+    bumped changelog version
+
 commit 2f9f156a94e48e37e34acfc0cee28bd194540437
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Mar 19 20:02:00 2023 -0400
@@ -33,6 +324,36 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Mar 19 18:01:27 2023 -0400
 
     typo
+
+commit ab19e801cad5667d0d6823c7c18eff0e00a724bd
+Merge: fdc2974 195924d
+Author: grass <grass@danwin1210.de>
+Date:   Sat Mar 18 21:44:29 2023 +0000
+
+    Merge remote-tracking branch 'kicksecure/master'
+    
+    * kicksecure/master: (34 commits)
+      bumped changelog version
+      fix, install ca-certificates
+      minor
+      comments
+      install openssl
+      use apt-get with --no-install-recommends
+      fix
+      fix
+      fix, add backports repository since now required for Debian stable
+      fix, add backports repository since now required for Debian stable
+      output
+      refactoring
+      improve error handling
+      quotes
+      improve error handling
+      improve error handling
+      improve error handling
+      long options
+      improve error handling
+      improve error message
+      ...
 
 commit 195924d003c5836b8bd741ab895d68c2c413a005
 Author: Patrick Schleizer <adrelanos@whonix.org>
@@ -237,6 +558,12 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Mar 15 19:37:13 2023 -0400
 
     typo
+
+commit fdc29742d50ac251945a7562b847d2aa24befb6c
+Author: grass <grass@danwin1210.de>
+Date:   Tue Feb 7 19:00:32 2023 +0000
+
+    hard fail when distro_version is not found
 
 commit df691c34c587d123fe40074ff10a0e64f6e8eabb
 Author: Patrick Schleizer <adrelanos@whonix.org>
