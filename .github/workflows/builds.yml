@@ -7,7 +7,7 @@ on:
 jobs:
     changes:
         runs-on: ubuntu-22.04
-        permissions: 
+        permissions:
             pull-requests: read
         outputs:
             build: ${{ steps.filter.outputs.build }}
@@ -45,7 +45,7 @@ jobs:
             - name: System Basic Packages
               run: apt-get update -y && apt-get install -y shellcheck sudo
             - name: Run Installer
-              run: bash ./usr/bin/installer-dist -n -l debug -k -D
+              run: bash ./usr/bin/installer-dist -n -l debug -k -D --ci
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
 

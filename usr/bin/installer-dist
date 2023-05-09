@@ -570,7 +570,10 @@ log_run(){
     log notice "Skipping: $ ${command_without_extrarenous_spaces}"
     return 0
   fi
-  log notice "Executing: $ ${command_without_extrarenous_spaces}"
+  if test "${ci}" != "1"; then
+    ## CI expects no output from root_cmd() which calls log_run().
+    log notice "Executing: $ ${command_without_extrarenous_spaces}"
+  fi
   "${@}" || return 1
 }
 
@@ -1463,6 +1466,12 @@ get_utilities(){
   log info "Testing root login"
   root_cmd echo "Successful root login" ||
     die 1 "Failed to run test command as root."
+  if test "${ci}" = "1"; then
+    root_output="$(root_cmd test -d /usr 2>&1)"
+    if test -n "${root_output}"; then
+      die 1 "Unexpected non-empty output for root_cmd test in CI mode."
+    fi
+  fi
 }
 
 
@@ -2324,7 +2333,8 @@ Developer options:
                        start again. \$HOME/installer-dist-download (default).
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
- -D, --dev           Se development mode. Set version to download empty image.
+ -D, --dev           Set development mode. Empty image to download
+ --ci                Set CI mode. Test running in CI.
  --testers           Set testers version to be downloaded.
  -d, --dry-run       Fake run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
@@ -2359,6 +2369,7 @@ set_default(){
   dev="" dry_run=""
   getversion=""
   getopt=""
+  ci=""
   no_import=""
   no_boot=""
   redownload=""
@@ -2466,6 +2477,9 @@ parse_opt(){
         ;;
       t|getopt)
         set_arg getopt 1
+        ;;
+      ci)
+        set_arg ci 1
         ;;
       d|dry-run)
         set_arg dry_run 1
