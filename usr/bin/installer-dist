@@ -1474,6 +1474,7 @@ get_utilities(){
   if test "${ci}" = "1"; then
     root_output="$(timeout --kill-after 5 5 root_cmd test -d /usr 2>&1)"
     if test -n "${root_output}"; then
+      log error "sucmd output: ${root_output}"
       die 1 "Unexpected non-empty output for root_cmd test in CI mode."
     fi
     return 0
@@ -1488,6 +1489,7 @@ get_utilities(){
     log info "Sudo credential caching: Yes"
     root_output="$(timeout --kill-after 5 5 sudo test -d /usr 2>&1)"
     if test -n "${root_output}"; then
+      log error "sucmd output: ${root_output}"
       die 1 "Unexpected non-empty output for root_cmd test in normal mode."
     fi
   fi
