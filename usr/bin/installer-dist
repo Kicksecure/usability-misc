@@ -1472,7 +1472,7 @@ get_utilities(){
     die 1 "Failed to run test command as root."
 
   if test "${ci}" = "1"; then
-    root_output="$(root_cmd test -d /usr 2>&1)"
+    root_output="$(timeout --kill-after 5 5 root_cmd test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       die 1 "Unexpected non-empty output for root_cmd test in CI mode."
     fi
@@ -1481,12 +1481,12 @@ get_utilities(){
 
   ## Other su cmds do not have an option that does the same.
   if test "${sucmd}" = "sudo"; then
-    if ! sudo --non-interactive test -d /usr; then
+    if ! timeout --kill-after 5 5 sudo --non-interactive test -d /usr; then
       log info "Sudo credential caching: No"
       return 0
     fi
     log info "Sudo credential caching: Yes"
-    root_output="$(sudo test -d /usr 2>&1)"
+    root_output="$(timeout --kill-after 5 5 sudo test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       die 1 "Unexpected non-empty output for root_cmd test in normal mode."
     fi
