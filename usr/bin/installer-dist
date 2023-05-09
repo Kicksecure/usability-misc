@@ -1461,6 +1461,10 @@ get_utilities(){
     test -z "${sucmd}" && {
       die 1 "Failed to find program to run as another user."
     }
+    case "${sucmd}" in
+      sudo) :;;
+      *) log warn "Using sucmd '$sucmd'. Consider installing sudo instead to cache your passwords instead of typing them every time.";;
+    esac
   done
 
   log info "Testing root login"
