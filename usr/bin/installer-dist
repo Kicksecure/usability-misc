@@ -784,10 +784,10 @@ install_pkg(){
 
   if test -n "${pkg_not_installed}"; then
     if test "${dry_run}" = "1"; then
-      log notice "Installing package(s):${pkg_not_installed}."
-      log info "Skipping installing packages because dry_run is set."
+      log notice "Skipping installing packages because dry_run is set:${pkg_not_installed}"
       return 0
     fi
+    log notice "Installing package(s):${pkg_not_installed}"
     log notice "Updating package list."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_update} ||
@@ -2614,8 +2614,8 @@ parse_opt(){
   fi
   if test "${dry_run}" = "1"; then
     if test -z "${guest_version}"; then
-      log info "dry_run set, commands will be printed and not executed"
-      log info "Using simulated software version because of dry_run."
+      log notice "dry_run set, commands will be printed but not executed."
+      log notice "Using simulated software version because of dry_run."
       guest_version="16.0.4.2"
     fi
   fi
