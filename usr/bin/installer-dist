@@ -1291,7 +1291,6 @@ install_virtualbox_debian(){
     log notice "Preparing to install VirtualBox-QT"
     test "${fasttrack_added-}" != 1 && install_fasttrack_repository_debian
     install_pkg virtualbox-qt
-
   fi
 
   install_virtualbox_debian_common_end
