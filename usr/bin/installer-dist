@@ -1493,7 +1493,7 @@ get_utilities(){
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       log error "sucmd output: ${root_output}"
-      die 1 "Unexpected non-empty output for root_cmd test in normal mode."
+      die 1 "Unexpected non-empty output for sudo test in normal mode."
     fi
   fi
 }
