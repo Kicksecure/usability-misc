@@ -1155,7 +1155,7 @@ install_virtualbox_debian_common_end(){
 }
 
 
-install_fasttrack_repository_debian(){
+install_backports_and_fasttrack_repository_debian(){
   backports_found=""
   backports_clearnet="deb.debian.org"
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
@@ -1283,13 +1283,13 @@ install_virtualbox_debian(){
 
   if test "${has_vboxmanage}" != "1"; then
     log notice "Preparing to install VirtualBox"
-    install_fasttrack_repository_debian
+    install_backports_and_fasttrack_repository_debian
     fasttrack_added=1
     install_pkg virtualbox
   fi
   if test "${has_virtualbox_qt}"; then
     log notice "Preparing to install VirtualBox-QT"
-    test "${fasttrack_added-}" != 1 && install_fasttrack_repository_debian
+    test "${fasttrack_added-}" != 1 && install_backports_and_fasttrack_repository_debian
     install_pkg virtualbox-qt
   fi
 
