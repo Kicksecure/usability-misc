@@ -1010,6 +1010,8 @@ import_guest(){
     exit 0
   fi
 
+  check_vm_exists
+
   case "${hypervisor}" in
     virtualbox)
       import_virtualbox
