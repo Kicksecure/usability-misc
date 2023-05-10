@@ -68,7 +68,7 @@ get_colors(){
     # shellcheck disable=SC2034
     nocolor=""
     bold=""
-    #nobold=""
+    nobold=""
     underline=""
     nounderline=""
     red=""
@@ -83,7 +83,7 @@ get_colors(){
   # shellcheck disable=SC2034
   nocolor="\033[0m"
   bold="\033[1m"
-  #nobold="\033[22m"
+  nobold="\033[22m"
   underline="\033[4m"
   nounderline="\033[24m"
   red="\033[31m"
@@ -1095,17 +1095,19 @@ start_virtualbox(){
         "${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
       ;;
   esac
+  log notice "${underline}Virtual Machine startup result:${nounderline} ${green}${bold}SUCCESS${nobold}${nocolor}"
 }
 
 virtualbox_start_failed() {
   if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
-    die 106 "Virtual Machine start failed.
-- The installer succeeded with download and import but failed to start the virtual machines.
+    die 106 "${underline}Virtual Machine startup result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
+- The installer succeeded with download and import, but
+- failed to start the virtual machines.
 - This is likely happening due to the virtualization related warnings that have been reported above."
   fi
-  die 107 "Virtual Machine start failed.
-- The installer succeeded with download and import,
-- but failed to start the virtual machines.
+  die 107 "${underline}Virtual Machine startup result:${nounderline} ${bold}FAIL${nobold}
+- The installer succeeded with download and import, but
+- failed to start the virtual machines.
 - See user documentation:
   ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
