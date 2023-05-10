@@ -2204,11 +2204,11 @@ check_hash(){
 
 ## Check integrity of files
 check_integrity(){
-  log notice "Doing integrity checks."
   if test "${dry_run}" = "1"; then
-    log info "Skipping integrity checks because dry_run is set."
+    log notice "Skipping integrity checks because dry_run is set."
     return 0
   fi
+  log notice "Doing integrity checks."
   check_signature || die 104 "Failed to verify signature."
   check_hash || die 104 "Failed hash checking."
 }
