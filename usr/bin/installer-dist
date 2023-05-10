@@ -1746,8 +1746,10 @@ get_version(){
   fi
   # shellcheck disable=SC2086
   raw_version="$(${cmd_raw_version})"
+  ## First line only.
+  guest_version="$(echo "$raw_version" | head -n 1)"
   # shellcheck disable=SC2046,SC2086
-  guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
+  guest_version="$(printf '%s\n' "${guest_version}" | sed "s/<.*//")"
   ## Distrust the API version
   ## Block anything that is not made purely out of numbers and dots
   ## Not printing queried version to avoid it showing a very long version
