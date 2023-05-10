@@ -1761,7 +1761,7 @@ When manually running above cmd_check_proxy it needs to include the expected_res
 get_version(){
   log notice "Searching for guest version."
   if test -n "${guest_version:-}"; then
-    log info "User input version."
+    log notice "User input version."
     return 0
   fi
   log info "Acquiring guest version from API."
