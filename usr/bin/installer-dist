@@ -1010,6 +1010,8 @@ import_guest(){
     exit 0
   fi
 
+  check_vm_exists
+
   case "${hypervisor}" in
     virtualbox)
       import_virtualbox
@@ -2247,7 +2249,9 @@ main(){
   log_time
 
   ## Check if VM were already imported, if true then ask to start
-  check_vm_exists
+  if test "${redownload}" != "1"; then
+    check_vm_exists
+  fi
   #############
   ## END PRE ##
   #############
