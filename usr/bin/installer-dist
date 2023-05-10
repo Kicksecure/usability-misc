@@ -2149,7 +2149,7 @@ should_download(){
     log notice "Skipping download because flag exists: ${download_flag}."
     return 1
   fi
-  ## Download as not obstacles prohibit it.
+  ## Download as no obstacles prohibit it.
   return 0
 }
 
