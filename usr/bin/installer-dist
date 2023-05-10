@@ -2362,7 +2362,7 @@ Developer options:
  -D, --dev           Set development mode. Empty image to download
  --ci                Set CI mode. Test running in CI.
  --testers           Set testers version to be downloaded.
- -d, --dry-run       Fake run, log commands to info level without executing.
+ -d, --dry-run       Simulated run, log commands to info level without executing.
  -t, --getopt        Show parsed options and quit.
 File name:
   The default file name is installer-dist. Some basic options can be set as
@@ -2615,7 +2615,7 @@ parse_opt(){
   if test "${dry_run}" = "1"; then
     if test -z "${guest_version}"; then
       log info "dry_run set, commands will be printed and not executed"
-      log info "Faking software version because of dry_run."
+      log info "Using simulated software version because of dry_run."
       guest_version="16.0.4.2"
     fi
   fi
