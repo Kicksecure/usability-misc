@@ -2612,7 +2612,7 @@ parse_opt(){
   fi
   if test "${dev}" = "1"; then
     if test -z "${guest_version}"; then
-      log info "Setting dev software version."
+      log notice "Setting dev software version."
       guest_version="16.0.4.2"
     fi
   fi
