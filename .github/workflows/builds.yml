@@ -1,8 +1,10 @@
 name: docker build
+# on: [push]
 on:
     push:
         paths:
             - 'usr/bin/installer-dist'
+            - '.github/workflows/builds.yml'
 
 jobs:
     changes:
@@ -10,20 +12,25 @@ jobs:
         permissions:
             pull-requests: read
         outputs:
-            build: ${{ steps.filter.outputs.build }}
+            builds: ${{ steps.filter.outputs.builds }}
+            installer: ${{ steps.filter.outputs.installer }}
         steps:
             - uses: actions/checkout@v3
             - uses: dorny/paths-filter@v2
               id: filter
               with:
                 filters: |
-                    build:
+                    installer:
                         - 'usr/bin/installer-dist'
+                    builds:
+                        - '.github/workflows/builds.yml'
 
     build:
         needs: changes
-        if: ${{ needs.changes.outputs.build == 'true' }}
-        ## Github takes too long to set the corrent latest image, this is
+        # if: ${{ (needs.changes.outputs.installer == 'true') }}
+        # if: ${{ (needs.changes.outputs.builds == 'true') }}
+        if: ${{ (needs.changes.outputs.installer == 'true' || needs.changes.outputs.builds == 'true') }}
+        ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         runs-on: ubuntu-22.04
@@ -40,12 +47,17 @@ jobs:
 
         steps:
             - uses: actions/checkout@v3
-            - name: System information
-              run: cat /etc/os-release; uname -a; echo "${PATH}"
             - name: System Basic Packages
               run: apt-get update -y && apt-get install -y shellcheck sudo
+            - name: System information
+              run: cat /etc/os-release; uname -a; echo "${PATH}"; cat /etc/sudoers; ls /etc/sudoers.d;
+            - name: Normal user with sudo privileges
+              run: |
+                  adduser --gecos "" --disabled-password user
+                  usermod -aG sudo user
+                  echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
             - name: Run Installer
-              run: bash ./usr/bin/installer-dist -n -l debug -k -D --ci
+              run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D --ci
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
 
