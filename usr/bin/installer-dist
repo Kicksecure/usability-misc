@@ -68,7 +68,7 @@ get_colors(){
     # shellcheck disable=SC2034
     nocolor=""
     bold=""
-    #nobold=""
+    nobold=""
     underline=""
     nounderline=""
     red=""
@@ -83,7 +83,7 @@ get_colors(){
   # shellcheck disable=SC2034
   nocolor="\033[0m"
   bold="\033[1m"
-  #nobold="\033[22m"
+  nobold="\033[22m"
   underline="\033[4m"
   nounderline="\033[24m"
   red="\033[31m"
@@ -1100,17 +1100,19 @@ start_virtualbox(){
         "${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
       ;;
   esac
+  log notice "${underline}Virtual Machine startup result:${nounderline} ${green}${bold}SUCCESS${nobold}${nocolor}"
 }
 
 virtualbox_start_failed() {
   if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
-    die 106 "Virtual Machine start failed.
-- The installer succeeded with download and import but failed to start the virtual machines.
+    die 106 "${underline}Virtual Machine startup result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
+- The installer succeeded with download and import, but
+- failed to start the virtual machines.
 - This is likely happening due to the virtualization related warnings that have been reported above."
   fi
-  die 107 "Virtual Machine start failed.
-- The installer succeeded with download and import,
-- but failed to start the virtual machines.
+  die 107 "${underline}Virtual Machine startup result:${nounderline} ${bold}FAIL${nobold}
+- The installer succeeded with download and import, but
+- failed to start the virtual machines.
 - See user documentation:
   ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
@@ -1475,25 +1477,25 @@ get_utilities(){
     die 1 "Failed to run test command as root."
 
   if test "${ci}" = "1"; then
-    root_output="$(timeout --kill-after 5 5 root_cmd test -d /usr 2>&1)"
+    root_output="$(timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
-      log error "sucmd output: ${root_output}"
-      die 1 "Unexpected non-empty output for root_cmd test in CI mode."
+      log error "sudo output: ${root_output}"
+      die 1 "Unexpected non-empty output for sudo --non-interactive -- test in CI mode."
     fi
     return 0
   fi
 
   ## Other su cmds do not have an option that does the same.
   if test "${sucmd}" = "sudo"; then
-    if ! timeout --kill-after 5 5 sudo --non-interactive test -d /usr; then
+    if ! timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr; then
       log info "Sudo credential caching: No"
       return 0
     fi
     log info "Sudo credential caching: Yes"
-    root_output="$(timeout --kill-after 5 5 sudo test -d /usr 2>&1)"
+    root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
-      log error "sucmd output: ${root_output}"
-      die 1 "Unexpected non-empty output for root_cmd test in normal mode."
+      log error "sudo output: ${root_output}"
+      die 1 "Unexpected non-empty output for sudo test in normal mode."
     fi
   fi
 }
@@ -1778,8 +1780,10 @@ get_version(){
   fi
   # shellcheck disable=SC2086
   raw_version="$(${cmd_raw_version})"
+  ## First line only.
+  guest_version="$(echo "$raw_version" | head -n 1)"
   # shellcheck disable=SC2046,SC2086
-  guest_version="$(printf '%s\n' "${raw_version}" | sed "s/<.*//")"
+  guest_version="$(printf '%s\n' "${guest_version}" | sed "s/<.*//")"
   ## Distrust the API version
   ## Block anything that is not made purely out of numbers and dots
   ## Not printing queried version to avoid it showing a very long version
@@ -2177,7 +2181,7 @@ should_download(){
     log notice "Skipping download because flag exists: ${download_flag}."
     return 1
   fi
-  ## Download as not obstacles prohibit it.
+  ## Download as no obstacles prohibit it.
   return 0
 }
 
@@ -2376,6 +2380,7 @@ File name:
 
 ## Set default values for variables.
 set_default(){
+  guest_pretty=""
   get_colors
   xtrace=""
   directory_prefix=""
