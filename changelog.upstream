@@ -1,3 +1,103 @@
+commit 02c19e090fbcc93d01d9b3c44720bba9c6bc2dae
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:16:00 2023 +0000
+
+    output
+
+commit dcff25991e4a1ea32caa9abb63bb748f1f68ac75
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:13:03 2023 +0000
+
+    output
+
+commit 2c4bc0be93e26c044d00fcef7707525b497ad9e7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:12:29 2023 +0000
+
+    improve sudo test
+
+commit ac56c8030cad0a95ab795d5300613912605ccc31
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:09:26 2023 +0000
+
+    fix CI test
+
+commit 774892bf021ce2da14bfa39c4bd1bd69241f4be0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:04:34 2023 +0000
+
+    initialize guest_pretty variable
+    
+    otherwise the variable could be missing (unbound) and break the error handler itself
+
+commit ff88d7f0ec48e57521d417280a81bacba1fcc8c4
+Merge: cd62241 3e0be86
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 22:43:55 2023 +0000
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 3e0be86c50d15cd4657ec50dd173b0b1cde0a990
+Merge: dee5352 72fdfa1
+Author: grass <grass@danwin1210.de>
+Date:   Wed May 10 22:41:27 2023 +0000
+
+    Fix merge conflict with CI
+
+commit cd62241dad6a0f3bc869043cccdbc7139cb27962
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 22:31:47 2023 +0000
+
+    typo
+
+commit ec0acd82dab5cd4b5bbeb65fa85b5f4c2c243183
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 22:28:43 2023 +0000
+
+    improved startup result output
+
+commit 27a3237c16e006992c07117f98177a7f845e9a10
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 21:49:11 2023 +0000
+
+    fix for compatibility with new remote version API
+
+commit dee5352512eab2b0e1c0a704d702471ab519a67c
+Author: grass <grass@danwin1210.de>
+Date:   Tue May 9 13:30:42 2023 +0000
+
+    Show sucmd output on errors
+
+commit 3ee5f010a4560fa78202f473e88f87322cb93948
+Author: grass <grass@danwin1210.de>
+Date:   Tue May 9 13:27:05 2023 +0000
+
+    Add timeout to sudo tests
+
+commit 7c26cbde68e3f3afc5e536b76e1ca8d817e14fac
+Author: grass <grass@danwin1210.de>
+Date:   Tue May 9 13:21:30 2023 +0000
+
+    Inform that sudo usage is preferred
+
+commit d29aee1d815b38b7034b40935280b4c08fe44511
+Author: grass <grass@danwin1210.de>
+Date:   Tue May 9 13:18:36 2023 +0000
+
+    Make sudo --non-interactive test for users too
+
+commit 99a16bf70afb6b8c31c88b39bcea46d730631fa6
+Author: grass <grass@danwin1210.de>
+Date:   Tue May 9 09:39:13 2023 +0000
+
+    Add CI mode
+
+commit d39930a31f2f08c1eb1f3cf6907b5ff3073824e3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 5 17:10:29 2023 +0000
+
+    bumped changelog version
+
 commit aec797f2967d967ffa4fc1b932f7e0f469f49a62
 Merge: 13f7c36 72fdfa1
 Author: Patrick Schleizer <adrelanos@whonix.org>
