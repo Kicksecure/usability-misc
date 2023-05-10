@@ -2376,6 +2376,7 @@ File name:
 
 ## Set default values for variables.
 set_default(){
+  guest_pretty=""
   get_colors
   xtrace=""
   directory_prefix=""
