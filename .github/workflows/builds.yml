@@ -57,7 +57,7 @@ jobs:
                   usermod -aG sudo user
                   echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
             - name: Run Installer
-              run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D
+              run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D --ci
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
 

@@ -31,6 +31,7 @@ args=(
   '(--no-show-errors)'--no-show-errors'[Hide errors]'
   '(--testers)'--testers'[Set testers mode]'
   '(-D --dev)'{-D,--dev}'[Set dev mode]'
+  '(--ci)'{--ci}'[Set CI mode]'
   '(-d --dry-run)'{-d,--dry-run}'[Set dry-run mode]'
   '(-t --getopt)'{-t,--getopt}'[Show parsed options]'
   '(-)*:: :->args'

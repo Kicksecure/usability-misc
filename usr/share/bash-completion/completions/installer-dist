@@ -14,9 +14,9 @@ _installer_dist()
     case $prev in
         --guest-version | --socks-proxy | --onion | --non-interactive | \
             --no-import | --no-boot | --redownload | --reimport | \
-            --destroy-existing-guest | --dev | --dry-run | --getopt | \
-            --no-show-errors | --allow-errors | --testers | --version | \
-            --help )
+            --destroy-existing-guest | --dev | --ci | --dry-run | \
+            --getopt | --no-show-errors | --allow-errors | --testers | \
+            --version | --help )
             return
             ;;
         --directory-prefix )
