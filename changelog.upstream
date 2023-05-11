@@ -1,3 +1,149 @@
+commit d6de1d8f5850cd7959a0087970056bc317500d61
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 01:12:32 2023 +0000
+
+    output
+
+commit d9d6ee78669dfd4916a03a41567c89e4278a099e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 01:05:59 2023 +0000
+
+    refactoring
+
+commit 7cb0dfec5c758e531611e926993aecebe3a1820a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 01:03:25 2023 +0000
+
+    output
+
+commit b0e667f3c46a9817c4c5e2e26d5991a55765159f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 01:02:29 2023 +0000
+
+    output
+
+commit 619986f100853d6ebe18f113fda7743a15911a8f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 00:59:13 2023 +0000
+
+    output
+
+commit d512d94ba5da95c307ec9403d44ed2a38712dd85
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 00:52:58 2023 +0000
+
+    improve output regarding which programs/packages are already installed (info level only)
+
+commit 52851fdc25156d45ee34331ec51c5ce2a03c8f62
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 00:37:45 2023 +0000
+
+    simply installation of virtualbox-qt
+
+commit b54de474d9afd477b3033232bb68e918d0756a91
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 00:34:31 2023 +0000
+
+    output
+
+commit 1866a6fe63e0cc582a48380986615f64766f182c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 11 00:12:30 2023 +0000
+
+    improve --dry-run and install_virtualbox_debian
+
+commit 821fab3e6f62680cc858f755c8c093ae1b1bd7a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:57:26 2023 +0000
+
+    refactoring
+
+commit 4d0066f7af3ccea23e55831d49c8bad998f79ace
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:53:52 2023 +0000
+
+    minor
+
+commit 4a5c4bd08d7bebf150ef6a2b9aaf983221421930
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:52:20 2023 +0000
+
+    output
+
+commit 3841315965aacb5fb1c55575d975763b7d19a773
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:51:04 2023 +0000
+
+    set loglevel to notice (default) for manual user input version
+
+commit 9693a86231fef18f8d7f5543b196f60a8df6a341
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:48:54 2023 +0000
+
+    improve --dev
+
+commit 2ec24ca1f039367a43a8048ba60e83d842ca483c
+Merge: b744d29 16377fd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:45:52 2023 +0000
+
+    Merge remote-tracking branch 'grass/master'
+
+commit b744d2904c9f224ed123e566df2acc628b7942b9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:44:56 2023 +0000
+
+    improve --dry-run
+
+commit 8152ce08b8a92783bb97854effc0551c3046b60b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:34:45 2023 +0000
+
+    output
+
+commit 16377fdea1eaf44c7c9da41a33fd128ccd7d86ec
+Merge: d7673b5 65c03f1
+Author: grass <grass@danwin1210.de>
+Date:   Wed May 10 23:34:42 2023 +0000
+
+    Merge remote-tracking branch 'kicksecure/master'
+    
+    * kicksecure/master:
+      bumped changelog version
+      output
+      output
+      improve sudo test
+      fix CI test
+      initialize guest_pretty variable
+      typo
+      improved startup result output
+      fix for compatibility with new remote version API
+      bumped changelog version
+
+commit d7673b5754fd9ba0d060e9244755bdf6fc6cda64
+Author: grass <grass@danwin1210.de>
+Date:   Wed May 10 23:34:18 2023 +0000
+
+    Fix redownload also reimporting
+
+commit 593aae82a352d4fceb36cdffcdfc491cfe5d9867
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:33:08 2023 +0000
+
+    improve check_integrity during --dry-run
+
+commit 8f2bb2ae3037eeabd7d82f4c6a1da35bfaa792c6
+Author: grass <grass@danwin1210.de>
+Date:   Wed May 10 23:27:28 2023 +0000
+
+    Fix skipping redownload
+
+commit 65c03f1f366f8f9a35076590220a77b3e2abbc20
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 10 23:16:32 2023 +0000
+
+    bumped changelog version
+
 commit 02c19e090fbcc93d01d9b3c44720bba9c6bc2dae
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed May 10 23:16:00 2023 +0000
