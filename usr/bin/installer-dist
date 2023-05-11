@@ -1291,15 +1291,9 @@ install_virtualbox_debian(){
     install_pkg "${linux_headers}"
   fi
 
-  if test "${has_vboxmanage}" != "1"; then
-    log notice "Preparing to install VirtualBox"
-    install_backports_and_fasttrack_repository_debian
-    fasttrack_added=1
-    install_pkg virtualbox
-  fi
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "Preparing to install VirtualBox-QT"
-    test "${fasttrack_added-}" != 1 && install_backports_and_fasttrack_repository_debian
+    install_backports_and_fasttrack_repository_debian
     install_pkg virtualbox-qt
   fi
 
