@@ -776,10 +776,18 @@ install_pkg(){
   pkg_not_installed=""
   for pkg in ${pkgs}; do
     ## Test if package exists as a binary or a library, using different tools.
-    # shellcheck disable=SC2086
-    if ! has "${pkg}" && ! ${pkg_mngr_check_installed} "${pkg}"; then
-      pkg_not_installed="${pkg_not_installed} ${pkg}"
+    if has "${pkg}"; then
+      log info "${pkg} program already installed."
+      continue
     fi
+
+    # shellcheck disable=SC2086
+    if ${pkg_mngr_check_installed} "${pkg}"; then
+      log info "${pkg} package already installed."
+      continue
+    fi
+
+    pkg_not_installed="${pkg_not_installed} ${pkg}"
   done
 
   if test -n "${pkg_not_installed}"; then
@@ -1212,7 +1220,7 @@ install_backports_and_fasttrack_repository_debian(){
       die 1 "APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
   fi
 
-  log notice "Installing packages required for backports and fasttrack repository."
+  log info "Installing packages required for backports and fasttrack repository."
   install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
 
   if [ "${backports_found}" = "1" ] && [ "${fasttrack_found}" = "1" ]; then
