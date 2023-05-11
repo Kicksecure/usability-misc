@@ -1499,10 +1499,10 @@ get_utilities(){
   ## Other su cmds do not have an option that does the same.
   if test "${sucmd}" = "sudo"; then
     if ! timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr; then
-      log info "Sudo credential caching: No"
+      log info "User system is using credential caching: No"
       return 0
     fi
-    log info "Sudo credential caching: Yes"
+    log info "User system is using credential caching: Yes"
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       log error "sudo output: ${root_output}"
