@@ -829,8 +829,12 @@ test_pkg(){
   done
 
   if test -n "${pkg_not_installed}"; then
-    log error "Failed to locate package(s):${pkg_not_installed}."
-    return 1
+    if test "${dry_run}" = "1"; then
+      log error "Failed to locate package(s):${pkg_not_installed}. - ignoring because dry_run is set."
+    else
+      log error "Failed to locate package(s):${pkg_not_installed}."
+      return 1
+    fi
   fi
 }
 
@@ -1149,7 +1153,13 @@ install_package_debian_common(){
 
 ## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
-  has vboxmanage || die 1 "Failed to locate 'vboxmanage' program."
+  if ! has vboxmanage ; then
+    if test "${dry_run}" = "1"; then
+      log error "Failed to locate 'vboxmanage' program. - ignoring because dry_run is set."
+    else
+      die 1 "Failed to locate 'vboxmanage' program."
+    fi
+  fi
   id_of_user="$(id --name --user)" || die 1 "Failed to run 'id --name --user'."
   root_cmd adduser "$id_of_user" vboxusers || die 1 "Failed to add user '$id_of_user' to group 'vboxusers'."
 }
@@ -1271,7 +1281,7 @@ install_virtualbox_debian(){
   has virtualboxvm && has_virtualbox_qt=1
 
   if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
-    log notice "vboxmanage and ${linux_headers}"
+    log notice "vboxmanage and ${linux_headers} are already installed."
     install_virtualbox_debian_common_end
     return 0
   fi
@@ -1287,7 +1297,7 @@ install_virtualbox_debian(){
     fasttrack_added=1
     install_pkg virtualbox
   fi
-  if test "${has_virtualbox_qt}"; then
+  if test "${has_virtualbox_qt}" != "1"; then
     log notice "Preparing to install VirtualBox-QT"
     test "${fasttrack_added-}" != 1 && install_backports_and_fasttrack_repository_debian
     install_pkg virtualbox-qt
