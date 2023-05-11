@@ -776,14 +776,13 @@ install_pkg(){
   pkg_not_installed=""
   for pkg in ${pkgs}; do
     ## Test if package exists as a binary or a library, using different tools.
-    if has "${pkg}"; then
-      log info "${pkg} program already installed."
-      continue
-    fi
-
     # shellcheck disable=SC2086
     if ${pkg_mngr_check_installed} "${pkg}"; then
       log info "${pkg} package already installed."
+      continue
+    fi
+    if has "${pkg}"; then
+      log info "${pkg} program already installed."
       continue
     fi
 
