@@ -1769,12 +1769,12 @@ When manually running above cmd_check_proxy it needs to include the expected_res
 
 ## Set version by user input or by querying the API
 get_version(){
-  log notice "Searching for guest version."
+  log notice "Detecting guest version..."
   if test -n "${guest_version:-}"; then
-    log notice "User input version."
+    log notice "User defined, dry_run or dev version already configured. Autodetection form API not required."
     return 0
   fi
-  log info "Acquiring guest version from API."
+  log info "Acquiring guest version from API..."
   log info "API host: ${1}"
   cmd_raw_version="curl ${curl_transfer_proxy:-} $(get_proxy_cred version) \
       ${curl_opt_ssl:-} \
