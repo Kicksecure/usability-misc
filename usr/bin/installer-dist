@@ -1483,8 +1483,8 @@ get_utilities(){
     esac
   done
 
-  log info "Testing root login"
-  root_cmd echo "Successful root login" ||
+  log info "Testing root_cmd function"
+  root_cmd echo "test" ||
     die 1 "Failed to run test command as root."
 
   if test "${ci}" = "1"; then
