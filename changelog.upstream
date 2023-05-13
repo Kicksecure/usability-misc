@@ -1,3 +1,99 @@
+commit 019f7115ef45e6a53c921210dd1b740a2be619a0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 13:21:13 2023 +0000
+
+    output
+
+commit 596b01e5d3b969a48e4e7579c63cb938804c4536
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 13:20:32 2023 +0000
+
+    refactoring
+
+commit d4ae008a98988f51bad26b632c09eaeec3a48fd9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 13:18:51 2023 +0000
+
+    add QubesOS detection test
+
+commit 82bd4ae7681ab5462601c4cf04ddc4cbb2a51353
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 13:08:36 2023 +0000
+
+    output
+
+commit d324f426382ac3f57c4c0b24fe2f62cb7f69fc19
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 13:08:13 2023 +0000
+
+    output
+
+commit 744ed506ddf4e7e8b42d2875ed8f62c1419c168c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 13:00:17 2023 +0000
+
+    output
+
+commit abcf085ac9d7e7a80cac7a78fdbcd0fb930a22d1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 13:00:00 2023 +0000
+
+    output
+
+commit 5269d2752b24ea346fbf8e7b68210d7a70e41c8d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:57:53 2023 +0000
+
+    output
+
+commit c684a7d3c6e6ba4fee6b17d64852546755dd39a9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:54:11 2023 +0000
+
+    output
+
+commit 4b7c4b88acbbd26566d1a7b7bca16d678b59f8a9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:53:25 2023 +0000
+
+    output
+
+commit bd8df4c336bc8052dfd0fd193214d202bbd839b2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:50:53 2023 +0000
+
+    output
+
+commit d2a4687b4f1edc9484a6c621add4df4d72b55958
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:39:24 2023 +0000
+
+    refactoring
+
+commit 66db59336ba4502cd79f89b237fd26d4b994be98
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:37:32 2023 +0000
+
+    avoid re-adding user to vboxusers group
+    
+    if already done
+    
+    to avoid writing to /etc/passwd
+    
+    to avoid a sudo command
+
+commit 7a3e29ccdcdb8f8a1f90f7651f0383f17db7c98b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:31:00 2023 +0000
+
+    improve hypervisor_pretty
+
+commit f30383f782bf5d67b577a8312cf97dd4fcfd349f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 13 12:17:07 2023 +0000
+
+    bumped changelog version
+
 commit ce7cd84672f53c4d2a8184270711f722a7cce4ac
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat May 13 12:16:18 2023 +0000
