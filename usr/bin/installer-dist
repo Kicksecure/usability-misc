@@ -751,7 +751,10 @@ get_independent_host_pkgs(){
     install_pkg virt-what && nested_virt_tool="virt-what" && break
     break
   done
+}
 
+
+nested_virtualization_test() {
   nested_virtualization_detected=""
   if test -z "${nested_virt_tool:-}"; then
     ## No hard fail, not a requirement, good to have only.
@@ -1646,6 +1649,7 @@ pre_check(){
   get_system_stat
   get_host_pkgs
   get_independent_host_pkgs
+  nested_virtualization_test
 
   ## onion=1 -- Always torify onion connections.
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
