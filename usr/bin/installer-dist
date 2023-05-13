@@ -280,8 +280,8 @@ get_os(){
   esac
   log notice "Detected architecture: ${arch}."
   log notice "Detected system: ${os}."
-  log notice "Decteted distribution: ${distro}."
-  log notice "Decteted distribution version: ${distro_version}."
+  log notice "Detected distribution: ${distro}."
+  log notice "Detected distribution version: ${distro_version}."
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
   if [ -z "${distro_version}" ]; then
