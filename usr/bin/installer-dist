@@ -1134,7 +1134,7 @@ virtualbox_start_failed() {
 - failed to start the virtual machines.
 - This is likely happening due to the virtualization related warnings that have been reported above."
   fi
-  die 107 "${underline}Virtual Machine Startup Result:${nounderline} ${bold}FAIL${nobold}
+  die 107 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
 - The installer succeeded with download and import, but
 - failed to start the virtual machines.
 - See user documentation:
