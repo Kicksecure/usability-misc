@@ -976,13 +976,14 @@ check_guest_boot(){
   log notice "If you would like to reimport the image, read about --reimport (danger)."
   ## Skip guest boot
   if test "${no_boot}" = "1"; then
-    log notice "no_boot is set."
-    log notice "User declined to start Virtual Machine(s) via command line."
+    log info "no_boot is set."
+    log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via command line."
     log notice "Virtual Machine(s) can be started manually."
     exit
   fi
   ## Default to start guest without interaction
   if test "${non_interactive}" = "1"; then
+    log notice "${underline}VM Startup Check:${nounderline} VM start agreed by the user by setting non_interactive."
     start_guest
     exit
   fi
@@ -996,17 +997,17 @@ check_guest_boot(){
       log notice "Available guest: ${guest_pretty}-${interface_all_caps}"
       ;;
   esac
-  log notice "Do you want to start the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
+  log notice "${bold}Question:${nobold} Do you want to start the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
   printf '%s' "Your answer: "
   read -r response
   log notice "User replied '${response}'."
   case ${response} in
     ""|[Yy]|[Yy][Ee][Ss])
-      log notice "User accepted to start Virtual Machine(s)."
+      log notice "${underline}VM Startup Check:${nounderline} User accepted to start Virtual Machine(s)."
       start_guest
       ;;
     *)
-      log notice "User declined to start Virtual Machine(s)."
+      log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s)."
       log notice "The ${guest_pretty} Virtual Machine(s) can be started manually."
       ;;
   esac
