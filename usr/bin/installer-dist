@@ -1293,7 +1293,7 @@ install_virtualbox_debian(){
   has virtualboxvm && has_virtualbox_qt=1
 
   if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
-    log notice "vboxmanage and ${linux_headers} are already installed."
+    log info "vboxmanage and ${linux_headers} are already installed."
     install_virtualbox_debian_common_end
     return 0
   fi
