@@ -1168,6 +1168,10 @@ install_virtualbox_debian_common_end(){
     fi
   fi
   id_of_user="$(id --name --user)" || die 1 "Failed to run 'id --name --user'."
+  if id -nG "$id_of_user" | grep -qw "vboxusers\$"; then
+    log info "'$id_of_user' is already a member of the Linux group 'vboxusers'."
+    return 0
+  fi
   root_cmd adduser "$id_of_user" vboxusers || die 1 "Failed to add user '$id_of_user' to group 'vboxusers'."
 }
 
