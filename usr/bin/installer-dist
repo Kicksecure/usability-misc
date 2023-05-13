@@ -2263,7 +2263,7 @@ main(){
     log info "  ${item}"
   done
 
-  log notice "${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer."
+  log notice "${underline}Installer:${nounderline} ${bold}${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer${nobold}"
   if test "${non_interactive}" != "1"; then
     log notice "If you wish to cancel installation, press Ctrl+C."
   fi
