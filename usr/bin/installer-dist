@@ -1335,7 +1335,7 @@ install_signify(){
 ## Test if user accepts the license, if not, abort.
 check_license(){
   if [ "${non_interactive}" = "1" ]; then
-    log notice "License agreed by the user by setting non_interactive."
+    log notice "${underline}License Check:${nounderline} Agreed by the user by setting non_interactive."
     return 0
   fi
 
@@ -1363,7 +1363,7 @@ check_license(){
         --no-label "Disagree" \
         --output-fd 1 \
         --yesno "${license}" 640 480 || return 1
-      log notice "User agreed with the license."
+      log notice "${underline}License Check:${nounderline} User agreed with the license."
       ;;
     whiptail)
       ## When text is too long and scrolltext is needed, the yesno box
@@ -1375,7 +1375,7 @@ check_license(){
         --yes-button "Agree" \
         --no-button "Disagree" \
         --yesno "${license}" 24 80 || return 1
-      log notice "User agreed with the license."
+      log notice "${underline}License Check:${nounderline} User agreed with the license."
       ;;
     *)
       printf '%s\n' "${license}"
@@ -1383,10 +1383,10 @@ check_license(){
       read -r license_agreement
       case "${license_agreement}" in
         [yY][eE][sS])
-          log notice "User agreed with the license."
+          log notice "${underline}License Check:${nounderline} User agreed with the license."
           ;;
         *)
-          log warn "User replied '${license_agreement}'."
+          log warn "${underline}License Check:${nounderline} User replied '${license_agreement}'."
           return 1
           ;;
       esac
