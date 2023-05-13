@@ -1124,17 +1124,17 @@ start_virtualbox(){
         "${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
       ;;
   esac
-  log notice "${underline}Virtual Machine startup result:${nounderline} ${green}${bold}SUCCESS${nobold}${nocolor}"
+  log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}SUCCESS${nobold}${nocolor}"
 }
 
 virtualbox_start_failed() {
   if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
-    die 106 "${underline}Virtual Machine startup result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
+    die 106 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
 - The installer succeeded with download and import, but
 - failed to start the virtual machines.
 - This is likely happening due to the virtualization related warnings that have been reported above."
   fi
-  die 107 "${underline}Virtual Machine startup result:${nounderline} ${bold}FAIL${nobold}
+  die 107 "${underline}Virtual Machine Startup Result:${nounderline} ${bold}FAIL${nobold}
 - The installer succeeded with download and import, but
 - failed to start the virtual machines.
 - See user documentation:
