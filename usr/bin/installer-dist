@@ -2240,7 +2240,18 @@ main(){
   guest_pretty="$(capitalize_first_char "${guest}")"
   interface_pretty="$(capitalize_first_char "${interface}")"
   interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
-  hypervisor_pretty="$(capitalize_first_char "${hypervisor}")"
+
+  case "${hypervisor}" in
+    virtualbox)
+      hypervisor_pretty="VirtualBox"
+      ;;
+    kvm)
+      hypervisor_pretty="KVM"
+      ;;
+    *)
+      hypervisor_pretty="${hypervisor}"
+      ;;
+  esac
 
   log info "Parsed options:"
   for item in ${arg_saved}; do
