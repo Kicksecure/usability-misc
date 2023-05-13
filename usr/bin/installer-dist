@@ -1167,12 +1167,13 @@ install_virtualbox_debian_common_end(){
       die 1 "Failed to locate 'vboxmanage' program."
     fi
   fi
+  virtualbox_linux_user_group="vboxusers"
   id_of_user="$(id --name --user)" || die 1 "Failed to run 'id --name --user'."
-  if id -nG "$id_of_user" | grep -qw "vboxusers\$"; then
+  if id -nG "$id_of_user" | grep -qw "${virtualbox_linux_user_group}\$"; then
     log info "'$id_of_user' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
-  root_cmd adduser "$id_of_user" vboxusers || die 1 "Failed to add user '$id_of_user' to group 'vboxusers'."
+  root_cmd adduser "$id_of_user" "${virtualbox_linux_user_group}" || die 1 "Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
 }
 
 
