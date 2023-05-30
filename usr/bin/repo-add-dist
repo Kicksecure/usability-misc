@@ -28,12 +28,14 @@ root_check
 [[ -v apt_source_key_temp_folder_derivative ]] || apt_source_key_temp_folder_derivative="/var/lib/derivative-maker/repo-add-dist"
 [[ -v apt_source_key_derivative ]] || apt_source_key_derivative="/var/lib/derivative-maker/repo-add-dist/derivative.asc"
 
-## Variable set by derivative-maker.
+## Variables set by derivative-maker.
+[[ -v sources_list_target_folder_build_remote_derivative ]] || sources_list_target_folder_build_remote_derivative="/etc/apt/sources.list.d"
 [[ -v sources_list_target_build_remote_derivative ]] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/derivative.list"
 
 [[ -v codename ]] || codename="bullseye"
 [[ -v sources_list_build_remote_derivative ]] || sources_list_build_remote_derivative="deb [signed-by=$apt_target_key_derivative] https://deb.kicksecure.com $codename main contrib non-free"
 
+mkdir --parents "$sources_list_target_folder_build_remote_derivative"
 mkdir --parents "$apt_source_key_temp_folder_derivative"
 
 cat <<EOF | tee "$apt_source_key_derivative" >/dev/null
