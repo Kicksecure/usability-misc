@@ -10,6 +10,8 @@
 
 true "START: $0"
 set -e
+set -o pipefail
+set -o nounset
 
 root_check() {
    if [ "$(id -u)" != "0" ]; then
