@@ -34,7 +34,7 @@ true "real_path_apt_source_key_derivative: $real_path_apt_source_key_derivative"
 [ -n "$codename" ] || codename="bullseye"
 [ -n "$sources_list_build_remote_derivative" ] || sources_list_build_remote_derivative="deb [signed-by=/usr/share/keyrings/derivative.asc] https://deb.kicksecure.com $codename main contrib non-free"
 
-cat <<EOF > "$apt_source_key_derivative"
+cat <<EOF | tee "$apt_source_key_derivative" >/dev/null
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQINBFLYY+gBEACb5AqqsBuxzGlqSQZoua/CI/kr9YOagD9G8I+aBXoTUqyTSafy
@@ -1234,7 +1234,7 @@ cp --verbose "$apt_source_key_derivative" "$apt_target_key_derivative"
 
 true "sources_list_target_build_remote_derivative: $sources_list_target_build_remote_derivative"
 
-cat <<EOF > "$sources_list_target_build_remote_derivative"
+cat <<EOF | tee "$sources_list_target_build_remote_derivative" >/dev/null
 $sources_list_build_remote_derivative
 EOF
 
