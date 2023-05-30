@@ -6,7 +6,7 @@
 ## Self-contained script. Don't add dependencies to other files. See man page
 ## for the purpose of this script.
 
-## Dependency of Whonix / Kicksecure build script.
+## Dependency of derivative-maker.
 
 true "START: $0"
 set -e
@@ -28,7 +28,7 @@ root_check
 [[ -v apt_source_key_temp_folder_derivative ]] || apt_source_key_temp_folder_derivative="/var/lib/derivative-maker/repo-add-dist"
 [[ -v apt_source_key_derivative ]] || apt_source_key_derivative="/var/lib/derivative-maker/repo-add-dist/derivative.asc"
 
-## Variable set by Whonix / Kicksecure build script.
+## Variable set by derivative-maker.
 [[ -v sources_list_target_build_remote_derivative ]] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/derivative.list"
 
 [[ -v codename ]] || codename="bullseye"
