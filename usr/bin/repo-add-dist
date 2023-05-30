@@ -24,15 +24,15 @@ root_check() {
 
 root_check
 
-[ -n "$apt_target_key_derivative" ] || apt_target_key_derivative="/usr/share/keyrings/derivative.asc"
-[ -n "$apt_source_key_temp_folder_derivative" ] || apt_source_key_temp_folder_derivative="/var/lib/derivative-maker/repo-add-dist"
-[ -n "$apt_source_key_derivative" ] || apt_source_key_derivative="/var/lib/derivative-maker/repo-add-dist/derivative.asc"
+[[ -v apt_target_key_derivative ]] || apt_target_key_derivative="/usr/share/keyrings/derivative.asc"
+[[ -v apt_source_key_temp_folder_derivative ]] || apt_source_key_temp_folder_derivative="/var/lib/derivative-maker/repo-add-dist"
+[[ -v apt_source_key_derivative ]] || apt_source_key_derivative="/var/lib/derivative-maker/repo-add-dist/derivative.asc"
 
 ## Variable set by Whonix / Kicksecure build script.
-[ -n "$sources_list_target_build_remote_derivative" ] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/derivative.list"
+[[ -v sources_list_target_build_remote_derivative ]] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/derivative.list"
 
-[ -n "$codename" ] || codename="bullseye"
-[ -n "$sources_list_build_remote_derivative" ] || sources_list_build_remote_derivative="deb [signed-by=$apt_target_key_derivative] https://deb.kicksecure.com $codename main contrib non-free"
+[[ -v codename ]] || codename="bullseye"
+[[ -v sources_list_build_remote_derivative ]] || sources_list_build_remote_derivative="deb [signed-by=$apt_target_key_derivative] https://deb.kicksecure.com $codename main contrib non-free"
 
 mkdir --parents "$apt_source_key_temp_folder_derivative"
 
