@@ -1,4 +1,4 @@
-#compdef installer-dist kicksecure-installer-cli kicksecure-installer-xfce whonix-installer-cli whonix-installer-xfce
+#compdef installer-dist kicksecure-installer-cli kicksecure-installer-xfce whonix-installer-cli whonix-installer-xfce virtualbox-installer
 # vim: set sw=2 sts=2 ts=2 et :
 ## Copyright (C) 2022 grass <grass@danwin1210.de>
 ## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
@@ -31,9 +31,10 @@ args=(
   '(--no-show-errors)'--no-show-errors'[Hide errors]'
   '(--testers)'--testers'[Set testers mode]'
   '(-D --dev)'{-D,--dev}'[Set dev mode]'
-  '(--ci)'{--ci}'[Set CI mode]'
+  '(--ci)'--ci'[Set CI mode]'
   '(-d --dry-run)'{-d,--dry-run}'[Set dry-run mode]'
   '(-t --getopt)'{-t,--getopt}'[Show parsed options]'
+  '(--virtualbox-only)'--virtualbox-only'[Only downloads and installs VirtualBox]'
   '(-)*:: :->args'
 )
 
