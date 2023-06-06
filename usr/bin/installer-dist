@@ -683,13 +683,17 @@ get_host_pkgs(){
           true "${distro}"
           install_package_debian_common
           install_virtualbox_debian
-          test "${virtualbox_only}" = "1" && exit 0
+          if test "${virtualbox_only}" = "1"; then
+            exit 0
+          fi
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
           true "${distro}"
           install_package_debian_common
           install_virtualbox_ubuntu
-          test "${virtualbox_only}" = "1" && exit 0
+          if test "${virtualbox_only}" = "1"; then
+            exit 0
+          fi
           ;;
         *"buntu"*)
           true "${distro}"
@@ -1168,7 +1172,9 @@ install_package_debian_common(){
     return 1
   fi
 
-  test "${virtualbox_only}" = "1" && return 0
+  if test "${virtualbox_only}" = "1"; then
+    return 0
+  fi
 
   install_pkg torsocks
   install_signify signify-openbsd
@@ -1538,7 +1544,9 @@ get_transfer_cmd(){
 ## Get utilities from a pool of known utilities and use the first one found.
 get_utilities(){
   get_su_cmd
-  test "${virtualbox_only}" = "1" && return 0
+  if test "${virtualbox_only}" = "1"; then
+    return 0
+  fi
   get_checkhash_cmd
   get_transfer_cmd
 }
@@ -1597,6 +1605,7 @@ get_system_stat(){
       ;;
   esac
   if test "${virtualbox_only}" = "1"; then
+    # shellcheck disable=SC2034
     min_ram_mb="1024"
   fi
 
@@ -2069,7 +2078,9 @@ get_virtualization(){
 ## BEGIN MAIN ##
 ################
 get_download_links(){
-  test "${virtualbox_only}" = "1" && return 0
+  if test "${virtualbox_only}" = "1"; then
+    return 0
+  fi
   ## Set upstream links as base, especially for API.
   ## clearnet project domain
   site_clearnet_whonix="whonix.org"
