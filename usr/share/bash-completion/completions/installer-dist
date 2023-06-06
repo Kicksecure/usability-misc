@@ -16,7 +16,7 @@ _installer_dist()
             --no-import | --no-boot | --redownload | --reimport | \
             --destroy-existing-guest | --dev | --ci | --dry-run | \
             --getopt | --no-show-errors | --allow-errors | --testers | \
-            --version | --help )
+            --virtualbox-only | --version | --help )
             return
             ;;
         --directory-prefix )
@@ -59,6 +59,7 @@ _installer_dist()
 } &&
     complete -F _installer_dist installer-dist \
                 kicksecure-installer-cli kicksecure-installer-xfce \
-                whonix-installer-cli whonix-installer-xfce
+                whonix-installer-cli whonix-installer-xfce \
+                virtualbox-installer
 
 # ex: filetype=sh

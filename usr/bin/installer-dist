@@ -683,11 +683,13 @@ get_host_pkgs(){
           true "${distro}"
           install_package_debian_common
           install_virtualbox_debian
+          test "${virtualbox_only}" = "1" && exit 0
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
           true "${distro}"
           install_package_debian_common
           install_virtualbox_ubuntu
+          test "${virtualbox_only}" = "1" && exit 0
           ;;
         *"buntu"*)
           true "${distro}"
@@ -1166,6 +1168,8 @@ install_package_debian_common(){
     return 1
   fi
 
+  test "${virtualbox_only}" = "1" && return 0
+
   install_pkg torsocks
   install_signify signify-openbsd
 }
@@ -1408,8 +1412,49 @@ check_license(){
 }
 
 
-## Get utilities from a pool of known utilities and use the first one found.
-get_utilities(){
+get_su_cmd(){
+  while true; do
+    has sudo && sucmd=sudo && break
+    has doas && sucmd=doas && break
+    has su && sucmd=su && break
+    test -z "${sucmd}" && {
+      die 1 "Failed to find program to run as another user."
+    }
+    case "${sucmd}" in
+      sudo) :;;
+      *) log warn "Using sucmd '$sucmd'. Consider installing sudo instead to cache your passwords instead of typing them every time.";;
+    esac
+  done
+
+  log info "Testing root_cmd function"
+  root_cmd echo "test" ||
+    die 1 "Failed to run test command as root."
+
+  if test "${ci}" = "1"; then
+    root_output="$(timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr 2>&1)"
+    if test -n "${root_output}"; then
+      log error "sudo output: ${root_output}"
+      die 1 "Unexpected non-empty output for sudo test in CI mode."
+    fi
+    return 0
+  fi
+
+  ## Other su cmds do not have an option that does the same.
+  if test "${sucmd}" = "sudo"; then
+    if ! timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr; then
+      log info "User system is using credential caching: No"
+      return 0
+    fi
+    log info "User system is using credential caching: Yes"
+    root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
+    if test -n "${root_output}"; then
+      log error "sudo output: ${root_output}"
+      die 1 "Unexpected non-empty output for sudo test in normal mode."
+    fi
+  fi
+}
+
+get_checkhash_cmd(){
   while true; do
     has sha512sum && checkhash="sha512sum" && break
     has shasum && checkhash="shasum -a 512" && break
@@ -1420,7 +1465,9 @@ get_utilities(){
       die 1 "Failed to find program that checks SHA512 hash sum."
     }
   done
+}
 
+get_transfer_cmd(){
   ## curl|rsync
   transfer_utility=rsync
   case "${transfer_utility}" in
@@ -1486,46 +1533,14 @@ get_utilities(){
       transfer_speed_optimization_opt="--compress --partial"
       ;;
   esac
+}
 
-  while true; do
-    has sudo && sucmd=sudo && break
-    has doas && sucmd=doas && break
-    has su && sucmd=su && break
-    test -z "${sucmd}" && {
-      die 1 "Failed to find program to run as another user."
-    }
-    case "${sucmd}" in
-      sudo) :;;
-      *) log warn "Using sucmd '$sucmd'. Consider installing sudo instead to cache your passwords instead of typing them every time.";;
-    esac
-  done
-
-  log info "Testing root_cmd function"
-  root_cmd echo "test" ||
-    die 1 "Failed to run test command as root."
-
-  if test "${ci}" = "1"; then
-    root_output="$(timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr 2>&1)"
-    if test -n "${root_output}"; then
-      log error "sudo output: ${root_output}"
-      die 1 "Unexpected non-empty output for sudo test in CI mode."
-    fi
-    return 0
-  fi
-
-  ## Other su cmds do not have an option that does the same.
-  if test "${sucmd}" = "sudo"; then
-    if ! timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr; then
-      log info "User system is using credential caching: No"
-      return 0
-    fi
-    log info "User system is using credential caching: Yes"
-    root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
-    if test -n "${root_output}"; then
-      log error "sudo output: ${root_output}"
-      die 1 "Unexpected non-empty output for sudo test in normal mode."
-    fi
-  fi
+## Get utilities from a pool of known utilities and use the first one found.
+get_utilities(){
+  get_su_cmd
+  test "${virtualbox_only}" = "1" && return 0
+  get_checkhash_cmd
+  get_transfer_cmd
 }
 
 
@@ -1581,6 +1596,9 @@ get_system_stat(){
       min_ram_mb="1024"
       ;;
   esac
+  if test "${virtualbox_only}" = "1"; then
+    min_ram_mb="1024"
+  fi
 
   ## 4GB RAM machine reports 3844Mi and 4031MB
   ## /proc/meminfo replies in kB
@@ -1591,7 +1609,12 @@ get_system_stat(){
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
     log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: ${total_mem} MB. See:"
-    log warn "  ${url_version_domain}/wiki/RAM"
+    if test "${virtualbox_only}" != "1"; then
+      log warn "  ${url_version_domain}/wiki/RAM"
+    fi
+  fi
+  if test "${virtualbox_only}" = "1"; then
+    return 0
   fi
 
   df_output="$(df --output=avail -BG "${directory_prefix}")"
@@ -2046,6 +2069,7 @@ get_virtualization(){
 ## BEGIN MAIN ##
 ################
 get_download_links(){
+  test "${virtualbox_only}" = "1" && return 0
   ## Set upstream links as base, especially for API.
   ## clearnet project domain
   site_clearnet_whonix="whonix.org"
@@ -2277,7 +2301,11 @@ main(){
     log info "  ${item}"
   done
 
-  log notice "${underline}Installer:${nounderline} ${bold}${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer${nobold}"
+  if test "${virtualbox_only}" = "1"; then
+    log notice "${underline}Installer:${nounderline} ${bold}VirtualBox Installer${nobold}"
+  else
+    log notice "${underline}Installer:${nounderline} ${bold}${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer${nobold}"
+  fi
   if test "${non_interactive}" != "1"; then
     log notice "If you wish to cancel installation, press Ctrl+C."
   fi
@@ -2407,6 +2435,7 @@ Developer options:
  --ci                Set CI mode. Test running in CI.
  --testers           Set testers version to be downloaded.
  -d, --dry-run       Simulated run, log commands to info level without executing.
+  --virtualbox-only  Only downloads and installs VirtualBox.
  -t, --getopt        Show parsed options and quit.
 File name:
   The default file name is installer-dist. Some basic options can be set as
@@ -2437,7 +2466,8 @@ set_default(){
   socks_proxy=""
   onion=""
   non_interactive=""
-  dev="" dry_run=""
+  dev=""
+  dry_run=""
   getversion=""
   getopt=""
   ci=""
@@ -2451,6 +2481,7 @@ set_default(){
   allow_errors=""
   no_show_errors=""
   mirror=""
+  virtualbox_only=""
 }
 
 
@@ -2461,8 +2492,14 @@ parse_name(){
   ## check if file name is valid
   case "${me}" in
     whonix-installer-xfce | whonix-installer-cli | \
-        kicksecure-installer-xfce | kicksecure-installer-cli )
-      log info "Valid script name ${me}, using its name to set options."
+      kicksecure-installer-xfce | kicksecure-installer-cli )
+      log info "Valid script name '${me}', using its name to set options."
+      ;;
+    virtualbox-installer )
+      log info "Valid script name '${me}', using its name to set options."
+      set_arg virtualbox_only 1
+      set_arg hypervisor virtualbox
+      return 0
       ;;
     *)
       log error "Invalid script name '${me}'."
@@ -2554,6 +2591,10 @@ parse_opt(){
         ;;
       d|dry-run)
         set_arg dry_run 1
+        ;;
+      virtualbox-only)
+        set_arg virtualbox_only 1
+        set_arg hypervisor virtualbox
         ;;
       V|version)
         set_arg getversion 1
