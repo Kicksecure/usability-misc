@@ -1,3 +1,36 @@
+commit a47e00600ebf702ea5d168bb41454a192b7418ab
+Merge: b31eee7 c0d3954
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jun 6 17:28:23 2023 +0000
+
+    Merge remote-tracking branch 'grass/master'
+
+commit c0d3954968d3daea356d7b924cdb8466c842377f
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jun 6 17:25:27 2023 +0000
+
+    Fix test statement not handling errors
+    Reminder to use if statements because they don't have this problem.
+
+commit b31eee7bd73a0e42e5d7cb166fe7615809b2e20f
+Merge: d7ab9d4 b047523
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jun 6 16:57:59 2023 +0000
+
+    Merge remote-tracking branch 'grass/master'
+
+commit b047523ce38b02f4c670c974b67bc7507e4d113c
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jun 6 16:42:02 2023 +0000
+
+    Add standalone VirtualBox installer
+
+commit d7ab9d43cf36a45d67d4f04cfb1bee5a98313d42
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 30 08:59:43 2023 +0000
+
+    bumped changelog version
+
 commit d611d89522fd875a370ba98459e98aaa3dea7ea7
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue May 30 08:59:31 2023 +0000
