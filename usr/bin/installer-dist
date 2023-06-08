@@ -1363,6 +1363,8 @@ check_license(){
   fi
 
   log notice "The license will be shown in 5 seconds."
+  log notice "(Use -n or --non-interactive for non-interactive mode.)"
+
   test "${dry_run}" != "1" && sleep 5
 
   ## Whiptail is the Debian version of Dialog with much less features.
