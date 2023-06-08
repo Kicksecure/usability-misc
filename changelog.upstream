@@ -1,3 +1,21 @@
+commit 04b8fa376e16d647328104fc3279e4439026625d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jun 8 21:31:50 2023 +0000
+
+    output
+
+commit 04bd76bd307b8da49ac8d8890a99e3106ae4670b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jun 8 21:29:29 2023 +0000
+
+    symlink /usr/bin/virtualbox-installer
+
+commit a832528833f4b3a80706d894f07ebb226a000e20
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jun 7 11:20:11 2023 +0000
+
+    bumped changelog version
+
 commit a47e00600ebf702ea5d168bb41454a192b7418ab
 Merge: b31eee7 c0d3954
 Author: Patrick Schleizer <adrelanos@whonix.org>
