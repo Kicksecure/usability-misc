@@ -1,7 +1,7 @@
 #compdef installer-dist kicksecure-installer-cli kicksecure-installer-xfce whonix-installer-cli whonix-installer-xfce virtualbox-installer
 # vim: set sw=2 sts=2 ts=2 et :
 ## Copyright (C) 2022 grass <grass@danwin1210.de>
-## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## Copyright (C) 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 local curcontext="$curcontext" state state_descr line expl ret=1

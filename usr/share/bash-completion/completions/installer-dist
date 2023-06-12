@@ -1,6 +1,6 @@
 # installer-dist(8) completion                           -*- shell-script -*-
 
-## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## Copyright (C) 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 _installer_dist()

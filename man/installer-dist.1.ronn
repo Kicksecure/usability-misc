@@ -5,7 +5,7 @@ installer-dist(1) -- download and import Whonix/Kicksecure VMs
 # vim: tw=75 cc=76
 ## ronn conversion of options description breaks lines horribly if longer
 ## than 75 chars.
-## Copyright (C) 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## Copyright (C) 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 -->
 
