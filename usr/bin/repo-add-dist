@@ -32,7 +32,7 @@ root_check
 [[ -v sources_list_target_folder_build_remote_derivative ]] || sources_list_target_folder_build_remote_derivative="/etc/apt/sources.list.d"
 [[ -v sources_list_target_build_remote_derivative ]] || sources_list_target_build_remote_derivative="/etc/apt/sources.list.d/derivative.list"
 
-[[ -v codename ]] || codename="bullseye"
+[[ -v codename ]] || codename="bookworm"
 [[ -v sources_list_build_remote_derivative ]] || sources_list_build_remote_derivative="deb [signed-by=$apt_target_key_derivative] https://deb.kicksecure.com $codename main contrib non-free"
 
 mkdir --parents "$sources_list_target_folder_build_remote_derivative"

@@ -1274,7 +1274,7 @@ install_backports_and_fasttrack_repository_debian(){
 
     log notice "backports URL: ${backports_url}"
     log notice "Adding backports repository to /etc/apt/sources.list.d/backports.list"
-    echo "deb ${backports_url}/debian/ bullseye-backports main contrib non-free" | \
+    echo "deb ${backports_url}/debian/ bookworm-backports main contrib non-free" | \
       root_cmd tee /etc/apt/sources.list.d/backports.list ||
         die 1 "Failed to write to /etc/apt/sources.list.d/backports.list."
   fi
@@ -1298,7 +1298,7 @@ install_backports_and_fasttrack_repository_debian(){
 
     log notice "Fasttrack URL: ${fasttrack_url}"
     log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
-    echo "deb ${fasttrack_url}/debian/ bullseye-fasttrack main contrib non-free" | \
+    echo "deb ${fasttrack_url}/debian/ bookworm-fasttrack main contrib non-free" | \
       root_cmd tee /etc/apt/sources.list.d/fasttrack.list ||
         die 1 "Failed to write to /etc/apt/sources.list.d/fasttrack.list."
   fi
