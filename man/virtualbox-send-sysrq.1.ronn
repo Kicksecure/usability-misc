@@ -22,15 +22,15 @@ Send SysRq command to VirtualBox VMs.
 Has to be used on the host.
 
 ## Examples
-`virtualbox-send-sysrq Whonix-Workstation-XFCE h`
+`virtualbox-send-sysrq Whonix-Workstation-Xfce h`
 
 `virtualbox-send-sysrq Whonix-Workstation-CLI h`
 
-`virtualbox-send-sysrq Whonix-Gateway-XFCE h`
+`virtualbox-send-sysrq Whonix-Gateway-Xfce h`
 
 `virtualbox-send-sysrq Whonix-Gateway-CLI h`
 
-`virtualbox-send-sysrq Kicksecure-XFCE h`
+`virtualbox-send-sysrq Kicksecure-Xfce h`
 
 `virtualbox-send-sysrq Kicksecure-CLI h`
 
