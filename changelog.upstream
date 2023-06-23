@@ -1,3 +1,15 @@
+commit 228673709dd1c8a0e04b8d0c531e30fb4ef4e10d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jun 22 16:16:42 2023 +0000
+
+    XFCE -> Xfce
+
+commit 68e9a58508c2459eb1849f5921d53fa023ce5bfd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jun 21 09:40:36 2023 +0000
+
+    bumped changelog version
+
 commit bc656d19e2c14bc8115c8427d44e2e7ebb8b61b5
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Jun 21 09:11:33 2023 +0000
