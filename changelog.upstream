@@ -1,3 +1,99 @@
+commit 0ea89dc53ef230913ddce82fca403181fcbeb250
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:37:04 2023 +0000
+
+    install Kicksecure signing key
+
+commit 8714671259511d1475db5434b3ce003017db1ca8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:30:21 2023 +0000
+
+    implement adding Kicksecure repository
+
+commit f7cc8da0c26d4fda5bdc2645b1d75454d76929a6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:22:34 2023 +0000
+
+    refactoring
+
+commit 56baf4acf3069f35795efee704ec347b7605ff2e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:17:49 2023 +0000
+
+    refactoring
+
+commit d50248bac78b134e62eef2d3107eb95a5eef9bb5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:15:52 2023 +0000
+
+    refactoring
+
+commit 0e124337e1a6571b9ed8bf89f0c72bb20d9514ba
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:14:40 2023 +0000
+
+    towards bookworm support
+
+commit 1bab2bdfee21bd0a9abce92a4fbbd3573d2b1218
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:06:53 2023 +0000
+
+    fix, do not hardcode distribution codename
+
+commit 6937c6b2144b8e2585d39800cb0f6455aef51b5c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:06:16 2023 +0000
+
+    typo
+
+commit 56c266f15c0d5c75adcf1d5255b58c3a62ea2364
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:05:54 2023 +0000
+
+    minor
+
+commit 4676cd1a49a9e1005acb4843ccb2fff88205e962
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 12:05:31 2023 +0000
+
+    distro_codename
+
+commit 312c08929662ac32f965c4fee225772b2f6c04cd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 11:58:39 2023 +0000
+
+    oldstable
+
+commit 92659dcbc137a8f2030fe15b7b36d7fdcfbd6473
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 11:47:33 2023 +0000
+
+    fix, do not run Nested Virtualization Test when dry run
+
+commit b1e5fd8484bd6053124bd79da606356866257dad
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 11:43:44 2023 +0000
+
+    output
+
+commit 97ea12a10e1d132fc28f95f369d4a67597006789
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 11:40:58 2023 +0000
+
+    handle XFCE -> Xfce renaming for Whonix 17
+
+commit 3c13d0b03f2442d2078cf19ada4b044877ca8961
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 10:52:03 2023 +0000
+
+    refactoring
+
+commit 97462a6345b39d197131d8edda34209b19fdf927
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 23 08:18:43 2023 +0000
+
+    bumped changelog version
+
 commit 228673709dd1c8a0e04b8d0c531e30fb4ef4e10d
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jun 22 16:16:42 2023 +0000
