@@ -872,12 +872,12 @@ check_vm_exists_virtualbox(){
       workstation_exists=0
       gateway_exists=0
       if vboxmanage showvminfo \
-        "${guest_pretty}-Gateway-${interface_all_caps}" >/dev/null 2>&1
+        "${guest_pretty}-Gateway-${interface_name}" >/dev/null 2>&1
       then
         gateway_exists=1
       fi
       if vboxmanage showvminfo \
-        "${guest_pretty}-Workstation-${interface_all_caps}" >/dev/null 2>&1
+        "${guest_pretty}-Workstation-${interface_name}" >/dev/null 2>&1
       then
         workstation_exists=1
       fi
@@ -907,7 +907,7 @@ check_vm_exists_virtualbox(){
             else
               log warn "Deleting previously imported gateway because reimport is set."
               log_run vboxmanage unregistervm \
-                "${guest_pretty}-Gateway-${interface_all_caps}" --delete
+                "${guest_pretty}-Gateway-${interface_name}" --delete
             fi
           fi
           ## Remove Workstation if it exists.
@@ -919,7 +919,7 @@ check_vm_exists_virtualbox(){
             else
               log warn "Deleting previously imported workstation because reimport is set."
               log_run vboxmanage unregistervm \
-                "${guest_pretty}-Workstation-${interface_all_caps}" --delete
+                "${guest_pretty}-Workstation-${interface_name}" --delete
             fi
           fi
         elif test -n "${import_only}"; then
@@ -953,7 +953,7 @@ check_vm_exists_virtualbox(){
       ;;
     kicksecure)
       if vboxmanage showvminfo \
-        "${guest_pretty}-${interface_all_caps}" >/dev/null 2>&1
+        "${guest_pretty}-${interface_name}" >/dev/null 2>&1
       then
         log notice "${underline}Existing VM Check:${nounderline} Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
@@ -961,7 +961,7 @@ check_vm_exists_virtualbox(){
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
           log_run vboxmanage unregistervm \
-            "${guest_pretty}-${interface_all_caps}" --delete
+            "${guest_pretty}-${interface_name}" --delete
         else
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -1008,11 +1008,11 @@ check_guest_boot(){
   ## Ask user to start guest or not
   case "${guest}" in
     whonix)
-      log notice "Available guest: ${guest_pretty}-Gateway-${interface_all_caps}"
-      log notice "Available guest: ${guest_pretty}-Workstation-${interface_all_caps}"
+      log notice "Available guest: ${guest_pretty}-Gateway-${interface_name}"
+      log notice "Available guest: ${guest_pretty}-Workstation-${interface_name}"
       ;;
     kicksecure)
-      log notice "Available guest: ${guest_pretty}-${interface_all_caps}"
+      log notice "Available guest: ${guest_pretty}-${interface_name}"
       ;;
   esac
   log notice "${bold}Question:${nobold} Do you want to start the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
@@ -1121,13 +1121,13 @@ start_virtualbox(){
   case "${guest}" in
     whonix)
       log_run vboxmanage startvm \
-        "${guest_pretty}-Gateway-${interface_all_caps}" || virtualbox_start_failed
+        "${guest_pretty}-Gateway-${interface_name}" || virtualbox_start_failed
       log_run vboxmanage startvm \
-        "${guest_pretty}-Workstation-${interface_all_caps}" || virtualbox_start_failed
+        "${guest_pretty}-Workstation-${interface_name}" || virtualbox_start_failed
       ;;
     kicksecure)
       log_run vboxmanage startvm \
-        "${guest_pretty}-${interface_all_caps}" || virtualbox_start_failed
+        "${guest_pretty}-${interface_name}" || virtualbox_start_failed
       ;;
   esac
   log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}SUCCESS${nobold}${nocolor}"
@@ -2295,7 +2295,7 @@ main(){
 
   guest_pretty="$(capitalize_first_char "${guest}")"
   interface_pretty="$(capitalize_first_char "${interface}")"
-  interface_all_caps="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
+  interface_name="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
 
   case "${hypervisor}" in
     virtualbox)
@@ -2344,7 +2344,7 @@ main(){
   ## specified the desired version.
   ## If version is set, use it now to set the download flag path.
   if test -n "${guest_version}"; then
-    guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
+    guest_file="${guest_pretty}-${interface_name}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
@@ -2360,7 +2360,7 @@ main(){
     fi
     get_version "${url_version}"
     log notice "Version: ${guest_version}."
-    guest_file="${guest_pretty}-${interface_all_caps}-${guest_version}"
+    guest_file="${guest_pretty}-${interface_name}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
     url_domain="${url_domain}/${guest_version:?}"
     url_guest_file="${url_domain}/${guest_file}"
