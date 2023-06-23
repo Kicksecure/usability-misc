@@ -1220,6 +1220,10 @@ install_repositories_for_virtualbox_on_debian(){
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_found=""
 
+  kicksecure_clearnet="deb.kicksecure.com"
+  kicksecure_onion="deb.w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+  kicksecure_found=""
+
   apt_torified=""
   apt_onion=""
 
@@ -1278,7 +1282,31 @@ install_repositories_for_virtualbox_on_debian(){
 
 
 install_kicksecure_repository_debian() {
-  die 1 "bookworm support not yet implemented!"
+  ## TODO: signing key
+
+  if test "${kicksecure_found}" = "1"; then
+    log info "Skipped adding Kicksecure because it was already found."
+  else
+    ## If user has onion repositories configured, prefer it.
+    if test "${apt_onion}"; then
+      log notice "Adding Kicksecure's onion repository."
+      kicksecure_url="tor+http://${kicksecure_onion}"
+    ## If user has torified repositories configured, prefer it.
+    elif test "${apt_torified}"; then
+      log notice "Adding Kicksecure's torified clearnet repository."
+      kicksecure_url="tor+https://${kicksecure_clearnet}"
+    ## If user doesn't have torified repositories, use clearnet one.
+    else
+      log notice "Adding Kicksecure's clearnet repository."
+      kicksecure_url="https://${kicksecure_clearnet}"
+    fi
+
+    log notice "Kicksecure URL: ${kicksecure_url}"
+    log notice "Adding Kicksecure repository to /etc/apt/sources.list.d/derivative.list"
+    echo "deb [signed-by=/usr/share/keyrings/derivative.asc] ${kicksecure_url} ${distro_codename} main contrib non-free" | \
+      root_cmd tee /etc/apt/sources.list.d/derivative.list ||
+        die 1 "Failed to write to /etc/apt/sources.list.d/derivative.list."
+  fi
 }
 
 
