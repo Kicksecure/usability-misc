@@ -766,15 +766,19 @@ nested_virtualization_test() {
     ## No hard fail, not a requirement, good to have only.
     log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
   else
-    ## Check if we are a guest of virtualization.
-    if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
-      nested_virtualization_detected=true
-      log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
-- Possibly a user mistake.
-- This installer is designed to run on the host operating system.
-- This installer is not designed to be run inside virtual machines.
-- For more information about nested virtualization see:
-  ${url_version_domain}/wiki/Nested_Virtualization"
+    if test "${dry_run}" = "1"; then
+      log notice "${underline}Nested Virtualization Test:${nounderline} SKipping because dry_run is set."
+    else
+      ## Check if we are a guest of virtualization.
+      if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
+        nested_virtualization_detected=true
+        log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
+  - Possibly a user mistake.
+  - This installer is designed to run on the host operating system.
+  - This installer is not designed to be run inside virtual machines.
+  - For more information about nested virtualization see:
+    ${url_version_domain}/wiki/Nested_Virtualization"
+      fi
     fi
   fi
 
