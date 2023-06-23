@@ -1211,17 +1211,23 @@ install_virtualbox_debian_common_end(){
 }
 
 
-install_backports_and_fasttrack_repository_debian(){
+install_repositories_for_virtualbox_on_debian(){
   distro_codename=$(lsb_release --short --codename)
 
-  if [ ! "$distro_codename" = "bookworm" ]; then
-    die 1 "bookworm not yet implemented!"
+  if [ "$distro_codename" = "bullseye" ]; then
+    install_backports_and_fasttrack_repository_debian
+    return 0
   fi
 
-  if [ ! "$distro_codename" = "bullseye" ]; then
-    die 1 "Unsupported distro_codename '$distro_codename'!"
+  if [ "$distro_codename" = "bookworm" ]; then
+    die 1 "bookworm support not yet implemented!"
   fi
 
+  die 1 "Unsupported distro_codename '$distro_codename'!"
+}
+
+
+install_backports_and_fasttrack_repository_debian() {
   backports_found=""
   backports_clearnet="deb.debian.org"
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
