@@ -1820,11 +1820,22 @@ When manually running above cmd_check_proxy it needs to include the expected_res
 }
 
 
+guest_version_post_processing() {
+  ## TODO: Legacy. Remove once Whonix 17 has been released as stable.
+  if echo "$guest_version" | grep "16.1" ; then
+    if [ "$interface_name" = "Xfce" ]; then
+      interface_name="XFCE"
+    fi
+  fi
+}
+
+
 ## Set version by user input or by querying the API
 get_version(){
   log notice "Detecting guest version..."
   if test -n "${guest_version:-}"; then
     log notice "User defined, dry_run or dev version already configured. Autodetection form API not required."
+    guest_version_post_processing
     return 0
   fi
   log info "Acquiring guest version from API..."
@@ -1857,6 +1868,8 @@ get_version(){
   ## block string containing more than 12 chars
   [ "${#guest_version}" -le 12 ] ||
     die 1 "Invalid guest version: contains more than 12 characters."
+
+  guest_version_post_processing
 }
 
 
@@ -2294,8 +2307,6 @@ main(){
   log info "Starting main function."
 
   guest_pretty="$(capitalize_first_char "${guest}")"
-  interface_pretty="$(capitalize_first_char "${interface}")"
-  interface_name="$(echo "${interface}" | tr "[:lower:]" "[:upper:]")"
 
   case "${hypervisor}" in
     virtualbox)
@@ -2317,7 +2328,7 @@ main(){
   if test "${virtualbox_only}" = "1"; then
     log notice "${underline}Installer:${nounderline} ${bold}VirtualBox Installer${nobold}"
   else
-    log notice "${underline}Installer:${nounderline} ${bold}${guest_pretty} ${interface_pretty} for ${hypervisor_pretty} Installer${nobold}"
+    log notice "${underline}Installer:${nounderline} ${bold}${guest_pretty} ${interface_name} for ${hypervisor_pretty} Installer${nobold}"
   fi
   if test "${non_interactive}" != "1"; then
     log notice "If you wish to cancel installation, press Ctrl+C."
@@ -2634,6 +2645,17 @@ parse_opt(){
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
   range_arg import_only workstation gateway
+
+  case "${interface}" in
+    xfce)
+      ## Whonix 17 and above usex Xfce instead of XFCE.
+      interface_name="Xfce"
+      ;;
+    cli)
+      interface_name="CLI"
+      ;;
+  esac
+
   if test "${guest}" != "whonix" && test -n "${import_only}"; then
     die 1 "The option import_only can only be set when the guest is whonix."
   fi
@@ -2708,6 +2730,8 @@ parse_opt(){
     if test -z "${guest_version}"; then
       log notice "Setting dev software version."
       guest_version="16.0.4.2"
+      ## Legacy XFCE instead of Xfce.
+      interface_name="XFCE"
     fi
   fi
   if test "${dry_run}" = "1"; then
@@ -2715,6 +2739,8 @@ parse_opt(){
       log notice "dry_run set, commands will be printed but not executed."
       log notice "Using simulated software version because of dry_run."
       guest_version="16.0.4.2"
+      ## Legacy XFCE instead of Xfce.
+      interface_name="XFCE"
     fi
   fi
   if test "${allow_errors}" = "1"; then
