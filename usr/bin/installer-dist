@@ -1137,12 +1137,16 @@ virtualbox_start_failed() {
   if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
     die 106 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
 - The installer succeeded with download and import, but
-- failed to start the virtual machines.
+- failed to start the virtual machines (VMs).
+- The root cause for this issue is likely not the installer.
+- This issue would likely also happen if the user tried to manually start the VMs.
 - This is likely happening due to the virtualization related warnings that have been reported above."
   fi
   die 107 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
 - The installer succeeded with download and import, but
-- failed to start the virtual machines.
+- failed to start the virtual machines (VMs).
+- The root cause for this issue is likely not the installer.
+- This issue would likely also happen if the user tried to manually start the VMs.
 - See user documentation:
   ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
