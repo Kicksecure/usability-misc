@@ -1282,7 +1282,20 @@ install_repositories_for_virtualbox_on_debian(){
 
 
 install_kicksecure_repository_debian() {
-  ## TODO: signing key
+  ## Contains file:
+  ## /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc
+  ## Same as: kicksecure.asc
+  ## (Which is not yet in the extrepo-offline-data package as of Debian 12.0.)
+  install_pkg extrepo-offline-data
+  ## Not using extrepo directly because it does not support torified and/or onion repositories:
+  ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037254
+
+  if test -f /usr/share/keyrings/derivative.asc ; then
+    log info "Key /usr/share/keyrings/derivative.asc already exists."
+    log info "Not copying /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc to /usr/share/keyrings/derivative.asc."
+  else
+    root_cmd cp --verbose /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc /usr/share/keyrings/derivative.asc
+  fi
 
   if test "${kicksecure_found}" = "1"; then
     log info "Skipped adding Kicksecure because it was already found."
