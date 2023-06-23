@@ -299,7 +299,7 @@ get_os(){
      die 101 "Distro version without dot is still not a number: '${distro_version_without_dot}'"
 
   if has lsb_release; then
-    distro_codename=$(lsb_release --short --codename )
+    distro_codename=$(lsb_release --short --codename)
   fi
 }
 
