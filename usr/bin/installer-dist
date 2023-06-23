@@ -1349,7 +1349,7 @@ install_virtualbox_debian(){
 
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "Preparing to install VirtualBox-QT"
-    install_backports_and_fasttrack_repository_debian
+    install_repositories_for_virtualbox_on_debian
     install_pkg virtualbox-qt
   fi
 
