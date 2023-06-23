@@ -297,10 +297,6 @@ get_os(){
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
   is_integer "${distro_version_without_dot}" ||
      die 101 "Distro version without dot is still not a number: '${distro_version_without_dot}'"
-
-  if has lsb_release; then
-    distro_codename=$(lsb_release --short --codename)
-  fi
 }
 
 ##############
@@ -1191,7 +1187,7 @@ install_package_debian_common(){
     return 0
   fi
 
-  install_pkg torsocks
+  install_pkg torsocks lsb-release
   install_signify signify-openbsd
 }
 
@@ -1216,6 +1212,16 @@ install_virtualbox_debian_common_end(){
 
 
 install_backports_and_fasttrack_repository_debian(){
+  distro_codename=$(lsb_release --short --codename)
+
+  if [ ! "$distro_codename" = "bookworm" ]; then
+    die 1 "bookworm not yet implemented!"
+  fi
+
+  if [ ! "$distro_codename" = "bullseye" ]; then
+    die 1 "Unsupported distro_codename '$distro_codename'!"
+  fi
+
   backports_found=""
   backports_clearnet="deb.debian.org"
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
