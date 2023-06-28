@@ -877,8 +877,9 @@ check_vm_running_virtualbox(){
   vm="${17}"
   ## Paused state should be considered as running. Instead of grepping
   ## possible states, grep VM from list of running VMs.
-  # vboxmanage showvminfo "${vm}" | grep -q "^State:[[:space:]]\+running"
-  if vboxmanage list runningvms | grep -q "^\"${vm}\" "
+  # vboxmanage list runningvms | grep -q "^\"${vm}\" "
+  if vboxmanage showvminfo "${vm}" | \
+    grep -qE "^State:[[:space:]]+(running|paused)"
   then
     log error "Can't proceed, you have the following VM running: ${vm}"
     die 1 "Please turn it off before running this script again."
