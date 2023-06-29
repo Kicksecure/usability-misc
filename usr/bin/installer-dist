@@ -6,6 +6,7 @@
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
+# shellcheck disable=SC2317
 set -o errexit
 set -o nounset
 
@@ -871,6 +872,22 @@ test_pkg(){
 }
 
 
+## Abort if user wants to reimport a VM that is running.
+## This function is called before attempting to reimport an image.
+check_vm_running_virtualbox(){
+  vm="${17}"
+  ## Paused state should be considered as running. Instead of grepping
+  ## possible states, grep VM from list of running VMs.
+  # vboxmanage list runningvms | grep -q "^\"${vm}\" "
+  if vboxmanage showvminfo "${vm}" | \
+    grep -qE "^State:[[:space:]]+(running|paused)"
+  then
+    log error "Can't proceed, you have the following VM running: ${vm}"
+    die 1 "Please turn it off before running this script again."
+  fi
+}
+
+
 ## Check if VM exists on VirtualBox
 check_vm_exists_virtualbox(){
   case "${guest}" in
@@ -899,7 +916,7 @@ check_vm_exists_virtualbox(){
       then
         log warn "Workstation exists but Gateway doesn't."
       fi
-      ## If either one of the Guests exists, procede.
+      ## If either one of the Guests exists, proceed.
       if test "${workstation_exists}" = "1" ||
         test "${gateway_exists}" = "1"
       then
@@ -907,6 +924,7 @@ check_vm_exists_virtualbox(){
         if test "${reimport}" = "1"; then
           ## Remove Gateway if it exists.
           if test "${gateway_exists}" = "1"; then
+            check_vm_running_virtualbox "${guest_pretty}-Gateway-${interface_name}"
             ## Do not remove gateway if import_only is set to workstation
             if test "${import_only}" = "workstation"; then
               log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
@@ -919,6 +937,7 @@ check_vm_exists_virtualbox(){
           fi
           ## Remove Workstation if it exists.
           if test "${workstation_exists}" = "1"; then
+            check_vm_running_virtualbox "${guest_pretty}-Workstation-${interface_name}"
             ## Do not remove workstation if import_only is set to gateway
             if test "${import_only}" = "gateway"; then
               log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
@@ -964,6 +983,7 @@ check_vm_exists_virtualbox(){
       then
         log notice "${underline}Existing VM Check:${nounderline} Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
+          check_vm_running_virtualbox "${guest_pretty}-${interface_name}"
           ## If VMs exists and reimport is set, remove VMs as they are gonna
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
