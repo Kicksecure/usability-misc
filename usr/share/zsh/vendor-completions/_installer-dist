@@ -1,0 +1,104 @@
+#compdef installer-dist kicksecure-installer-cli kicksecure-installer-xfce whonix-installer-cli whonix-installer-xfce virtualbox-installer
+# vim: set sw=2 sts=2 ts=2 et :
+## Copyright (C) 2022 grass <grass@danwin1210.de>
+## Copyright (C) 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+local curcontext="$curcontext" state state_descr line expl ret=1
+local -a args
+typeset -A opt_args
+
+args=(
+  '(-g --guest)'{-g,--guest=}'[Set guest operating system]:<guest>:->guests'
+  '(-u --guest-version)'{-u,--guest-version=}"[Set guest's version]:<version>"
+  '(-i --interface)'{-i,--interface=}"[Set guest's interface]:<interface>:->interfaces"
+  '(-m --hypervisor)'{-m,--hypervisor=}"[Set guest's hypervisor]:<hypervisor>:->hypervisors"
+  '(-s --socks-proxy)'{-s,--socks-proxy=}'[Set SOCKS proxy for requests]':'<host\:port>'
+  '(-P --directory-prefix)'{-P,--directory-prefix=}'[Set directory for saving files]:directory:->directories'
+  '(-o --onion)'{-o,--onion}'[Make requests over onion]'
+  '(- *)'{-V,--version}'[Show version number and quit]'
+  '(- *)'{-h,--help}'[Get help for commands and quit]'
+  '(-l --log-level)'{-l,--log-level=}'[Set logging level]:<level>:->loglevels'
+  '(--mirror)'--mirror='[Set target mirror]:<number>:->mirrors'
+  '(--no-import)'--no-import'[Do not import guest]'
+  '(--import-only)'--import-only='[Set VM to import when using whonix]:<vms>:->vms'
+  '(-k --no-boot)'{-k,--no-boot}'[Do not boot guest]'
+  '(--redownload)'--redownload'[Redo download]'
+  '(--reimport)'--reimport'[Redo import]'
+  '(--destroy-existing-guest)'--destroy-existing-guest'[Required pledge for --reimport]'
+  '(-n --non-interactive)'{-n,--non-interactive}'[Set non-interactive mode]'
+  '(--allow-errors)'--allow-errors'[Set dirty mode]'
+  '(--no-show-errors)'--no-show-errors'[Hide errors]'
+  '(--testers)'--testers'[Set testers mode]'
+  '(-D --dev)'{-D,--dev}'[Set dev mode]'
+  '(--ci)'--ci'[Set CI mode]'
+  '(-d --dry-run)'{-d,--dry-run}'[Set dry-run mode]'
+  '(-t --getopt)'{-t,--getopt}'[Show parsed options]'
+  '(--virtualbox-only)'--virtualbox-only'[Only downloads and installs VirtualBox]'
+  '(-)*:: :->args'
+)
+
+_arguments -C -s -S -A "-*" : $args && ret=0
+
+case "$state" in
+  (directories)
+      _directories -W $HOME
+    ;;
+  (guests)
+    local guests
+    guests=(
+      'whonix:Anonymous by default Kicksecure based distribution'
+      'kicksecure:Hardened by default Debian based distribution'
+    )
+    _describe -t guests 'guests' guests && ret=0
+    ;;
+  (interfaces)
+    local interfaces
+    interfaces=(
+      'cli:Commad-Line Interface'
+      'xfce:Xfce Desktop Environment'
+    )
+    _describe -t interfaces 'interfaces' interfaces && ret=0
+    ;;
+  (hypervisors)
+    local hypervisors
+    hypervisors=(
+      'kvm:Kernel-based Virtual Machine'
+      'virtualbox:VirtualBox Oracle'
+    )
+    _describe -t hypervisors 'hypervisors' hypervisors && ret=0
+    ;;
+  (loglevels)
+    local loglevels
+    loglevels=(
+      'debug:Show everything with xtrace set'
+      'info:Show information, notices, warnings and errors'
+      'notice:Show notices, warnings and errors'
+      'warn:Show warnings and errors'
+      'error:Show only error messages'
+    )
+    _describe -t loglevels 'loglevels' loglevels && ret=0
+    ;;
+  (vms)
+    local vms
+    vms=(
+      'workstation:User workspace machine'
+      'gateway:Proxy machine'
+    )
+    _describe -t vms 'vms' vms && ret=0
+    ;;
+  (mirrors)
+    local mirrors
+    mirrors=(
+      '0:[DE] download.whonix.org (onion available)'
+      '1:[DK] mirrors.dotsrc.org (onion available)'
+      '2:[DE] mirror.koljasagorski.de'
+      '3:[HU] quantum-mirror.hu'
+      '4:[PL] ftp.icm.edu.pl'
+      '5:[US] mirrors.gigenet.com'
+    )
+    _describe -t mirrors 'mirrors' mirrors && ret=0
+    ;;
+esac
+
+return ret

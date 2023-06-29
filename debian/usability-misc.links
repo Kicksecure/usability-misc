@@ -1,4 +1,4 @@
-## Copyright (C) 2019 - 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## Copyright (C) 2019 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 /usr/bin/curl-download /usr/bin/curlget
@@ -6,3 +6,9 @@
 
 /usr/share/man/man1/curl-download.1.gz /usr/share/man/man1/curlget.1.gz
 /usr/share/man/man1/scurl-download.1.gz /usr/share/man/man1/scurlget.1.gz
+
+/usr/bin/installer-dist /usr/bin/virtualbox-installer
+/usr/bin/installer-dist /usr/bin/kicksecure-installer-cli
+/usr/bin/installer-dist /usr/bin/kicksecure-installer-xfce
+/usr/bin/installer-dist /usr/bin/whonix-installer-cli
+/usr/bin/installer-dist /usr/bin/whonix-installer-xfce

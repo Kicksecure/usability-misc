@@ -1,4 +1,4 @@
-## Copyright (C) 2012 - 2022 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## Copyright (C) 2012 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 Source: usability-misc
@@ -9,7 +9,7 @@ Build-Depends: debhelper (>= 13), debhelper-compat (= 13)
 Homepage: https://github.com/Whonix/usability-misc
 Vcs-Browser: https://github.com/Whonix/usability-misc
 Vcs-Git: https://github.com/Whonix/usability-misc.git
-Standards-Version: 4.5.1
+Standards-Version: 4.6.2
 Rules-Requires-Root: no
 
 Package: usability-misc
@@ -41,6 +41,9 @@ Description: Misc usability improvements
  .
  Disable sudo default lecture.
  /etc/sudoers.d/sudo-lecture-disable
+ .
+ Add pwfeedback to sudo Defaults so password asterisks are shown while typing.
+ /etc/sudoers.d/pwfeedback
  .
  xfce4-terminal:
  .
