@@ -1179,6 +1179,20 @@ virtualbox_start_failed() {
 }
 
 
+## Detect if repository is configured in the sources list.
+get_pattern_sources_debian(){
+  file="${1}"
+  pattern="${2}"
+  grep -v "#" "${file}" | grep -q -E "${pattern}" || return 1
+}
+
+write_sources_debian(){
+  url="${1}"
+  file="${2}"
+  echo "${url}" | root_cmd tee "${file}" ||
+    die 1 "Failed to write to ${file}"
+}
+
 ## https://stackoverflow.com/a/54239534
 check_installed_debian(){
   status="$(dpkg-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
@@ -1230,19 +1244,29 @@ install_virtualbox_debian_common_end(){
   root_cmd adduser "$id_of_user" "${virtualbox_linux_user_group}" || die 1 "Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
 }
 
-
 install_repositories_for_virtualbox_on_debian(){
+  distro_codename=$(lsb_release --short --codename)
+
   backports_found=""
   backports_clearnet="deb.debian.org"
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
+  backports_file_debsource="/etc/apt/sources.list.d/backports.list"
+  backports_prefix_debsource="deb "
+  backports_suffix_debsource="/debian/ ${distro_codename}-backports main contrib non-free"
 
+  fasttrack_found=""
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
-  fasttrack_found=""
+  fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
+  fasttrack_prefix_debsource="deb "
+  fasttrack_suffix_debsource="/debian/ ${distro_codename}-fasttrack main contrib non-free"
 
+  kicksecure_found=""
   kicksecure_clearnet="deb.kicksecure.com"
   kicksecure_onion="deb.w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
-  kicksecure_found=""
+  kicksecure_file_debsource="/etc/apt/sources.list.d/derivative.list"
+  kicksecure_prefix_debsource="deb [signed-by=/usr/share/keyrings/derivative.asc] "
+  kicksecure_suffix_debsource=" ${distro_codename} main contrib non-free"
 
   apt_torified=""
   apt_onion=""
@@ -1250,54 +1274,84 @@ install_repositories_for_virtualbox_on_debian(){
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     test -f "${file}" || continue
 
-    if grep -v "#" "${file}" | grep -q \
-      -e "backports"
+    if get_pattern_sources_debian "${file}" "${kicksecure_clearnet}|${kicksecure_onion}"
+    then
+      kicksecure_found=1
+    fi
+
+    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename}-backports"
     then
       backports_found=1
     fi
 
-    if grep -v "#" "${file}" | grep -q \
-      -e "://${fasttrack_clearnet}" \
-      -e "://${fasttrack_onion}"
+    if get_pattern_sources_debian "${file}" "${fasttrack_clearnet}|${fasttrack_onion}"
     then
       fasttrack_found=1
     fi
 
-    if grep -v "#" "${file}" | grep -q -F -e "tor://" -e "tor+"; then
+    if get_pattern_sources_debian "${file}" "tor://|tor\+"; then
       apt_torified=1
     fi
 
-    if grep -v "#" "${file}" | grep -q -F ".onion"; then
+    if get_pattern_sources_debian "${file}" "\.onion"; then
       apt_onion=1
     fi
   done
 
   if test "${apt_torified}" = "1"; then
     ## If apt-transport-tor is not installed, we shouldn't, because we got
-    ## a false positive that updates should be torified. Not sure when this
-    ## could happen in reality, but a hard fail is necessary as explained
-    ## per the points above.
+    ## a false positive that updates should be torified. This can happen if
+    ## user configured the sources list to be torified but hasn't installed
+    ## apt-transport-tor. It is better to abort, the user should configure
+    ## tor by other means to ensure a working connection (bridges, proxy etc).
     log info "APT is supposed to be torified, checking if package apt-transport-tor is installed."
     test_pkg apt-transport-tor ||
       die 1 "APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
   fi
 
+
+  ## If user has onion repositories configured, prefer it.
+  if test "${apt_onion}"; then
+    protocol_prefix_debsource="tor+http://"
+    connection_type_debsource="onion"
+    kicksecure_domain_debsource="${kicksecure_onion}"
+    fasttrack_domain_debsource="${fasttrack_onion}"
+    backports_domain_debsource="${backports_onion}"
+  ## If user has torified repositories configured, prefer it.
+  elif test "${apt_torified}"; then
+    protocol_prefix_debsource="tor+https://"
+    connection_type_debsource="torified clearnet"
+    kicksecure_domain_debsource="${kicksecure_clearnet}"
+    fasttrack_domain_debsource="${fasttrack_clearnet}"
+    backports_domain_debsource="${backports_clearnet}"
+  ## If user doesn't have torified repositories, use clearnet one.
+  else
+    protocol_prefix_debsource="https://"
+    connection_type_debsource="clearnet"
+    kicksecure_domain_debsource="${kicksecure_clearnet}"
+    fasttrack_domain_debsource="${fasttrack_clearnet}"
+    backports_domain_debsource="${backports_clearnet}"
+  fi
+
+  kicksecure_url="${kicksecure_prefix_debsource} ${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
+  fasttrack_url="${fasttrack_prefix_debsource} ${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
+  backports_url="${backports_prefix_debsource} ${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
+
   log info "Installing packages required for backports and fasttrack repository."
   install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
 
-  distro_codename=$(lsb_release --short --codename)
+  case "${distro_codename}" in
+    bullseye)
+      install_backports_and_fasttrack_repository_debian
+      return 0
+      ;;
+    bookworm)
+      install_kicksecure_repository_debian
+      return 0
+      ;;
+  esac
 
-  if [ "$distro_codename" = "bullseye" ]; then
-    install_backports_and_fasttrack_repository_debian
-    return 0
-  fi
-
-  if [ "$distro_codename" = "bookworm" ]; then
-    install_kicksecure_repository_debian
-    return 0
-  fi
-
-  die 1 "Unsupported distro_codename '$distro_codename'!"
+  die 1 "Unsupported distro codename '${distro_codename}'!"
 }
 
 
@@ -1320,81 +1374,30 @@ install_kicksecure_repository_debian() {
   if test "${kicksecure_found}" = "1"; then
     log info "Skipped adding Kicksecure because it was already found."
   else
-    ## If user has onion repositories configured, prefer it.
-    if test "${apt_onion}"; then
-      log notice "Adding Kicksecure's onion repository."
-      kicksecure_url="tor+http://${kicksecure_onion}"
-    ## If user has torified repositories configured, prefer it.
-    elif test "${apt_torified}"; then
-      log notice "Adding Kicksecure's torified clearnet repository."
-      kicksecure_url="tor+https://${kicksecure_clearnet}"
-    ## If user doesn't have torified repositories, use clearnet one.
-    else
-      log notice "Adding Kicksecure's clearnet repository."
-      kicksecure_url="https://${kicksecure_clearnet}"
-    fi
-
-    log notice "Kicksecure URL: ${kicksecure_url}"
-    log notice "Adding Kicksecure repository to /etc/apt/sources.list.d/derivative.list"
-    echo "deb [signed-by=/usr/share/keyrings/derivative.asc] ${kicksecure_url} ${distro_codename} main contrib non-free" | \
-      root_cmd tee /etc/apt/sources.list.d/derivative.list ||
-        die 1 "Failed to write to /etc/apt/sources.list.d/derivative.list."
+    log notice "Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
+    write_sources_debian "${kicksecure_url}" "${kicksecure_file_debsource}"
   fi
 }
 
 
 install_backports_and_fasttrack_repository_debian() {
-  if [ "${backports_found}" = "1" ] && [ "${fasttrack_found}" = "1" ]; then
-    log info "Skipped adding additional APT repositories because backports and fasttrack was already found."
+  if test "${backports_found}" = "1" && test "${fasttrack_found}" = "1"; then
+    log info "Skipped adding additional APT repositories because backports and fasttrack were already found."
     return 0
   fi
 
   if test "${backports_found}" = "1"; then
     log info "Skipped adding Backports because it was already found."
   else
-    ## If user has onion repositories configured, prefer it.
-    if test "${apt_onion}"; then
-      log notice "Adding Backports onion repository."
-      backports_url="tor+http://${backports_onion}"
-    ## If user has torified repositories configured, prefer it.
-    elif test "${apt_torified}"; then
-      log notice "Adding Backports torified clearnet repository."
-      backports_url="tor+https://${backports_clearnet}"
-    ## If user doesn't have torified repositories, use clearnet one.
-    else
-      log notice "Adding Backports clearnet repository."
-      backports_url="https://${backports_clearnet}"
-    fi
-
-    log notice "backports URL: ${backports_url}"
-    log notice "Adding backports repository to /etc/apt/sources.list.d/backports.list"
-    echo "deb ${backports_url}/debian/ ${distro_codename}-backports main contrib non-free" | \
-      root_cmd tee /etc/apt/sources.list.d/backports.list ||
-        die 1 "Failed to write to /etc/apt/sources.list.d/backports.list."
+    log notice "Adding Backports's ${connection_type_debsource} repository to ${backports_file_debsource}"
+    write_sources_debian "${backports_url}" "${backports_file_debsource}"
   fi
 
   if test "${fasttrack_found}" = "1"; then
     log info "Skipped adding Fasttrack because it was already found."
   else
-    ## If user has onion repositories configured, prefer it.
-    if test "${apt_onion}"; then
-      log notice "Adding Fasttrack's onion repository."
-      fasttrack_url="tor+http://${fasttrack_onion}"
-    ## If user has torified repositories configured, prefer it.
-    elif test "${apt_torified}"; then
-      log notice "Adding Fasttrack's torified clearnet repository."
-      fasttrack_url="tor+https://${fasttrack_clearnet}"
-    ## If user doesn't have torified repositories, use clearnet one.
-    else
-      log notice "Adding Fasttrack's clearnet repository."
-      fasttrack_url="https://${fasttrack_clearnet}"
-    fi
-
-    log notice "Fasttrack URL: ${fasttrack_url}"
-    log notice "Adding Fasttrack repository to /etc/apt/sources.list.d/fasttrack.list"
-    echo "deb ${fasttrack_url}/debian/ ${distro_codename}-fasttrack main contrib non-free" | \
-      root_cmd tee /etc/apt/sources.list.d/fasttrack.list ||
-        die 1 "Failed to write to /etc/apt/sources.list.d/fasttrack.list."
+    log notice "Adding Fasttrack's ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
+    write_sources_debian "${fasttrack_url}" "${fasttrack_file_debsource}"
   fi
 }
 
