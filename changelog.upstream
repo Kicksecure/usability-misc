@@ -1,8 +1,49 @@
+commit 043c8e8f5a04e752ad02c9052a9e7b44ed73d3c7
+Merge: ba45e78 bcd691e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 7 17:12:28 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit ba45e78824cea9106d5f4412a57c5787d3d9fc0d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 7 17:08:38 2023 -0400
+
+    fix
+
+commit 2dbc8379cd4aa3bb01ae3a9142a6a48cdffab1f8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 7 16:55:38 2023 -0400
+
+    bumped changelog version
+
 commit 172f89e82954a91885d7d6c26d126f2290c62221
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Jul 5 17:01:59 2023 -0400
 
     comment
+
+commit bcd691e03cd0814abf754f433d49f4a57f646207
+Merge: 55b67a1 0e1aaa2
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 3 15:20:56 2023 +0000
+
+    Merge remote-tracking branch 'kicksecure/master'
+    
+    * kicksecure/master:
+      bumped changelog version
+      fix
+      fix
+      improve curl-download and redirect scurl-download to it
+      better to quote every arg
+      quote args with spaces, that if passed as singl arg, they were unquoted by the shell
+      improve scurl-download to behave like wget
+
+commit 55b67a12b65ff8906558499dbb85a176d748c5af
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 3 14:48:49 2023 +0000
+
+    Unify repository installation
 
 commit 0e1aaa2e3706894d6592b3fd545f9935dd32fd1d
 Author: Patrick Schleizer <adrelanos@whonix.org>
