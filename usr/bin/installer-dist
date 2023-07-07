@@ -875,7 +875,7 @@ test_pkg(){
 ## Abort if user wants to reimport a VM that is running.
 ## This function is called before attempting to reimport an image.
 check_vm_running_virtualbox(){
-  vm="${17}"
+  vm="${1}"
   ## Paused state should be considered as running. Instead of grepping
   ## possible states, grep VM from list of running VMs.
   # vboxmanage list runningvms | grep -q "^\"${vm}\" "
