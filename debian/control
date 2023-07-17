@@ -6,9 +6,9 @@ Section: misc
 Priority: optional
 Maintainer: Patrick Schleizer <adrelanos@whonix.org>
 Build-Depends: debhelper (>= 13), debhelper-compat (= 13)
-Homepage: https://github.com/Whonix/usability-misc
-Vcs-Browser: https://github.com/Whonix/usability-misc
-Vcs-Git: https://github.com/Whonix/usability-misc.git
+Homepage: https://github.com/Kicksecure/usability-misc
+Vcs-Browser: https://github.com/Kicksecure/usability-misc
+Vcs-Git: https://github.com/Kicksecure/usability-misc.git
 Standards-Version: 4.6.2
 Rules-Requires-Root: no
 
