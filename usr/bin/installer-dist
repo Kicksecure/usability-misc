@@ -2813,14 +2813,14 @@ parse_opt(){
   if test "${dev}" = "1"; then
     if test -z "${guest_version}"; then
       log notice "Setting dev software version."
-      guest_version="16.0.4.2"
+      guest_version="17.0.3.4"
     fi
   fi
   if test "${dry_run}" = "1"; then
     if test -z "${guest_version}"; then
       log notice "dry_run set, commands will be printed but not executed."
       log notice "Using simulated software version because of dry_run."
-      guest_version="16.0.4.2"
+      guest_version="17.0.3.4"
     fi
   fi
   if test "${allow_errors}" = "1"; then
