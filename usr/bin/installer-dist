@@ -771,7 +771,7 @@ nested_virtualization_test() {
     log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
   else
     if test "${dry_run}" = "1"; then
-      log notice "${underline}Nested Virtualization Test:${nounderline} SKipping because dry_run is set."
+      log notice "${underline}Nested Virtualization Test:${nounderline} Skipping because dry_run is set."
     else
       ## Check if we are a guest of virtualization.
       if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
@@ -1464,7 +1464,7 @@ check_license(){
 
   test "${dry_run}" != "1" && sleep 5
 
-  ## Whiptail is the Debian version of Dialog with much less features.
+  ## 'whiptail' is the Debian version of Dialog with much less features.
   ## Dialog types problems:
   ## - whiptail does not allow to set default option with scrolltext on.
   ## - dialog leaves empty lines on exit.
@@ -2524,7 +2524,7 @@ Developer options:
  --mirror=<number>   Set mirror according to number index. Choose closest
                        mirror to you if not using onion for faster downloads.
                        Not that if not choosing mirror, defaults to whonix.org
-                       for plainnet and dotsrc.org correspondent for onion.
+                       for clearnet and dotsrc.org correspondent for onion.
                        Mirrors index:
                          0 [DE] download.whonix.org (onion available)
                          1 [DK] mirrors.dotsrc.org (onion available)
@@ -2745,7 +2745,7 @@ parse_opt(){
 
   case "${interface}" in
     xfce)
-      ## Whonix 17 and above usex Xfce instead of XFCE.
+      ## Whonix 17 and above uses Xfce instead of XFCE.
       interface_name="Xfce"
       ;;
     cli)
