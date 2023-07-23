@@ -595,7 +595,7 @@ log_time(){
 }
 
 
-## wrappet to end the exit trap.
+## Wrapper to end the exit trap.
 end_exit(){
   ## Reset exit trap.
   trap - EXIT HUP INT QUIT ABRT ALRM TERM
@@ -2863,7 +2863,7 @@ log_term_and_file(){
   ## Current problem is that command-line option is necessary to hide stderr
   ## by sending it to /dev/null, while the desired method would be to avoid
   ## this workaround and simply be able to redirect with 2>/dev/null.
-  ## Send f21/stdout to log file.
+  ## Send fd1/stdout to log file.
   true "exec 1>>${log_file_user}"
   exec 1>>"${log_file_user}"
   ## Send fd2/stderr to log file by default.
