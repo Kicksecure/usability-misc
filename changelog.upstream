@@ -1,3 +1,159 @@
+commit 781214e30b23ff91e03c2b700fa024f76eae043a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 17:09:37 2023 -0400
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit b9afa1ea65c9ad49b993f501e17db1bb1e32b466
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 16:27:50 2023 -0400
+
+    output
+
+commit 682e17567f64023a769ad8a87f3d3399c75df3c3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 16:25:51 2023 -0400
+
+    output
+
+commit c9c07a7ed0fa48598a55ac529e54965a5ebe830e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 16:20:25 2023 -0400
+
+    output
+
+commit 743fbeaf9995f76089eebf0d474840734feddd02
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 16:16:10 2023 -0400
+
+    output
+
+commit 8daa6b96715eb987477c98126fe22c499c94325c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 16:12:32 2023 -0400
+
+    output
+
+commit 4704eda6b3ad85352556d09ce8d8484c16821c06
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 16:02:37 2023 -0400
+
+    output
+
+commit 54be2c480665cdf0c872868608fe40c8c2d771e1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 15:50:41 2023 -0400
+
+    output
+
+commit b7c8aa4fbb5c746d31f198a1fd45ea0b7c7d4695
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 15:49:53 2023 -0400
+
+    output
+
+commit b4b9a9f265aa3de3f009a9c4290069949675aac4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 15:42:12 2023 -0400
+
+    output
+
+commit 12fbf2262689a6cba990d9d7bc85afd683a19803
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 15:41:09 2023 -0400
+
+    output
+
+commit bb59252eb5d561180628c3d702b239a7ab2c46ab
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 15:34:02 2023 -0400
+
+    output
+
+commit bb32847c7da64999bd8a69db2fe806a8da99b39d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 15:25:10 2023 -0400
+
+    output
+
+commit 997442683d62cdce2302643e5a98f9c276b42873
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 14:52:14 2023 -0400
+
+    output
+
+commit 85af7c3552b60bc6cb79fbc0e36d3d0b4dc72ce8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 14:50:23 2023 -0400
+
+    output
+
+commit 030acc73e2aa14bb289595605b51234e284065a6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 14:50:03 2023 -0400
+
+    output
+
+commit ab0c5def25737b0690e7a56f5b9c3bba0303d53a
+Merge: f40d0ab b10e322
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 14:33:06 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit b10e322c4e4908168da4c7d264f4917f26efaaaf
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 24 14:36:25 2023 +0000
+
+    Add missing options to manual page
+
+commit 0e6718cddf8f5911a22dc51400ca99cf7fb5aacd
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 24 14:26:27 2023 +0000
+
+    Fix apt line wrapping if output is not a tty
+    With Bash, we can leave stdout to the tty.
+
+commit 1c5ff086197fbf2bb6ba1def710f735156bbedaf
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 24 12:08:03 2023 +0000
+
+    Improve log formatting of test cases
+
+commit f40d0ab59a575b37eaccf4733fd1250758048eac
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 23 09:23:22 2023 -0400
+
+    update hardcoded testing-only simulated version number
+    
+    of empty hard drive test-only release
+    
+    because of XFCE -> Xfce change
+
+commit 0e9855ea58cff68a8e5328f6f2388c5fd05e1a67
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 23 09:10:30 2023 -0400
+
+    remove legacy XFCE -> Xfce support code
+
+commit a00f8e57813f365ff3110201e585f080f593605c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 23 09:08:09 2023 -0400
+
+    spelling
+
+commit 7997468b286555dbfa2fb3975566895849f64a3b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 23 08:03:37 2023 -0400
+
+    typos
+
+commit e5faabb8049bb63a29eb5cdef3717e352a30d544
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 17 11:51:41 2023 -0400
+
+    bumped changelog version
+
 commit ee9d68ff05ba854c549886e76e6252c49f3da534
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Jul 17 11:20:19 2023 -0400
