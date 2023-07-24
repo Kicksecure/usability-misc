@@ -954,11 +954,11 @@ check_vm_exists_virtualbox(){
           if test "${gateway_exists}" = "1" &&
             test "${import_only}" = "gateway"
           then
-            die 1 "import_only was set to 'gateway', but it already exists and reimport was not set."
+            die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - import_only was set to 'gateway', but it already exists and reimport was not set."
           elif test "${workstation_exists}" = "1" &&
             test "${import_only}" = "workstation"
           then
-            die 1 "import_only was set to 'workstation', but it already exists and reimport was not set."
+            die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - import_only was set to 'workstation', but it already exists and reimport was not set."
           fi
         else
           ## One of the guests doesn't exist, but neither reimport nor
@@ -967,9 +967,9 @@ check_vm_exists_virtualbox(){
             test "${gateway_exists}" = "0"
           then
             test "${workstation_exists}" = "0" &&
-              die 1 "Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
+              die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
             test "${gateway_exists}" = "0" &&
-              die 1 "Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
+              die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
           fi
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -1113,14 +1113,14 @@ import_virtualbox(){
   # shellcheck disable=SC2086
   log_run vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
-    die 105 "VM Import: 'FAIL' - Failed to import virtual machines."
+    die 105 "${underline}VM Import:${nounderline} 'FAIL' - Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
     log_run vboxmanage unregistervm ${vm_purge} --delete ||
-      die 1 "VM Import: 'FAIL' - Failed to remove extraneous virtual system."
+      die 1 "${underline}VM Import:${nounderline} 'FAIL' - Failed to remove extraneous virtual system."
   fi
 
   log notice "VM Import: 'success'"
@@ -1196,7 +1196,7 @@ write_sources_debian(){
   url="${1}"
   file="${2}"
   echo "${url}" | root_cmd tee "${file}" ||
-    die 1 "Failed to write to ${file}"
+    die 1 "${underline}Sources List Writer:${nounderline} 'FAIL' - Failed to write to file: '${file}'"
 }
 
 ## https://stackoverflow.com/a/54239534
@@ -1238,16 +1238,16 @@ install_virtualbox_debian_common_end(){
     if test "${dry_run}" = "1"; then
       log error "Failed to locate 'vboxmanage' program. - ignoring because dry_run is set."
     else
-      die 1 "Failed to locate 'vboxmanage' program."
+      die 1 "${underline}vboxmanage test:${nounderline} 'FAIL' - Failed to locate 'vboxmanage' program."
     fi
   fi
   virtualbox_linux_user_group="vboxusers"
-  id_of_user="$(id --name --user)" || die 1 "Failed to run: 'id --name --user'"
+  id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} 'FAIL' - Failed to run: 'id --name --user'"
   if id -nG "$id_of_user" | grep -qw "${virtualbox_linux_user_group}\$"; then
     log info "'$id_of_user' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
-  root_cmd adduser "$id_of_user" "${virtualbox_linux_user_group}" || die 1 "Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
+  root_cmd adduser "$id_of_user" "${virtualbox_linux_user_group}" || die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} 'FAIL' - Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
 }
 
 install_repositories_for_virtualbox_on_debian(){
@@ -1312,7 +1312,7 @@ install_repositories_for_virtualbox_on_debian(){
     ## tor by other means to ensure a working connection (bridges, proxy etc).
     log info "APT is supposed to be torified, checking if package apt-transport-tor is installed."
     test_pkg apt-transport-tor ||
-      die 1 "APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
+      die 1 "${underline}Torified APT CHECK:${nounderline} 'FAIL' - APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
   fi
 
 
@@ -1357,7 +1357,7 @@ install_repositories_for_virtualbox_on_debian(){
       ;;
   esac
 
-  die 1 "Unsupported distro codename '${distro_codename}'!"
+  die 1 "${underline}Repository Add:${nounderline} 'FAIL' - Unsupported distribution codename: '${distro_codename}'!"
 }
 
 
@@ -1529,7 +1529,7 @@ get_su_cmd(){
     has doas && sucmd=doas && break
     has su && sucmd=su && break
     test -z "${sucmd}" && {
-      die 1 "Failed to find program to run as another user."
+      die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Failed to find program to run as another user."
     }
     case "${sucmd}" in
       sudo) :;;
@@ -1539,13 +1539,13 @@ get_su_cmd(){
 
   log info "Testing root_cmd function"
   root_cmd echo "test" ||
-    die 1 "Failed to run test command as root."
+    die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Failed to run test command as root."
 
   if test "${ci}" = "1"; then
     root_output="$(timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       log error "sudo output: '${root_output}'"
-      die 1 "Unexpected non-empty output for sudo test in CI mode."
+      die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Unexpected non-empty output for sudo test in CI mode."
     fi
     return 0
   fi
@@ -1560,7 +1560,7 @@ get_su_cmd(){
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       log error "sudo output: '${root_output}'"
-      die 1 "Unexpected non-empty output for sudo test in normal mode."
+      die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Unexpected non-empty output for sudo test in normal mode."
     fi
   fi
 }
@@ -1573,7 +1573,7 @@ get_checkhash_cmd(){
     has openssl && checkhash="openssl dgst -sha512 -r" && break
     has digest && checkhash="digest -a sha512" && break
     test -z "${checkhash}" && {
-      die 1 "Failed to find program that checks SHA512 hash sum."
+      die 1 "${underline}get_checkhash_cmd:${nounderline} 'FAIL' - Failed to find program that checks SHA512 hash sum."
     }
   done
 }
@@ -1693,7 +1693,7 @@ set_trap(){
 ## Check if system status is supported
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    die 101 "Only supported architecture is x86_64, yours is ${arch}."
+    die 101 "${underline}Architecture Check:${nounderline} 'FAIL' - Only supported architecture is 'x86_64', yours is: '${arch}'."
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
@@ -1767,7 +1767,7 @@ get_system_stat(){
 
   if [ "${free_space_available}" -lt "$free_space_required" ]; then
     die 101 "\
-${underline}Free Disk Space Check:${nounderline} Failed! Insufficient free disk space!
+${underline}Free Disk Space Check:${nounderline} 'FAIL' - Insufficient free disk space!
 
   - available: '${free_space_available}G'
   - required : '${free_space_required}G'
@@ -1909,6 +1909,8 @@ torify_conn(){
     fi
   fi
   check_tor_proxy || die 2 "\
+${underline}Check Tor Proxy:${nounderline} 'FAIL'
+
 Unable to connect to Tor SOCKS proxy.
 
   - This issue is unlikely caused by this installer.
@@ -1959,10 +1961,10 @@ get_version(){
   ## that could inhibit the user from seeing the error message.
   ## The user would still see a failed exit code.
   [ "${guest_version%%*[^0-9.]*}" ] ||
-    die 1 "Invalid guest version: contains unexpected characters."
+    die 1 "${underline}Version Check:${nounderline} 'FAIL' - Invalid guest version: contains unexpected characters."
   ## block string containing more than 12 chars
   [ "${#guest_version}" -le 12 ] ||
-    die 1 "Invalid guest version: contains more than 12 characters."
+    die 1 "${underline}Version Check:${nounderline} 'FAIL' - Invalid guest version: contains more than 12 characters."
 }
 
 
@@ -2017,7 +2019,7 @@ download_files(){
     log_time
     log_run touch "${download_flag}"
   else
-    die 103 "Failed to download files."
+    die 103 "${underline}Download:${nounderline} 'FAIL' - Failed to download files."
   fi
 }
 
@@ -2142,7 +2144,7 @@ get_virtualization(){
   msr="/dev/cpu/0/msr"
   if root_cmd test ! -r "${msr}"; then
     root_cmd modprobe msr ||
-      die 1 "Could not add module 'msr' to the kernel."
+      die 1 "${underline}modprobe:${nounderline} 'FAIL' - Could not add module 'msr' to the kernel."
   fi
   if root_cmd test ! -r "${msr}"; then
     log error "Cannot read: '${msr}'"
