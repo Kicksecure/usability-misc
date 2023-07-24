@@ -2241,12 +2241,12 @@ get_download_links(){
       ## does not have TLS for Rsync
       ## When using rsync-ssl, this message appears:
       ##   rsync: did not see server greeting
-      die 1 "Mirror ${mirror} doesn't support TLS for rsync."
+      die 1 "${underline}Mirror Selection:${nounderline} 'FAIL' - Mirror ${mirror} doesn't support TLS for rsync."
       site_download_clearnet="ftp.icm.edu.pl/pub/Linux/dist/${guest}"
       site_download_onion=""
       ;;
     5)
-      die 1 "Mirror ${mirror} is currently using an invalid certificate."
+      die 1 "${underline}Mirror Selection:${nounderline} 'FAIL' - Mirror ${mirror} is currently using an invalid certificate."
       site_download_clearnet="mirror.gigenet.com/${guest}"
       site_download_onion=""
       ;;
@@ -2280,7 +2280,7 @@ get_download_links(){
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
       ## URL to download files from.
       test -n "${site_download_onion}" ||
-        die 1 "Mirror ${mirror} doesn't provide an onion service."
+        die 1 "${underline}Mirror Selection:${nounderline} 'FAIL' - Mirror ${mirror} doesn't provide an onion service."
       url_download="${url_download_onion}"
       ## Used to query version number.
       url_version_domain="http://www.${site_onion}"
@@ -2318,7 +2318,7 @@ get_download_links(){
 
     kvm)
       if test "${testers}" = "1"; then
-        die 1 "KVM does not have testers version."
+        die 1 "${underline}Version Selection:${nounderline} 'FAIL' - KVM does not have testers version."
         #url_version_template=""
       else
         url_version_template="Version_KVM"
@@ -2385,8 +2385,8 @@ check_integrity(){
     return 0
   fi
   log notice "Performing integrity checks..."
-  check_signature || die 104 "Signify Signature Verification: 'FAIL' - Failed to verify signature."
-  check_hash || die 104 "SHA512 Hash Verification: 'FAIL' - Failed hash checking."
+  check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} 'FAIL' - Failed to verify signature."
+  check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'FAIL' - Failed hash checking."
 }
 
 
@@ -2461,7 +2461,7 @@ main(){
       cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
       log info "Executing: $ ${cmd_check_internet}"
       ${cmd_check_internet} >/dev/null ||
-        die $? "Cannot connect to ${url_origin}, perhaps no internet?"
+        die $? "${underline}Connectivity Test:${nounderline} 'FAIL' - Cannot connect to ${url_origin}, perhaps no internet?"
       log notice "Connection to ${url_origin} succeeded."
     fi
     get_version "${url_version}"
@@ -2473,7 +2473,7 @@ main(){
 
     ## Check again for download flag after version was queried.
     if should_download; then
-      download_files || die 103 "Failed to download files."
+      download_files || die 103 "${underline}Download:${nounderline} 'FAIL' -  Failed to download files."
     fi
   else
     log notice "Version: '${guest_version}'"
