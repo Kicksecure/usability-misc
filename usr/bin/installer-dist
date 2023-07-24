@@ -1909,7 +1909,7 @@ torify_conn(){
     fi
   fi
   check_tor_proxy || die 2 "\
-${underline}Check Tor Proxy:${nounderline} 'FAIL'
+${underline}Check Tor Proxy:${nounderline} 'failure'
 
 Unable to connect to Tor SOCKS proxy.
 
@@ -2362,19 +2362,19 @@ should_download(){
 
 ## Check signature of signed checksum.
 check_signature(){
-  log notice "Signify key:\n${signify_key}"
-  log notice "Verifying file: '${directory_prefix}/${guest_file}.sha512sums'"
+  log info "Signify key:\n${signify_key}"
+  log info "Verifying file: '${directory_prefix}/${guest_file}.sha512sums'"
   echo "${signify_key}" | signify -V -p - \
    -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
-  log notice "Signify Signature Verification: 'success'"
+  log info "Signify Signature Verification: 'success'"
 }
 
 
 ## Check hash sum.
 check_hash(){
-  log notice "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
+  log info "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
   ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
-  log notice "SHA512 Hash Verification: 'success'"
+  log info "SHA512 Hash Verification: 'success'"
 }
 
 
@@ -2387,6 +2387,7 @@ check_integrity(){
   log notice "Performing integrity checks..."
   check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} Failed to verify signature."
   check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} Failed hash checking."
+  log notice "Integrity Check Result: 'success'"
 }
 
 
