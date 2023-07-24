@@ -2838,6 +2838,21 @@ parse_opt(){
 }
 
 
+## Bash supports process substitution and saving xtrace to a file, which is a
+## simpler way to log to file and console.
+log_term_and_file_bash(){
+  exec > >(tee -a "${log_file_user}") 2> >(tee -a "${log_file_debug}" >&2) &
+  ## Bash has built-in feature to redirect xtrace to the specified file.
+  # shellcheck disable=SC2039
+  true "exec 9>>${log_file_debug}"
+  exec 9>>"${log_file_debug}"
+  export BASH_XTRACEFD=9
+  set -o xtrace
+  xtrace=1
+  touch "${log_file_debug}"
+}
+
+
 ## Logging mechanism.
 log_term_and_file(){
   ## Discover if terminal is attached to stdout
@@ -2845,6 +2860,16 @@ log_term_and_file(){
     log warn "Output is not being sent to the terminal because terminal is not connected to stdout."
     return 0
   fi
+
+  if test "${curr_shell}" = "bash"; then
+    log_term_and_file_bash
+    return 0
+  fi
+
+  ## Portable log and console redirection that has the downside of some
+  ## applications doing horrible line wrappings (apt >=2.6.1) if the output is
+  ## not a tty.
+
   ## Send fd3 to the terminal
   true "exec 3>$(tty)"
   exec 3>>"$(tty)"
@@ -2861,16 +2886,6 @@ log_term_and_file(){
   if test "${no_show_errors}" = "1"; then
     true "exec 2>/dev/null"
     exec 2>/dev/null
-  fi
-  ## Bash has built-in feature to redirect xtrace to the specified file.
-  if test "${curr_shell}" = "bash"; then
-    # shellcheck disable=SC2039
-    true "exec 9>>${log_file_debug}"
-    exec 9>>"${log_file_debug}"
-    export BASH_XTRACEFD=9
-    set -o xtrace
-    xtrace=1
-    touch "${log_file_debug}"
   fi
   ## Copy output of log file to fd3 and send process to the background.
   if test -f "${log_file_debug}" && test "${log_level}" = "debug"; then
