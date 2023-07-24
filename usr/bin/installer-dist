@@ -804,7 +804,7 @@ install_pkg(){
     ## Test if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
     if ${pkg_mngr_check_installed} "${pkg}"; then
-      log info "Package already installed: '${pkg}"
+      log info "Package already installed: '${pkg}'"
       continue
     fi
     if has "${pkg}"; then
