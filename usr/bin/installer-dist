@@ -2362,7 +2362,7 @@ should_download(){
 
 ## Check signature of signed checksum.
 check_signature(){
-  log notice "Signify signature:\n${signify_key}"
+  log notice "Signify key:\n${signify_key}"
   log notice "Verifying file: '${directory_prefix}/${guest_file}.sha512sums'"
   echo "${signify_key}" | signify -V -p - \
    -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
