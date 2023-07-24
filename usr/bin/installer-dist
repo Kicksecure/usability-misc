@@ -173,13 +173,13 @@ root_cmd(){
       ## https://stackoverflow.com/a/32966744/2605155
       cmd="$(which -- "${1}")"
       shift
-      log_run su root -s "${cmd}" -- "${@}"
+      log_run notice su root -s "${cmd}" -- "${@}"
       ;;
     sudo)
-      log_run sudo -- "${@}"
+      log_run notice sudo -- "${@}"
       ;;
     doas)
-      log_run doas -u root -- "${@}"
+      log_run notice doas -u root -- "${@}"
       ;;
     *)
       die 1 "${underline}root_cmd function:${nounderline} root_cmd does not support sucmd: '${sucmd}'"
@@ -569,15 +569,17 @@ die(){
 
 ## Wrapper to log command before running to avoid duplication of code
 log_run(){
+  level="${1}"
+  shift
   ## Extra spaces appearing when breaking log_run on multiple lines.
   command_without_extrarenous_spaces="$(echo "${@}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
-    log notice "Skipping: $ ${command_without_extrarenous_spaces}"
+    log "${level}" "Skipping: $ ${command_without_extrarenous_spaces}"
     return 0
   fi
   if test "${ci}" != "1"; then
     ## CI expects no output from root_cmd() which calls log_run().
-    log notice "Running: $ ${command_without_extrarenous_spaces}"
+    log "${level}" "Running: $ ${command_without_extrarenous_spaces}"
   fi
   "${@}" || return 1
 }
@@ -931,7 +933,7 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported gateway because reimport is set..."
-              log_run vboxmanage unregistervm \
+              log_run notice vboxmanage unregistervm \
                 "${guest_pretty}-Gateway-${interface_name}" --delete
             fi
           fi
@@ -944,7 +946,7 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported workstation because reimport is set."
-              log_run vboxmanage unregistervm \
+              log_run notice vboxmanage unregistervm \
                 "${guest_pretty}-Workstation-${interface_name}" --delete
             fi
           fi
@@ -987,7 +989,7 @@ check_vm_exists_virtualbox(){
           ## If VMs exists and reimport is set, remove VMs as they are gonna
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          log_run vboxmanage unregistervm \
+          log_run notice vboxmanage unregistervm \
             "${guest_pretty}-${interface_name}" --delete
         else
           ## VMs already exist, check if user wants to start them.
@@ -1111,7 +1113,7 @@ import_virtualbox(){
   esac
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run vboxmanage import \
+  log_run notice vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
@@ -1119,7 +1121,7 @@ import_virtualbox(){
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
-    log_run vboxmanage unregistervm ${vm_purge} --delete ||
+    log_run notice vboxmanage unregistervm ${vm_purge} --delete ||
       die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous virtual system."
   fi
 
@@ -1152,13 +1154,13 @@ start_virtualbox(){
   log notice "Starting Virtual Machine(s)."
   case "${guest}" in
     whonix)
-      log_run vboxmanage startvm \
+      log_run notice vboxmanage startvm \
         "${guest_pretty}-Gateway-${interface_name}" || virtualbox_start_failed
-      log_run vboxmanage startvm \
+      log_run notice vboxmanage startvm \
         "${guest_pretty}-Workstation-${interface_name}" || virtualbox_start_failed
       ;;
     kicksecure)
-      log_run vboxmanage startvm \
+      log_run notice vboxmanage startvm \
         "${guest_pretty}-${interface_name}" || virtualbox_start_failed
       ;;
   esac
@@ -1946,7 +1948,7 @@ get_version(){
   ## assigned to a variable at 'raw_version=$()'.
   if test "${dry_run}" = "1"; then
     # shellcheck disable=SC2086
-    log_run ${cmd_raw_version}
+    log_run notice ${cmd_raw_version}
     return 0
   fi
   # shellcheck disable=SC2086
@@ -1995,7 +1997,7 @@ get_file(){
 
   log notice "Downloading: '${url:-}'"
   # shellcheck disable=SC2086
-  log_run ${download_opt_full} || return 1
+  log_run notice ${download_opt_full} || return 1
 }
 
 
@@ -2017,7 +2019,7 @@ download_files(){
   }
   then
     log_time
-    log_run touch "${download_flag}"
+    log_run notice touch "${download_flag}"
   else
     die 103 "${underline}Download:${nounderline} Failed to download files."
   fi
@@ -2309,6 +2311,7 @@ get_download_links(){
       fi
       ## image signer
       signify_key="${adrelanos_signify}"
+      signify_signer="adrelanos"
       ## url directory to find files of the selected hypervisor
       url_domain="${url_download}/ova"
       ## image file extension
@@ -2325,6 +2328,7 @@ get_download_links(){
       fi
       ## image signer
       signify_key="${hulahoop_signify}"
+      signify_signer="hulahoop"
       ## url directory to find files of the selected hypervisor
       url_domain="${url_download}/libvirt"
       ## image file extension
@@ -2363,9 +2367,13 @@ should_download(){
 ## Check signature of signed checksum.
 check_signature(){
   log info "Signify key:\n${signify_key}"
-  log info "Verifying file: '${directory_prefix}/${guest_file}.sha512sums'"
-  echo "${signify_key}" | signify -V -p - \
-   -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
+  signify_checksum_file="${directory_prefix}/${guest_file}.sha512sums"
+  log info "Verifying file: '${signify_checksum_file}'"
+  signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
+  echo "${signify_key}" | tee "${signify_pub_file}" >/dev/null
+  signify -V -p "${signify_pub_file}" \
+    -m "${signify_checksum_file}" | log info "Signify output: $(cat)" \
+    || return 1
   log info "Signify Signature Verification: 'success'"
 }
 
@@ -2373,7 +2381,9 @@ check_signature(){
 ## Check hash sum.
 check_hash(){
   log info "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
-  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
+  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" \
+    | log info "Checksum output: $(cat)" \
+    || return 1
   log info "SHA512 Hash Verification: 'success'"
 }
 
@@ -2384,7 +2394,7 @@ check_integrity(){
     log notice "Skipping integrity checks because dry_run is set."
     return 0
   fi
-  log notice "Performing integrity checks..."
+  log notice "Performing integrity checks."
   check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} Failed to verify signature."
   check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} Failed hash checking."
   log notice "Integrity Check Result: 'success'"
