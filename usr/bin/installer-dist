@@ -2427,7 +2427,7 @@ main(){
     log notice "If you wish to cancel installation, press Ctrl+C."
   fi
   ## The license function sleeps for some seconds to give time to abort
-  check_license || die 100 "License Check: 'FAIL' - User declined the license."
+  check_license || die 100 "${underline}License Check:${nounderline} 'FAIL' - User declined the license."
 
   pre_check
 
