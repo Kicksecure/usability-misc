@@ -930,7 +930,7 @@ check_vm_exists_virtualbox(){
               log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
               log info "If you wish to reimport both machines, do not specify import_only."
             else
-              log warn "Deleting previously imported gateway because reimport is set."
+              log warn "Deleting previously imported gateway because reimport is set..."
               log_run vboxmanage unregistervm \
                 "${guest_pretty}-Gateway-${interface_name}" --delete
             fi
