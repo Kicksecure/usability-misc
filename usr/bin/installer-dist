@@ -1461,7 +1461,7 @@ install_signify(){
 ## Test if user accepts the license, if not, abort.
 check_license(){
   if [ "${non_interactive}" = "1" ]; then
-    log notice "License Check: Agreed by the user by setting non_interactive."
+    log notice "License Check: User agreement confirmed via non_interactive setting."
     return 0
   fi
 
