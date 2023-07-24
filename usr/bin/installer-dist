@@ -2379,7 +2379,7 @@ check_integrity(){
     log notice "Skipping integrity checks because dry_run is set."
     return 0
   fi
-  log notice "Doing integrity checks..."
+  log notice "Performing integrity checks..."
   check_signature || die 104 "Signify Signature Verification: 'FAIL' - Failed to verify signature."
   check_hash || die 104 "SHA512 Hash Verification: 'FAIL' - Failed hash checking."
 }
