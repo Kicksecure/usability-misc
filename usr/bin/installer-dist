@@ -1085,7 +1085,7 @@ import_guest(){
 
 ## Import VirtualBox images
 import_virtualbox(){
-  log notice "Importing Virtual Machine(s)."
+  log notice "Importing Virtual Machine(s)..."
   ## Check how many systems to import.
   ## vsys 0: gateway
   ## vsys 1: workstation
@@ -1113,17 +1113,18 @@ import_virtualbox(){
   # shellcheck disable=SC2086
   log_run vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
-    die 105 "Failed to import virtual machines."
+    die 105 "Virtual Machine Import: 'FAIL' - Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
     log_run vboxmanage unregistervm ${vm_purge} --delete ||
-      die 1 "Failed to remove extraneous virtual system."
+      die 1 "Virtual Machine Import: 'FAIL' - Failed to remove extraneous virtual system."
   fi
 
-  log notice "You can now open the VirtualBox application to use '${guest_pretty}'"
+  log notice "Virtual Machine Import: 'success'"
+  log notice "You can now open the VirtualBox application to use: '${guest_pretty}'"
 }
 
 
@@ -2360,7 +2361,7 @@ check_signature(){
   log notice "Verifying file: '${directory_prefix}/${guest_file}.sha512sums'"
   echo "${signify_key}" | signify -V -p - \
    -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
-  log notice "Signature matches."
+  log notice "Signify Signature Verification: 'success'"
 }
 
 
@@ -2368,7 +2369,7 @@ check_signature(){
 check_hash(){
   log notice "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
   ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
-  log notice "Checksum matches."
+  log notice "SHA512 Hash Verification: 'success'"
 }
 
 
@@ -2378,9 +2379,9 @@ check_integrity(){
     log notice "Skipping integrity checks because dry_run is set."
     return 0
   fi
-  log notice "Doing integrity checks."
-  check_signature || die 104 "Failed to verify signature."
-  check_hash || die 104 "Failed hash checking."
+  log notice "Doing integrity checks..."
+  check_signature || die 104 "Signify Signature Verification: 'FAIL' - Failed to verify signature."
+  check_hash || die 104 "SHA512 Hash Verification: 'FAIL' - Failed hash checking."
 }
 
 
