@@ -577,7 +577,7 @@ log_run(){
   fi
   if test "${ci}" != "1"; then
     ## CI expects no output from root_cmd() which calls log_run().
-    log notice "Executing: $ ${command_without_extrarenous_spaces}"
+    log notice "Running: $ ${command_without_extrarenous_spaces}"
   fi
   "${@}" || return 1
 }
@@ -777,21 +777,21 @@ nested_virtualization_test() {
       if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
         nested_virtualization_detected=true
         log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
-  - Possibly a user mistake.
+  - This might be a user error.
   - This installer is designed to run on the host operating system.
   - This installer is not designed to be run inside virtual machines.
-  - For more information about nested virtualization see:
-    ${url_version_domain}/wiki/Nested_Virtualization"
+  - For more information about nested virtualization, refer to:
+  ${url_version_domain}/wiki/Nested_Virtualization"
       fi
     fi
   fi
 
   if test -f /usr/share/qubes/marker-vm; then
     nested_virtualization_detected=true
-    log warn "${underline}QubesOS Detection Test:${nounderline} Qubes detected.
-- The installer is not supposed to be run inside Qubes.
-- Useful only for development purposes.
-- It is recommended to use Qubes-Whonix instead."
+    log warn "${underline}QubesOS Detection Test:${nounderline} 'Qubes detected'
+  - The installer is not designed for execution within Qubes.
+  - Useful only for development purposes.
+  - It is recommended to use Qubes-Whonix instead."
   fi
 }
 
@@ -825,8 +825,8 @@ install_pkg(){
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_update} ||
       die 1 "Could not update package lists.
-- This issue is most likely not caused by this installer.
-- This is most likely a package manager configuration or network issue.
+  - This issue is most likely not caused by this installer.
+  - This is most likely a package manager configuration or network issue.
 
 This is the command which the installer has just run that failed:
 
@@ -1124,7 +1124,7 @@ import_virtualbox(){
   fi
 
   log notice "Virtual Machine Import: 'success'"
-  log notice "You can now open the VirtualBox application to use: '${guest_pretty}'"
+  log notice "You can now open the VirtualBox application and start using: '${guest_pretty}'"
 }
 
 
@@ -1168,18 +1168,19 @@ start_virtualbox(){
 virtualbox_start_failed() {
   if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
     die 106 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
-- The installer succeeded with download and import, but
-- failed to start the virtual machines (VMs).
-- The root cause for this issue is likely not the installer.
-- This issue would likely also happen if the user tried to manually start the VMs.
-- This is likely happening due to the virtualization related warnings that have been reported above."
+  - The installer succeeded with download and import, but
+  - failed to start the virtual machines (VMs).
+  - The root cause for this issue is likely not the installer.
+  - This issue would likely also happen if the user tried to manually start the VMs.
+  - This is likely happening due to the virtualization related warnings that have been reported above.
+  - Resolving these issues (as per documentation hyperlinks above) would likely resolve this issue."
   fi
   die 107 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
-- The installer succeeded with download and import, but
-- failed to start the virtual machines (VMs).
-- The root cause for this issue is likely not the installer.
-- This issue would likely also happen if the user tried to manually start the VMs.
-- See user documentation:
+  - The installer succeeded with download and import, but
+  - failed to start the virtual machines (VMs).
+  - The root cause for this issue is likely not the installer.
+  - This issue would likely also happen if the user tried to manually start the VMs.
+  - Refer to user documentation:
   ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
 
@@ -1722,8 +1723,8 @@ get_system_stat(){
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
     log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: '${total_mem} MB'"
-    log warn "  See:"
     if test "${virtualbox_only}" != "1"; then
+      log warn "  - For more information, refer to:"
       log warn "  ${url_version_domain}/wiki/RAM"
     fi
   fi
@@ -1768,8 +1769,8 @@ get_system_stat(){
     die 101 "\
 ${underline}Free Disk Space Check:${nounderline} Failed! Insufficient free disk space!
 
-- available: ${free_space_available}G
-- required : ${free_space_required}G
+  - available: '${free_space_available}G'
+  - required : '${free_space_required}G'
 
 Debugging information:
 - Command to test the available free space on ${directory_prefix}:
@@ -1909,17 +1910,19 @@ torify_conn(){
   fi
   check_tor_proxy || die 2 "\
 Cannot connect to Tor SOCKS proxy.
-- This issue is most likely not caused by this installer.
-- This issue is likely caused by a missing software, configuration or network issues.
+
+  - This issue is most likely not caused by this installer.
+  - This issue is likely caused by a missing software, configuration or network issues.
 
 Note, that for torification of connections an already functional Tor connection is required.
 
-- A) An already installed and running system Tor (little-t-tor). Or,
-- B) An already installed and running TBB (Tor Browser Bundle).
+  - A) An already installed and running system Tor (little-t-tor). Or,
+  - B) An already installed and running TBB (Tor Browser Bundle).
 
-This installer cannot help to set up a functional Tor connection. This must be done by the system administrator.
+Additional information:
 
-When manually running above cmd_check_proxy it needs to include the expected_response_header."
+  - This installer cannot help to set up a functional Tor connection. This must be done by the system administrator.
+  - When manually running above cmd_check_proxy it needs to include the expected_response_header."
 }
 
 
@@ -2053,9 +2056,9 @@ get_virtualization(){
   esac
 
   if [ "$virt_detection_success" = "false" ]; then
-    log warn "(The virtualization detection is imperfect and might show a false negative warning.)"
+    log warn "  - The virtualization detection feature of this installer may not be flawless and could potentially fail to detect virtualization support (this is known as a 'false negative')."
     if [ "${hypervisor}" = "virtualbox" ]; then
-      log warn "See user documentation on how to enable virtualization:"
+      log warn "  - Refer to user documentation on how to enable virtualization:"
       log warn "  ${url_version_domain}/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
     fi
     return 0
@@ -2347,7 +2350,7 @@ should_download(){
     return 0
   elif test -f "${download_flag:-}"; then
     ## Do not download if flag exists.
-    log notice "Skipping download because flag exists: '${download_flag}'"
+    log notice "Skipping download. Flag found: '${download_flag}'"
     return 1
   fi
   ## Download as no obstacles prohibit it.
