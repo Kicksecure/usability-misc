@@ -1244,7 +1244,7 @@ install_virtualbox_debian_common_end(){
   virtualbox_linux_user_group="vboxusers"
   id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} 'FAIL' - Failed to run: 'id --name --user'"
   if id -nG "$id_of_user" | grep -qw "${virtualbox_linux_user_group}\$"; then
-    log info "'$id_of_user' is already a member of the Linux group 'vboxusers'."
+    log info "Linux account '$id_of_user' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
   root_cmd adduser "$id_of_user" "${virtualbox_linux_user_group}" || die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} 'FAIL' - Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
@@ -1419,7 +1419,7 @@ install_virtualbox_debian(){
   has virtualboxvm && has_virtualbox_qt=1
 
   if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
-    log info "vboxmanage and ${linux_headers} are already installed."
+    log info "'vboxmanage' and '${linux_headers}' are already installed."
     install_virtualbox_debian_common_end
     return 0
   fi
