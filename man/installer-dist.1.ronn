@@ -117,6 +117,9 @@ Guest and Interface can be set by changing the script name to the format
           4 [PL] ftp.icm.edu.pl
           5 [US] mirrors.gigenet.com
 
+`--virtualbox-only`
+        Only downloads and installs VirtualBox.
+
 `--allow-errors`
 
         Set dirty mode, don't quit on errors.
@@ -124,6 +127,9 @@ Guest and Interface can be set by changing the script name to the format
 `--no-show-errors`
 
         Hide errors, do not print them.
+
+`--ci`
+        Set CI mode. Test running in CI.
 
 `--testers`
 
@@ -205,4 +211,3 @@ https://www.whonix.org/wiki/Dev/Linux_Installer
 
 ## SEE ALSO
 curl(1), sha512sum(1), signify-openbsd(1), qemu(1), kvm(1)
-
