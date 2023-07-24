@@ -182,7 +182,7 @@ root_cmd(){
       log_run doas -u root -- "${@}"
       ;;
     *)
-      die 1 "Function root_cmd does not support sucmd '${sucmd}'."
+      die 1 "Function root_cmd does not support sucmd: '${sucmd}'"
       ;;
   esac
 }
@@ -280,10 +280,10 @@ get_os(){
     *) distro="${os} ${kernel}";;
   esac
 
-  log notice "Detected architecture: ${arch}."
-  log notice "Detected system: ${os}."
-  log notice "Detected distribution: ${distro}."
-  log notice "Detected distribution version: ${distro_version}."
+  log notice "Detected architecture: '${arch}'"
+  log notice "Detected system: '${os}'"
+  log notice "Detected distribution: '${distro}'"
+  log notice "Detected distribution version: '${distro_version}'"
 
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
@@ -447,7 +447,7 @@ range_arg(){
     done
     ## if not within range, fail and show the fixed range that can be used
     if [ ${success} -eq 0 ]; then
-      die 2 "Option '${key}' cannot be '${var:-}'. Possible values: '${list}'."
+      die 2 "Option '${key}' cannot be '${var:-}'. Possible values: '${list}'"
     fi
   fi
 }
@@ -502,7 +502,7 @@ log(){
       log_color="${green}"
       ;;
     *)
-      log bug "Unsupported log type: '${log_type}'."
+      log bug "Unsupported log type: '${log_type}'"
       die 1 "Please report this bug."
   esac
   ## uniform log format
@@ -625,13 +625,13 @@ handle_exit(){
   ## Virtual Machine unexpected start issues.
   test "${last_exit}" = "107" && end_exit
   ## Exit with errors.
-  log notice "Current script: ${0}"
+  log notice "Current script: '${0}'"
   # shellcheck disable=SC3028
   if test -n "${BASH_COMMAND:-}"; then
     # shellcheck disable=SC2039,3028,3054
-    log notice "Function executed: ${FUNCNAME[1]}"
+    log notice "Function executed: '${FUNCNAME[1]}'"
     # shellcheck disable=SC2039,3028,3054
-    log notice "Command executed: ${BASH_COMMAND}"
+    log notice "Command executed: '${BASH_COMMAND}'"
   fi
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
@@ -642,7 +642,7 @@ handle_exit(){
     log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
     log error "If not already reported, please report this bug!"
     echo ""
-    log error "Error occurred in line: ${line_number}."
+    log error "Error occurred in line: '${line_number}'"
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
     # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
@@ -661,11 +661,11 @@ handle_exit(){
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
       signal_caught="$(kill -l "${signal_code}")"
-      log error "Received ${signal_caught} signal."
+      log error "Received signal: '${signal_caught}"
     fi
   fi
   ## Print exit code.
-  log error "Exit code: ${last_exit}."
+  log error "Exit code: '${last_exit}'"
   end_exit
 }
 
@@ -804,11 +804,11 @@ install_pkg(){
     ## Test if package exists as a binary or a library, using different tools.
     # shellcheck disable=SC2086
     if ${pkg_mngr_check_installed} "${pkg}"; then
-      log info "${pkg} package already installed."
+      log info "Package already installed: '${pkg}"
       continue
     fi
     if has "${pkg}"; then
-      log info "${pkg} program already installed."
+      log info "Program already installed: '${pkg}'"
       continue
     fi
 
@@ -817,10 +817,10 @@ install_pkg(){
 
   if test -n "${pkg_not_installed}"; then
     if test "${dry_run}" = "1"; then
-      log notice "Skipping installing packages because dry_run is set:${pkg_not_installed}"
+      log notice "Skipping installing the following packages because dry_run is set: '${pkg_not_installed}'"
       return 0
     fi
-    log notice "Installing package(s):${pkg_not_installed}"
+    log notice "Installing package(s): '${pkg_not_installed}'"
     log notice "Updating package list."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_update} ||
@@ -837,10 +837,10 @@ The user is advised to attempt to debug this with the following steps:
 2. If there is an issue, use search engines, documentation and if needed
    contact the support of your operating system.
 3. Once this has been fixed fixed, re-run this installer."
-    log notice "Installing package(s):${pkg_not_installed}."
+    log notice "Installing package(s): '${pkg_not_installed}'"
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
-      die 1 "Failed to install package${pkg_not_installed}."
+      die 1 "Failed to install package '${pkg_not_installed}'"
     ## Test if installation worked.
     test_pkg "${pkg_not_installed}"
   fi
@@ -863,9 +863,9 @@ test_pkg(){
 
   if test -n "${pkg_not_installed}"; then
     if test "${dry_run}" = "1"; then
-      log error "Failed to locate package(s):${pkg_not_installed}. - ignoring because dry_run is set."
+      log error "Failed to locate package(s) and ignoring because dry_run is set: '${pkg_not_installed}'"
     else
-      log error "Failed to locate package(s):${pkg_not_installed}."
+      log error "Failed to locate package(s): '${pkg_not_installed}'"
       return 1
     fi
   fi
@@ -1017,8 +1017,12 @@ check_vm_exists(){
 ## Check if guest should start or not
 check_guest_boot(){
   log info "Virtual Machine(s) already exist."
-  log notice "If you would like to redownload the image, read about --redownload (safe)."
-  log notice "If you would like to reimport the image, read about --reimport (danger)."
+  if test "${redownload}" != "1"; then
+    log notice "If you would like to redownload the image, read about --redownload (safe)."
+  fi
+  if test "${reimport}" != "1"; then
+    log notice "If you would like to reimport the image, read about --reimport (danger)."
+  fi
   ## Skip guest boot
   if test "${no_boot}" = "1"; then
     log info "no_boot is set."
@@ -1035,17 +1039,17 @@ check_guest_boot(){
   ## Ask user to start guest or not
   case "${guest}" in
     whonix)
-      log notice "Available guest: ${guest_pretty}-Gateway-${interface_name}"
-      log notice "Available guest: ${guest_pretty}-Workstation-${interface_name}"
+      log notice "Available guest: '${guest_pretty}-Gateway-${interface_name}'"
+      log notice "Available guest: '${guest_pretty}-Workstation-${interface_name}'"
       ;;
     kicksecure)
-      log notice "Available guest: ${guest_pretty}-${interface_name}"
+      log notice "Available guest: '${guest_pretty}-${interface_name}'"
       ;;
   esac
   log notice "${bold}Question:${nobold} Do you want to start the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
   printf '%s' "Your answer: "
   read -r response
-  log notice "User replied '${response}'."
+  log notice "User replied '${response}'"
   case ${response} in
     ""|[Yy]|[Yy][Ee][Ss])
       log notice "${underline}VM Startup Check:${nounderline} User accepted to start Virtual Machine(s)."
@@ -1053,7 +1057,7 @@ check_guest_boot(){
       ;;
     *)
       log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s)."
-      log notice "The ${guest_pretty} Virtual Machine(s) can be started manually."
+      log notice "The following Virtual Machine(s) can be started manually: '${guest_pretty}'"
       ;;
   esac
   ## Last phase, should exit here every time.
@@ -1119,7 +1123,7 @@ import_virtualbox(){
       die 1 "Failed to remove extraneous virtual system."
   fi
 
-  log notice "You can now open the VirtualBox application to use ${guest_pretty}."
+  log notice "You can now open the VirtualBox application to use '${guest_pretty}'"
 }
 
 
@@ -1157,7 +1161,7 @@ start_virtualbox(){
         "${guest_pretty}-${interface_name}" || virtualbox_start_failed
       ;;
   esac
-  log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}SUCCESS${nobold}${nocolor}"
+  log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
 }
 
 virtualbox_start_failed() {
@@ -1236,7 +1240,7 @@ install_virtualbox_debian_common_end(){
     fi
   fi
   virtualbox_linux_user_group="vboxusers"
-  id_of_user="$(id --name --user)" || die 1 "Failed to run 'id --name --user'."
+  id_of_user="$(id --name --user)" || die 1 "Failed to run: 'id --name --user'"
   if id -nG "$id_of_user" | grep -qw "${virtualbox_linux_user_group}\$"; then
     log info "'$id_of_user' is already a member of the Linux group 'vboxusers'."
     return 0
@@ -1508,7 +1512,7 @@ check_license(){
           log notice "${underline}License Check:${nounderline} User agreed with the license."
           ;;
         *)
-          log warn "${underline}License Check:${nounderline} User replied '${license_agreement}'."
+          log warn "${underline}License Check:${nounderline} User replied '${license_agreement}'"
           return 1
           ;;
       esac
@@ -1538,7 +1542,7 @@ get_su_cmd(){
   if test "${ci}" = "1"; then
     root_output="$(timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
-      log error "sudo output: ${root_output}"
+      log error "sudo output: '${root_output}'"
       die 1 "Unexpected non-empty output for sudo test in CI mode."
     fi
     return 0
@@ -1547,13 +1551,13 @@ get_su_cmd(){
   ## Other su cmds do not have an option that does the same.
   if test "${sucmd}" = "sudo"; then
     if ! timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr; then
-      log info "User system is using credential caching: No"
+      log info "User system is using credential caching: 'No'"
       return 0
     fi
     log info "User system is using credential caching: Yes"
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
-      log error "sudo output: ${root_output}"
+      log error "sudo output: '${root_output}'"
       die 1 "Unexpected non-empty output for sudo test in normal mode."
     fi
   fi
@@ -1653,7 +1657,7 @@ get_utilities(){
 
 ## Set default traps
 set_trap(){
-  log info "Current PATH: ${PATH}"
+  log info "Current PATH: '${PATH}'"
   ## Sometimes ps is not available, default to sh.
   curr_shell="$(cat /proc/$$/comm)"
   ## Get current shell from current process
@@ -1716,7 +1720,8 @@ get_system_stat(){
   total_mem="$((total_mem_kB/1000))"
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
-    log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: ${total_mem} MB. See:"
+    log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: '${total_mem} MB'"
+    log warn "  See:"
     if test "${virtualbox_only}" != "1"; then
       log warn "  ${url_version_domain}/wiki/RAM"
     fi
@@ -1811,7 +1816,7 @@ get_proxy_cred(){
 
 ## Test if can connect to SOCKS proxy and expect the correct Tor reply.
 check_tor_proxy(){
-  log notice "Testing SOCKS proxy: ${proxy}."
+  log notice "Testing SOCKS proxy: '${proxy}'"
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
   log info "Expected response header:"
   log info "'$expected_response_header'"
@@ -1982,7 +1987,7 @@ get_file(){
   # shellcheck disable=SC2046,SC2086
   download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
-  log notice "Downloading ${url:-}."
+  log notice "Downloading: '${url:-}'"
   # shellcheck disable=SC2086
   log_run ${download_opt_full} || return 1
 }
@@ -1993,7 +1998,7 @@ get_file(){
 download_files(){
   log_time
 
-  log notice "Downloads will be stored in the directory: '${directory_prefix}'."
+  log notice "Downloads will be stored in the directory: '${directory_prefix}'"
   get_file large "${url_guest_file}.${guest_file_ext}" || return 1
   get_file small "${url_guest_file}.sha512sums.sig" || return 1
   get_file small "${url_guest_file}.sha512sums" || return 1
@@ -2032,7 +2037,7 @@ get_virtualization(){
 
   case "${virt_flag:=}" in
     vmx|svm)
-      log notice "${underline}Virtualization Support Test:${nounderline} Your CPU supports virtualization: ${brand}: ${virt_flag}."
+      log notice "${underline}Virtualization Support Test:${nounderline} Your CPU supports virtualization: '${brand}': '${virt_flag}'"
       virt_detection_success=true
       return 0
       ;;
@@ -2041,7 +2046,7 @@ get_virtualization(){
       virt_detection_success=false
       ;;
     *)
-      log warn "${underline}Virtualization Support Test:${nounderline} Unknown virtualization flag: ${virt_flag}."
+      log warn "${underline}Virtualization Support Test:${nounderline} Unknown virtualization flag: '${virt_flag}'"
       virt_detection_success=false
       ;;
   esac
@@ -2126,7 +2131,7 @@ get_virtualization(){
     verdict 0
   else
     log warn "Device /dev/kvm does not exist"
-    log warn "hint: ${sucmd} modprobe kvm_$brand"
+    log warn "hint: '${sucmd} modprobe kvm_$brand'"
   fi
 
   ## Prepare MSR access
@@ -2155,7 +2160,7 @@ get_virtualization(){
     virt_bit=$(root_cmd rdmsr --bitfield 4:4 0xc0010114 2>/dev/null || true)
     [ "${virt_bit}" = "1" ] && virt_disabled=1
   else
-    log error "Unknown virtualization extension: ${virt}"
+    log error "Unknown virtualization extension: '${virt}'"
     verdict 1
   fi
 
@@ -2241,7 +2246,7 @@ get_download_links(){
       ;;
     *)
       ## range_arg should have catch this error before, just safeguarding.
-      log bug "Invalid mirror number: '${mirror}'."
+      log bug "Invalid mirror number: '${mirror}'"
       ;;
   esac
 
@@ -2341,7 +2346,7 @@ should_download(){
     return 0
   elif test -f "${download_flag:-}"; then
     ## Do not download if flag exists.
-    log notice "Skipping download because flag exists: ${download_flag}."
+    log notice "Skipping download because flag exists: '${download_flag}'"
     return 1
   fi
   ## Download as no obstacles prohibit it.
@@ -2352,7 +2357,7 @@ should_download(){
 ## Check signature of signed checksum.
 check_signature(){
   log notice "Signify signature:\n${signify_key}"
-  log notice "Verifying file: ${directory_prefix}/${guest_file}.sha512sums."
+  log notice "Verifying file: '${directory_prefix}/${guest_file}.sha512sums'"
   echo "${signify_key}" | signify -V -p - \
    -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
   log notice "Signature matches."
@@ -2361,7 +2366,7 @@ check_signature(){
 
 ## Check hash sum.
 check_hash(){
-  log notice "Checking SHA512 checksum: ${directory_prefix}/${guest_file}.${guest_file_ext}"
+  log notice "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
   ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
   log notice "Checksum matches."
 }
@@ -2384,9 +2389,9 @@ main(){
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving user log to: '${log_file_user}'."
+  log notice "Saving user log to: '${log_file_user}'"
   if test -f "${log_file_debug}"; then
-    log notice "Saving debug log to: '${log_file_debug}'."
+    log notice "Saving debug log to: '${log_file_debug}'"
   fi
   log info "Starting main function."
 
@@ -2410,9 +2415,9 @@ main(){
   done
 
   if test "${virtualbox_only}" = "1"; then
-    log notice "${underline}Installer:${nounderline} ${bold}VirtualBox Installer${nobold}"
+    log notice "${underline}Installer:${nounderline} ${bold}'VirtualBox Installer'${nobold}"
   else
-    log notice "${underline}Installer:${nounderline} ${bold}${guest_pretty} ${interface_name} for ${hypervisor_pretty} Installer${nobold}"
+    log notice "${underline}Installer:${nounderline} ${bold}'${guest_pretty} ${interface_name} for ${hypervisor_pretty} Installer'${nobold}"
   fi
   if test "${non_interactive}" != "1"; then
     log notice "If you wish to cancel installation, press Ctrl+C."
@@ -2454,7 +2459,7 @@ main(){
       log notice "Connection to ${url_origin} succeeded."
     fi
     get_version "${url_version}"
-    log notice "Version: ${guest_version}."
+    log notice "Version: '${guest_version}'"
     guest_file="${guest_pretty}-${interface_name}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
     url_domain="${url_domain}/${guest_version:?}"
@@ -2465,7 +2470,7 @@ main(){
       download_files || die 103 "Failed to download files."
     fi
   else
-    log notice "Version: ${guest_version}."
+    log notice "Version: '${guest_version}'"
   fi
   ##################
   ## END DOWNLOAD ##
@@ -2601,16 +2606,16 @@ parse_name(){
   case "${me}" in
     whonix-installer-xfce | whonix-installer-cli | \
       kicksecure-installer-xfce | kicksecure-installer-cli )
-      log info "Valid script name '${me}', using its name to set options."
+      log info "Valid script name to set options: '${me}'"
       ;;
     virtualbox-installer )
-      log info "Valid script name '${me}', using its name to set options."
+      log info "Valid script name to set options: '${me}'"
       set_arg virtualbox_only 1
       set_arg hypervisor virtualbox
       return 0
       ;;
     *)
-      log error "Invalid script name '${me}'."
+      log error "Invalid script name: '${me}'"
       log error "If you don't know why this happened, rename this script to"
       log error "  installer-dist and use command-line options instead."
       return 2
@@ -2619,7 +2624,7 @@ parse_name(){
   set_arg guest "$(echo "${me}" | cut -d "-" -f1)"
   set_arg interface "$(echo "${me}" | cut -d "-" -f3)"
   #set_arg hypervisor "$(echo "${me}" | cut -d "-" -f3)"
-  log info "Assigned guest and interface according to script name ${me}."
+  log info "Assigned guest and interface according to script name: '${me}'"
   return 0
 }
 
@@ -2711,7 +2716,7 @@ parse_opt(){
         usage 0
         ;;
       *)
-        die 2 "Invalid option: '${opt_orig}'."
+        die 2 "Invalid option: '${opt_orig}'"
         ;;
     esac
     shift "${shift_n:-1}"
@@ -2760,25 +2765,25 @@ parse_opt(){
     directory_prefix="${directory_prefix%*/}"
     ## Only accept an absolute path.
     if [ "${directory_prefix}" = "${directory_prefix#/}" ]; then
-      log error "Invalid directory prefix: '${directory_prefix}'."
+      log error "Invalid directory prefix: '${directory_prefix}'"
       die 1 "Directory prefix can not be a relative path, must be an absolute path."
     fi
 
     ## Test if parent directory exists.
     directory_prefix_parent="$(dirname "${directory_prefix}")"
     if ! test -d "${directory_prefix_parent}"; then
-      die 1 "Directory doesn't exist: '${directory_prefix_parent}'."
+      die 1 "Directory doesn't exist: '${directory_prefix_parent}'"
     fi
     ## Not possible to check if parent dir is writable because if the prefix
     ## is set to '~/', the parent '/home' is not writable.
 
-    log info "Creating directory: '${directory_prefix}'."
+    log info "Creating directory: '${directory_prefix}'"
     mkdir -p "${directory_prefix}" ||
-      die 1 "Failed to created directory: '${directory_prefix}'."
+      die 1 "Failed to created directory: '${directory_prefix}'"
     test -w "${directory_prefix}" ||
-      die 1 "Directory isn't writable: '${directory_prefix}'."
+      die 1 "Directory isn't writable: '${directory_prefix}'"
     test -r "${directory_prefix}" ||
-      die 1 "Directory isn't readable: '${directory_prefix}'."
+      die 1 "Directory isn't readable: '${directory_prefix}'"
 
     log_dir_main="${directory_prefix}/logs"
 
@@ -2833,6 +2838,21 @@ parse_opt(){
 }
 
 
+## Bash supports process substitution and saving xtrace to a file, which is a
+## simpler way to log to file and console.
+log_term_and_file_bash(){
+  exec > >(tee -a "${log_file_user}") 2> >(tee -a "${log_file_debug}" >&2) &
+  ## Bash has built-in feature to redirect xtrace to the specified file.
+  # shellcheck disable=SC2039
+  true "exec 9>>${log_file_debug}"
+  exec 9>>"${log_file_debug}"
+  export BASH_XTRACEFD=9
+  set -o xtrace
+  xtrace=1
+  touch "${log_file_debug}"
+}
+
+
 ## Logging mechanism.
 log_term_and_file(){
   ## Discover if terminal is attached to stdout
@@ -2840,6 +2860,16 @@ log_term_and_file(){
     log warn "Output is not being sent to the terminal because terminal is not connected to stdout."
     return 0
   fi
+
+  if test "${curr_shell}" = "bash"; then
+    log_term_and_file_bash
+    return 0
+  fi
+
+  ## Portable log and console redirection that has the downside of some
+  ## applications doing horrible line wrappings (apt >=2.6.1) if the output is
+  ## not a tty.
+
   ## Send fd3 to the terminal
   true "exec 3>$(tty)"
   exec 3>>"$(tty)"
@@ -2856,16 +2886,6 @@ log_term_and_file(){
   if test "${no_show_errors}" = "1"; then
     true "exec 2>/dev/null"
     exec 2>/dev/null
-  fi
-  ## Bash has built-in feature to redirect xtrace to the specified file.
-  if test "${curr_shell}" = "bash"; then
-    # shellcheck disable=SC2039
-    true "exec 9>>${log_file_debug}"
-    exec 9>>"${log_file_debug}"
-    export BASH_XTRACEFD=9
-    set -o xtrace
-    xtrace=1
-    touch "${log_file_debug}"
   fi
   ## Copy output of log file to fd3 and send process to the background.
   if test -f "${log_file_debug}" && test "${log_level}" = "debug"; then
