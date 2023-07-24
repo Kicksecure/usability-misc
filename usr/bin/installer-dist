@@ -1113,17 +1113,17 @@ import_virtualbox(){
   # shellcheck disable=SC2086
   log_run vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
-    die 105 "Virtual Machine Import: 'FAIL' - Failed to import virtual machines."
+    die 105 "VM Import: 'FAIL' - Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
     log_run vboxmanage unregistervm ${vm_purge} --delete ||
-      die 1 "Virtual Machine Import: 'FAIL' - Failed to remove extraneous virtual system."
+      die 1 "VM Import: 'FAIL' - Failed to remove extraneous virtual system."
   fi
 
-  log notice "Virtual Machine Import: 'success'"
+  log notice "VM Import: 'success'"
   log notice "You can now open the VirtualBox application and start using: '${guest_pretty}'"
 }
 
