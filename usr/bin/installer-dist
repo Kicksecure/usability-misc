@@ -159,14 +159,14 @@ capitalize_first_char(){
 
 ## Block running as root.
 not_as_root(){
-  test "$(id -u)" = "0" && die 1 "Running as root."
+  test "$(id -u)" = "0" && die 1 "${underline}Non-Root Check:${nounderline} 'FAIL' - Running as root. This installer should not be run as root. Please run as normal user."
   return 0
 }
 
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
-  test -z "${1:-}" && die 1 "Failed to pass arguments to root_cmd."
+  test -z "${1:-}" && die 1 "${underline}root_cmd function:${nounderline} Failed to pass arguments to root_cmd."
   case "${sucmd}" in
     su)
       ## Thanks to Congelli501 for su to not mess with quotes.
@@ -182,7 +182,7 @@ root_cmd(){
       log_run doas -u root -- "${@}"
       ;;
     *)
-      die 1 "Function root_cmd does not support sucmd: '${sucmd}'"
+      die 1 "${underline}root_cmd function:${nounderline} root_cmd does not support sucmd: '${sucmd}'"
       ;;
   esac
 }
@@ -206,25 +206,25 @@ is_addr_port(){
   if [ "$(echo "${addr_port}" | tr -cd "." | wc -c)" != 3 ] ||
     [ "$(echo "${addr_port}" | tr -cd ":" | wc -c)" != 1 ] ||
     [ "${port}" = "${addr}" ]; then
-    die 2 "Invalid address:port assignment: ${addr_port}"
+    die 2 "${underline}is_addr_port test:${nounderline} Invalid address:port assignment: ${addr_port}"
   fi
 
   is_integer "${port}" ||
-    die 2 "Invalid port '${port}', not an integer."
+    die 2 "${underline}is_addr_port test:${nounderline} Invalid port '${port}', not an integer."
 
   if [ "${port}" -gt 0 ] && [ "${port}" -le 65535 ]; then
-    true "Valid port '${port}'"
+    true "is_addr_port test: Valid port: '${port}'"
   else
-    die 2 "Invalid port '${port}', not within range: 0-65535."
+    die 2 "${underline}is_addr_port test:${nounderline} Invalid port '${port}', not within range: 0-65535."
   fi
 
   for quad in $(printf '%s\n' "${addr}" | tr "." " "); do
     is_integer "${quad}" ||
-      die 2 "Invalid address '${addr}', '${quad}' is not an integer."
+      die 2 "${underline}is_addr_port test:${nounderline} Invalid address '${addr}', '${quad}' is not an integer."
     if [ "${quad}" -ge 0 ] && [ "${quad}" -le 255 ]; then
       true "Valid quad '${quad}'"
     else
-      die 2 "Invalid address '${addr}', '${quad}' not within range: 0-255."
+      die 2 "${underline}is_addr_port test:${nounderline} Invalid address '${addr}', '${quad}' not within range: 0-255."
     fi
   done
 }
@@ -288,7 +288,7 @@ get_os(){
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
   if [ -z "${distro_version}" ]; then
-    die 101 "Failed to find distribution version."
+    die 101 "${underline}Distribution Check:${nounderline} Failed to find distribution version."
     ## it will fail later on get_host_pkgs if the system is not supported.
     ## but distro version needs to be checked here because it can occur
     ## frequently when the release of the distribution is still unstable.
@@ -297,7 +297,7 @@ get_os(){
 
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
   is_integer "${distro_version_without_dot}" ||
-     die 101 "Distro version without dot is still not a number: '${distro_version_without_dot}'"
+     die 101 "${underline}Distribution Check:${nounderline} Distribution version without dot is still not a number: '${distro_version_without_dot}'"
 }
 
 ##############
@@ -702,33 +702,33 @@ get_host_pkgs(){
         *"buntu"*)
           true "${distro}"
           if [ "${distro_version_without_dot}" -lt 2204 ]; then
-            die 101 "Minimal ${distro} required version is 22.04, yours is ${distro_version}."
+            die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          die 101 "Unsupported system."
+          die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          die 101 "Unsupported system."
+          die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
           ;;
         *)
-          die 101 "Unsupported system."
+          die 101 "${underline}Distribution Check:${nounderline} Unsupported (unknown) system."
           ;;
       esac
     ;;
     "OpenBSD"*)
-      die 101 "Unsupported system."
+      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
       ;;
     "NetBSD"*)
-      die 101 "Unsupported system."
+      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
       ;;
     "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      die 101 "Unsupported system."
+      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
       ;;
     *)
-      die 101 "Unsupported system."
+      die 101 "${underline}Distribution Check:${nounderline} Unsupported (unknown) system."
       ;;
   esac
 }
@@ -741,7 +741,7 @@ get_independent_host_pkgs(){
     signify(){ signify-openbsd "${@}"; }
   fi
 
-  has timeout || die 1 "Timeout utility is missing."
+  has timeout || die 1 "${underline}Packages Installed Check:${nounderline} Timeout utility is missing."
   has curl || install_pkg curl
   has rsync || install_pkg rsync
 
@@ -824,7 +824,7 @@ install_pkg(){
     log notice "Updating package list."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_update} ||
-      die 1 "Could not update package lists.
+      die 1 "${underline}Package List Update:${nounderline} 'FAIL' - Could not update package lists.
   - This issue is most likely not caused by this installer.
   - This is most likely a package manager configuration or network issue.
 
@@ -840,7 +840,7 @@ The user is advised to attempt to debug this with the following steps:
     log notice "Installing package(s): '${pkg_not_installed}'"
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
-      die 1 "Failed to install package '${pkg_not_installed}'"
+      die 1 "${underline}Package Installation:${nounderline} 'FAIL' - Failed to install package: '${pkg_not_installed}'"
     ## Test if installation worked.
     test_pkg "${pkg_not_installed}"
   fi
@@ -882,8 +882,8 @@ check_vm_running_virtualbox(){
   if vboxmanage showvminfo "${vm}" | \
     grep -qE "^State:[[:space:]]+(running|paused)"
   then
-    log error "Can't proceed, you have the following VM running: ${vm}"
-    die 1 "Please turn it off before running this script again."
+    log error "Cannot proceed. You have the following VM running: ${vm}"
+    die 1 "${underline}VM Running Check:${nounderline} 'FAIL' - Please turn it off before re-running this installer."
   fi
 }
 
