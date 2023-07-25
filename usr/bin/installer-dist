@@ -581,7 +581,7 @@ log_run(){
     ## CI expects no output from root_cmd() which calls log_run().
     log "${level}" "Running: $ ${command_without_extrarenous_spaces}"
   fi
-  "${@}" | (ec="$?"; read -r output; log "${level}" "Output: ${output}"; return "$ec"; ) || return 1
+  "${@}" || return 1
 }
 
 
@@ -2371,8 +2371,9 @@ check_signature(){
   log info "Verifying file: '${signify_checksum_file}'"
   signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
   echo "${signify_key}" | tee "${signify_pub_file}" >/dev/null
-  log_run info signify -V -p "${signify_pub_file}" \
-    -m "${signify_checksum_file}" || return 1
+  signify -V -p "${signify_pub_file}" \
+    -m "${signify_checksum_file}" | log info "Signify output: $(cat)" \
+    || return 1
   log info "Signify Signature Verification: 'success'"
 }
 
@@ -2380,8 +2381,8 @@ check_signature(){
 ## Check hash sum.
 check_hash(){
   log info "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
-  # shellcheck disable=SC2086
-  log_run info ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" \
+  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" \
+    | log info "Checksum output: $(cat)" \
     || return 1
   log info "SHA512 Hash Verification: 'success'"
 }
