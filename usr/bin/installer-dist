@@ -2388,9 +2388,6 @@ check_hash(){
   log info "Changing to directory: '${directory_prefix}'"
   cd "${directory_prefix}"
 
-  ## TODO: unit test with broken sha512sums file.
-  #echo "" > "${directory_prefix}/${guest_file}.sha512sums"
-
   # shellcheck disable=SC2086
   log_run info ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" \
     || return 1
@@ -2409,6 +2406,18 @@ check_integrity(){
 
   check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
   check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
+
+  ## TODO: unit test with broken sha512sums file.
+  cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.orig"
+  echo "" | tee "${directory_prefix}/${guest_file}.sha512sums" >/dev/null
+  log info "Unit testing checksum, expecting non-zero exit code."
+  if ! check_hash 2>/dev/null; then
+    mv "${directory_prefix}/${guest_file}.sha512sums.orig" "${directory_prefix}/${guest_file}.sha512sums"
+    log info "Received expected non-zero exit code from unit test."
+  else
+    mv "${directory_prefix}/${guest_file}.sha512sums.orig" "${directory_prefix}/${guest_file}.sha512sums"
+    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
+  fi
 
   log notice "Integrity Check Result: 'success'"
 }
