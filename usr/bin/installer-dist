@@ -159,7 +159,7 @@ capitalize_first_char(){
 
 ## Block running as root.
 not_as_root(){
-  test "$(id -u)" = "0" && die 1 "${underline}Non-Root Check:${nounderline} 'FAIL' - Running as root. This installer should not be run as root. Please run as normal user."
+  test "$(id -u)" = "0" && die 1 "${underline}Non-Root Check:${nounderline} Running as root. This installer should not be run as root. Please run as normal user."
   return 0
 }
 
@@ -173,13 +173,13 @@ root_cmd(){
       ## https://stackoverflow.com/a/32966744/2605155
       cmd="$(which -- "${1}")"
       shift
-      log_run su root -s "${cmd}" -- "${@}"
+      log_run notice su root -s "${cmd}" -- "${@}"
       ;;
     sudo)
-      log_run sudo -- "${@}"
+      log_run notice sudo -- "${@}"
       ;;
     doas)
-      log_run doas -u root -- "${@}"
+      log_run notice doas -u root -- "${@}"
       ;;
     *)
       die 1 "${underline}root_cmd function:${nounderline} root_cmd does not support sucmd: '${sucmd}'"
@@ -569,15 +569,17 @@ die(){
 
 ## Wrapper to log command before running to avoid duplication of code
 log_run(){
+  level="${1}"
+  shift
   ## Extra spaces appearing when breaking log_run on multiple lines.
   command_without_extrarenous_spaces="$(echo "${@}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
-    log notice "Skipping: $ ${command_without_extrarenous_spaces}"
+    log "${level}" "Skipping: $ ${command_without_extrarenous_spaces}"
     return 0
   fi
   if test "${ci}" != "1"; then
     ## CI expects no output from root_cmd() which calls log_run().
-    log notice "Running: $ ${command_without_extrarenous_spaces}"
+    log "${level}" "Running: $ ${command_without_extrarenous_spaces}"
   fi
   "${@}" || return 1
 }
@@ -824,7 +826,7 @@ install_pkg(){
     log notice "Updating package list."
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_update} ||
-      die 1 "${underline}Package List Update:${nounderline} 'FAIL' - Could not update package lists.
+      die 1 "${underline}Package List Update:${nounderline} Could not update package lists.
   - This issue is most likely not caused by this installer.
   - This is most likely a package manager configuration or network issue.
 
@@ -840,7 +842,7 @@ The user is advised to attempt to debug this with the following steps:
     log notice "Installing package(s): '${pkg_not_installed}'"
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
-      die 1 "${underline}Package Installation:${nounderline} 'FAIL' - Failed to install package: '${pkg_not_installed}'"
+      die 1 "${underline}Package Installation:${nounderline} Failed to install package: '${pkg_not_installed}'"
     ## Test if installation worked.
     test_pkg "${pkg_not_installed}"
   fi
@@ -883,7 +885,7 @@ check_vm_running_virtualbox(){
     grep -qE "^State:[[:space:]]+(running|paused)"
   then
     log error "Cannot proceed. You have the following VM running: ${vm}"
-    die 1 "${underline}VM Running Check:${nounderline} 'FAIL' - Please turn it off before re-running this installer."
+    die 1 "${underline}VM Running Check:${nounderline} Please turn it off before re-running this installer."
   fi
 }
 
@@ -931,7 +933,7 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported gateway because reimport is set..."
-              log_run vboxmanage unregistervm \
+              log_run notice vboxmanage unregistervm \
                 "${guest_pretty}-Gateway-${interface_name}" --delete
             fi
           fi
@@ -944,7 +946,7 @@ check_vm_exists_virtualbox(){
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported workstation because reimport is set."
-              log_run vboxmanage unregistervm \
+              log_run notice vboxmanage unregistervm \
                 "${guest_pretty}-Workstation-${interface_name}" --delete
             fi
           fi
@@ -954,11 +956,11 @@ check_vm_exists_virtualbox(){
           if test "${gateway_exists}" = "1" &&
             test "${import_only}" = "gateway"
           then
-            die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - import_only was set to 'gateway', but it already exists and reimport was not set."
+            die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'gateway', but it already exists and reimport was not set."
           elif test "${workstation_exists}" = "1" &&
             test "${import_only}" = "workstation"
           then
-            die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - import_only was set to 'workstation', but it already exists and reimport was not set."
+            die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
           fi
         else
           ## One of the guests doesn't exist, but neither reimport nor
@@ -967,9 +969,9 @@ check_vm_exists_virtualbox(){
             test "${gateway_exists}" = "0"
           then
             test "${workstation_exists}" = "0" &&
-              die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
+              die 1 "${underline}Check Existing VM Test:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
             test "${gateway_exists}" = "0" &&
-              die 1 "${underline}Check Existing VM Test:${nounderline} 'FAIL' - Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
+              die 1 "${underline}Check Existing VM Test:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
           fi
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -987,7 +989,7 @@ check_vm_exists_virtualbox(){
           ## If VMs exists and reimport is set, remove VMs as they are gonna
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          log_run vboxmanage unregistervm \
+          log_run notice vboxmanage unregistervm \
             "${guest_pretty}-${interface_name}" --delete
         else
           ## VMs already exist, check if user wants to start them.
@@ -1111,16 +1113,16 @@ import_virtualbox(){
   esac
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run vboxmanage import \
+  log_run notice vboxmanage import \
     "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
-    die 105 "${underline}VM Import:${nounderline} 'FAIL' - Failed to import virtual machines."
+    die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
-    log_run vboxmanage unregistervm ${vm_purge} --delete ||
-      die 1 "${underline}VM Import:${nounderline} 'FAIL' - Failed to remove extraneous virtual system."
+    log_run notice vboxmanage unregistervm ${vm_purge} --delete ||
+      die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous virtual system."
   fi
 
   log notice "VM Import: 'success'"
@@ -1152,13 +1154,13 @@ start_virtualbox(){
   log notice "Starting Virtual Machine(s)."
   case "${guest}" in
     whonix)
-      log_run vboxmanage startvm \
+      log_run notice vboxmanage startvm \
         "${guest_pretty}-Gateway-${interface_name}" || virtualbox_start_failed
-      log_run vboxmanage startvm \
+      log_run notice vboxmanage startvm \
         "${guest_pretty}-Workstation-${interface_name}" || virtualbox_start_failed
       ;;
     kicksecure)
-      log_run vboxmanage startvm \
+      log_run notice vboxmanage startvm \
         "${guest_pretty}-${interface_name}" || virtualbox_start_failed
       ;;
   esac
@@ -1196,7 +1198,7 @@ write_sources_debian(){
   url="${1}"
   file="${2}"
   echo "${url}" | root_cmd tee "${file}" ||
-    die 1 "${underline}Sources List Writer:${nounderline} 'FAIL' - Failed to write to file: '${file}'"
+    die 1 "${underline}Sources List Writer:${nounderline} Failed to write to file: '${file}'"
 }
 
 ## https://stackoverflow.com/a/54239534
@@ -1238,16 +1240,16 @@ install_virtualbox_debian_common_end(){
     if test "${dry_run}" = "1"; then
       log error "Failed to locate 'vboxmanage' program. - ignoring because dry_run is set."
     else
-      die 1 "${underline}vboxmanage test:${nounderline} 'FAIL' - Failed to locate 'vboxmanage' program."
+      die 1 "${underline}vboxmanage test:${nounderline} Failed to locate 'vboxmanage' program."
     fi
   fi
   virtualbox_linux_user_group="vboxusers"
-  id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} 'FAIL' - Failed to run: 'id --name --user'"
+  id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
   if id -nG "$id_of_user" | grep -qw "${virtualbox_linux_user_group}\$"; then
     log info "Linux account '$id_of_user' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
-  root_cmd adduser "$id_of_user" "${virtualbox_linux_user_group}" || die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} 'FAIL' - Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
+  root_cmd adduser "$id_of_user" "${virtualbox_linux_user_group}" || die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
 }
 
 install_repositories_for_virtualbox_on_debian(){
@@ -1312,7 +1314,7 @@ install_repositories_for_virtualbox_on_debian(){
     ## tor by other means to ensure a working connection (bridges, proxy etc).
     log info "APT is supposed to be torified, checking if package apt-transport-tor is installed."
     test_pkg apt-transport-tor ||
-      die 1 "${underline}Torified APT CHECK:${nounderline} 'FAIL' - APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
+      die 1 "${underline}Torified APT CHECK:${nounderline} APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
   fi
 
 
@@ -1357,7 +1359,7 @@ install_repositories_for_virtualbox_on_debian(){
       ;;
   esac
 
-  die 1 "${underline}Repository Add:${nounderline} 'FAIL' - Unsupported distribution codename: '${distro_codename}'!"
+  die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename}'!"
 }
 
 
@@ -1514,7 +1516,7 @@ check_license(){
           log notice "${underline}License Check:${nounderline} 'success' - User has accepted the license."
           ;;
         *)
-          log warn "${underline}License Check:${nounderline} 'FAIL' - User replied: '${license_agreement}'"
+          log warn "${underline}License Check:${nounderline} User replied: '${license_agreement}'"
           return 1
           ;;
       esac
@@ -1529,7 +1531,7 @@ get_su_cmd(){
     has doas && sucmd=doas && break
     has su && sucmd=su && break
     test -z "${sucmd}" && {
-      die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Failed to find program to run as another user."
+      die 1 "${underline}get_su_cmd:${nounderline} Failed to find program to run as another user."
     }
     case "${sucmd}" in
       sudo) :;;
@@ -1539,13 +1541,13 @@ get_su_cmd(){
 
   log info "Testing root_cmd function"
   root_cmd echo "test" ||
-    die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Failed to run test command as root."
+    die 1 "${underline}get_su_cmd:${nounderline} Failed to run test command as root."
 
   if test "${ci}" = "1"; then
     root_output="$(timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       log error "sudo output: '${root_output}'"
-      die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Unexpected non-empty output for sudo test in CI mode."
+      die 1 "${underline}get_su_cmd:${nounderline} Unexpected non-empty output for sudo test in CI mode."
     fi
     return 0
   fi
@@ -1560,7 +1562,7 @@ get_su_cmd(){
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       log error "sudo output: '${root_output}'"
-      die 1 "${underline}get_su_cmd:${nounderline} 'FAIL' - Unexpected non-empty output for sudo test in normal mode."
+      die 1 "${underline}get_su_cmd:${nounderline} Unexpected non-empty output for sudo test in normal mode."
     fi
   fi
 }
@@ -1573,7 +1575,7 @@ get_checkhash_cmd(){
     has openssl && checkhash="openssl dgst -sha512 -r" && break
     has digest && checkhash="digest -a sha512" && break
     test -z "${checkhash}" && {
-      die 1 "${underline}get_checkhash_cmd:${nounderline} 'FAIL' - Failed to find program that checks SHA512 hash sum."
+      die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
     }
   done
 }
@@ -1693,7 +1695,7 @@ set_trap(){
 ## Check if system status is supported
 get_system_stat(){
   if [ "${arch}" != "x86_64" ]; then
-    die 101 "${underline}Architecture Check:${nounderline} 'FAIL' - Only supported architecture is 'x86_64', yours is: '${arch}'."
+    die 101 "${underline}Architecture Check:${nounderline} Only supported architecture is 'x86_64', yours is: '${arch}'."
   fi
 
   ## https://www.whonix.org/wiki/RAM#Whonix_RAM_and_VRAM_Defaults
@@ -1767,7 +1769,7 @@ get_system_stat(){
 
   if [ "${free_space_available}" -lt "$free_space_required" ]; then
     die 101 "\
-${underline}Free Disk Space Check:${nounderline} 'FAIL' - Insufficient free disk space!
+${underline}Free Disk Space Check:${nounderline} Insufficient free disk space!
 
   - available: '${free_space_available}G'
   - required : '${free_space_required}G'
@@ -1909,7 +1911,7 @@ torify_conn(){
     fi
   fi
   check_tor_proxy || die 2 "\
-${underline}Check Tor Proxy:${nounderline} 'FAIL'
+${underline}Check Tor Proxy:${nounderline} 'failure'
 
 Unable to connect to Tor SOCKS proxy.
 
@@ -1946,7 +1948,7 @@ get_version(){
   ## assigned to a variable at 'raw_version=$()'.
   if test "${dry_run}" = "1"; then
     # shellcheck disable=SC2086
-    log_run ${cmd_raw_version}
+    log_run notice ${cmd_raw_version}
     return 0
   fi
   # shellcheck disable=SC2086
@@ -1961,10 +1963,10 @@ get_version(){
   ## that could inhibit the user from seeing the error message.
   ## The user would still see a failed exit code.
   [ "${guest_version%%*[^0-9.]*}" ] ||
-    die 1 "${underline}Version Check:${nounderline} 'FAIL' - Invalid guest version: contains unexpected characters."
+    die 1 "${underline}Version Check:${nounderline} Invalid guest version: contains unexpected characters."
   ## block string containing more than 12 chars
   [ "${#guest_version}" -le 12 ] ||
-    die 1 "${underline}Version Check:${nounderline} 'FAIL' - Invalid guest version: contains more than 12 characters."
+    die 1 "${underline}Version Check:${nounderline} Invalid guest version: contains more than 12 characters."
 }
 
 
@@ -1995,7 +1997,7 @@ get_file(){
 
   log notice "Downloading: '${url:-}'"
   # shellcheck disable=SC2086
-  log_run ${download_opt_full} || return 1
+  log_run notice ${download_opt_full} || return 1
 }
 
 
@@ -2017,9 +2019,9 @@ download_files(){
   }
   then
     log_time
-    log_run touch "${download_flag}"
+    log_run notice touch "${download_flag}"
   else
-    die 103 "${underline}Download:${nounderline} 'FAIL' - Failed to download files."
+    die 103 "${underline}Download:${nounderline} Failed to download files."
   fi
 }
 
@@ -2144,7 +2146,7 @@ get_virtualization(){
   msr="/dev/cpu/0/msr"
   if root_cmd test ! -r "${msr}"; then
     root_cmd modprobe msr ||
-      die 1 "${underline}modprobe:${nounderline} 'FAIL' - Could not add module 'msr' to the kernel."
+      die 1 "${underline}modprobe:${nounderline} Could not add module 'msr' to the kernel."
   fi
   if root_cmd test ! -r "${msr}"; then
     log error "Cannot read: '${msr}'"
@@ -2241,12 +2243,12 @@ get_download_links(){
       ## does not have TLS for Rsync
       ## When using rsync-ssl, this message appears:
       ##   rsync: did not see server greeting
-      die 1 "${underline}Mirror Selection:${nounderline} 'FAIL' - Mirror ${mirror} doesn't support TLS for rsync."
+      die 1 "${underline}Mirror Selection:${nounderline} Mirror ${mirror} doesn't support TLS for rsync."
       site_download_clearnet="ftp.icm.edu.pl/pub/Linux/dist/${guest}"
       site_download_onion=""
       ;;
     5)
-      die 1 "${underline}Mirror Selection:${nounderline} 'FAIL' - Mirror ${mirror} is currently using an invalid certificate."
+      die 1 "${underline}Mirror Selection:${nounderline} Mirror ${mirror} is currently using an invalid certificate."
       site_download_clearnet="mirror.gigenet.com/${guest}"
       site_download_onion=""
       ;;
@@ -2280,7 +2282,7 @@ get_download_links(){
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
       ## URL to download files from.
       test -n "${site_download_onion}" ||
-        die 1 "${underline}Mirror Selection:${nounderline} 'FAIL' - Mirror ${mirror} doesn't provide an onion service."
+        die 1 "${underline}Mirror Selection:${nounderline} Mirror ${mirror} doesn't provide an onion service."
       url_download="${url_download_onion}"
       ## Used to query version number.
       url_version_domain="http://www.${site_onion}"
@@ -2309,6 +2311,7 @@ get_download_links(){
       fi
       ## image signer
       signify_key="${adrelanos_signify}"
+      signify_signer="adrelanos"
       ## url directory to find files of the selected hypervisor
       url_domain="${url_download}/ova"
       ## image file extension
@@ -2318,13 +2321,14 @@ get_download_links(){
 
     kvm)
       if test "${testers}" = "1"; then
-        die 1 "${underline}Version Selection:${nounderline} 'FAIL' - KVM does not have testers version."
+        die 1 "${underline}Version Selection:${nounderline} KVM does not have testers version."
         #url_version_template=""
       else
         url_version_template="Version_KVM"
       fi
       ## image signer
       signify_key="${hulahoop_signify}"
+      signify_signer="hulahoop"
       ## url directory to find files of the selected hypervisor
       url_domain="${url_download}/libvirt"
       ## image file extension
@@ -2362,19 +2366,25 @@ should_download(){
 
 ## Check signature of signed checksum.
 check_signature(){
-  log notice "Signify key:\n${signify_key}"
-  log notice "Verifying file: '${directory_prefix}/${guest_file}.sha512sums'"
-  echo "${signify_key}" | signify -V -p - \
-   -m "${directory_prefix}/${guest_file}.sha512sums" || return 1
-  log notice "Signify Signature Verification: 'success'"
+  log info "Signify key:\n${signify_key}"
+  signify_checksum_file="${directory_prefix}/${guest_file}.sha512sums"
+  log info "Verifying file: '${signify_checksum_file}'"
+  signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
+  echo "${signify_key}" | tee "${signify_pub_file}" >/dev/null
+  signify -V -p "${signify_pub_file}" \
+    -m "${signify_checksum_file}" | log info "Signify output: $(cat)" \
+    || return 1
+  log info "Signify Signature Verification: 'success'"
 }
 
 
 ## Check hash sum.
 check_hash(){
-  log notice "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
-  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" || return 1
-  log notice "SHA512 Hash Verification: 'success'"
+  log info "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
+  ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" \
+    | log info "Checksum output: $(cat)" \
+    || return 1
+  log info "SHA512 Hash Verification: 'success'"
 }
 
 
@@ -2384,9 +2394,10 @@ check_integrity(){
     log notice "Skipping integrity checks because dry_run is set."
     return 0
   fi
-  log notice "Performing integrity checks..."
-  check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} 'FAIL' - Failed to verify signature."
-  check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'FAIL' - Failed hash checking."
+  log notice "Performing integrity checks."
+  check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} Failed to verify signature."
+  check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} Failed hash checking."
+  log notice "Integrity Check Result: 'success'"
 }
 
 
@@ -2429,7 +2440,7 @@ main(){
     log notice "If you wish to cancel installation, press Ctrl+C."
   fi
   ## The license function sleeps for some seconds to give time to abort
-  check_license || die 100 "${underline}License Check:${nounderline} 'FAIL' - User declined the license."
+  check_license || die 100 "${underline}License Check:${nounderline} User declined the license."
 
   pre_check
 
@@ -2461,7 +2472,7 @@ main(){
       cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
       log info "Executing: $ ${cmd_check_internet}"
       ${cmd_check_internet} >/dev/null ||
-        die $? "${underline}Connectivity Test:${nounderline} 'FAIL' - Cannot connect to ${url_origin}, perhaps no internet?"
+        die $? "${underline}Connectivity Test:${nounderline} Cannot connect to ${url_origin}, perhaps no internet?"
       log notice "Connection to ${url_origin} succeeded."
     fi
     get_version "${url_version}"
@@ -2473,7 +2484,7 @@ main(){
 
     ## Check again for download flag after version was queried.
     if should_download; then
-      download_files || die 103 "${underline}Download:${nounderline} 'FAIL' -  Failed to download files."
+      download_files || die 103 "${underline}Download:${nounderline} Failed to download files."
     fi
   else
     log notice "Version: '${guest_version}'"
