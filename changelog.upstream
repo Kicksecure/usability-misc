@@ -1,8 +1,45 @@
+commit 03cc6a6c90be6ef1080037d2f35a3c3aa8e9a3a7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 25 15:11:06 2023 -0400
+
+    fix integrity checks
+
+commit af2fc8d682ace541bb783584c4ffbcda6f787f2f
+Merge: 9876475 da45f02
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 25 14:47:52 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit da45f02da2147e9bb430953da6e6e8a6b731f053
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 24 21:46:31 2023 +0000
+
+    Improve verification steps logging
+
+commit 9876475bcffc370a1bb9bdeeb61845d7b74bd911
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 24 17:09:37 2023 -0400
+
+    bumped changelog version
+
 commit 781214e30b23ff91e03c2b700fa024f76eae043a
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Jul 24 17:09:37 2023 -0400
 
     re-generate man pages (generated using "genmkfile manpages")
+
+commit cee7211d5cbb2bdca14fafac1ece480606c8031a
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 24 21:06:23 2023 +0000
+
+    Downgrade verification loglevels to notice
+
+commit 5820d5702e003041b87ac82ed6536686c094625d
+Author: grass <grass@danwin1210.de>
+Date:   Mon Jul 24 21:01:40 2023 +0000
+
+    Remove redundant fail from error logs
 
 commit b9afa1ea65c9ad49b993f501e17db1bb1e32b466
 Author: Patrick Schleizer <adrelanos@whonix.org>
