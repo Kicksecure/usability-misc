@@ -1570,9 +1570,9 @@ get_su_cmd(){
 get_checkhash_cmd(){
   while true; do
     has sha512sum && checkhash="sha512sum --check --strict --warn" && break
-    has shasum && checkhash="shasum -a 512 -c" && break
-    has sha512 && checkhash="sha512 -c" && break
-    has digest && checkhash="digest -a sha512 -c" && break
+    #has shasum && checkhash="shasum -a 512 -c" && break
+    #has sha512 && checkhash="sha512 -c" && break
+    #has digest && checkhash="digest -a sha512 -c" && break
     ## TODO: How to make openssl check the file?
     #has openssl && checkhash="openssl dgst -sha512 -r" && break
     test -z "${checkhash}" && {
