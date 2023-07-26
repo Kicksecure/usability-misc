@@ -2408,6 +2408,8 @@ check_integrity(){
   check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
   check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
 
+  ## TODO: unit test invalid signature
+
   cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.orig"
   echo "" | tee "${directory_prefix}/${guest_file}.sha512sums" >/dev/null
   log info "Unit testing checksum, expecting non-zero exit code."
