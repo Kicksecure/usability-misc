@@ -1569,11 +1569,12 @@ get_su_cmd(){
 
 get_checkhash_cmd(){
   while true; do
-    has sha512sum && checkhash="sha512sum" && break
-    has shasum && checkhash="shasum -a 512" && break
-    has sha512 && checkhash="sha512" && break
-    has openssl && checkhash="openssl dgst -sha512 -r" && break
-    has digest && checkhash="digest -a sha512" && break
+    has sha512sum && checkhash="sha512sum --check --strict --warn" && break
+    has shasum && checkhash="shasum -a 512 -c" && break
+    has sha512 && checkhash="sha512 -c" && break
+    ## TODO: How to make openssl check the file?
+    #has openssl && checkhash="openssl dgst -sha512 -r" && break
+    has digest && checkhash="digest -a sha512 -c" && break
     test -z "${checkhash}" && {
       die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
     }
@@ -2372,10 +2373,8 @@ check_signature(){
   signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
   echo "${signify_key}" | tee "${signify_pub_file}" >/dev/null
 
-  signify -V -p "${signify_pub_file}" -m "${signify_checksum_file}"
-
-  ## | log info "Signify output: $(cat)" \
-  ## || return 1
+  log_run info signify -V -p "${signify_pub_file}" \
+    -m "${signify_checksum_file}" || return 1
 
   log info "Signify Signature Verification: 'success'"
 }
@@ -2385,21 +2384,13 @@ check_signature(){
 check_hash(){
   log info "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
 
-  ## TODO: 'cd' or 'pushd' / 'popd'?
-  ## 'cd' is required by sha512sum to look for the file inside the same folder.
+  ## $checkhash needs to be executed on the same folder as the compared file.
+  log info "Changing to directory: '${directory_prefix}'"
   cd "${directory_prefix}"
 
-  ## TODO: unit test with broken sha512sums file.
-  #echo "" > "${directory_prefix}/${guest_file}.sha512sums"
-  #
-  #touch "/tmp/empty"
-  #${checkhash} --check --strict --warn /tmp/empty
-
-  ${checkhash} --check --strict --warn "${directory_prefix}/${guest_file}.sha512sums"
-
-  ## TODO: Does not work. Fails to detect non-zero exit code.
-  ## | log info "Checksum output: $(cat)" \
-  ## || return 1
+  # shellcheck disable=SC2086
+  log_run info ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" \
+    || return 1
 
   log info "SHA512 Hash Verification: 'success'"
 }
@@ -2413,9 +2404,20 @@ check_integrity(){
   fi
   log notice "Performing integrity checks."
 
-  ## TODO: The '|| die' might break aborting with error if the verification tool failed to verify (non-zero exit code).
-  check_signature #|| die 104 "${underline}Signify Signature Verification:${nounderline} Failed to verify signature."
-  check_hash #|| die 104 "${underline}SHA512 Hash Verification:${nounderline} Failed hash checking."
+  check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
+  check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
+
+  ## TODO: unit test with broken sha512sums file.
+  cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.orig"
+  echo "" | tee "${directory_prefix}/${guest_file}.sha512sums" >/dev/null
+  log info "Unit testing checksum, expecting non-zero exit code."
+  if ! check_hash 2>/dev/null; then
+    mv "${directory_prefix}/${guest_file}.sha512sums.orig" "${directory_prefix}/${guest_file}.sha512sums"
+    log info "Received expected non-zero exit code from unit test."
+  else
+    mv "${directory_prefix}/${guest_file}.sha512sums.orig" "${directory_prefix}/${guest_file}.sha512sums"
+    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
+  fi
 
   log notice "Integrity Check Result: 'success'"
 }
