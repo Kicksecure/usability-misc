@@ -627,18 +627,17 @@ handle_exit(){
   ## Virtual Machine unexpected start issues.
   test "${last_exit}" = "107" && end_exit
   ## Exit with errors.
-  log notice "Current script: '${0}'"
   # shellcheck disable=SC3028
   if test -n "${BASH_COMMAND:-}"; then
     # shellcheck disable=SC2039,3028,3054
-    log notice "Function executed: '${FUNCNAME[1]}'"
-    # shellcheck disable=SC2039,3028,3054
-    log notice "Command executed: '${BASH_COMMAND}'"
+    log notice "Executed script, function, command: '${0}' '${FUNCNAME[1]}' '${BASH_COMMAND}'"
+  else
+    log notice "Executed script: '${0}'"
   fi
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
     log error "Error detected. Installer aborted."
-    log error "No panic. Nothing is broken. Just some rare condition has been hit."
+    log error "No need to panic. Nothing is broken. Just some rare condition has been hit."
     log error "There is likely a solution for this problem."
     log error "Try again. If this issue is transient (not happening again) it can be safely ignored."
     log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
@@ -680,6 +679,14 @@ handle_exit(){
 ## BEGIN SCRIPT SPECIFIC ##
 ###########################
 
+claim_unsupported_distro(){
+  status="${1}"
+  log error "At this moment, your Operating System is unsupported by the ${guest_pretty} Installer."
+  log error "Check if manual installation is supported by visiting:"
+  log error "    ${url_version_domain}/wiki/Virtualbox"
+  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status}) system."
+}
+
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
   case "${os}" in
@@ -710,27 +717,27 @@ get_host_pkgs(){
           install_virtualbox_ubuntu
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+          claim_unsupported_distro known
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+          claim_unsupported_distro known
           ;;
         *)
-          die 101 "${underline}Distribution Check:${nounderline} Unsupported (unknown) system."
+          claim_unsupported_distro unknown
           ;;
       esac
     ;;
     "OpenBSD"*)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+      claim_unsupported_distro known
       ;;
     "NetBSD"*)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+      claim_unsupported_distro known
       ;;
     "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+      claim_unsupported_distro known
       ;;
     *)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (unknown) system."
+      claim_unsupported_distro unknown
       ;;
   esac
 }
