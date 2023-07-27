@@ -1577,11 +1577,12 @@ get_su_cmd(){
 get_checkhash_cmd(){
   while true; do
     has sha512sum && checkhash="sha512sum --check --strict --warn" && break
-    has shasum && checkhash="shasum -a 512 -c" && break
-    has sha512 && checkhash="sha512 -c" && break
+    ## TODO: Does it have an equivalent to --check? Compatible file format?
+    #has shasum && checkhash="shasum -a 512 -c" && break
+    #has sha512 && checkhash="sha512 -c" && break
+    #has digest && checkhash="digest -a sha512 -c" && break
     ## TODO: How to make openssl check the file?
     #has openssl && checkhash="openssl dgst -sha512 -r" && break
-    has digest && checkhash="digest -a sha512 -c" && break
     test -z "${checkhash}" && {
       die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
     }
@@ -2414,7 +2415,8 @@ check_integrity(){
   check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
   check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
 
-  ## TODO: unit test with broken sha512sums file.
+  ## TODO: unit test invalid signature
+
   cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.orig"
   echo "" | tee "${directory_prefix}/${guest_file}.sha512sums" >/dev/null
   log info "Unit testing checksum, expecting non-zero exit code."
