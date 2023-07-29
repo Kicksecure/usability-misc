@@ -1,3 +1,164 @@
+commit 545de28f8e8394a9d7f47431fa2f211ba5718023
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 06:28:21 2023 -0400
+
+    trixie
+
+commit ee9faa8e992e21d8789fde21f298ad7c908b936d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 06:24:41 2023 -0400
+
+    refactoring
+
+commit 6e0668fdd474a3f8da51dec8b5e47db2a483f679
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 06:12:38 2023 -0400
+
+    add Debian trixie (testing) support
+
+commit f7ea11a09d40effe62d3812f31a4383699a7dda8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 06:10:05 2023 -0400
+
+    output
+
+commit 769a609761d3ab91ddd2c7589145083dfff03ff5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 06:05:06 2023 -0400
+
+    add Debian testing detection
+
+commit f3a9abef9140ee67f30e048f0e2089a67dc38749
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 05:53:36 2023 -0400
+
+    debugging
+
+commit af2459093f0eb5dc8ffb2e0f8717add4127a1b75
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 05:48:48 2023 -0400
+
+    testing
+
+commit af4c83a7cfd83e20dea494625aee06a968900cf0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 05:31:32 2023 -0400
+
+    improve unsupported distribution check output
+
+commit 21fbaece4dcfea1543d7e4f976820783878c8fc0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 05:28:07 2023 -0400
+
+    output
+
+commit 38cbbca7701641812143fd1d494b7256f25b6560
+Merge: 6e56f35 1bb27a1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 05:23:59 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 1bb27a1d26dfca0fd23b749199c8bc25fd1740a3
+Author: grass <grass@danwin1210.de>
+Date:   Thu Jul 27 18:42:50 2023 +0000
+
+    Add missing shasum options
+
+commit 9f7e71dd0452868a83c58779aa8b0401e772ee43
+Author: grass <grass@danwin1210.de>
+Date:   Thu Jul 27 18:39:18 2023 +0000
+
+    Add signature unit test
+
+commit df544e192703be464a42a2e5d7431b296d6bfd24
+Merge: 388dd14 6e56f35
+Author: grass <grass@danwin1210.de>
+Date:   Thu Jul 27 18:07:05 2023 +0000
+
+    Merge remote-tracking branch 'kicksecure/master'
+    
+    * kicksecure/master:
+      comment
+      comment
+      comment
+      support only sha512sum tool for verification
+      refactoring
+
+commit 388dd14db9d580682d52121c864fb7fcd013a9b6
+Author: grass <grass@danwin1210.de>
+Date:   Thu Jul 27 18:06:36 2023 +0000
+
+    Improve error message for unknown systems
+
+commit 6e56f350e3a4189e0449db484fa678d6b60ca47f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 26 07:12:23 2023 -0400
+
+    comment
+
+commit 67563bb258527834577624feb5680dd7d2db98e5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 26 07:10:54 2023 -0400
+
+    comment
+
+commit 8ad3a05c4c2333179cc00b3ce5e0f92a18484120
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 26 07:04:59 2023 -0400
+
+    comment
+
+commit e311cd541dac481046919ac3cf9622ef26b37f5e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 26 07:03:05 2023 -0400
+
+    support only sha512sum tool for verification
+
+commit b0b283202531b03088b3df8be4fbd03709daf653
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 26 07:01:18 2023 -0400
+
+    refactoring
+
+commit 1e2465def61b950d2445daaa34ecdbf16703a53d
+Merge: 125e52d 2eb27a7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 26 06:43:08 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 2eb27a7defaac25901db9c9e23390f34c8c1b293
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jul 25 21:32:55 2023 +0000
+
+    Add unit test to checksum verification
+
+commit 39a732743ae04d347e5f3ba63116c0f17e76698f
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jul 25 21:21:14 2023 +0000
+
+    Descomplicate verification
+
+commit 11ffe936cbcc34396fcf59f6f56688ee85b9afb4
+Merge: e5172d8 125e52d
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jul 25 20:39:28 2023 +0000
+
+    Merge remote-tracking branch 'kicksecure/master'
+    
+    * kicksecure/master:
+      bumped changelog version
+      fix integrity checks
+      bumped changelog version
+      re-generate man pages (generated using "genmkfile manpages")
+
+commit 125e52d8b6344c5bb57e03b759ad24f6d1d77b3e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 25 15:17:05 2023 -0400
+
+    bumped changelog version
+
 commit 03cc6a6c90be6ef1080037d2f35a3c3aa8e9a3a7
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Jul 25 15:11:06 2023 -0400
@@ -10,6 +171,20 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Jul 25 14:47:52 2023 -0400
 
     Merge remote-tracking branch 'grass/master'
+
+commit e5172d87ed8cd2d0e34041436cd00eff270567a6
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jul 25 14:13:06 2023 +0000
+
+    Revert "Better log_run output catch"
+    
+    This reverts commit d31afaf2eb8a12915a9e5e0eda29724fdf5788a1.
+
+commit d31afaf2eb8a12915a9e5e0eda29724fdf5788a1
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jul 25 13:48:02 2023 +0000
+
+    Better log_run output catch
 
 commit da45f02da2147e9bb430953da6e6e8a6b731f053
 Author: grass <grass@danwin1210.de>
