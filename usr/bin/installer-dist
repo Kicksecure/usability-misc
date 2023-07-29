@@ -681,10 +681,11 @@ handle_exit(){
 
 claim_unsupported_distro(){
   status="${1}"
+  distro="${2}"
   log error "At this moment, your Operating System is unsupported by the ${guest_pretty} Installer."
   log error "Check if manual installation is supported by visiting:"
   log error "    ${url_version_domain}/wiki/Virtualbox"
-  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status}) system."
+  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status} '${distro}') system."
 }
 
 ## Get necessary packages for your host system to be able to set the guest.
@@ -717,27 +718,27 @@ get_host_pkgs(){
           install_virtualbox_ubuntu
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          claim_unsupported_distro known
+          claim_unsupported_distro known "${distro}"
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          claim_unsupported_distro known
+          claim_unsupported_distro known "${distro}"
           ;;
         *)
-          claim_unsupported_distro unknown
+          claim_unsupported_distro unknown "${distro}"
           ;;
       esac
     ;;
     "OpenBSD"*)
-      claim_unsupported_distro known
+      claim_unsupported_distro known "${distro}"
       ;;
     "NetBSD"*)
-      claim_unsupported_distro known
+      claim_unsupported_distro known "${distro}"
       ;;
     "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      claim_unsupported_distro known
+      claim_unsupported_distro known "${distro}"
       ;;
     *)
-      claim_unsupported_distro unknown
+      claim_unsupported_distro unknown "${distro}"
       ;;
   esac
 }
