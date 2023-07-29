@@ -38,10 +38,11 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - image: debian:oldstable
-                    - image: debian:stable
-                    - image: ubuntu:latest
-                    - image: linuxmintd/mint21-amd64:latest
+                    # - image: debian:oldstable
+                    # - image: debian:stable
+                    - image: debian:testing
+                    # - image: ubuntu:latest
+                    # - image: linuxmintd/mint21-amd64:latest
 
         container:
             image: ${{ matrix.image }}
