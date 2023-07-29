@@ -239,6 +239,7 @@ get_os(){
 
   distro=""
   distro_version=""
+  debian_testing_detected=""
   case ${os} in
     Linux*)
       if test -f /usr/share/kicksecure/marker; then
@@ -258,6 +259,10 @@ get_os(){
             (VERSION_ID) distro_version=${val}
               ;;
           esac
+          ## Debian testing /etc/os-release does not contain VERSION_ID.
+          if echo "$distro" | grep --quiet "/sid" ; then
+            debian_testing_detected=true
+          fi
         done < /etc/os-release
       else
         has crux && distro=$(crux)
@@ -284,6 +289,11 @@ get_os(){
   log notice "Detected system: '${os}'"
   log notice "Detected distribution: '${distro}'"
   log notice "Detected distribution version: '${distro_version}'"
+
+  if [ "$debian_testing_detected" = "true" ]; then
+    log notice "Debian testing detection: 'success'"
+    return 0
+  fi
 
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
