@@ -288,6 +288,12 @@ get_os(){
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
   if [ -z "${distro_version}" ]; then
+    if test -f /etc/os-release; then
+      log notice "File /etc/os-release contents:"
+      cat /etc/os-release || true
+    else
+      log notice "File /etc/os-release does not exist."
+    fi
     die 101 "${underline}Distribution Check:${nounderline} Failed to find distribution version."
     ## it will fail later on get_host_pkgs if the system is not supported.
     ## but distro version needs to be checked here because it can occur
