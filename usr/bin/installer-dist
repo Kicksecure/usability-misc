@@ -1282,27 +1282,35 @@ install_virtualbox_debian_common_end(){
 
 install_repositories_for_virtualbox_on_debian(){
   distro_codename_real=$(lsb_release --short --codename)
+  distro_codename_use="$distro_codename_real"
+
+  case "${distro_codename_real}" in
+    trixie)
+      distro_codename_use="bookworm"
+      return 0
+      ;;
+  esac
 
   backports_found=""
   backports_clearnet="deb.debian.org"
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
   backports_file_debsource="/etc/apt/sources.list.d/backports.list"
   backports_prefix_debsource="deb "
-  backports_suffix_debsource="/debian/ ${distro_codename_real}-backports main contrib non-free"
+  backports_suffix_debsource="/debian/ ${distro_codename_use}-backports main contrib non-free"
 
   fasttrack_found=""
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
   fasttrack_prefix_debsource="deb "
-  fasttrack_suffix_debsource="/debian/ ${distro_codename_real}-fasttrack main contrib non-free"
+  fasttrack_suffix_debsource="/debian/ ${distro_codename_use}-fasttrack main contrib non-free"
 
   kicksecure_found=""
   kicksecure_clearnet="deb.kicksecure.com"
   kicksecure_onion="deb.w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
   kicksecure_file_debsource="/etc/apt/sources.list.d/derivative.list"
   kicksecure_prefix_debsource="deb [signed-by=/usr/share/keyrings/derivative.asc] "
-  kicksecure_suffix_debsource=" ${distro_codename_real} main contrib non-free"
+  kicksecure_suffix_debsource=" ${distro_codename_use} main contrib non-free"
 
   apt_torified=""
   apt_onion=""
@@ -1315,7 +1323,7 @@ install_repositories_for_virtualbox_on_debian(){
       kicksecure_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename_real}-backports"
+    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename_use}-backports"
     then
       backports_found=1
     fi
