@@ -1287,7 +1287,6 @@ install_repositories_for_virtualbox_on_debian(){
   case "${distro_codename_real}" in
     trixie)
       distro_codename_use="bookworm"
-      return 0
       ;;
   esac
 
