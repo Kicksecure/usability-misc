@@ -627,18 +627,17 @@ handle_exit(){
   ## Virtual Machine unexpected start issues.
   test "${last_exit}" = "107" && end_exit
   ## Exit with errors.
-  log notice "Current script: '${0}'"
   # shellcheck disable=SC3028
   if test -n "${BASH_COMMAND:-}"; then
     # shellcheck disable=SC2039,3028,3054
-    log notice "Function executed: '${FUNCNAME[1]}'"
-    # shellcheck disable=SC2039,3028,3054
-    log notice "Command executed: '${BASH_COMMAND}'"
+    log notice "Executed script, function, command: '${0}' '${FUNCNAME[1]}' '${BASH_COMMAND}'"
+  else
+    log notice "Executed script: '${0}'"
   fi
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
     log error "Error detected. Installer aborted."
-    log error "No panic. Nothing is broken. Just some rare condition has been hit."
+    log error "No need to panic. Nothing is broken. Just some rare condition has been hit."
     log error "There is likely a solution for this problem."
     log error "Try again. If this issue is transient (not happening again) it can be safely ignored."
     log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
@@ -680,6 +679,14 @@ handle_exit(){
 ## BEGIN SCRIPT SPECIFIC ##
 ###########################
 
+claim_unsupported_distro(){
+  status="${1}"
+  log error "At this moment, your Operating System is unsupported by the ${guest_pretty} Installer."
+  log error "Check if manual installation is supported by visiting:"
+  log error "    ${url_version_domain}/wiki/Virtualbox"
+  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status}) system."
+}
+
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
   case "${os}" in
@@ -710,27 +717,27 @@ get_host_pkgs(){
           install_virtualbox_ubuntu
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+          claim_unsupported_distro known
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+          claim_unsupported_distro known
           ;;
         *)
-          die 101 "${underline}Distribution Check:${nounderline} Unsupported (unknown) system."
+          claim_unsupported_distro unknown
           ;;
       esac
     ;;
     "OpenBSD"*)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+      claim_unsupported_distro known
       ;;
     "NetBSD"*)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+      claim_unsupported_distro known
       ;;
     "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (known) system."
+      claim_unsupported_distro known
       ;;
     *)
-      die 101 "${underline}Distribution Check:${nounderline} Unsupported (unknown) system."
+      claim_unsupported_distro unknown
       ;;
   esac
 }
@@ -1570,11 +1577,11 @@ get_su_cmd(){
 get_checkhash_cmd(){
   while true; do
     has sha512sum && checkhash="sha512sum --check --strict --warn" && break
+    has shasum && checkhash="shasum --algorithm 512 --check --strict --warn" && break
     ## TODO: Does it have an equivalent to --check? Compatible file format?
-    #has shasum && checkhash="shasum -a 512 -c" && break
     #has sha512 && checkhash="sha512 -c" && break
     #has digest && checkhash="digest -a sha512 -c" && break
-    ## TODO: How to make openssl check the file?
+    ## TODO: How to make openssl check the file without workarounds?
     #has openssl && checkhash="openssl dgst -sha512 -r" && break
     test -z "${checkhash}" && {
       die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
@@ -2368,8 +2375,8 @@ should_download(){
 
 ## Check signature of signed checksum.
 check_signature(){
+  signify_checksum_file="${1}"
   log info "Signify key:\n${signify_key}"
-  signify_checksum_file="${directory_prefix}/${guest_file}.sha512sums"
   log info "Verifying file: '${signify_checksum_file}'"
   signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
   echo "${signify_key}" | tee "${signify_pub_file}" >/dev/null
@@ -2383,19 +2390,46 @@ check_signature(){
 
 ## Check hash sum.
 check_hash(){
-  log info "Checking SHA512 checksum: '${directory_prefix}/${guest_file}.${guest_file_ext}'"
-
+  shafile="${1}"
+  dir="$(dirname "${shafile}")"
+  log info "Checking SHA512 checksum: '${shafile}"
   ## $checkhash needs to be executed on the same folder as the compared file.
-  log info "Changing to directory: '${directory_prefix}'"
-  cd "${directory_prefix}"
-
+  log info "Changing to directory: '${dir}'"
+  cd "${dir}"
   # shellcheck disable=SC2086
-  log_run info ${checkhash} "${directory_prefix}/${guest_file}.sha512sums" \
-    || return 1
-
+  log_run info ${checkhash} "${shafile}" || return 1
   log info "SHA512 Hash Verification: 'success'"
 }
 
+
+check_signature_test(){
+  log info "Unit testing signature, expecting non-zero exit code."
+  rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+  cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.test"
+  echo "" | tee "${directory_prefix}/${guest_file}.sha512sums.test" >/dev/null
+  if ! check_signature "${directory_prefix}/${guest_file}.sha512sums.test" 2>/dev/null; then
+    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+    log info "Received expected non-zero exit code from unit test."
+  else
+    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
+  fi
+}
+
+
+check_hash_test(){
+  log info "Unit testing checksum, expecting non-zero exit code."
+  rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+  cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.test"
+  echo "" | tee "${directory_prefix}/${guest_file}.sha512sums.test" >/dev/null
+  if ! check_hash "${directory_prefix}/${guest_file}.sha512sums.test" 2>/dev/null; then
+    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+    log info "Received expected non-zero exit code from unit test."
+  else
+    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
+  fi
+}
 
 ## Check integrity of files
 check_integrity(){
@@ -2404,22 +2438,12 @@ check_integrity(){
     return 0
   fi
   log notice "Performing integrity checks."
+  check_signature "${directory_prefix}/${guest_file}.sha512sums" || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
+  check_hash "${directory_prefix}/${guest_file}.sha512sums" \
+    || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
 
-  check_signature || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
-  check_hash || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
-
-  ## TODO: unit test invalid signature
-
-  cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.orig"
-  echo "" | tee "${directory_prefix}/${guest_file}.sha512sums" >/dev/null
-  log info "Unit testing checksum, expecting non-zero exit code."
-  if ! check_hash 2>/dev/null; then
-    mv "${directory_prefix}/${guest_file}.sha512sums.orig" "${directory_prefix}/${guest_file}.sha512sums"
-    log info "Received expected non-zero exit code from unit test."
-  else
-    mv "${directory_prefix}/${guest_file}.sha512sums.orig" "${directory_prefix}/${guest_file}.sha512sums"
-    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
-  fi
+  check_signature_test
+  check_hash_test
 
   log notice "Integrity Check Result: 'success'"
 }
