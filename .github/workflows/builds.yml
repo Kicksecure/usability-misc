@@ -74,8 +74,8 @@ jobs:
                     echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
                   elif test -f /etc/fedora-release; then
                     adduser user
-                    usermod -aG sudo user
-                    echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
+                    usermod -aG wheel user
+                    echo "%wheel ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
                   else
                     exit 1
                   fi
