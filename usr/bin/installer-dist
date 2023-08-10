@@ -1400,7 +1400,7 @@ install_repositories_for_virtualbox_on_debian(){
   #oracle_onion=""
   oracle_file_debsource="/etc/apt/sources.list.d/oracle.list"
   oracle_prefix_debsource="deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.asc] "
-  oracle_suffix_debsource="/virtualbox/debian ${distro_codename} contrib"
+  oracle_suffix_debsource="/virtualbox/debian ${distro_codename_use} contrib"
 
   backports_found=""
   backports_clearnet="deb.debian.org"
