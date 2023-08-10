@@ -51,7 +51,7 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: System Basic Packages
-              run: if command -v apt-get; then apt-get update -y && apt-get install -y shellcheck sudo; else dnf update -y && dnf install ShellCheck sudo; fi
+              run: if command -v apt-get; then apt-get update -y && apt-get install -y shellcheck sudo; else dnf update -y && dnf install -y ShellCheck sudo; fi
             - name: System information
               run: cat /etc/os-release; uname -a; echo "${PATH}"; cat /etc/sudoers; ls /etc/sudoers.d;
             - name: Normal user with sudo privileges
