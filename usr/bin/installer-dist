@@ -217,7 +217,11 @@ capitalize_first_char(){
 
 ## Block running as root.
 not_as_root(){
-  test "$(id -u)" = "0" && die 1 "${underline}Non-Root Check:${nounderline} Running as root. This installer should not be run as root. Please run as normal user."
+  test "$(id -u)" = "0" && die 1 "\
+${underline}Non-Root Check:${nounderline} Running as root detected.
+  - You are currently running this installer with root privileges.
+  - This installer should not be run as root.
+  - Please run as normal user."
   return 0
 }
 
@@ -297,6 +301,7 @@ get_os(){
 
   distro=""
   distro_version=""
+  debian_testing_detected=""
   case ${os} in
     Linux*)
       if test -f /usr/share/kicksecure/marker; then
@@ -316,6 +321,10 @@ get_os(){
             (VERSION_ID) distro_version=${val}
               ;;
           esac
+          ## Debian testing /etc/os-release does not contain VERSION_ID.
+          if echo "$distro" | grep --quiet "/sid" ; then
+            debian_testing_detected=true
+          fi
         done < /etc/os-release
       else
         has crux && distro=$(crux)
@@ -343,9 +352,20 @@ get_os(){
   log notice "Detected distribution: '${distro}'"
   log notice "Detected distribution version: '${distro_version}'"
 
+  if [ "$debian_testing_detected" = "true" ]; then
+    log notice "Debian testing detection: 'success'"
+    return 0
+  fi
+
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
   if [ -z "${distro_version}" ]; then
+    if test -f /etc/os-release; then
+      log notice "File /etc/os-release contents:"
+      cat /etc/os-release || true
+    else
+      log notice "File /etc/os-release does not exist."
+    fi
     die 101 "${underline}Distribution Check:${nounderline} Failed to find distribution version."
     ## it will fail later on get_host_pkgs if the system is not supported.
     ## but distro version needs to be checked here because it can occur
@@ -739,10 +759,11 @@ handle_exit(){
 
 claim_unsupported_distro(){
   status="${1}"
+  distro="${2}"
   log error "At this moment, your Operating System is unsupported by the ${guest_pretty} Installer."
   log error "Check if manual installation is supported by visiting:"
   log error "    ${url_version_domain}/wiki/Virtualbox"
-  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status}) system."
+  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status} '${distro}') system."
 }
 
 ## Get necessary packages for your host system to be able to set the guest.
@@ -751,7 +772,7 @@ get_host_pkgs(){
     Linux*)
       case "${distro}" in
         "Debian"*|"Tails"*|"Kicksecure"|"Whonix")
-          true "${distro}"
+          true "distro: ${distro}"
           install_package_debian_common
           install_virtualbox_debian
           if test "${virtualbox_only}" = "1"; then
@@ -764,7 +785,7 @@ get_host_pkgs(){
             claim_unsupported_distro known
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
-          true "${distro}"
+          true "distro: ${distro}"
           install_package_debian_common
           install_virtualbox_ubuntu
           if test "${virtualbox_only}" = "1"; then
@@ -772,7 +793,7 @@ get_host_pkgs(){
           fi
           ;;
         *"buntu"*)
-          true "${distro}"
+          true "distro: ${distro}"
           if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
@@ -788,24 +809,24 @@ get_host_pkgs(){
           fi
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          claim_unsupported_distro known
+          claim_unsupported_distro known "${distro}"
           ;;
         *)
-          claim_unsupported_distro unknown
+          claim_unsupported_distro unknown "${distro}"
           ;;
       esac
     ;;
     "OpenBSD"*)
-      claim_unsupported_distro known
+      claim_unsupported_distro known "${distro}"
       ;;
     "NetBSD"*)
-      claim_unsupported_distro known
+      claim_unsupported_distro known "${distro}"
       ;;
     "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      claim_unsupported_distro known
+      claim_unsupported_distro known "${distro}"
       ;;
     *)
-      claim_unsupported_distro unknown
+      claim_unsupported_distro unknown "${distro}"
       ;;
   esac
 }
@@ -1365,7 +1386,14 @@ install_virtualbox_debian_common_end(){
 
 
 install_repositories_for_virtualbox_on_debian(){
-  distro_codename=$(lsb_release --short --codename)
+  distro_codename_real=$(lsb_release --short --codename)
+  distro_codename_use="$distro_codename_real"
+
+  case "${distro_codename_real}" in
+    trixie)
+      distro_codename_use="bookworm"
+      ;;
+  esac
 
   oracle_found=""
   oracle_clearnet="download.virtualbox.org"
@@ -1379,21 +1407,21 @@ install_repositories_for_virtualbox_on_debian(){
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
   backports_file_debsource="/etc/apt/sources.list.d/backports.list"
   backports_prefix_debsource="deb "
-  backports_suffix_debsource="/debian/ ${distro_codename}-backports main contrib non-free"
+  backports_suffix_debsource="/debian/ ${distro_codename_use}-backports main contrib non-free"
 
   fasttrack_found=""
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
   fasttrack_prefix_debsource="deb "
-  fasttrack_suffix_debsource="/debian/ ${distro_codename}-fasttrack main contrib non-free"
+  fasttrack_suffix_debsource="/debian/ ${distro_codename_use}-fasttrack main contrib non-free"
 
   kicksecure_found=""
   kicksecure_clearnet="deb.kicksecure.com"
   kicksecure_onion="deb.w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
   kicksecure_file_debsource="/etc/apt/sources.list.d/derivative.list"
   kicksecure_prefix_debsource="deb [signed-by=/usr/share/keyrings/derivative.asc] "
-  kicksecure_suffix_debsource=" ${distro_codename} main contrib non-free"
+  kicksecure_suffix_debsource=" ${distro_codename_use} main contrib non-free"
 
   apt_torified=""
   apt_onion=""
@@ -1411,7 +1439,7 @@ install_repositories_for_virtualbox_on_debian(){
       kicksecure_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename}-backports"
+    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename_use}-backports"
     then
       backports_found=1
     fi
@@ -1491,7 +1519,7 @@ install_repositories_for_virtualbox_on_debian(){
   log info "Installing packages required for backports and fasttrack repository."
   install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
 
-  case "${distro_codename}" in
+  case "${distro_codename_real}" in
     bullseye)
       install_backports_and_fasttrack_repository_debian
       return 0
@@ -1500,9 +1528,13 @@ install_repositories_for_virtualbox_on_debian(){
       install_kicksecure_repository_debian
       return 0
       ;;
+    trixie)
+      install_kicksecure_repository_debian
+      return 0
+      ;;
   esac
 
-  die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename}'!"
+  die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename_real}'!"
 }
 
 
