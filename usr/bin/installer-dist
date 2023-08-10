@@ -800,13 +800,6 @@ get_host_pkgs(){
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
-<<<<<<< HEAD
-        "Arch"*|"Artix"*|"ArcoLinux"*)
-          claim_unsupported_distro known "${distro}"
-          ;;
-        "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          claim_unsupported_distro known "${distro}"
-=======
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
           true "${distro}"
           install_package_fedora_common
@@ -816,8 +809,7 @@ get_host_pkgs(){
           fi
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
-          claim_unsupported_distro known
->>>>>>> bitbucket/master
+          claim_unsupported_distro known "${distro}"
           ;;
         *)
           claim_unsupported_distro unknown "${distro}"
