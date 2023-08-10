@@ -51,21 +51,33 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: System Basic Packages
-              run: if command -v apt-get; then apt-get update -y && apt-get install -y shellcheck sudo; else dnf update -y && dnf install -y ShellCheck sudo; fi
+              run: |
+                  if command -v apt-get; then
+                    apt-get update -y && apt-get install -y shellcheck sudo
+                  else
+                    dnf update -y && dnf install -y ShellCheck sudo
+                  fi
             - name: System information
-              run: cat /etc/os-release; uname -a; echo "${PATH}"; cat /etc/sudoers; ls /etc/sudoers.d;
+              run: |
+                  cat /etc/os-release
+                  uname -a
+                  echo "${PATH}"
+                  cat /etc/sudoers
+                  ls /etc/sudoers.d
             - name: Normal user with sudo privileges
               run: |
                   if test -f /etc/debian_version; then
                     adduser --gecos "" --disabled-password user
-                  else
+                    usermod -aG sudo user
+                    echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
+                  elif test -f /etc/fedora-release
                     adduser user
+                    usermod -aG sudo user
+                    echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
+                  else
+                    exit 1
                   fi
-                  usermod -aG sudo user
-                  echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
             - name: Run Installer
               run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D --ci
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
-
-# vim: sw=4
