@@ -56,7 +56,11 @@ jobs:
               run: cat /etc/os-release; uname -a; echo "${PATH}"; cat /etc/sudoers; ls /etc/sudoers.d;
             - name: Normal user with sudo privileges
               run: |
-                  adduser --gecos "" --disabled-password user
+                  if test -f /etc/debian_version; then
+                    adduser --gecos "" --disabled-password user
+                  else
+                    adduser user
+                  fi
                   usermod -aG sudo user
                   echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
             - name: Run Installer
