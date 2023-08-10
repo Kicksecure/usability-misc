@@ -1349,12 +1349,12 @@ install_package_debian_common(){
 
 add_user_to_vbox_group(){
   id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
-  if id -nG "$id_of_user" | grep -qw "${virtualbox_linux_user_group}\$"; then
+  if id -nG "${id_of_user}" | grep -qw "${virtualbox_linux_user_group}\$"; then
     log info "Linux account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
 
-    root_cmd usermoad --append --groups "${id_of_user}" "${virtualbox_linux_user_group}" || die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
+    root_cmd usermod --append --groups "${id_of_user}" "${virtualbox_linux_user_group}" || die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
 }
 
 
