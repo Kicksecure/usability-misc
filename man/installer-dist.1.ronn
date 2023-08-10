@@ -44,6 +44,13 @@ Guest and Interface can be set by changing the script name to the format
 
         Set guest's hypervisor. Options: kvm, virtualbox (default).
 
+`--oracle-repo`
+
+        Set Oracle repository for VirtualBox. Default for Fedora based
+        distributions, optional for Debian based distributions, but may
+        be set by the developers if the Debian repository stops serving
+        the VirtualBox package.
+
 `-o`, `--onion`
 
         Make requests over the onion network.

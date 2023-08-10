@@ -16,7 +16,7 @@ _installer_dist()
             --no-import | --no-boot | --redownload | --reimport | \
             --destroy-existing-guest | --dev | --ci | --dry-run | \
             --getopt | --no-show-errors | --allow-errors | --testers | \
-            --virtualbox-only | --version | --help )
+            --virtualbox-only | --oracle-repo | --version | --help )
             return
             ;;
         --directory-prefix )
