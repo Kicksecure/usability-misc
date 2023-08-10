@@ -1354,7 +1354,8 @@ add_user_to_vbox_group(){
     return 0
   fi
 
-    root_cmd usermod --append --groups "${id_of_user}" "${virtualbox_linux_user_group}" || die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
+    root_cmd usermod --append --groups "${virtualbox_linux_user_group}" "${id_of_user}" || \
+      die 1 "${underline}adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
 }
 
 
