@@ -42,7 +42,8 @@ jobs:
                     - image: debian:stable
                     - image: debian:testing
                     - image: ubuntu:latest
-                    - image: linuxmintd/mint21-amd64:latest
+                    - image: linuxmintd/mint21.2-amd64:latest
+                    - image: fedora:latest
 
         container:
             image: ${{ matrix.image }}
