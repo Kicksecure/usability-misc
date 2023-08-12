@@ -42,7 +42,8 @@ jobs:
                     - image: debian:stable
                     - image: debian:testing
                     - image: ubuntu:latest
-                    - image: linuxmintd/mint21-amd64:latest
+                    - image: linuxmintd/mint21.2-amd64:latest
+                    - image: fedora:latest
 
         container:
             image: ${{ matrix.image }}
@@ -50,17 +51,36 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: System Basic Packages
-              run: apt-get update -y && apt-get install -y shellcheck sudo
+              run: |
+                  if command -v apt-get; then
+                    apt-get update -y && apt-get install -y shellcheck sudo
+                  elif command -v dnf; then
+                    dnf update -y && dnf install -y ShellCheck sudo
+                  else
+                    exit 1
+                  fi
             - name: System information
-              run: cat /etc/os-release; uname -a; echo "${PATH}"; cat /etc/sudoers; ls /etc/sudoers.d;
+              run: |
+                  cat /etc/os-release
+                  uname -a
+                  echo "${PATH}"
+                  cat /etc/sudoers
+                  ls /etc/sudoers.d
             - name: Normal user with sudo privileges
               run: |
-                  adduser --gecos "" --disabled-password user
-                  usermod -aG sudo user
-                  echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
+                  if test -f /etc/debian_version; then
+                    adduser --gecos "" --disabled-password user
+                    usermod -aG sudo user
+                    echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
+                  elif test -f /etc/fedora-release; then
+                    adduser user
+                    usermod -aG wheel user
+                    echo "%wheel ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
+                  else
+                    exit 1
+                  fi
             - name: Run Installer
-              run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D --ci
+              #run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D --ci
+              run: sudo -u user -- usr/bin/installer-dist -n -l debug -k -D --ci
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
-
-# vim: sw=4
