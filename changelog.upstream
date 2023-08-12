@@ -1,3 +1,192 @@
+commit 8c78d9c8812cb767bce9c640f5da1697aa9c10a0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 12 11:15:12 2023 -0400
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit c18d517cd85604ff21e95314f8915a4fd3b24f93
+Merge: ccad34a e6c1684
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 12 11:09:59 2023 -0400
+
+    Merge remote-tracking branch 'nyxnor/master'
+
+commit e6c1684a2e47350145ac4972c1896bd6bba70cd0
+Merge: 22e647a 30e0d9b
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 15:01:59 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 30e0d9b583d2e71315d2a751f68b5faecffee764
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 15:01:45 2023 +0000
+
+    Fix usermod args
+
+commit 22e647a01156f1c82c9402e536a97a71dffa0185
+Merge: caaa545 7b066b1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:58:28 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 7b066b13a4223af20daedff953b9d2d2ef2ac9fa
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:58:14 2023 +0000
+
+    Fix typo
+
+commit caaa545b48cdffa02dde4fc809f7d216e548fcdb
+Merge: 778e0b3 6dab620
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:53:57 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 6dab6209e5e84d8878c8d1ed92be91b5b127ec45
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:53:41 2023 +0000
+
+    Change adduser to usermod
+
+commit 778e0b3dc0436f643df7091ec70776ee21d033bc
+Merge: 0cd3636 39598e7
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:41:07 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 39598e7aa6b6ef50ed1a8bbd7221863c8bcda78b
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:40:56 2023 +0000
+
+    CI: Fedora doesn't have 'su' in CI
+
+commit 0cd36362657b86e1e42d8524c5df3566174c7538
+Merge: 48d0aaf 41f35ba
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:36:34 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 41f35bac61dfc66ef41b39c35d0e641d777aed1e
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:36:19 2023 +0000
+
+    CI: fix wheel group
+
+commit 48d0aafd85032d9998afe2523ca15697c75b47b0
+Merge: 600d306 51311a5
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:33:43 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 51311a57adf4d263f14f7c852f8f22685cbe4bba
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:33:28 2023 +0000
+
+    CI: closing if statement
+
+commit 600d306ce335f16b8fae3289772630baddd117f5
+Merge: ed24121 0eda64b
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:30:33 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 0eda64bed71a32df73937a2916ca087cb80a681f
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:30:22 2023 +0000
+
+    CI: Fedora uses the wheel group
+
+commit ed24121690e0b859e41c3fa62bc2c051aa0e5177
+Merge: 400e705 6808ee6
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:23:29 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 6808ee6de8b65edc247de85f46e5eba4acf18d97
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:23:15 2023 +0000
+
+    CI: Fedora doesn't have all adduser options
+
+commit 400e705f1ee1d42f7c071eec6f7048025e40cdba
+Merge: 766b63d 73c536b
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:12:28 2023 +0000
+
+    Merge branch 'master' of https://bitbucket.org/uncut-grass/usability-misc
+
+commit 73c536b020df25b063d51ef5cd3cbb65942eff4e
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 14:12:14 2023 +0000
+
+    Fix ci for fedora not being noninteractive
+
+commit 766b63d87cb4a912150a860b191d3f74533b09bd
+Merge: dc4f907 49b6395
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 14:00:03 2023 +0000
+
+    merge
+
+commit 49b6395f6ad4c8b05ba7dbba7f59e371df778621
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 13:58:50 2023 +0000
+
+    Support Fedora in CI
+
+commit dc4f907e23f3aafafb64ed429d821c84cf586e47
+Merge: 35f6e2f d2cad5d
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 13:50:57 2023 +0000
+
+    Merge remote-tracking branch 'bitbucket/master'
+
+commit d2cad5d0793ed7f755845e48b96229d6f4931f21
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 13:50:25 2023 +0000
+
+    Fix old variable name
+
+commit 35f6e2f028789b0dec145ee59d82892285c6a06e
+Merge: 5a3ab85 83c1ae1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 13:47:10 2023 +0000
+
+    merge
+
+commit 83c1ae14f596015ea42f89a9f2bd99eb0ef74147
+Merge: 1a76b8c ccad34a
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 13:40:47 2023 +0000
+
+    Fix merge conflict
+
+commit 5a3ab85067dea7a725cf5e629add84f036e25237
+Merge: ccad34a 1a76b8c
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Thu Aug 10 13:36:31 2023 +0000
+
+    merge
+
+commit 1a76b8c17fbfe41e290b55dc150dba8de9932964
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 10 13:14:40 2023 +0000
+
+    Add Oracle repo and Fedora support
+
+commit ccad34acd2c27117320fafe57a6394ba443a8bbc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 29 08:41:25 2023 -0400
+
+    bumped changelog version
+
 commit 267522c2031caaa214feee089d38c2d0564bbf12
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Jul 29 08:20:15 2023 -0400
