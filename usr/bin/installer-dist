@@ -1130,6 +1130,7 @@ check_vm_exists(){
 ## Check if guest should start or not
 check_guest_boot(){
   if test "${virtualbox_only}" = "1"; then
+    log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
     return 0
   fi
 
@@ -2821,7 +2822,11 @@ main(){
       download_files || die 103 "${underline}Download:${nounderline} Failed to download files."
     fi
   else
-    log notice "Version: '${guest_version}'"
+    if test "${virtualbox_only}" = "1"; then
+      true "INFO: Skip showing version because virtualbox_only."
+    else
+      log notice "Version: '${guest_version}'"
+    fi
   fi
   ##################
   ## END DOWNLOAD ##
