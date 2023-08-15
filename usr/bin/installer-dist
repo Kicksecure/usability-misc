@@ -896,8 +896,7 @@ nested_virtualization_test() {
 
 
 secure_boot_test() {
-  local mokutil_output mokutil_exit_code
-  mokutil_exit_code=0
+  local mokutil_output
   if mokutil_output=$(mokutil --sb-state 2>&1) ; then
     log info "${underline}Secure Boot Check Result:${nounderline} 'enabled' (mokutil_output: '$mokutil_output') Ok."
   else
