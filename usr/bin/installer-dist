@@ -2009,9 +2009,6 @@ get_system_stat(){
       log warn "  ${url_version_domain}/wiki/RAM"
     fi
   fi
-  if test "${virtualbox_only}" = "1"; then
-    return 0
-  fi
 
   df_output="$(df --output=avail -BG "${directory_prefix}")"
   free_space_available="$(echo "$df_output" |
@@ -2042,6 +2039,11 @@ get_system_stat(){
       esac
       ;;
   esac
+
+  if test "${virtualbox_only}" = "1"; then
+    free_space_required="1"
+  fi
+
   if test "${dev}" = "1"; then
     free_space_required="1"
   fi
