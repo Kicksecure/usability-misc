@@ -1675,7 +1675,7 @@ install_virtualbox_fedora(){
 
   ## Guard against adding extraneous repositories.
   if test "${has_virtualbox_qt}" != "1"; then
-    log notice "Preparing to install VirtualBox"
+    log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_oracle_repository_fedora
   fi
 
@@ -1703,7 +1703,7 @@ install_virtualbox_debian(){
   install_pkg "${linux_headers}"
 
   if test "${has_virtualbox_qt}" != "1"; then
-    log notice "Preparing to install VirtualBox"
+    log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_repositories_for_virtualbox_on_debian
   fi
 
