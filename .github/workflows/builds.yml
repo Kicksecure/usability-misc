@@ -86,5 +86,7 @@ jobs:
               run: sudo -u user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
             - name: Run VirtualBox Installer - Oracle repository
               run: sudo -u user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo
+            - name: Run VirtualBox Installer - back to default repository
+              run: sudo -u user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
