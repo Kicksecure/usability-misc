@@ -2928,6 +2928,7 @@ set_default(){
   no_show_errors=""
   mirror=""
   virtualbox_only=""
+  url_version_domain=""
 }
 
 
