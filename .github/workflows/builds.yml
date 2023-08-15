@@ -80,7 +80,7 @@ jobs:
                     exit 1
                   fi
             - name: Run Installer
-              #run: su -s /bin/bash user -- usr/bin/installer-dist -n -l debug -k -D --ci
-              run: sudo -u user -- usr/bin/installer-dist -n -l debug -k -D --ci
+              #run: su -s /bin/bash user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci
+              run: sudo -u user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
