@@ -1669,7 +1669,7 @@ install_virtualbox_fedora(){
   virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
 
   has_virtualbox_qt=0
-  has virtualbox && has_virtualbox_qt=1
+  test_pkg "${virtualbox_qt_package_name}" 2>/dev/null && has_virtualbox_qt=1
 
   install_pkg kernel-headers kernel-devel dkms
 
@@ -1695,7 +1695,7 @@ install_virtualbox_debian(){
 
   has_virtualbox_qt=0
   linux_headers="linux-headers-$(dpkg --print-architecture)"
-  has virtualbox && has_virtualbox_qt=1
+  test_pkg "${virtualbox_qt_package_name}" 2>/dev/null && has_virtualbox_qt=1
 
   install_pkg "${linux_headers}"
 
