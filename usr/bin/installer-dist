@@ -842,6 +842,7 @@ get_independent_host_pkgs(){
   has timeout || die 1 "${underline}Packages Installed Check:${nounderline} Timeout utility is missing."
   has curl || install_pkg curl
   has rsync || install_pkg rsync
+  has mokutil || install_pkg mokutil
 
   ## Install openssl and ca-certificates.
   ## openssl is required:
@@ -890,6 +891,17 @@ nested_virtualization_test() {
   - The installer is not designed for execution within Qubes.
   - Useful only for development purposes.
   - It is recommended to use Qubes-Whonix instead."
+  fi
+}
+
+
+secure_boot_test() {
+  local mokutil_output mokutil_exit_code
+  mokutil_exit_code=0
+  if mokutil_output=$(mokutil --sb-state 2>&1) ; then
+    log info "${underline}Secure Boot Check Result:${nounderline} 'enabled' (mokutil_output: '$mokutil_output') Ok."
+  else
+    log info "${underline}Secure Boot Check Result:${nounderline} 'disabled' (mokutil_output: '$mokutil_output') Ok."
   fi
 }
 
@@ -2053,6 +2065,7 @@ pre_check(){
   get_host_pkgs
   get_independent_host_pkgs
   nested_virtualization_test
+  secure_boot_test
 
   ## onion=1 -- Always torify onion connections.
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
