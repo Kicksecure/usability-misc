@@ -1666,6 +1666,8 @@ install_backports_and_fasttrack_repository_debian() {
 
 ## Install VirtualBox on Fedora
 install_virtualbox_fedora(){
+  virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
+
   has_linux_headers=0
   has_virtualbox_qt=0
   has virtualbox && has_virtualbox_qt=1
@@ -1677,7 +1679,7 @@ install_virtualbox_fedora(){
     install_oracle_repository_fedora
   fi
 
-  install_pkg VirtualBox-"${virtualbox_version}"
+  install_pkg "$virtualbox_qt_package_name"
 
   install_virtualbox_fedora_common_end
 }
@@ -1686,6 +1688,12 @@ install_virtualbox_fedora(){
 
 ## Install VirtualBox on Debian
 install_virtualbox_debian(){
+  if test "${oracle_repo}" = "1"; then
+    virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
+  else
+    virtualbox_qt_package_name=virtualbox-qt
+  fi
+
   has_linux_headers=0
   has_virtualbox_qt=0
   linux_headers="linux-headers-$(dpkg --print-architecture)"
@@ -1699,11 +1707,7 @@ install_virtualbox_debian(){
     install_repositories_for_virtualbox_on_debian
   fi
 
-  if test "${oracle_repo}" = "1"; then
-    install_pkg virtualbox-"${virtualbox_version}"
-  else
-    install_pkg virtualbox-qt
-  fi
+  install_pkg "$virtualbox_qt_package_name"
 
   install_virtualbox_debian_common_end
 }
