@@ -1,3 +1,135 @@
+commit fae2bbb77685c85611146b834966c4c462af04c8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:57:24 2023 -0400
+
+    CI
+
+commit 7634be77e875a65495e562bd3b8a1424b9b42274
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:50:01 2023 -0400
+
+    output
+
+commit d9fe607bc3c6ff6cf3ca7d0bcd485bfc94ea6597
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:47:50 2023 -0400
+
+    newline
+
+commit b7dd1ac841c776f532539b63b58d08494d64a6e3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:44:18 2023 -0400
+
+    comments
+
+commit a36dd5a99dc36db9b18d9c2df403aa499852cad2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:38:49 2023 -0400
+
+    check if VirtualBox package is installed rather than virtualbox program
+
+commit 1c206113d07b8c38234a39a1d6c58cc0a6814afc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:36:52 2023 -0400
+
+    cleanup
+
+commit fd6f4b352939a47f40470e548c495a09c35a8447
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:35:59 2023 -0400
+
+    refactoring
+
+commit a6ecf952808d73ba11c1ac71ac8265e82476355d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:32:31 2023 -0400
+
+    cleanup
+
+commit 031ede52f44bf4528d17dc206d38df3be73407f5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:29:08 2023 -0400
+
+    ident style
+
+commit e176e4faef2fc3814698b210416b92236f87a3c5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:28:17 2023 -0400
+
+    output
+
+commit 6d480743edace1a0a6270e5cab10be1f4342ce7f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:25:19 2023 -0400
+
+    code simplification
+
+commit 564015b790b0635251a0a9a0107fdac19ab8ac79
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 14:07:11 2023 -0400
+
+    shower success confirmation if VirtualBox installer succeeded
+
+commit 310c04faf8177fccb9d06d3a3506812a7c35d927
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:56:59 2023 -0400
+
+    run the usual tests also for VirtualBox Installer
+
+commit 74be46bf15a93783db5d6cc7aa346b186ab7c7a9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:45:45 2023 -0400
+
+    check disk space also for VirtualBox Installer
+
+commit 262d332add8c9d1cdf687c0072c8398d3075ca68
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:32:20 2023 -0400
+
+    Debian testing fix
+
+commit 371c6c502530e0caa5b36be3ec28fafd1717cf0b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:29:01 2023 -0400
+
+    defensively initialize `url_version_domain` variable
+
+commit 1920fc072913ac6d141228ce4c66b9a165409850
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:17:32 2023 -0400
+
+    test Oracle repository on CI
+
+commit 29d33886e69dfd978ba8eb03db1742e907631b78
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:16:09 2023 -0400
+
+    Test VirtualBox Installer on CI
+
+commit 9829df290ad0f39c4d1797e1d82caa3bd0cd34d5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:10:10 2023 -0400
+
+    use long option names
+
+commit 45a8f99eb28d50cf49dc12902de24664dff42a36
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:04:59 2023 -0400
+
+    cleanup
+
+commit 5c77d036ce501fb706907e20eb9db17715e42179
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 13:00:17 2023 -0400
+
+    info level output if SecureBoot is enabled or disabled
+
+commit da28756202c5377f0b7dd582009ae0152d3eeb8d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 12 11:15:13 2023 -0400
+
+    bumped changelog version
+
 commit 8c78d9c8812cb767bce9c640f5da1697aa9c10a0
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Aug 12 11:15:12 2023 -0400
