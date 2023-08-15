@@ -1668,7 +1668,6 @@ install_backports_and_fasttrack_repository_debian() {
 install_virtualbox_fedora(){
   virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
 
-  has_linux_headers=0
   has_virtualbox_qt=0
   has virtualbox && has_virtualbox_qt=1
 
@@ -1694,10 +1693,8 @@ install_virtualbox_debian(){
     virtualbox_qt_package_name=virtualbox-qt
   fi
 
-  has_linux_headers=0
   has_virtualbox_qt=0
   linux_headers="linux-headers-$(dpkg --print-architecture)"
-  test_pkg "${linux_headers}" 2>/dev/null && has_linux_headers=1
   has virtualbox && has_virtualbox_qt=1
 
   install_pkg "${linux_headers}"
