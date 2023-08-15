@@ -1687,7 +1687,6 @@ install_virtualbox_fedora(){
 }
 
 
-
 ## Install VirtualBox on Debian
 ## See also comments for install_virtualbox_fedora.
 install_virtualbox_debian(){
