@@ -373,6 +373,11 @@ get_os(){
     ## Also because we check for distribution version to abort if necessary.
   fi
 
+  if [ "$distro_version" = "n/a" ]; then
+    ## In Debian testing distro_version can be 'n/a'.
+    return 0
+  fi
+
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
   is_integer "${distro_version_without_dot}" ||
      die 101 "${underline}Distribution Check:${nounderline} Distribution version without dot is still not a number: '${distro_version_without_dot}'"
