@@ -1673,11 +1673,14 @@ install_virtualbox_fedora(){
 
   install_pkg kernel-headers kernel-devel dkms
 
+  ## Guard against adding extraneous repositories.
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "Preparing to install VirtualBox"
     install_oracle_repository_fedora
   fi
 
+  ## This is to make sure loglevel info message is shown:
+  ## Package already installed: $virtualbox_qt_package_name
   install_pkg "$virtualbox_qt_package_name"
 
   install_virtualbox_fedora_common_end
@@ -1686,6 +1689,7 @@ install_virtualbox_fedora(){
 
 
 ## Install VirtualBox on Debian
+## See also comments for install_virtualbox_fedora.
 install_virtualbox_debian(){
   if test "${oracle_repo}" = "1"; then
     virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
