@@ -1,3 +1,15 @@
+commit 65522938b061489576125b7af3c04adda055fd37
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 15:50:03 2023 -0400
+
+    installing weak dependency packages `gcc` and `udev` when using `virtualbox.org` (Oracle) repository
+
+commit b6743d599230ae2cdacc4712cd7804ecf4aebea7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 15:11:27 2023 -0400
+
+    bumped changelog version
+
 commit fae2bbb77685c85611146b834966c4c462af04c8
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 15 14:57:24 2023 -0400
