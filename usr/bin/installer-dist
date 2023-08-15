@@ -1666,25 +1666,26 @@ install_backports_and_fasttrack_repository_debian() {
 
 ## Install VirtualBox on Fedora
 install_virtualbox_fedora(){
-  has_vboxmanage=0
+  #has_vboxmanage=0
   has_linux_headers=0
   has_virtualbox_qt=0
-  has vboxmanage && has_vboxmanage=1
-  has virtualboxvm && has_virtualbox_qt=1
+  #has vboxmanage && has_vboxmanage=1
+  has virtualbox && has_virtualbox_qt=1
 
-  log notice "Preparing to install Linux headers"
   install_pkg kernel-headers kernel-devel dkms
-  if test "${has_vboxmanage}" = "1"; then
-    log info "'vboxmanage' is already installed."
-    install_virtualbox_fedora_common_end
-    return 0
-  fi
+
+  #if test "${has_virtualbox_qt}" = "1"; then
+  #  log info "'virtualbox' is already installed."
+  #  install_virtualbox_fedora_common_end
+  #  return 0
+  #fi
 
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "Preparing to install VirtualBox"
     install_oracle_repository_fedora
-    install_pkg VirtualBox-"${virtualbox_version}"
   fi
+
+  install_pkg VirtualBox-"${virtualbox_version}"
 
   install_virtualbox_fedora_common_end
 }
@@ -1693,33 +1694,35 @@ install_virtualbox_fedora(){
 
 ## Install VirtualBox on Debian
 install_virtualbox_debian(){
-  has_vboxmanage=0
+  #has_vboxmanage=0
   has_linux_headers=0
   has_virtualbox_qt=0
   linux_headers="linux-headers-$(dpkg --print-architecture)"
-  has vboxmanage && has_vboxmanage=1
+  #has vboxmanage && has_vboxmanage=1
   test_pkg "${linux_headers}" 2>/dev/null && has_linux_headers=1
-  has virtualboxvm && has_virtualbox_qt=1
+  #has virtualboxvm && has_virtualbox_qt=1
+  has virtualbox && has_virtualbox_qt=1
 
-  if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
-    log info "'vboxmanage' and '${linux_headers}' are already installed."
-    install_virtualbox_debian_common_end
-    return 0
-  fi
+  #if test "${has_vboxmanage}" = "1" && test "${has_linux_headers}" = "1"; then
+    #log info "'vboxmanage' and '${linux_headers}' are already installed."
+    #install_virtualbox_debian_common_end
+    #return 0
+  #fi
 
-  if test "${has_linux_headers}" != "1"; then
-    log notice "Preparing to install ${linux_headers}"
+  #if test "${has_linux_headers}" != "1"; then
+    #log notice "Preparing to install ${linux_headers}"
     install_pkg "${linux_headers}"
-  fi
+  #fi
 
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "Preparing to install VirtualBox"
     install_repositories_for_virtualbox_on_debian
-    if test "${oracle_repo}" = "1"; then
-      install_pkg virtualbox-"${virtualbox_version}"
-    else
-      install_pkg virtualbox-qt
-    fi
+  fi
+
+  if test "${oracle_repo}" = "1"; then
+    install_pkg virtualbox-"${virtualbox_version}"
+  else
+    install_pkg virtualbox-qt
   fi
 
   install_virtualbox_debian_common_end
