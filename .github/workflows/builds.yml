@@ -79,8 +79,10 @@ jobs:
                   else
                     exit 1
                   fi
-            - name: Run Installer
+            - name: Run default installer-dist
               #run: su -s /bin/bash user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci
               run: sudo -u user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci
+            - name: Run VirtualBox Installer
+              run: sudo -u user -- usr/bin/installer-dist --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/installer-dist
