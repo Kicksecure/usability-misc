@@ -773,26 +773,19 @@ claim_unsupported_distro(){
 
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
+  true "distro: ${distro}"
   case "${os}" in
     Linux*)
       case "${distro}" in
-        "Debian"*|"Tails"*|"Kicksecure"|"Whonix")
-          true "distro: ${distro}"
+        "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
           install_package_debian_common
           install_virtualbox_debian
           ;;
-        "Kali")
-            log error "Kali Linux support is disabled, reason: legal liability"
-            log error "  https://www.kicksecure.com/wiki/Limitations_on_Free_Speech_on_Website_and_Chat#Banned_Subjects"
-            claim_unsupported_distro known
-          ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
-          true "distro: ${distro}"
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
         *"buntu"*)
-          true "distro: ${distro}"
           if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
