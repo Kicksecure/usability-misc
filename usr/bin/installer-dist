@@ -2842,6 +2842,8 @@ main(){
 ## called by [-h|--help] or because user tried and invalid option.
 usage(){
   printf %s"Usage: ${me} [options...]
+
+User Options:
  -g, --guest=<guest> Set guest. Options: kicksecure, whonix (default)
  -u, --guest-version=<version>
                      Set guest version, else query from API.
@@ -2866,7 +2868,7 @@ Developer options:
  --allow-errors      Don't exit on errors. Dirty mode.
  --mirror=<number>   Set mirror according to number index. Choose closest
                        mirror to you if not using onion for faster downloads.
-                       Not that if not choosing mirror, defaults to whonix.org
+                       Note that if not choosing mirror, defaults to whonix.org
                        for clearnet and dotsrc.org correspondent for onion.
                        Mirrors index:
                          0 [DE] download.whonix.org (onion available)
@@ -2895,7 +2897,7 @@ Developer options:
                        start again. \$HOME/installer-dist-download (default).
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
- -D, --dev           Set development mode. Empty image to download
+ -D, --dev           Set development mode. Empty image to download.
  --ci                Set CI mode. Test running in CI.
  --testers           Set testers version to be downloaded.
  -d, --dry-run       Simulated run, log commands to info level without executing.
