@@ -2899,7 +2899,7 @@ Developer options:
  --ci                Set CI mode. Test running in CI.
  --testers           Set testers version to be downloaded.
  -d, --dry-run       Simulated run, log commands to info level without executing.
-  --virtualbox-only  Only downloads and installs VirtualBox.
+ --virtualbox-only   Only downloads and installs VirtualBox.
  -t, --getopt        Show parsed options and quit.
 File name:
   The default file name is installer-dist. Some basic options can be set as
