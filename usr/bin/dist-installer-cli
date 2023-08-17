@@ -2887,7 +2887,7 @@ Developer options:
                        write capabilities for the calling user. If you change
                        this directory, but the previously downloaded files
                        are not changed to the new directory, the download
-                       start again. \$HOME/installer-dist-download (default).
+                       start again. \$HOME/dist-installer-cli-download (default).
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -D, --dev           Set development mode. Empty image to download.
@@ -2897,7 +2897,7 @@ Developer options:
  --virtualbox-only   Only downloads and installs VirtualBox.
  -t, --getopt        Show parsed options and quit.
 File name:
-  The default file name is installer-dist. Some basic options can be set as
+  The default file name is dist-installer-cli. Some basic options can be set as
   the file name if they follow the format 'guest-installer-interface'.
   Anything different than the default name or the allowed format is rejected.
   Command line options override the file name definition.
@@ -2912,7 +2912,7 @@ set_default(){
   get_colors
   xtrace=""
   directory_prefix=""
-  set_arg directory_prefix "${HOME}/installer-dist-download"
+  set_arg directory_prefix "${HOME}/dist-installer-cli-download"
   guest=""
   set_arg guest whonix
   hypervisor=""
@@ -2949,11 +2949,11 @@ set_default(){
 ## Parse script name.
 parse_name(){
   ## if using default file name, ignore the rest
-  test "${me}" = "installer-dist" && return 0
+  test "${me}" = "dist-installer-cli" && return 0
   ## check if file name is valid
   case "${me}" in
-    whonix-installer-xfce | whonix-installer-cli | \
-      kicksecure-installer-xfce | kicksecure-installer-cli )
+    whonix-xfce-installer-cli | whonix-cli-installer-cli | \
+      kicksecure-xfce-installer-cli | kicksecure-cli-installer-cli )
       log info "Valid script name to set options: '${me}'"
       ;;
     virtualbox-installer )
@@ -2965,13 +2965,12 @@ parse_name(){
     *)
       log error "Invalid script name: '${me}'"
       log error "If you don't know why this happened, rename this script to"
-      log error "  installer-dist and use command-line options instead."
+      log error "  dist-installer-cli and use command-line options instead."
       return 2
   esac
   ## assign values according to script name
   set_arg guest "$(echo "${me}" | cut -d "-" -f1)"
-  set_arg interface "$(echo "${me}" | cut -d "-" -f3)"
-  #set_arg hypervisor "$(echo "${me}" | cut -d "-" -f3)"
+  set_arg interface "$(echo "${me}" | cut -d "-" -f2)"
   log info "Assigned guest and interface according to script name: '${me}'"
   return 0
 }
