@@ -18,10 +18,10 @@ of Kicksecure and Whonix VMs. It supports interfaces CLI or Xfce,
 and allows users to choose their preferred hypervisor, such as KVM or VirtualBox.
 
 ## OPTIONS
-Options start with one or two dashes. Both, long and short options that require
+Options start with one or two dashes. Both long and short options that require
 arguments can be separated by either spaces or an equal sign.
 
-If an option is specified multiple times, the last assignment will take precedence.
+If an option is specified multiple times, the last assignment takes precedence.
 
 The guest and interface can also be set by renaming the script following the
 format <guest-installer-interface>.
@@ -32,11 +32,11 @@ format <guest-installer-interface>.
 
 `-u`, `--guest-version`=<version>
 
-        Specify the guest version. If none is provided, the API will be queried by default.
+        Specify the guest version. If none is provided, the default is to query the API.
 
 `-i`, `--interface`=<interface>
 
-        Set the guest interface. Options: cli, xfce (default).
+        Define the guest interface. Options: cli, xfce (default).
 
 `-m`, `--hypervisor`=<hypervisor>
 
@@ -45,9 +45,8 @@ format <guest-installer-interface>.
 `--oracle-repo`
 
         Use the Oracle repository for VirtualBox. This is the default for Fedora-based
-        distributions and is optional for Debian-based ones. However, it might be set
-        by developers in a future version if the Debian repository stops serving the
-        VirtualBox package.
+        distributions. It's optional for Debian-based ones but may be set by developers
+        in the future if the Debian repository discontinues the VirtualBox package.
 
 `-o`, `--onion`
 
@@ -55,21 +54,20 @@ format <guest-installer-interface>.
 
 `-s`, `--socks-proxy`=<proxy>
 
-        Define a TCP SOCKS proxy for requests in the format "host:addr". If none is
-        specified and onion routing is enabled, the system will try
-        TOR_SOCKS_HOST:TOR_SOCKS_PORT. If this fails, it will default to host 127.0.0.1
-        and check for TBB on port 9151 or the system's tor on port 9050.
+        Define a TCP SOCKS proxy for requests in the format "host:addr". If not specified
+        and Tor onion routing is enabled, it defaults to TOR_SOCKS_HOST:TOR_SOCKS_PORT.
+        If this fails, it defaults to host 127.0.0.1 and checks for TBB on port 9151
+        or the system's tor on port 9050.
 
 `-l`, `--log-level`=<level>
 
-        Define the logging level. Options: debug, info, notice (default), warn,
-        error. Log messages below the specified level will be printed.
+        Define the logging level. Options: debug, info, notice (default), warn, error.
+        Log messages below the specified level are displayed.
 
 `-k`, `--no-boot`
 
-        Prevent the guest from booting after the installation. By default, the installer will
-        prompt to start the guest. If in non-interactive mode, the installer will start the guest
-        automatically.
+        Prevent the guest from booting after the installation. By default, the installer prompts
+        to start the guest. In non-interactive mode, the guest starts automatically.
 
 `--no-import`
 
@@ -87,23 +85,21 @@ format <guest-installer-interface>.
 `--reimport`
 
         Re-import the guest into the hypervisor. The installer will attempt to import
-        any existing files if found. This option requires the --destroy-existing-guest
-        option as a pledge.
+        any existing files if found. This option requires the --destroy-existing-guest pledge.
 
 `--destroy-existing-guest`
 
-        This optoin is a prerequisite for --reimport as a pledge.
+        This option is a prerequisite pledge for --reimport.
 
 `-P`, `--directory-prefix`=<directory>
 
         Define the absolute path directory to store downloaded files. Defaults to
-        $HOME/installer-dist-download. This directory must exist and be writable by
-        the user. Changing this directory without relocating previously downloaded files
-        will trigger a new download.
+        $HOME/installer-dist-download. The directory must exist and be writable by the user.
+        Changing this directory without moving the previously downloaded files triggers a new download.
 
 `-n`, `--non-interactive`
 
-        Enable non-interactive mode. In this mode, all default options will be assumed,
+        Enable non-interactive mode. In this mode, all default options are assumed,
         including accepting the license and starting the guest.
 
 `--mirror`=<number>
@@ -121,11 +117,11 @@ format <guest-installer-interface>.
 
 `--virtualbox-only`
 
-        Download and install only VirtualBox.
+        Only download and install VirtualBox.
 
 `--allow-errors`
 
-        Enable dirty mode, where the program doesn't exit on errors.
+        Enable dirty mode, where the program continues despite errors.
 
 `--no-show-errors`
 
@@ -145,7 +141,7 @@ format <guest-installer-interface>.
 
 `-d`, `--dry-run`
 
-        Simulate a run without executing any impactful actions.
+        Simulate a run without executing impactful actions.
 
 `-t`, `--getopt`
 
@@ -153,7 +149,7 @@ format <guest-installer-interface>.
 
 `-V`, `--version`
 
-        Show the version number and exit.
+        Display the version number and exit.
 
 `-h`, `--help`
 
@@ -174,9 +170,9 @@ To install the default configuration non-interactively and display info messages
         $ installer-dist --non-interactive --log-level=info
 
 ## EXIT CODES
-The installer is set to return the exit code of the last command executed.
-Some command exit codes might clash with the script's exit code, which would be a bug.
-The exit codes for <curl> and <rsync> are reserved to prevent conflicts and simplify debugging.
+The installer returns the exit code of the last command executed.
+Some command exit codes might clash with the script's exit code, which would be considered a bug.
+Exit codes for <curl> and <rsync> are reserved to avoid conflicts and simplify debugging.
 
     1       General error.
 
@@ -190,7 +186,7 @@ The exit codes for <curl> and <rsync> are reserved to prevent conflicts and simp
 
     101     Unsupported system.
 
-    102     Virtual machines already present.
+    102     Virtual machines already exist.
 
     103     Download failure.
 
