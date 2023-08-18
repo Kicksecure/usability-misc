@@ -39,11 +39,11 @@ jobs:
             matrix:
                 include:
                     - image: fedora:latest
-                    # - image: debian:oldstable
-                    # - image: debian:stable
-                    # - image: debian:testing
-                    # - image: ubuntu:latest
-                    # - image: linuxmintd/mint21.2-amd64:latest
+                    - image: debian:oldstable
+                    - image: debian:stable
+                    - image: debian:testing
+                    - image: ubuntu:latest
+                    - image: linuxmintd/mint21.2-amd64:latest
 
         container:
             image: ${{ matrix.image }}
