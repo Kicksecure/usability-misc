@@ -3284,9 +3284,6 @@ log_term_and_file_bash(){
 
 ## Logging mechanism.
 log_term_and_file(){
-  ## Debugging.
-  log info "Current shell: '${curr_shell}'"
-
   ## Discover if terminal is attached to stdout
   if ! test -t 1; then
     log warn "Output is not being sent to the terminal because terminal is not connected to stdout."
