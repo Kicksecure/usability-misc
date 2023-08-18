@@ -1731,7 +1731,10 @@ install_virtualbox_fedora(){
 ## See also comments for install_virtualbox_fedora.
 install_virtualbox_debian(){
   get_virtualbox_version_debian(){
-    virtualbox_version="$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$" | tail -1 | cut -d " " -f1 | cut -d "-" -f2-)"
+    virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
+    virtualbox_version=$(echo "$virtualbox_version" | tail -1)
+    virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
+    virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
     virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
   }
 
