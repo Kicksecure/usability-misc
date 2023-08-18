@@ -1293,6 +1293,7 @@ start_guest(){
   esac
 }
 
+
 ## Start the hypervisor with the desired guest
 start_virtualbox_vm() {
   log notice "Starting Virtual Machine(s)."
@@ -1315,9 +1316,11 @@ start_virtualbox_vm() {
   log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
 }
 
+
 start_virtualbox_gui() {
   virtualbox & disown
 }
+
 
 virtualbox_start_failed() {
   if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
