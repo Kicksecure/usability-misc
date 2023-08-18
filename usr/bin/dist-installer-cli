@@ -899,7 +899,23 @@ secure_boot_test() {
 update_sources(){
   log notice "Updating package list."
   # shellcheck disable=SC2086
-  root_cmd ${pkg_mngr_update} ||
+  if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | tee /dev/tty) ; then
+    ## Exit code is zero but that does not guarantee in case of dnf that there is no error.
+    if echo "$update_output" | grep --quiet --ignore-case "Error:" ; then
+      ## Error found. Stop.
+      update_sources_error
+    else
+      ## No error found. Continuing.
+      return 0
+    fi
+  else
+    ## Non-zero exit code. Stop.
+    update_sources_error
+  fi
+}
+
+
+update_sources_error() {
   die 1 "${underline}Package List Update:${nounderline} Could not update package lists.
   - This issue is most likely not caused by this installer.
   - This is most likely a package manager configuration or network issue.
@@ -914,6 +930,7 @@ The user is advised to attempt to debug this with the following steps:
    contact the support of your operating system.
 3. Once this has been fixed fixed, re-run this installer."
 }
+
 
 ## Install package only if not installed already.
 install_pkg(){
