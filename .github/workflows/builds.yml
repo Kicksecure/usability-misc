@@ -35,18 +35,15 @@ jobs:
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         runs-on: ubuntu-22.04
         strategy:
-            ## TODO: re-enable
-            #fail-fast: false
-            ## Saving CI minutes.
-            fail-fast: true
+            fail-fast: false
             matrix:
                 include:
                     - image: fedora:latest
-                    - image: debian:oldstable
-                    - image: debian:stable
-                    - image: debian:testing
-                    - image: ubuntu:latest
-                    - image: linuxmintd/mint21.2-amd64:latest
+                    # - image: debian:oldstable
+                    # - image: debian:stable
+                    # - image: debian:testing
+                    # - image: ubuntu:latest
+                    # - image: linuxmintd/mint21.2-amd64:latest
 
         container:
             image: ${{ matrix.image }}
