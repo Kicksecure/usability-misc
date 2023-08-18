@@ -1364,6 +1364,7 @@ check_installed_debian(){
 install_package_fedora_common(){
   pkg_mngr="dnf"
   pkg_mngr_install="${pkg_mngr} install --assumeyes --setopt=install_weak_deps=False"
+  ## Fedora lacks an equivalent to Debian's '--error-on=any'.
   pkg_mngr_update="${pkg_mngr} update --assumeyes"
   pkg_mngr_check_installed="dnf list installed"
 
@@ -1723,6 +1724,10 @@ install_virtualbox_fedora(){
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_oracle_repository_fedora
+
+    ## Debugging.
+    root_cmd dnf repolist
+
     update_sources
     get_virtualbox_version_fedora || die 2 "\
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
