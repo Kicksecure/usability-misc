@@ -13,7 +13,7 @@ args=(
   '(-u --guest-version)'{-u,--guest-version=}"[Set guest's version]:<version>"
   '(-i --interface)'{-i,--interface=}"[Set guest's interface]:<interface>:->interfaces"
   '(-m --hypervisor)'{-m,--hypervisor=}"[Set guest's hypervisor]:<hypervisor>:->hypervisors"
-  '(--oracle-repo)'{--oracle-repo}'[Set Oracle repository]'
+  '(--oracle-repo)'--oracle-repo'[Set Oracle repository]'
   '(-s --socks-proxy)'{-s,--socks-proxy=}'[Set SOCKS proxy for requests]':'<host\:port>'
   '(-P --directory-prefix)'{-P,--directory-prefix=}'[Set directory for saving files]:directory:->directories'
   '(-o --onion)'{-o,--onion}'[Make requests over onion]'
