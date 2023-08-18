@@ -1669,7 +1669,7 @@ install_oracle_repository_fedora(){
     # shellcheck disable=SC2016
     echo '[virtualbox]
 name=Oracle Linux / RHEL / CentOS-$releasever / $basearch - VirtualBox
-baseurl=https://download.virtualbox.org/virtualbox/rpm/el/$releasever/$basearch
+baseurl=https://download.virtualbox.org/virtualbox/rpm/fedora/$releasever/$basearch
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
