@@ -1730,8 +1730,8 @@ install_virtualbox_debian(){
     virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
   }
 
-  get_virtualbox_version_debian
   if test "${oracle_repo}" = "1"; then
+    get_virtualbox_version_debian
     ## udev:
     ## https://www.virtualbox.org/ticket/21804
     ##
