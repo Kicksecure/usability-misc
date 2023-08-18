@@ -921,7 +921,7 @@ update_sources(){
       log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
       update_sources_error
     else
-      true "INFO: No error found in grep output, ok."
+      true "INFO: No error found in update output, ok."
       return 0
     fi
   else
