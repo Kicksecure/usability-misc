@@ -1700,7 +1700,7 @@ install_virtualbox_fedora(){
 
   get_virtualbox_version_fedora(){
     virtualbox_version=$(dnf search "virtualbox-*")
-    virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\."
+    virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\.")
     virtualbox_version=$(echo "$virtualbox_version" | tail -1)
     virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
     virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
