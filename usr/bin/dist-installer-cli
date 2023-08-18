@@ -1699,7 +1699,12 @@ install_virtualbox_fedora(){
   install_pkg kernel-headers kernel-devel dkms
 
   get_virtualbox_version_fedora(){
-    virtualbox_version="$(dnf search "virtualbox-*" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\." | tail -1 | cut -d " " -f1 | cut -d "-" -f2- | cut -d "." -f1)"
+    virtualbox_version=$(dnf search "virtualbox-*")
+    virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\."
+    virtualbox_version=$(echo "$virtualbox_version" | tail -1)
+    virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
+    virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
+    virtualbox_version=$(echo "$virtualbox_version" | cut -d "." -f1)
     virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
   }
 
