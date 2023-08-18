@@ -911,6 +911,8 @@ update_sources(){
   #root_cmd ${pkg_mngr_update} 2>&1 || true
   #update_sources_error
   ## result: OK: command_without_extrarenous_spaces="sudo -- apt-get update --yes --error-on=any"
+  ## But if root_cmd is run in a subshell using $(root_cmd ...) then command_without_extrarenous_spaces
+  ## won't be updated.
 
   # shellcheck disable=SC2086
   if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | $console_write_command) ; then
