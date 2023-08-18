@@ -53,7 +53,7 @@ jobs:
             - name: System Basic Packages
               run: |
                   if command -v apt-get; then
-                    apt-get update -y && apt-get install -y shellcheck sudo
+                    apt-get update -y && apt-get install -y shellcheck sudo adduser
                   elif command -v dnf; then
                     dnf update -y && dnf install -y ShellCheck sudo
                   else
