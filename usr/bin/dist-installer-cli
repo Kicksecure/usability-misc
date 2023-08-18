@@ -156,7 +156,6 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 =Rv7/
 -----END PGP PUBLIC KEY BLOCK-----"
 
-virtualbox_version="7.0"
 virtualbox_linux_user_group="vboxusers"
 
 ########################
@@ -778,10 +777,12 @@ get_host_pkgs(){
     Linux*)
       case "${distro}" in
         "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
+          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
           install_package_debian_common
           install_virtualbox_debian
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
+          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
@@ -789,11 +790,12 @@ get_host_pkgs(){
           if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
+          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          true "${distro}"
+          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
           install_package_fedora_common
           install_virtualbox_fedora
           ;;
@@ -894,6 +896,25 @@ secure_boot_test() {
 }
 
 
+update_sources(){
+  log notice "Updating package list."
+  # shellcheck disable=SC2086
+  root_cmd ${pkg_mngr_update} ||
+  die 1 "${underline}Package List Update:${nounderline} Could not update package lists.
+  - This issue is most likely not caused by this installer.
+  - This is most likely a package manager configuration or network issue.
+
+This is the command which the installer has just run that failed:
+
+$command_without_extrarenous_spaces
+
+The user is advised to attempt to debug this with the following steps:
+1. Run above command.
+2. If there is an issue, use search engines, documentation and if needed
+   contact the support of your operating system.
+3. Once this has been fixed fixed, re-run this installer."
+}
+
 ## Install package only if not installed already.
 install_pkg(){
   pkgs="${*}"
@@ -918,23 +939,8 @@ install_pkg(){
       log notice "Skipping installing the following packages because dry_run is set: '${pkg_not_installed}'"
       return 0
     fi
-    log notice "Installing package(s): '${pkg_not_installed}'"
-    log notice "Updating package list."
-    # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_update} ||
-      die 1 "${underline}Package List Update:${nounderline} Could not update package lists.
-  - This issue is most likely not caused by this installer.
-  - This is most likely a package manager configuration or network issue.
 
-This is the command which the installer has just run that failed:
-
-$command_without_extrarenous_spaces
-
-The user is advised to attempt to debug this with the following steps:
-1. Run above command.
-2. If there is an issue, use search engines, documentation and if needed
-   contact the support of your operating system.
-3. Once this has been fixed fixed, re-run this installer."
+    update_sources
     log notice "Installing package(s): '${pkg_not_installed}'"
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
@@ -1124,7 +1130,33 @@ check_vm_exists(){
 check_guest_boot(){
   if test "${virtualbox_only}" = "1"; then
     log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
-    return 0
+
+    if test "${no_boot}" = "1"; then
+      log info "no_boot is set."
+      log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via command line."
+      log notice "VirtualBox can be started manually."
+      exit
+    fi
+    ## Default to start guest without interaction
+    if test "${non_interactive}" = "1"; then
+      log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
+      virtualbox
+      exit
+    fi
+    log notice "${bold}Question:${nobold} Do you want to start VirtualBox now? [y/n] (default: yes): "
+    printf '%s' "Your answer: "
+    read -r response
+    log notice "User replied '${response}'"
+    case ${response} in
+      ""|[Yy]|[Yy][Ee][Ss])
+        log notice "${underline}VirtualBox Startup Check:${nounderline} User accepted to start VirtualBox."
+        virtualbox
+        ;;
+      *)
+        log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox."
+        ;;
+    esac
+    exit
   fi
 
   log info "Virtual Machine(s) already exist."
@@ -1263,18 +1295,22 @@ start_guest(){
 }
 
 ## Start the hypervisor with the desired guest
-start_virtualbox(){
+start_virtualbox()L{
   log notice "Starting Virtual Machine(s)."
+  ## 'virtualbox' is called after 'vboxmanage' because it hangs till the app
+  ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
   case "${guest}" in
     whonix)
       log_run notice vboxmanage startvm \
         "${guest_pretty}-Gateway-${interface_name}" || virtualbox_start_failed
       log_run notice vboxmanage startvm \
         "${guest_pretty}-Workstation-${interface_name}" || virtualbox_start_failed
+      virtualbox
       ;;
     kicksecure)
       log_run notice vboxmanage startvm \
         "${guest_pretty}-${interface_name}" || virtualbox_start_failed
+      virtualbox
       ;;
   esac
   log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
@@ -1553,6 +1589,7 @@ install_repositories_for_virtualbox_on_debian(){
       ;;
   esac
 
+  update_sources
   die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename_real}'!"
 }
 
@@ -1659,17 +1696,22 @@ install_backports_and_fasttrack_repository_debian() {
 
 ## Install VirtualBox on Fedora
 install_virtualbox_fedora(){
-  virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
+  install_pkg kernel-headers kernel-devel dkms
 
+  get_virtualbox_version_fedora(){
+    virtualbox_version="$(dnf search "virtualbox-*" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\." | tail -1 | cut -d " " -f1 | cut -d "-" -f2- | cut -d "." -f1)"
+    virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
+  }
+
+  get_virtualbox_version_fedora
   has_virtualbox_qt=0
   test_pkg "${virtualbox_qt_package_name}" 2>/dev/null && has_virtualbox_qt=1
-
-  install_pkg kernel-headers kernel-devel dkms
 
   ## Guard against adding extraneous repositories.
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_oracle_repository_fedora
+    get_virtualbox_version_fedora
   fi
 
   ## This is to make sure loglevel info message is shown:
@@ -1683,8 +1725,13 @@ install_virtualbox_fedora(){
 ## Install VirtualBox on Debian
 ## See also comments for install_virtualbox_fedora.
 install_virtualbox_debian(){
-  if test "${oracle_repo}" = "1"; then
+  get_virtualbox_version_debian(){
+    virtualbox_version="$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$" | tail -1 | cut -d " " -f1 | cut -d "-" -f2-)"
     virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
+  }
+
+  get_virtualbox_version_debian
+  if test "${oracle_repo}" = "1"; then
     ## udev:
     ## https://www.virtualbox.org/ticket/21804
     ##
@@ -1705,6 +1752,7 @@ install_virtualbox_debian(){
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_repositories_for_virtualbox_on_debian
+    get_virtualbox_version_debian
   fi
 
   install_pkg "$virtualbox_qt_package_name"
