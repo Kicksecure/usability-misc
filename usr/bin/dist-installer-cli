@@ -1139,7 +1139,7 @@ check_guest_boot(){
     ## Default to start guest without interaction
     if test "${non_interactive}" = "1"; then
       log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
-      virtualbox
+      start_virtualbox_gui
       exit 0
     fi
     log notice "${bold}Question:${nobold} Do you want to start VirtualBox now? [y/n] (default: yes): "
@@ -1149,7 +1149,7 @@ check_guest_boot(){
     case ${response} in
       ""|[Yy]|[Yy][Ee][Ss])
         log notice "${underline}VirtualBox Startup Check:${nounderline} User accepted to start VirtualBox."
-        virtualbox
+        start_virtualbox_gui
         ;;
       *)
         log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox."
@@ -1313,6 +1313,10 @@ start_virtualbox_vm() {
       ;;
   esac
   log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
+}
+
+start_virtualbox_gui() {
+  virtualbox & disown
 }
 
 virtualbox_start_failed() {
