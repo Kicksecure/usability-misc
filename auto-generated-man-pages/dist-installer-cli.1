@@ -1,0 +1,281 @@
+.\" generated with Ronn-NG/v0.9.1
+.\" http://github.com/apjanke/ronn-ng/tree/0.9.1
+.TH "DIST\-INSTALLER\-CLI" "1" "January 2020" "usability-misc" "usability-misc Manual"
+.SH "NAME"
+\fBdist\-installer\-cli\fR \- download and import Whonix/Kicksecure VMs
+.SH "SYNOPSIS"
+\fBdist\-installer\-cli\fR \fIoptions\fR
+.SH "DESCRIPTION"
+\fBdist\-installer\-cli\fR is an installer that automates the download and import of Kicksecure and Whonix VMs\. It supports interfaces CLI or Xfce, and allows users to choose their preferred hypervisor, such as KVM or VirtualBox\.
+.SH "OPTIONS"
+Options start with one or two dashes\. Both long and short options that require arguments can be separated by either spaces or an equal sign\.
+.P
+If an option is specified multiple times, the last assignment takes precedence\.
+.P
+The guest and interface can also be set by renaming the script following the format \fIguest\-interface\-installer\fR\.
+.P
+\fB\-g\fR, \fB\-\-guest\fR=\fIguest\fR
+.IP "" 4
+.nf
+    Set the guest operating system\. Options: kicksecure, whonix (default)\.
+.fi
+.IP "" 0
+.P
+\fB\-u\fR, \fB\-\-guest\-version\fR=\fIversion\fR
+.IP "" 4
+.nf
+    Specify the guest version\. If none is provided, the default is to query the API\.
+.fi
+.IP "" 0
+.P
+\fB\-i\fR, \fB\-\-interface\fR=\fIinterface\fR
+.IP "" 4
+.nf
+    Define the guest interface\. Options: cli, xfce (default)\.
+.fi
+.IP "" 0
+.P
+\fB\-m\fR, \fB\-\-hypervisor\fR=\fIhypervisor\fR
+.IP "" 4
+.nf
+    Choose the hypervisor for the guest\. Options: kvm, virtualbox (default)\.
+.fi
+.IP "" 0
+.P
+\fB\-\-oracle\-repo\fR
+.IP "" 4
+.nf
+    Use the Oracle repository for VirtualBox\. This is the default for Fedora\-based
+    distributions\. It's optional for Debian\-based ones but may be set by developers
+    in the future if the Debian repository discontinues the VirtualBox package\.
+.fi
+.IP "" 0
+.P
+\fB\-o\fR, \fB\-\-onion\fR
+.IP "" 4
+.nf
+    Route requests through the Tor onion network whenever possible\.
+.fi
+.IP "" 0
+.P
+\fB\-s\fR, \fB\-\-socks\-proxy\fR=\fIproxy\fR
+.IP "" 4
+.nf
+    Define a TCP SOCKS proxy for requests in the format "host:addr"\. If not specified
+    and Tor onion routing is enabled, it defaults to TOR_SOCKS_HOST:TOR_SOCKS_PORT\.
+    If this fails, it defaults to host 127\.0\.0\.1 and checks for TBB on port 9151
+    or the system's tor on port 9050\.
+.fi
+.IP "" 0
+.P
+\fB\-l\fR, \fB\-\-log\-level\fR=\fIlevel\fR
+.IP "" 4
+.nf
+    Define the logging level\. Options: debug, info, notice (default), warn, error\.
+    Log messages below the specified level are displayed\.
+.fi
+.IP "" 0
+.P
+\fB\-k\fR, \fB\-\-no\-boot\fR
+.IP "" 4
+.nf
+    Prevent the guest from booting after the installation\. By default, the installer prompts
+    to start the guest\. In non\-interactive mode, the guest starts automatically\.
+.fi
+.IP "" 0
+.P
+\fB\-\-no\-import\fR
+.IP "" 4
+.nf
+    Skip the importation of the guest\. By default, if the guest hasn't been imported, it will be\.
+.fi
+.IP "" 0
+.P
+\fB\-\-import\-only\fR=\fIvm\fR
+.IP "" 4
+.nf
+    Import only a specific Virtual Machine when the guest is Whonix\.
+    Options: gateway, workstation\.
+.fi
+.IP "" 0
+.P
+\fB\-\-redownload\fR
+.IP "" 4
+.nf
+    Force a new download even if a flag indicates a previous successful download\.
+.fi
+.IP "" 0
+.P
+\fB\-\-reimport\fR
+.IP "" 4
+.nf
+    Re\-import the guest into the hypervisor\. The installer will attempt to import
+    any existing files if found\. This option requires the \-\-destroy\-existing\-guest pledge\.
+.fi
+.IP "" 0
+.P
+\fB\-\-destroy\-existing\-guest\fR
+.IP "" 4
+.nf
+    This option is a prerequisite pledge for \-\-reimport\.
+.fi
+.IP "" 0
+.P
+\fB\-P\fR, \fB\-\-directory\-prefix\fR=\fIdirectory\fR
+.IP "" 4
+.nf
+    Define the absolute path directory to store downloaded files\. Defaults to
+    $HOME/dist\-installer\-cli\-download\. The directory must exist and be writable by the user\.
+    Changing this directory without moving the previously downloaded files triggers a new download\.
+.fi
+.IP "" 0
+.P
+\fB\-n\fR, \fB\-\-non\-interactive\fR
+.IP "" 4
+.nf
+    Enable non\-interactive mode\. In this mode, all default options are assumed,
+    including accepting the license and starting the guest\.
+.fi
+.IP "" 0
+.P
+\fB\-\-mirror\fR=\fInumber\fR
+.IP "" 4
+.nf
+    Select a mirror based on its index number\. For faster downloads, choose the
+    mirror closest to you unless using the onion network\. If no mirror is selected,
+    the default is whonix\.org for clearnet and dotsrc\.org for onion\.
+    Mirror indices:
+      0 [DE] download\.whonix\.org (onion available)
+      1 [DK] mirrors\.dotsrc\.org (onion available)
+      2 [DE] mirror\.koljasagorski\.de
+      3 [HU] quantum\-mirror\.hu
+      4 [PL] ftp\.icm\.edu\.pl
+      5 [US] mirrors\.gigenet\.com
+.fi
+.IP "" 0
+.P
+\fB\-\-virtualbox\-only\fR
+.IP "" 4
+.nf
+    Only download and install VirtualBox\.
+.fi
+.IP "" 0
+.P
+\fB\-\-allow\-errors\fR
+.IP "" 4
+.nf
+    Enable dirty mode, where the program continues despite errors\.
+.fi
+.IP "" 0
+.P
+\fB\-\-no\-show\-errors\fR
+.IP "" 4
+.nf
+    Suppress error messages\.
+.fi
+.IP "" 0
+.P
+\fB\-\-ci\fR
+.IP "" 4
+.nf
+    Enable CI mode for testing within Continuous Integration (CI) environments\.
+.fi
+.IP "" 0
+.P
+\fB\-\-testers\fR
+.IP "" 4
+.nf
+    Download the tester's version\.
+.fi
+.IP "" 0
+.P
+\fB\-D\fR, \fB\-\-dev\fR
+.IP "" 4
+.nf
+    Activate development mode, which sets the default download version to an empty image\.
+.fi
+.IP "" 0
+.P
+\fB\-d\fR, \fB\-\-dry\-run\fR
+.IP "" 4
+.nf
+    Simulate a run without executing impactful actions\.
+.fi
+.IP "" 0
+.P
+\fB\-t\fR, \fB\-\-getopt\fR
+.IP "" 4
+.nf
+    Display parsed options and exit\.
+.fi
+.IP "" 0
+.P
+\fB\-V\fR, \fB\-\-version\fR
+.IP "" 4
+.nf
+    Display the version number and exit\.
+.fi
+.IP "" 0
+.P
+\fB\-h\fR, \fB\-\-help\fR
+.IP "" 4
+.nf
+    Display help for commands and exit\.
+.fi
+.IP "" 0
+.SH "EXAMPLES"
+To install Whonix Xfce for KVM:
+.IP "" 4
+.nf
+    $ dist\-installer\-cli \-\-guest=whonix \-\-interface=xfce \-\-hypervisor=kvm
+.fi
+.IP "" 0
+.P
+To install the default configuration using Tor onion routing and a SOCKS proxy:
+.IP "" 4
+.nf
+    $ dist\-installer\-cli \-\-onion \-\-socks\-proxy=127\.0\.0\.1:9050
+.fi
+.IP "" 0
+.P
+To install the default configuration non\-interactively and display info messages:
+.IP "" 4
+.nf
+    $ dist\-installer\-cli \-\-non\-interactive \-\-log\-level=info
+.fi
+.IP "" 0
+.SH "EXIT CODES"
+The installer returns the exit code of the last command executed\. Some command exit codes might clash with the script's exit code, which would be considered a bug\. Exit codes for \fIcurl\fR and \fIrsync\fR are reserved to avoid conflicts and simplify debugging\.
+.IP "" 4
+.nf
+1       General error\.
+
+2       Unrecognized option or incorrect usage\.
+
+3\-35    Rsync errors\.
+
+3\-96    Curl errors\.
+
+100     License declined by the user\.
+
+101     Unsupported system\.
+
+102     Virtual machines already exist\.
+
+103     Download failure\.
+
+104     Digital signature verification failure\.
+
+105     Virtual machine import failure\.
+
+106     Failed to start virtual machines due to anticipated virtualization issues\.
+
+107     Failed to start virtual machines due to unforeseen issues\.
+.fi
+.IP "" 0
+.SH "AUTHOR"
+This man page was authored by grass (grass@danwin1210\.de)\.
+.SH "WWW"
+For more information, visit: https://www\.whonix\.org/wiki/Dev/Linux_Installer
+.SH "SEE ALSO"
+curl(1), sha512sum(1), signify\-openbsd(1), qemu(1), kvm(1)

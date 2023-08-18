@@ -1,9 +1,9 @@
-# installer-dist(8) completion                           -*- shell-script -*-
+# dist-installer-cli(8) completion                           -*- shell-script -*-
 
 ## Copyright (C) 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-_installer_dist()
+_dist_installer_cli()
 {
     local cur prev words cword
     _init_completion -s || return
@@ -57,9 +57,9 @@ _installer_dist()
     fi
 
 } &&
-    complete -F _installer_dist installer-dist \
-                kicksecure-installer-cli kicksecure-installer-xfce \
-                whonix-installer-cli whonix-installer-xfce \
+    complete -F _dist_installer_cli dist-installer-cli \
+                kicksecure-cli-installer-cli kicksecure-xfce-installer-cli \
+                whonix-cli-installer-cli whonix-xfce-installer-cli \
                 virtualbox-installer
 
 # ex: filetype=sh

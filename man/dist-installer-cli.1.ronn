@@ -1,4 +1,4 @@
-installer-dist(1) -- download and import Whonix/Kicksecure VMs
+dist-installer-cli(1) -- download and import Whonix/Kicksecure VMs
 =============================================
 
 <!--
@@ -10,10 +10,10 @@ installer-dist(1) -- download and import Whonix/Kicksecure VMs
 -->
 
 ## SYNOPSIS
-`installer-dist` [options]
+`dist-installer-cli` [options]
 
 ## DESCRIPTION
-**installer-dist** is an installer that automates the download and import
+**dist-installer-cli** is an installer that automates the download and import
 of Kicksecure and Whonix VMs. It supports interfaces CLI or Xfce,
 and allows users to choose their preferred hypervisor, such as KVM or VirtualBox.
 
@@ -24,7 +24,7 @@ arguments can be separated by either spaces or an equal sign.
 If an option is specified multiple times, the last assignment takes precedence.
 
 The guest and interface can also be set by renaming the script following the
-format <guest-installer-interface>.
+format <guest-interface-installer>.
 
 `-g`, `--guest`=<guest>
 
@@ -94,7 +94,7 @@ format <guest-installer-interface>.
 `-P`, `--directory-prefix`=<directory>
 
         Define the absolute path directory to store downloaded files. Defaults to
-        $HOME/installer-dist-download. The directory must exist and be writable by the user.
+        $HOME/dist-installer-cli-download. The directory must exist and be writable by the user.
         Changing this directory without moving the previously downloaded files triggers a new download.
 
 `-n`, `--non-interactive`
@@ -159,15 +159,15 @@ format <guest-installer-interface>.
 
 To install Whonix Xfce for KVM:
 
-        $ installer-dist --guest=whonix --interface=xfce --hypervisor=kvm
+        $ dist-installer-cli --guest=whonix --interface=xfce --hypervisor=kvm
 
 To install the default configuration using Tor onion routing and a SOCKS proxy:
 
-        $ installer-dist --onion --socks-proxy=127.0.0.1:9050
+        $ dist-installer-cli --onion --socks-proxy=127.0.0.1:9050
 
 To install the default configuration non-interactively and display info messages:
 
-        $ installer-dist --non-interactive --log-level=info
+        $ dist-installer-cli --non-interactive --log-level=info
 
 ## EXIT CODES
 The installer returns the exit code of the last command executed.
