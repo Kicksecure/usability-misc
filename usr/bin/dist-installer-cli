@@ -1716,11 +1716,11 @@ install_virtualbox_fedora(){
     fi
   }
 
+  has_virtualbox_qt=0
   if get_virtualbox_version_fedora ; then
     test_pkg "${virtualbox_qt_package_name}" 2>/dev/null && has_virtualbox_qt=1
   else
     true "INFO: get_virtualbox_version_fedora failed the first time which is normal is the repository has not been enabled yet."
-    has_virtualbox_qt=0
   fi
 
   ## Guard against adding extraneous repositories.
@@ -1776,11 +1776,11 @@ install_virtualbox_debian(){
   linux_headers="linux-headers-$(dpkg --print-architecture)"
   install_pkg "${linux_headers}"
 
+  has_virtualbox_qt=0
   if get_virtualbox_version_debian ; then
     test_pkg "${virtualbox_qt_package_name}" 2>/dev/null && has_virtualbox_qt=1
   else
     true "INFO: get_virtualbox_version_fedora failed the first time which is normal is the repository has not been enabled yet."
-    has_virtualbox_qt=0
   fi
 
   if test "${has_virtualbox_qt}" != "1"; then
