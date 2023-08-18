@@ -900,16 +900,16 @@ update_sources(){
   log notice "Updating package list."
   # shellcheck disable=SC2086
   if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | tee /dev/tty) ; then
-    ## Exit code is zero but that does not guarantee in case of dnf that there is no error.
+    true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if echo "$update_output" | grep --quiet --ignore-case "Error:" ; then
-      ## Error found. Stop.
+      true "INFO: Error found in grep output. Stop."
       update_sources_error
     else
-      ## No error found. Continuing.
+      true "INFO: No error found in grep output, ok."
       return 0
     fi
   else
-    ## Non-zero exit code. Stop.
+    true "INFO: Non-zero exit code. Stop."
     update_sources_error
   fi
 }
