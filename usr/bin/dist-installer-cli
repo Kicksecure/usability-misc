@@ -1754,7 +1754,7 @@ install_virtualbox_fedora(){
   install_pkg kernel-headers kernel-devel dkms
 
   get_virtualbox_version_fedora(){
-    virtualbox_version=$(dnf search --cacheonly "virtualbox-*")
+    virtualbox_version=$(dnf search --cacheonly "VirtualBox-*")
     virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\.")
     virtualbox_version=$(echo "$virtualbox_version" | tail -1)
     virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
