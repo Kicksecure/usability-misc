@@ -2050,6 +2050,7 @@ set_trap(){
       if test "${curr_shell}" = "bash"; then
         # shellcheck disable=SC2039,3040
         set -o errtrace
+        set -o pipefail
       fi
       # shellcheck disable=SC2039,3047
       trap 'handle_exit $? ${LINENO:-}' ERR
