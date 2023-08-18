@@ -1666,6 +1666,7 @@ install_oracle_repository_fedora(){
 
     ## Based on:
     ## https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
+    # shellcheck disable=SC2016
     echo '[virtualbox]
 name=Oracle Linux / RHEL / CentOS-$releasever / $basearch - VirtualBox
 baseurl=https://download.virtualbox.org/virtualbox/rpm/el/$releasever/$basearch
