@@ -1367,6 +1367,8 @@ install_package_fedora_common(){
   pkg_mngr_update="${pkg_mngr} update --assumeyes"
   pkg_mngr_check_installed="dnf list installed"
 
+  update_sources
+
   if test "${virtualbox_only}" = "1"; then
     return 0
   fi
@@ -1390,6 +1392,8 @@ install_package_debian_common(){
     log error "  https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT"
     return 1
   fi
+
+  update_sources
 
   if test "${virtualbox_only}" = "1"; then
     return 0
