@@ -3083,7 +3083,7 @@ parse_name(){
       kicksecure-xfce-installer-cli | kicksecure-cli-installer-cli )
       log info "Valid script name to set options: '${me}'"
       ;;
-    virtualbox-installer )
+    virtualbox-installer-cli )
       log info "Valid script name to set options: '${me}'"
       set_arg virtualbox_only 1
       set_arg hypervisor virtualbox

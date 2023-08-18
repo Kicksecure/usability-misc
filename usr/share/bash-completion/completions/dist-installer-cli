@@ -60,6 +60,6 @@ _dist_installer_cli()
     complete -F _dist_installer_cli dist-installer-cli \
                 kicksecure-cli-installer-cli kicksecure-xfce-installer-cli \
                 whonix-cli-installer-cli whonix-xfce-installer-cli \
-                virtualbox-installer
+                virtualbox-installer-cli
 
 # ex: filetype=sh
