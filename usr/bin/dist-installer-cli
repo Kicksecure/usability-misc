@@ -1285,16 +1285,16 @@ import_kvm(){
 start_guest(){
   case "${hypervisor}" in
     virtualbox)
-      start_virtualbox
+      start_virtualbox_vm
       ;;
     kvm)
-      start_kvm
+      start_kvm_vm
       ;;
   esac
 }
 
 ## Start the hypervisor with the desired guest
-start_virtualbox() {
+start_virtualbox_vm() {
   log notice "Starting Virtual Machine(s)."
   ## 'virtualbox' is called after 'vboxmanage' because it hangs till the app
   ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
