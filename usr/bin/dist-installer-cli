@@ -940,7 +940,6 @@ install_pkg(){
       return 0
     fi
 
-    update_sources
     log notice "Installing package(s): '${pkg_not_installed}'"
     # shellcheck disable=SC2086
     root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
@@ -2126,6 +2125,7 @@ $df_output"
 pre_check(){
   get_os
   get_system_stat
+  update_sources
   get_host_pkgs
   get_independent_host_pkgs
   nested_virtualization_test
