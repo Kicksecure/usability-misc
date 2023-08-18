@@ -916,14 +916,14 @@ update_sources(){
   if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | $console_write_command) ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if echo "$update_output" | grep --quiet --ignore-case "Error:" ; then
-      true "INFO: Error found in grep output. Stop."
+      log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
       update_sources_error
     else
       true "INFO: No error found in grep output, ok."
       return 0
     fi
   else
-    true "INFO: Non-zero exit code. Stop."
+    log error "${underline}Package List Update:${nounderline} Non-zero exit code. Stop."
     update_sources_error
   fi
 }
