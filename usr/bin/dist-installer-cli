@@ -1589,7 +1589,6 @@ install_repositories_for_virtualbox_on_debian(){
       ;;
   esac
 
-  update_sources
   die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename_real}'!"
 }
 
@@ -1765,6 +1764,7 @@ install_virtualbox_debian(){
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_repositories_for_virtualbox_on_debian
+    update_sources
     get_virtualbox_version_debian || die 2 "\
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
