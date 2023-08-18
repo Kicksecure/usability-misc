@@ -1763,6 +1763,7 @@ install_virtualbox_fedora(){
 
     log info "VirtualBox Version Detection: Running 'dnf search VirtualBox-*'. This can take a while..."
     ## --cacheonly does not work.
+    ## Maybe dnf would need to be run with root_cmd.
     virtualbox_version=$(dnf search "VirtualBox-*")
     virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\.")
     virtualbox_version=$(echo "$virtualbox_version" | tail -1)
