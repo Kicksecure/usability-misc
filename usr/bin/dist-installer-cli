@@ -1365,7 +1365,10 @@ install_package_fedora_common(){
   pkg_mngr="dnf"
   pkg_mngr_install="${pkg_mngr} install --assumeyes --setopt=install_weak_deps=False"
   ## Fedora lacks an equivalent to Debian's '--error-on=any'.
-  pkg_mngr_update="${pkg_mngr} update --assumeyes"
+  #pkg_mngr_update="${pkg_mngr} update --assumeyes"
+  ## 'dnf makecache' does exit non-zero if a repository is unavailable.
+  ## --assumeyes good or bad idea? For now not needed. So not using.
+  pkg_mngr_update="${pkg_mngr} makecache"
   pkg_mngr_check_installed="dnf list installed"
 
   update_sources
