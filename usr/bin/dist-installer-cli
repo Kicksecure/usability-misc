@@ -899,17 +899,21 @@ secure_boot_test() {
 update_sources(){
   log notice "Updating package list."
 
-  ## Debugging.
-  tty || true
-  ls -la /dev/tty
-  test -w /dev/tty
+  if test -w /dev/tty ; then
+    console_write_command="tee /dev/tty"
+  else
+    ## github actions CI issue:
+    ## tee: /dev/tty: No such device or address
+    ## https://github.com/actions/runner/issues/241
+    console_write_command="xargs -- echo"
+  fi
 
   #root_cmd ${pkg_mngr_update} 2>&1 || true
   #update_sources_error
   ## result: OK: command_without_extrarenous_spaces="sudo -- apt-get update --yes --error-on=any"
 
   # shellcheck disable=SC2086
-  if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | tee /dev/tty) ; then
+  if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | $console_write_command) ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if echo "$update_output" | grep --quiet --ignore-case "Error:" ; then
       true "INFO: Error found in grep output. Stop."
