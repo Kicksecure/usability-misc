@@ -1,3 +1,413 @@
+commit 84f2496d9b649aafe5472e79636d4c6d9f38aedc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:56:03 2023 -0400
+
+    CI
+
+commit 35d906d7e908c1281f1f826ec57adac00be13a13
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:55:46 2023 -0400
+
+    comment
+
+commit 413f7595a4604a15db7d1405ddcfdabbfc6a0c81
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:50:17 2023 -0400
+
+    dnf
+
+commit 01827fc48201774bb845a28fa288ecc2553df654
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:44:45 2023 -0400
+
+    dnf
+
+commit 6e2bb6be723efa7f5271a2e292a7f21635ca69a2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:28:16 2023 -0400
+
+    dnf
+
+commit 54849fe898164f6e7ae8d8d0d5f0e0f8ca98a616
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:24:35 2023 -0400
+
+    CI fix
+
+commit 3b8b0d34a41130f607965fefbf73d16c9ffaac83
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:22:16 2023 -0400
+
+    dnf
+
+commit 3de56992dd5dd010dc537c22439cbef50f5dedbc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:18:40 2023 -0400
+
+    dnf
+
+commit de8acc4369c65ab0ab30753b9372ac1279b2a8dd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:14:49 2023 -0400
+
+    CI
+
+commit c3b52f0c5a2f601130da9d929d40db16d3648d03
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:11:55 2023 -0400
+
+    CI
+
+commit aa2b77673868d7d062d49da04ab13a9001b5b874
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:10:57 2023 -0400
+
+    dnf
+
+commit 380d2dca8151f5cd559bb4212036247eb4439615
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:07:56 2023 -0400
+
+    fix dnf search VirtualBox search string
+
+commit 32d360de320f8d6757e4bb7cd0eaa1c2e29fb8fd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 14:06:59 2023 -0400
+
+    dnf search --cacheonly to avoid extraneous network connection
+
+commit bf0113c52ad2eb170c0f9ba54550ea53dda1c37d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 13:58:26 2023 -0400
+
+    cleanup
+
+commit cac977966d190399b60b9cb39325c144a53e82e7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 13:29:55 2023 -0400
+
+    add workaround to accept key into dnf database
+
+commit bfca9252ed117bbb9d71372bf134be016eacb3ba
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 13:02:40 2023 -0400
+
+    fix Fedora Oracle repository file creation
+
+commit 6836d84102b5d723a6e07c922c8d17a22c9f10b0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 13:01:45 2023 -0400
+
+    fix Fedora Oracle repository file creation
+
+commit c610f2475b4e11edf33cfcd1d4ee0c8ea698984c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:58:46 2023 -0400
+
+    shellcheck
+
+commit 72eecb7feaef6d0da1408615ab613ef235451fd8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:57:45 2023 -0400
+
+    https
+
+commit 306043c3a2d7c4e73b7899a031a2d42a2d0d9961
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:54:34 2023 -0400
+
+    output
+
+commit d1dcba497c6e70f81f7450b1ffbd1158b729eedf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:52:25 2023 -0400
+
+    fix Fedora Oracle repository file creation
+
+commit a6f682ffa0ad1f5199077cc017be4b1dc92eae91
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:29:47 2023 -0400
+
+    virtualbox-installer -> virtualbox-installer-cli
+
+commit 01f0f755d42e5c93bfcccc710f0167b2da4aee64
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:22:28 2023 -0400
+
+    CI fix
+
+commit 540647f1c546c42aaef7e5f909fd465db3812029
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:20:19 2023 -0400
+
+    comment
+
+commit 9888f835e3da76028ff0477cf92e0b339a332279
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:13:08 2023 -0400
+
+    output
+
+commit 8c5ffc6ccfcb39a5a4380045aea9e4436f714fdf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:10:55 2023 -0400
+
+    CI fix
+
+commit 996cf092f33e709184194e554506718226632800
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:06:51 2023 -0400
+
+    debugging
+
+commit 775fa93db2222255d296f21ed8a2c660262c54eb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 12:01:22 2023 -0400
+
+    debugging
+
+commit e631d76808bab2a1e05a7bbc6b0d9c186d353a4f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 11:56:48 2023 -0400
+
+    debugging
+
+commit e79d953e36cc3035dc275f53fe1d2765737f4f9d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 11:54:44 2023 -0400
+
+    search for errors in package manager update output
+
+commit a5b2d58aba7428c166967c666952c4519e3e1e76
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 10:21:48 2023 -0400
+
+    enable pipefail for bash
+
+commit 96d5eb486da5fa610f5575c2401681cc5b520ae5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 07:01:14 2023 -0400
+
+    comment
+
+commit 43324d3f72be1e111ff907e10ab823b98eebae0e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 07:00:42 2023 -0400
+
+    improve Fedora repository availability check
+
+commit df22562fd26a1ca294c5f17d9a0de786a250f47e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:57:03 2023 -0400
+
+    newlines
+
+commit cddff25a5720967285ab01057790008e688904ee
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:53:15 2023 -0400
+
+    start VirtualBox GUI into the background using `virtualbox & disown`
+
+commit 3906e471bcefe5ecaba59532e145f91a28ca02fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:51:41 2023 -0400
+
+    refactoring
+
+commit 4ef393dbf048dffeac519df6c83a9b734356d55d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:49:29 2023 -0400
+
+    consistency, `exit 0` instead of `exit`
+
+commit 2975222bc6a9fd6b1d84661e4d549e8b321f6ad8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:44:27 2023 -0400
+
+    improve Fedora repository availability check
+
+commit e8b6c8eb1bab2a22296da867ed8ae9b0914b04b6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:28:20 2023 -0400
+
+    improve VirtualBox version check
+
+commit b1532ba078b5690577e0dbbd85e8956c73398cee
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:26:56 2023 -0400
+
+    improve VirtualBox version check
+
+commit 8df7c4d6ba4f64c6facdee050ca9163d3f8938bb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:23:38 2023 -0400
+
+    fix unbound variable
+
+commit 97fe2ed9005b4ea041fa23e00e2564cf649df684
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:19:21 2023 -0400
+
+    debugging
+
+commit c244c9a4f83e76e6cf79376b98cda2d88bd84ff5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:17:17 2023 -0400
+
+    debugging
+
+commit d490a85e8dd46c78b09c87f426d4909a4b8772ec
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 06:08:19 2023 -0400
+
+    debugging
+
+commit 5203135804710fdd588c5c76d2e827abddd768fb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 05:55:01 2023 -0400
+
+    fix when to run update_sources
+
+commit 194a1290f7c9eef52cf74c9bfe489f4008783280
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 05:52:47 2023 -0400
+
+    newline
+
+commit f7750dc5cf18e95023aa706035413a3a2e00b98c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 05:49:38 2023 -0400
+
+    improve VirtualBox version check
+
+commit d7611c062c2f2d6bb46e8010cc2f654833b52856
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 05:46:48 2023 -0400
+
+    avoid running update_sources multiple times for faster execution
+
+commit eb00cc78a517a6f2b9acb79bc7b14dc8491ad3cd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 05:37:04 2023 -0400
+
+    fix VirtualBox version detection
+
+commit df16bc6d2451436d6b3dd93d5ba069e1cd812437
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 05:34:30 2023 -0400
+
+    installing the `adduser` package for Debian trixie now required on CI
+
+commit dd24bbd17cb40b231eb10b2c565bda80a9fb3739
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 05:25:32 2023 -0400
+
+    fix VirtualBox version detection
+
+commit 96ab87711ea94a9b868418f832229adbe0849113
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:59:03 2023 -0400
+
+    fix VirtualBox version detection
+
+commit c69ac0c6ea19b77f7152eea4346b00b9a3623f26
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:47:28 2023 -0400
+
+    fix
+
+commit 1b36135c8dc081f2ded7c5b688a506e16e4f04b5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:42:31 2023 -0400
+
+    debugging
+
+commit 8ab1a0d795505df0ef206af7883430ad2aa43593
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:40:11 2023 -0400
+
+    fix
+
+commit 61ac1630e5ecdee5790fdc19b9301ce1d8eca94c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:39:26 2023 -0400
+
+    debugging
+
+commit eb643a0df133e6c84a45eb696638d97fd9607058
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:34:53 2023 -0400
+
+    fix Debian VirtualBox package name detection
+
+commit ed1fb4b00ebe6a2d13d72ddcb97ca9bd2dd9f97d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:27:16 2023 -0400
+
+    fix
+
+commit ea591b2e064ca128c7c095f90d84e5eb1997074a
+Merge: ac05a74 1e04756
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 04:03:45 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 1e04756ef4bfcb1dc740d564275c61c01f24d6c9
+Author: grass <grass@danwin1210.de>
+Date:   Fri Aug 18 01:46:00 2023 +0000
+
+    Start VirtualBox together with VMs
+
+commit 06c88e4272c0b9b121f9252f775c43f7f3e2cb15
+Author: grass <grass@danwin1210.de>
+Date:   Fri Aug 18 01:04:11 2023 +0000
+
+    Update compiled manpages
+
+commit 1ac9050aff180b18ea12ac1e1250f2c0b2696f3a
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 17 21:53:42 2023 +0000
+
+    Rename installer
+
+commit 7ff84e8762fd502b6308f8abb19c3e7bbea754c3
+Author: grass <grass@danwin1210.de>
+Date:   Thu Aug 17 15:28:44 2023 +0000
+
+    Allow Kali Linux
+    https://forums.whonix.org/t/whonix-linux-installer-development-discussion/15917/100
+
+commit ac05a74572ad9aea5653a7138f91dbf34699bd57
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 17 10:29:48 2023 -0400
+
+    man page
+
+commit 7c8da0dd474be9e9ea3af2836fc4d160737d691c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 17 09:38:21 2023 -0400
+
+    man page
+
+commit 7acc45ecf987bb6403efa9e651a7756c77fd9bbf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 17 09:07:37 2023 -0400
+
+    output
+
+commit e5102a3cc1d0e53543707e7415ee5f7aa28ae23b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 17 08:58:50 2023 -0400
+
+    minor
+
+commit bb1b2117c54e7c6725b953d900df0af98929bbe3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 15 16:46:44 2023 -0400
+
+    bumped changelog version
+
 commit 65522938b061489576125b7af3c04adda055fd37
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 15 15:50:03 2023 -0400
