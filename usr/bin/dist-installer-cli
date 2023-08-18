@@ -900,8 +900,13 @@ update_sources(){
   log notice "Updating package list."
 
   ## Debugging.
+  tty || true
   ls -la /dev/tty
   test -w /dev/tty
+
+  #root_cmd ${pkg_mngr_update} 2>&1 || true
+  #update_sources_error
+  ## result: OK: command_without_extrarenous_spaces="sudo -- apt-get update --yes --error-on=any"
 
   # shellcheck disable=SC2086
   if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | tee /dev/tty) ; then
