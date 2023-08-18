@@ -1295,7 +1295,7 @@ start_guest(){
 }
 
 ## Start the hypervisor with the desired guest
-start_virtualbox()L{
+start_virtualbox() {
   log notice "Starting Virtual Machine(s)."
   ## 'virtualbox' is called after 'vboxmanage' because it hangs till the app
   ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
