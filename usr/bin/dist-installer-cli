@@ -1778,8 +1778,6 @@ install_virtualbox_fedora(){
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_oracle_repository_fedora
-    ## Fedora lacks an equivalent to Debian's '--error-on=any'.
-    root_cmd dnf makecache --disablerepo='*' --enablerepo=virtualbox
     update_sources
     get_virtualbox_version_fedora || die 2 "\
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
