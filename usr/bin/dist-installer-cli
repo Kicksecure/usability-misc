@@ -1757,6 +1757,10 @@ install_virtualbox_fedora(){
   install_pkg kernel-headers kernel-devel dkms
 
   get_virtualbox_version_fedora(){
+    ## Too many issues with auto detection. Therefore hardcoded.
+    virtualbox_qt_package_name="VirtualBox-7.0"
+    return 0
+
     log info "VirtualBox Version Detection: Running 'dnf search VirtualBox-*'. This can take a while..."
     ## --cacheonly does not work.
     virtualbox_version=$(dnf search "VirtualBox-*")
