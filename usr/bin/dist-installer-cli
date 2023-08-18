@@ -1408,7 +1408,8 @@ install_package_fedora_common(){
   #pkg_mngr_update="${pkg_mngr} update --assumeyes"
   ## 'dnf makecache' does exit non-zero if a repository is unavailable.
   ## --assumeyes good or bad idea? For now not needed. So not using.
-  pkg_mngr_update="${pkg_mngr} makecache"
+  #pkg_mngr_update="${pkg_mngr} makecache"
+  pkg_mngr_update="${pkg_mngr} --assumeyes update"
   pkg_mngr_check_installed="dnf list installed"
 
   update_sources
@@ -1780,7 +1781,8 @@ install_virtualbox_fedora(){
   if test "${has_virtualbox_qt}" != "1"; then
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_oracle_repository_fedora
-    root_cmd dnf makecache --assumeyes '--disablerepo=*' --enablerepo=virtualbox
+    ## Does not work.
+    #root_cmd dnf makecache --assumeyes '--disablerepo=*' --enablerepo=virtualbox
     update_sources
     get_virtualbox_version_fedora || die 2 "\
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
