@@ -1679,7 +1679,8 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
     ## dnf does not have a command to accept add the key to its database.
     ## https://bugzilla.redhat.com/show_bug.cgi?id=1768206
     ## Workaround to accept the key with --assumeyes without accepting other things.
-    root_cmd dnf --assumeyes module list
+    root_cmd dnf --assumeyes --cacheonly search VirtualBox
+    #root_cmd dnf --assumeyes module list
   fi
 }
 
@@ -1779,6 +1780,7 @@ install_virtualbox_fedora(){
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_oracle_repository_fedora
     update_sources
+    #root_cmd dnf makecache --assumeyes '--disablerepo=*' --enablerepo=virtualbox
     get_virtualbox_version_fedora || die 2 "\
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
