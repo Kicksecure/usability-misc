@@ -1703,6 +1703,9 @@ install_virtualbox_fedora(){
     virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
     virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
     virtualbox_version=$(echo "$virtualbox_version" | cut -d "." -f1)
+    if [ "$virtualbox_version" = "" ]; then
+      return 1
+    fi
     virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
   }
 
@@ -1737,6 +1740,9 @@ install_virtualbox_debian(){
       virtualbox_version=$(echo "$virtualbox_version" | tail -1)
       virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
       virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
+      if [ "$virtualbox_version" = "" ]; then
+        return 1
+      fi
       virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
     else
       virtualbox_qt_package_name=virtualbox-qt
