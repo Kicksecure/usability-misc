@@ -1,3 +1,21 @@
+commit 0406ef7b8cfabcccb4ad676dbcc5b6c97aa0f7a8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 15:04:20 2023 -0400
+
+    renamed:    usr/share/zsh/vendor-completions/_dist-installer -> usr/share/zsh/vendor-completions/_dist-installer-cli
+
+commit 8fbf68f5fed58e03964c2bf8364497d8548a2f34
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 15:03:34 2023 -0400
+
+    dist-installer -> dist-installer-cli
+
+commit 1eec50002f13a93a33237adf9487b0fafb4193eb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 15:01:09 2023 -0400
+
+    bumped changelog version
+
 commit 84f2496d9b649aafe5472e79636d4c6d9f38aedc
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Aug 18 14:56:03 2023 -0400
