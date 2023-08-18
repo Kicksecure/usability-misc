@@ -899,7 +899,7 @@ secure_boot_test() {
 update_sources(){
   log notice "Updating package list."
 
-  if test -w /dev/tty ; then
+  if tty >/dev/null >&1 ; then
     console_write_command="tee /dev/tty"
   else
     ## github actions CI issue:
