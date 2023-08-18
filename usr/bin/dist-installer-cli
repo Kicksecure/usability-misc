@@ -1731,15 +1731,18 @@ install_virtualbox_fedora(){
 ## See also comments for install_virtualbox_fedora.
 install_virtualbox_debian(){
   get_virtualbox_version_debian(){
-    virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
-    virtualbox_version=$(echo "$virtualbox_version" | tail -1)
-    virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
-    virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
-    virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
+    if test "${oracle_repo}" = "1"; then
+      virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
+      virtualbox_version=$(echo "$virtualbox_version" | tail -1)
+      virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
+      virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
+      virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
+    else
+      virtualbox_qt_package_name=virtualbox-qt
+    fi
   }
 
   if test "${oracle_repo}" = "1"; then
-    get_virtualbox_version_debian
     ## udev:
     ## https://www.virtualbox.org/ticket/21804
     ##
@@ -1747,8 +1750,6 @@ install_virtualbox_debian(){
     ## virtualbox-"${virtualbox_version}" by virtualbox.org (Oracle) `Recommends:` `gcc`
     ## Otherwise kernel modules will not be compiled during installation.
     install_pkg gcc udev
-  else
-    virtualbox_qt_package_name=virtualbox-qt
   fi
 
   has_virtualbox_qt=0
