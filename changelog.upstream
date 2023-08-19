@@ -1,3 +1,28 @@
+commit a3bcf2f04736a59032159d6075367ee0d32fc2f7
+Merge: 7d6c95a be50cbe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 19 05:08:54 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit be50cbea051629d37e122c99f9f95276a69ee6e9
+Author: grass <grass@danwin1210.de>
+Date:   Fri Aug 18 21:55:14 2023 +0000
+
+    Maintain test consistency
+
+commit 36ce4cb03a68154430d6fde4608727dba8b56b85
+Author: grass <grass@danwin1210.de>
+Date:   Fri Aug 18 20:18:12 2023 +0000
+
+    Fix zsh completion oracle-repo
+
+commit 7d6c95aae61c45d0ac66df9aa2bcf148dc85c6fb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Aug 18 15:05:04 2023 -0400
+
+    bumped changelog version
+
 commit 0406ef7b8cfabcccb4ad676dbcc5b6c97aa0f7a8
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Aug 18 15:04:20 2023 -0400
