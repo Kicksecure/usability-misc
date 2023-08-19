@@ -1771,7 +1771,7 @@ install_virtualbox_fedora(){
     virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
     virtualbox_version=$(echo "$virtualbox_version" | cut -d "." -f1)
     virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
-    if [ "$virtualbox_version" = "" ]; then
+    if test -z "$virtualbox_version"; then
       ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
       return 1
     fi
@@ -1813,7 +1813,7 @@ install_virtualbox_debian(){
       virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
       virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
       virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
-      if [ "$virtualbox_version" = "" ]; then
+      if test -z "$virtualbox_version"; then
         ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
         return 1
       fi
