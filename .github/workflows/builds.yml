@@ -69,7 +69,7 @@ jobs:
             - name: Normal user with sudo privileges
               run: |
                   if test -f /etc/debian_version; then
-                    adduser --gecos "" --disabled-password user
+                    adduser --comment "" --disabled-password user
                     usermod -aG sudo user
                     echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
                   elif test -f /etc/fedora-release; then
