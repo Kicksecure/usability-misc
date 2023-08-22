@@ -69,7 +69,9 @@ jobs:
             - name: Normal user with sudo privileges
               run: |
                   if test -f /etc/debian_version; then
-                    adduser --comment "" --disabled-password user
+                    ## Debian trixie needs "--comment".
+                    ## Older Debian versions need "--gecos".
+                    adduser --comment "" --disabled-password user || adduser --gecos "" --disabled-password user
                     usermod -aG sudo user
                     echo "%sudo ALL=(ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/user
                   elif test -f /etc/fedora-release; then
