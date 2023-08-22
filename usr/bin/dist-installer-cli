@@ -2638,7 +2638,6 @@ get_download_links(){
   case "${mirror}" in
     "")
       ## no mirror chosen, use default values.
-      ## Force mirror to be used.
       site_download_clearnet="${curl+download.}${site_clearnet}${rsync+/${guest}}"
       site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
       ;;
