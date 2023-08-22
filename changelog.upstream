@@ -1,3 +1,57 @@
+commit 90a9ce04925f75e398a1fcb291576f81ff16912c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 11:00:55 2023 -0400
+
+    fix mirror range_arg check
+
+commit 0b488f5073b455791819a53ecef0441254f656e2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 11:00:15 2023 -0400
+
+    refactoring
+
+commit 986d277b46074c941552eb9b961200a569c79cce
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 10:57:15 2023 -0400
+
+    comment
+
+commit 97bd3a3da1b7ef842d88df32b83b91c5dd378551
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 10:56:33 2023 -0400
+
+    no longer use mirror by default
+
+commit 282c42ec16c2e6585980f52d14047719cd023be2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 10:54:47 2023 -0400
+
+    mirror number change
+
+commit 59c73ba3d572d1129d880c1a9fa7541adfa82a0e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 10:53:43 2023 -0400
+
+    remove broken mirrors
+
+commit 81833635f9cad0cb32a0bfcd561f073e7d126332
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 10:45:36 2023 -0400
+
+    remove broken mirror
+
+commit 9f27922a0ca0120127bc248e7526d80db54c9345
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 10:42:24 2023 -0400
+
+    CI
+
+commit 1b50457b1206fdbf9e67a395ff7c39d42873037a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 10:24:51 2023 -0400
+
+    bumped changelog version
+
 commit d70b6b3f250bf27d5200e50a299e9dbf7f0f3aa2
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 22 10:24:50 2023 -0400
