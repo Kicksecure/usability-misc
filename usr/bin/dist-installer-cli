@@ -2666,11 +2666,6 @@ get_download_links(){
       site_download_clearnet="ftp.icm.edu.pl/pub/Linux/dist/${guest}"
       site_download_onion=""
       ;;
-    5)
-      die 1 "${underline}Mirror Selection:${nounderline} Mirror ${mirror} is currently using an invalid certificate."
-      site_download_clearnet="mirror.gigenet.com/${guest}"
-      site_download_onion=""
-      ;;
     *)
       ## range_arg should have catch this error before, just safeguarding.
       log bug "Invalid mirror number: '${mirror}'"
@@ -3013,7 +3008,6 @@ Developer options:
                          2 [DE] mirror.koljasagorski.de
                          3 [HU] quantum-mirror.hu
                          4 [PL] ftp.icm.edu.pl
-                         5 [US] mirrors.gigenet.com
  --redownload        Redo the download of the guest instead of stopping if it
                        was already successfully downloaded.
  --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
