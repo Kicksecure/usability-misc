@@ -2633,14 +2633,14 @@ get_download_links(){
       ;;
   esac
 
+  if test -z "${mirror}"; then
+    ## No mirror chosen, use default values.
+    mirror=0
+  fi
+
   ## ${variable+string} means use string as value if variable is not empty.
   ## get download links by mirror of choice.
   case "${mirror}" in
-    "")
-      ## no mirror chosen, use default values.
-      site_download_clearnet="${curl+download.}${site_clearnet}${rsync+/${guest}}"
-      site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
-      ;;
     0)
       site_download_clearnet="${curl+download.}${site_clearnet}${rsync+/${guest}}"
       site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
