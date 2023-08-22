@@ -1,3 +1,15 @@
+commit e0cae600c00ecdd2a948b5be2e7696e2810f6c84
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Aug 21 17:44:09 2023 -0400
+
+    --gecos -> --comment
+
+commit 6e7cb9f9f831c1a5c728d2c21b8f56a8c44bed9c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 19 05:12:02 2023 -0400
+
+    bumped changelog version
+
 commit a3bcf2f04736a59032159d6075367ee0d32fc2f7
 Merge: 7d6c95a be50cbe
 Author: Patrick Schleizer <adrelanos@whonix.org>
