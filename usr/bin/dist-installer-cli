@@ -2650,20 +2650,8 @@ get_download_links(){
       site_download_clearnet="mirrors.dotsrc.org/${guest}"
       site_download_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
       ;;
-    2)
-      site_download_clearnet="mirror.koljasagorski.de/${guest}"
-      site_download_onion=""
-      ;;
     3)
       site_download_clearnet="quantum-mirror.hu/mirrors/pub/${guest}"
-      site_download_onion=""
-      ;;
-    4)
-      ## does not have TLS for Rsync
-      ## When using rsync-ssl, this message appears:
-      ##   rsync: did not see server greeting
-      die 1 "${underline}Mirror Selection:${nounderline} Mirror ${mirror} doesn't support TLS for rsync."
-      site_download_clearnet="ftp.icm.edu.pl/pub/Linux/dist/${guest}"
       site_download_onion=""
       ;;
     *)
@@ -3005,9 +2993,7 @@ Developer options:
                        Mirror indices:
                          0 [DE] download.whonix.org (onion available)
                          1 [DK] mirrors.dotsrc.org (onion available)
-                         2 [DE] mirror.koljasagorski.de
                          3 [HU] quantum-mirror.hu
-                         4 [PL] ftp.icm.edu.pl
  --redownload        Redo the download of the guest instead of stopping if it
                        was already successfully downloaded.
  --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
