@@ -3221,7 +3221,7 @@ parse_opt(){
   if test "${guest}" != "whonix" && test -n "${import_only}"; then
     die 1 "The option import_only can only be set when the guest is whonix."
   fi
-  test -n "${mirror}" && range_arg mirror 0 1 2 3 4 5
+  test -n "${mirror}" && range_arg mirror 0 1 2
 
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
 
