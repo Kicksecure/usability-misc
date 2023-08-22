@@ -104,9 +104,8 @@ format <guest-interface-installer>.
 
 `--mirror`=<number>
 
-        Select a mirror based on its index number. For faster downloads, choose the
-        mirror closest to you unless using the onion network. If no mirror is selected,
-        the default is whonix.org for clearnet and dotsrc.org for onion.
+        Select a mirror based on its index number. If no mirror is selected,
+        the default is mirror 1 for clearnet and mirror 0 for onion.
         Mirror indices:
           0 [DE] download.whonix.org (onion available)
           1 [DK] mirrors.dotsrc.org (onion available)
