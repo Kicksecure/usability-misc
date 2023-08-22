@@ -2650,7 +2650,7 @@ get_download_links(){
       site_download_clearnet="mirrors.dotsrc.org/${guest}"
       site_download_onion="dotsrccccbidkzg7oc7oj4ugxrlfbt64qebyunxbrgqhxiwj3nl6vcad.onion/${guest}"
       ;;
-    3)
+    2)
       site_download_clearnet="quantum-mirror.hu/mirrors/pub/${guest}"
       site_download_onion=""
       ;;
@@ -2993,7 +2993,7 @@ Developer options:
                        Mirror indices:
                          0 [DE] download.whonix.org (onion available)
                          1 [DK] mirrors.dotsrc.org (onion available)
-                         3 [HU] quantum-mirror.hu
+                         2 [HU] quantum-mirror.hu
  --redownload        Redo the download of the guest instead of stopping if it
                        was already successfully downloaded.
  --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
