@@ -1760,6 +1760,54 @@ install_backports_and_fasttrack_repository_debian() {
 }
 
 
+virtualbox_installation_failure_debug() {
+  virtualbox_dkms_main_folder=/var/lib/dkms/virtualbox
+
+  if ! test -d "$virtualbox_dkms_main_folder" ; then
+    log notice "VirtualBox Installation Debug: folder '$virtualbox_dkms_main_folder' does not exist."
+    return 0
+  fi
+
+  ## TODO: review
+  # shellcheck disable=SC2012
+  log_run notice ls --format=single-column --sort=time "$virtualbox_dkms_main_folder"
+  # shellcheck disable=SC2012
+  latest_folder=$(ls --format=single-column --sort=time "$virtualbox_dkms_main_folder" | head --lines=1)
+  if [ "$latest_folder" = "" ]; then
+    log notice "VirtualBox Installation Debug: latest_folder in '$virtualbox_dkms_main_folder' is empty, could not be determined."
+    log_run notice ls -la "$virtualbox_dkms_main_folder" || true
+    return 0
+  fi
+
+  log notice "VirtualBox Installation Debug: latest_folder: '$latest_folder'"
+
+  virtualbox_dkms_latest_folder="${virtualbox_dkms_main_folder}/${latest_folder}"
+
+  if ! test -d "$virtualbox_dkms_latest_folder" ; then
+    log notice "VirtualBox Installation Debug: virtualbox_dkms_latest_folder '$virtualbox_dkms_latest_folder' is not a directory."
+    log_run notice ls -la "$virtualbox_dkms_latest_folder" || true
+    return 0
+  fi
+
+  make_log="${virtualbox_dkms_latest_folder}/build/make.log"
+
+  if ! test -f "$make_log" ; then
+    log notice "VirtualBox Installation Debug: make_log '$make_log' does not exist."
+    log_run notice ls -la "$virtualbox_dkms_latest_folder" || true
+    return 0
+  fi
+
+  if ! test -r "$make_log" ; then
+    log notice "VirtualBox Installation Debug: make_log '$make_log' not readable."
+    log_run notice ls -la "$virtualbox_dkms_latest_folder" || true
+    log_run notice ls -la "$make_log" || true
+    return 0
+  fi
+
+  log_run notice cat "$make_log" || true
+}
+
+
 ## Install VirtualBox on Fedora
 install_virtualbox_fedora(){
   install_pkg kernel-headers kernel-devel dkms
@@ -1858,9 +1906,17 @@ install_virtualbox_debian(){
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
 
-  install_pkg "$virtualbox_qt_package_name"
+  if install_pkg "$virtualbox_qt_package_name" ; then
+    ## VirtualBox installation succeeded.
+    install_virtualbox_debian_common_end
+    return 0
+  fi
 
-  install_virtualbox_debian_common_end
+  ## VirtualBox installation failed.
+  log error "VirtualBox Installation Debug: Installation of package '$virtualbox_qt_package_name' failed."
+  virtualbox_installation_failure_debug
+
+  die 1 "${underline}VirtualBox Installation Result:${nounderline} Failed to install VirtualBox."
 }
 
 
@@ -3401,7 +3457,6 @@ run_installer(){
   ## Start main function.
   main
 }
-
 
 ## Run the install script.
 run_installer "${@}"
