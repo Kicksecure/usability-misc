@@ -974,9 +974,15 @@ install_pkg(){
     fi
 
     log notice "Installing package(s): '${pkg_not_installed}'"
+
     # shellcheck disable=SC2086
-    root_cmd ${pkg_mngr_install} ${pkg_not_installed} ||
+    if ! root_cmd ${pkg_mngr_install} ${pkg_not_installed} ; then
+      if echo "${pkg_not_installed}" | grep --quiet --ignore-case virtualbox ; then
+        virtualbox_installation_failure_debug
+      fi
       die 1 "${underline}Package Installation:${nounderline} Failed to install package: '${pkg_not_installed}'"
+    fi
+
     ## Test if installation worked.
     test_pkg "${pkg_not_installed}"
   fi
@@ -1906,17 +1912,8 @@ install_virtualbox_debian(){
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
 
-  if install_pkg "$virtualbox_qt_package_name" ; then
-    ## VirtualBox installation succeeded.
-    install_virtualbox_debian_common_end
-    return 0
-  fi
-
-  ## VirtualBox installation failed.
-  log error "VirtualBox Installation Debug: Installation of package '$virtualbox_qt_package_name' failed."
-  virtualbox_installation_failure_debug
-
-  die 1 "${underline}VirtualBox Installation Result:${nounderline} Failed to install VirtualBox."
+  install_pkg "$virtualbox_qt_package_name"
+  install_virtualbox_debian_common_end
 }
 
 
