@@ -1501,7 +1501,11 @@ install_repositories_for_virtualbox_on_debian(){
       ;;
   esac
 
-  distro_codename_kicksecure_use="$distro_codename_common_use"
+  if test "${dev}" = "1"; then
+    distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
+  else
+    distro_codename_kicksecure_use="$distro_codename_common_use"
+  fi
 
   oracle_found=""
   oracle_clearnet="download.virtualbox.org"
