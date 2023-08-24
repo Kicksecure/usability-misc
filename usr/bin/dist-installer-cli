@@ -1440,11 +1440,13 @@ install_package_debian_common(){
 
   update_sources
 
+  install_pkg lsb-release
+
   if test "${virtualbox_only}" = "1"; then
     return 0
   fi
 
-  install_pkg torsocks lsb-release
+  install_pkg torsocks
   install_signify signify-openbsd
 }
 
