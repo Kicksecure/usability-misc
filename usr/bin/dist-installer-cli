@@ -1501,6 +1501,8 @@ install_repositories_for_virtualbox_on_debian(){
       ;;
   esac
 
+  distro_codename_kicksecure_use="$distro_codename_common_use"
+
   oracle_found=""
   oracle_clearnet="download.virtualbox.org"
   #oracle_onion=""
@@ -1527,7 +1529,7 @@ install_repositories_for_virtualbox_on_debian(){
   kicksecure_onion="deb.w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
   kicksecure_file_debsource="/etc/apt/sources.list.d/derivative.list"
   kicksecure_prefix_debsource="deb [signed-by=/usr/share/keyrings/derivative.asc] "
-  kicksecure_suffix_debsource=" ${distro_codename_common_use} main contrib non-free"
+  kicksecure_suffix_debsource=" ${distro_codename_kicksecure_use} main contrib non-free"
 
   apt_torified=""
   apt_onion=""
