@@ -751,7 +751,7 @@ handle_exit(){
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
       signal_caught="$(kill -l "${signal_code}")"
-      log error "Received signal: '${signal_caught}"
+      log error "Received signal: '${signal_caught}'"
     fi
   fi
   ## Print exit code.
