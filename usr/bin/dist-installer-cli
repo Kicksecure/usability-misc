@@ -659,11 +659,18 @@ log_run(){
     log "${level}" "Skipping: $ ${command_without_extrarenous_spaces}"
     return 0
   fi
-  if test "${ci}" != "1"; then
-    ## CI expects no output from root_cmd() which calls log_run().
+
+  ## TODO: Still an issue? CI expects no output from root_cmd() which calls log_run().
+
+  if test "${run_background}" = "1"; then
+    log "${level}" "Running: $ ${command_without_extrarenous_spaces} &"
+    "${@}" &
+    background_pid="$!"
+    disown "$background_pid"
+  else
     log "${level}" "Running: $ ${command_without_extrarenous_spaces}"
+    "${@}" || return 1
   fi
-  "${@}" || return 1
 }
 
 
@@ -1357,7 +1364,10 @@ start_virtualbox_vm() {
 
 
 start_virtualbox_gui() {
-  virtualbox & disown
+  run_background=1
+  log_run notice virtualbox
+  log notice "VirtualBox Manager Startup Result: Launched into the background. (pid: '$background_pid')"
+  run_background=""
 }
 
 
@@ -3127,6 +3137,8 @@ set_default(){
   mirror=""
   virtualbox_only=""
   url_version_domain=""
+  run_background=""
+  background_pid=""
 }
 
 
