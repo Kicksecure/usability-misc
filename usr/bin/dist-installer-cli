@@ -1190,10 +1190,14 @@ check_guest_boot(){
     log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via command line."
     log notice "VirtualBox can be started manually."
   fi
+
   ## Default to start guest without interaction
   if test "${non_interactive}" = "1"; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
-    start_virtualbox_gui
+    if test "${virtualbox_only}" = "1"; then
+      start_virtualbox_gui
+      end_installer
+    fi
   else
     if test "${virtualbox_only}" = "1"; then
       log notice "${bold}Question:${nobold} Do you want to start VirtualBox now? [y/n] (default: yes): "
@@ -1206,17 +1210,16 @@ check_guest_boot(){
     case ${response} in
       ""|[Yy]|[Yy][Ee][Ss])
         log notice "${underline}VirtualBox Startup Check:${nounderline} User accepted to start VirtualBox."
-        start_virtualbox_gui
+        if test "${virtualbox_only}" = "1"; then
+          start_virtualbox_gui
+          end_installer
+        fi
         ;;
       *)
         log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox."
         end_installer
         ;;
     esac
-  fi
-
-  if test "${virtualbox_only}" = "1"; then
-    end_installer
   fi
 
   log info "Virtual Machine(s) already exist."
@@ -1236,6 +1239,7 @@ check_guest_boot(){
   if test "${non_interactive}" = "1"; then
     log notice "${underline}VM Startup Check:${nounderline} VM start agreed by the user by setting non_interactive."
     start_guest
+    start_virtualbox_gui
     end_installer
   fi
 
@@ -1243,6 +1247,7 @@ check_guest_boot(){
     ""|[Yy]|[Yy][Ee][Ss])
       log notice "${underline}VM Startup Check:${nounderline} User accepted to start Virtual Machine(s)."
       start_guest
+      start_virtualbox_gui
       ;;
     *)
       log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s)."
@@ -1329,6 +1334,9 @@ import_kvm(){
 
 
 start_guest(){
+  if test "${virtualbox_only}" = "1"; then
+    return 0
+  fi
   case "${hypervisor}" in
     virtualbox)
       start_virtualbox_vm
