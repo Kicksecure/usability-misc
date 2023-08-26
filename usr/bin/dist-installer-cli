@@ -1173,25 +1173,36 @@ check_vm_exists(){
 
 ## Check if guest should start or not
 check_guest_boot(){
-  if test "${virtualbox_only}" = "1"; then
-    log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
+  log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
 
-    if test "${no_boot}" = "1"; then
-      log info "no_boot is set."
-      log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via command line."
-      log notice "VirtualBox can be started manually."
-      end_installer
+  case "${guest}" in
+    whonix)
+      log notice "Available guest: '${guest_pretty}-Gateway-${interface_name}'"
+      log notice "Available guest: '${guest_pretty}-Workstation-${interface_name}'"
+      ;;
+    kicksecure)
+      log notice "Available guest: '${guest_pretty}-${interface_name}'"
+      ;;
+  esac
+
+  if test "${no_boot}" = "1"; then
+    log info "no_boot is set."
+    log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via command line."
+    log notice "VirtualBox can be started manually."
+  fi
+  ## Default to start guest without interaction
+  if test "${non_interactive}" = "1"; then
+    log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
+    start_virtualbox_gui
+  else
+    if test "${virtualbox_only}" = "1"; then
+      log notice "${bold}Question:${nobold} Do you want to start VirtualBox now? [y/n] (default: yes): "
+    else
+      log notice "${bold}Question:${nobold} Do you want to start VirtualBox and the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
     fi
-    ## Default to start guest without interaction
-    if test "${non_interactive}" = "1"; then
-      log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
-      start_virtualbox_gui
-      end_installer
-    fi
-    log notice "${bold}Question:${nobold} Do you want to start VirtualBox now? [y/n] (default: yes): "
     printf '%s' "Your answer: "
     read -r response
-    log notice "User replied '${response}'"
+    log notice "User replied: '${response}'"
     case ${response} in
       ""|[Yy]|[Yy][Ee][Ss])
         log notice "${underline}VirtualBox Startup Check:${nounderline} User accepted to start VirtualBox."
@@ -1199,8 +1210,12 @@ check_guest_boot(){
         ;;
       *)
         log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox."
+        end_installer
         ;;
     esac
+  fi
+
+  if test "${virtualbox_only}" = "1"; then
     end_installer
   fi
 
@@ -1213,7 +1228,6 @@ check_guest_boot(){
   fi
   ## Skip guest boot
   if test "${no_boot}" = "1"; then
-    log info "no_boot is set."
     log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via command line."
     log notice "Virtual Machine(s) can be started manually."
     end_installer
@@ -1224,20 +1238,7 @@ check_guest_boot(){
     start_guest
     end_installer
   fi
-  ## Ask user to start guest or not
-  case "${guest}" in
-    whonix)
-      log notice "Available guest: '${guest_pretty}-Gateway-${interface_name}'"
-      log notice "Available guest: '${guest_pretty}-Workstation-${interface_name}'"
-      ;;
-    kicksecure)
-      log notice "Available guest: '${guest_pretty}-${interface_name}'"
-      ;;
-  esac
-  log notice "${bold}Question:${nobold} Do you want to start the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
-  printf '%s' "Your answer: "
-  read -r response
-  log notice "User replied '${response}'"
+
   case ${response} in
     ""|[Yy]|[Yy][Ee][Ss])
       log notice "${underline}VM Startup Check:${nounderline} User accepted to start Virtual Machine(s)."
@@ -2699,6 +2700,11 @@ get_download_links(){
       site_clearnet="${site_clearnet_kicksecure}"
       site_onion="${site_onion_kicksecure}"
       ;;
+    *)
+      ## Variables need to be set for --virtualbox-only.
+      site_clearnet=""
+      site_onion=""
+      ;;
   esac
 
   if test -z "${mirror}"; then
@@ -3252,6 +3258,7 @@ parse_opt(){
       virtualbox-only)
         set_arg virtualbox_only 1
         set_arg hypervisor virtualbox
+        set_arg guest none
         ;;
       V|version)
         set_arg getversion 1
@@ -3274,7 +3281,7 @@ parse_opt(){
     xtrace=1
     set -o xtrace
   fi
-  range_arg guest whonix kicksecure
+  range_arg guest none whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
   range_arg import_only workstation gateway
