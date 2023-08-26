@@ -1364,7 +1364,9 @@ start_virtualbox_vm() {
 start_virtualbox_gui() {
   run_background=1
   log_run notice virtualbox
-  log notice "VirtualBox Manager Startup Result: Launched into the background. (pid: '$background_pid')"
+  if ! test "${dry_run}" = "1"; then
+    log notice "VirtualBox Manager Startup Result: Launched into the background. (pid: '$background_pid')"
+  fi
   run_background=""
 }
 
