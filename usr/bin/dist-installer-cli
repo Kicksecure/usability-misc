@@ -1238,6 +1238,8 @@ check_guest_boot(){
   ## Default to start guest without interaction
   if test "${non_interactive}" = "1"; then
     log notice "${underline}VM Startup Check:${nounderline} VM start agreed by the user by setting non_interactive."
+    ## Try to start VMs before trying to start VirtualBox Manager,
+    ## because if it fails, it is less confusing to avoid starting VirtualBox Manager.
     start_guest
     start_virtualbox_gui
     end_installer
