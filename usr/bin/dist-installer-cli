@@ -1464,6 +1464,19 @@ install_package_debian_common(){
     return 1
   fi
 
+  ## Dumping all sources.list files could have privacy implications.
+  ## Hence only doing it for '--dev'.
+  if test "${dev}" = "1"; then
+    if [ -f /etc/apt/sources.list ]; then
+      cat /etc/apt/sources.list
+    fi
+    for file in /etc/apt/sources.list.d/*; do
+      if [ -f "$file" ]; then
+        cat "$file"
+      fi
+    done
+  fi
+
   update_sources
 
   install_pkg lsb-release
@@ -1528,9 +1541,11 @@ install_repositories_for_virtualbox_on_debian(){
 #   esac
 
   log info "VirtualBox Package Availability Check: Checking if package 'virtualbox' is already installable from an already enabled repository..."
-  if apt-cache policy virtualbox 2>/dev/null ; then
+  ## Show output if virtualbox package is installable for debugging purposes,
+  ## but hide apt-cache error message if not found using 2>/dev/null.
+  if log_run notice apt-cache policy virtualbox 2>/dev/null ; then
     ## Package 'virtualbox' is installable on Debian unstable ("sid").
-    log info "VirtualBox Package Availability Check: 'success' - Package 'virtualbox' is already installable from an already enabled repository. No need to add any extra repositories."
+    log notice "VirtualBox Package Availability Check: 'success' - Package 'virtualbox' is already installable from an already enabled repository. No need to add any extra repositories."
     return 0
   fi
 
@@ -1546,6 +1561,13 @@ install_repositories_for_virtualbox_on_debian(){
   oracle_file_debsource="/etc/apt/sources.list.d/oracle.list"
   oracle_prefix_debsource="deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.asc] "
   oracle_suffix_debsource="/virtualbox/debian ${distro_codename_common_use} contrib"
+
+  unstable_found=""
+  unstable_clearnet="deb.debian.org"
+  unstable_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
+  unstable_file_debsource="/etc/apt/sources.list.d/unstable.list"
+  unstable_prefix_debsource="deb "
+  unstable_suffix_debsource="/debian/ unstable main contrib non-free"
 
   backports_found=""
   backports_clearnet="deb.debian.org"
@@ -1582,6 +1604,14 @@ install_repositories_for_virtualbox_on_debian(){
     if get_pattern_sources_debian "${file}" "${kicksecure_clearnet}|${kicksecure_onion}"
     then
       kicksecure_found=1
+    fi
+
+    ## Need to check if not only unstable repository or sid codename is enabled but also check if the 'contrib' suite is enabled,
+    ## because VirtualBox is only available from 'contrib'.
+    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid).*contrib"
+    then
+      unstable_found=1
+      exit 0
     fi
 
     if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename_common_use}-backports"
