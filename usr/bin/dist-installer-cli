@@ -1595,7 +1595,9 @@ install_repositories_for_virtualbox_on_debian(){
 
   ## TODO:
   ## - handle case if using Debian mirrors
-  ## - add support for Deb822-style Format
+  ## - add support for Deb822-style Format parsing
+  ## - write sources.list files in one-line-style format or Deb822-style format?
+  ##   https://forums.kicksecure.com/t/apt-sources-list-one-line-format-versus-deb822-style-format/267
   ## - unit tests
 
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
