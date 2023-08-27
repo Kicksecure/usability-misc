@@ -303,13 +303,7 @@ get_os(){
   debian_testing_or_unstable_detected=""
   case ${os} in
     Linux*)
-      if test -f /usr/share/kicksecure/marker; then
-        distro="Kicksecure"
-        distro_version=$(cat /etc/kicksecure_version)
-      elif test -f /usr/share/whonix/marker; then
-        distro="Whonix"
-        distro_version=$(cat /etc/whonix_version)
-      elif has lsb_release; then
+      if has lsb_release; then
         distro=$(lsb_release --short --description || lsb_release -sd)
         distro_version=$(lsb_release --short --release || lsb_release -sr)
       elif test -f /etc/os-release; then
@@ -347,10 +341,20 @@ get_os(){
     debian_testing_or_unstable_detected=true
   fi
 
+  distro_derivative_name_pretty="(No derivative detected.)"
+  distro_derivative_version="(No derivative detected.)"
+  if test -f /usr/share/kicksecure/marker; then
+    distro_derivative_name_pretty="Kicksecure"
+    distro_derivative_version=$(cat /etc/kicksecure_version)
+  elif test -f /usr/share/whonix/marker; then
+    distro_derivative_name_pretty="Whonix"
+    distro_derivative_version=$(cat /etc/whonix_version)
+  fi
+
   log notice "Detected architecture: '${arch}'"
   log notice "Detected system: '${os}'"
-  log notice "Detected distribution: '${distro}'"
-  log notice "Detected distribution version: '${distro_version}'"
+  log notice "Detected distribution / derivative name: '${distro}' / '${distro_derivative_name_pretty}'"
+  log notice "Detected distribution / derivative version: '${distro_version}' / '${distro_derivative_version}'"
 
   if [ "$debian_testing_or_unstable_detected" = "true" ]; then
     log notice "Debian testing or unstable detection: 'success'"
