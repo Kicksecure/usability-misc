@@ -792,11 +792,13 @@ get_host_pkgs(){
       case "${distro}" in
         "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
           log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
+          debian_derivative_detected=1
           install_package_debian_common
           install_virtualbox_debian
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
           log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
+          debian_derivative_detected=1
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
@@ -805,6 +807,7 @@ get_host_pkgs(){
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
           log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
+          debian_derivative_detected=1
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
@@ -1504,9 +1507,13 @@ add_user_to_vbox_group(){
     return 0
   fi
 
-  ## TODO: Debian should use add 'addgroup'
-  root_cmd usermod --append --groups "${virtualbox_linux_user_group}" "${id_of_user}" || \
-    die 1 "${underline}Linux Group Configuration: adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
+  if test "${debian_derivative_detected}" = "1"; then
+    root_cmd adduser "${id_of_user}" "${virtualbox_linux_user_group}" || \
+      die 1 "${underline}Linux Group Configuration: adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
+  else
+    root_cmd usermod --append --groups "${virtualbox_linux_user_group}" "${id_of_user}" || \
+      die 1 "${underline}Linux Group Configuration: adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
+  fi
 }
 
 
@@ -3222,6 +3229,7 @@ set_default(){
   url_version_domain=""
   run_background=""
   background_pid=""
+  debian_derivative_detected=""
 }
 
 
