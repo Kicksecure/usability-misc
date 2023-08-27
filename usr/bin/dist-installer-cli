@@ -379,7 +379,7 @@ get_os(){
     ## Also because we check for distribution version to abort if necessary.
   fi
 
-  if [ "$distro_version" = "n/a" ]; then
+  if [ "${distro_version}" = "n/a" ]; then
     ## In Debian testing distro_version can be 'n/a'.
     return 0
   fi
