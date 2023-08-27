@@ -355,13 +355,19 @@ get_os(){
   if [ "$debian_testing_or_unstable_detected" = "true" ]; then
     log notice "Debian testing or unstable detection: 'success'"
     if test "${oracle_repo}" = "1"; then
+      log error "Attempting to use --oracle-repo on Debian testing."
       if test "${ci}" = "1"; then
         die 0 "${underline}Distribution Check:${nounderline} Oracle doesn't provide a Debian testing or unstable repository. Skipped on CI to avoid breaking the CI testing."
       else
         die 101 "${underline}Distribution Check:${nounderline} Oracle doesn't provide a Debian testing or unstable repository."
       fi
     fi
+    log info "Not attempting to use --oracle-repo on Debian testing."
+    ## In Debian testing distro_version was previously observed as 'n/a' or empty, because
+    ## Debian testing /etc/os-release does not contain VERSION_ID.
+    return 0
   fi
+  log info "Debian testing or unstable detection: 'Not detected.'"
 
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
@@ -377,11 +383,6 @@ get_os(){
     ## but distro version needs to be checked here because it can occur
     ## frequently when the release of the distribution is still unstable.
     ## Also because we check for distribution version to abort if necessary.
-  fi
-
-  if [ "${distro_version}" = "n/a" ]; then
-    ## In Debian testing distro_version can be 'n/a'.
-    return 0
   fi
 
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
