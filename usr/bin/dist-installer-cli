@@ -320,10 +320,6 @@ get_os(){
             (VERSION_ID) distro_version=${val}
               ;;
           esac
-          ## Debian testing /etc/os-release does not contain VERSION_ID.
-          if echo "$distro" | grep --quiet "/sid" ; then
-            debian_testing_or_unstable_detected=true
-          fi
         done < /etc/os-release
       else
         has crux && distro=$(crux)
@@ -345,6 +341,11 @@ get_os(){
     FreeBSD) distro="${os} $(freebsd-version)";;
     *) distro="${os} ${kernel}";;
   esac
+
+  ## Debian testing /etc/os-release does not contain VERSION_ID.
+  if echo "$distro" | grep --quiet "/sid" ; then
+    debian_testing_or_unstable_detected=true
+  fi
 
   log notice "Detected architecture: '${arch}'"
   log notice "Detected system: '${os}'"
