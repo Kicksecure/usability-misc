@@ -1593,6 +1593,11 @@ install_repositories_for_virtualbox_on_debian(){
   apt_torified=""
   apt_onion=""
 
+  ## TODO:
+  ## - handle case if using Debian mirrors
+  ## - add support for Deb822-style Format
+  ## - unit tests
+
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     test -f "${file}" || continue
 
@@ -1606,12 +1611,16 @@ install_repositories_for_virtualbox_on_debian(){
       kicksecure_found=1
     fi
 
+    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid)"
+    then
+      unstable_found=1
+    fi
+
     ## Need to check if not only unstable repository or sid codename is enabled but also check if the 'contrib' suite is enabled,
     ## because VirtualBox is only available from 'contrib'.
     if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid).*contrib"
     then
-      unstable_found=1
-      exit 0
+      unstable_found_with_contrib=1
     fi
 
     if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename_common_use}-backports"
@@ -1661,6 +1670,7 @@ install_repositories_for_virtualbox_on_debian(){
       fi
     fi
     kicksecure_domain_debsource="${kicksecure_onion}"
+    unstable_domain_debsource="${unstable_onion}"
     fasttrack_domain_debsource="${fasttrack_onion}"
     backports_domain_debsource="${backports_onion}"
   ## If user has torified repositories configured, prefer it.
@@ -1669,6 +1679,7 @@ install_repositories_for_virtualbox_on_debian(){
     connection_type_debsource="torified clearnet"
     oracle_domain_debsource="${oracle_clearnet}"
     kicksecure_domain_debsource="${kicksecure_clearnet}"
+    unstable_domain_debsource="${unstable_clearnet}"
     fasttrack_domain_debsource="${fasttrack_clearnet}"
     backports_domain_debsource="${backports_clearnet}"
   ## If user doesn't have torified repositories, use clearnet one.
@@ -1677,12 +1688,14 @@ install_repositories_for_virtualbox_on_debian(){
     connection_type_debsource="clearnet"
     oracle_domain_debsource="${oracle_clearnet}"
     kicksecure_domain_debsource="${kicksecure_clearnet}"
+    unstable_domain_debsource="${unstable_clearnet}"
     fasttrack_domain_debsource="${fasttrack_clearnet}"
     backports_domain_debsource="${backports_clearnet}"
   fi
 
   oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
   kicksecure_url="${kicksecure_prefix_debsource} ${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
+  unstable_url="${unstable_prefix_debsource} ${protocol_prefix_debsource}${unstable_domain_debsource}${unstable_suffix_debsource}"
   fasttrack_url="${fasttrack_prefix_debsource} ${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
   backports_url="${backports_prefix_debsource} ${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
 
@@ -1704,7 +1717,7 @@ install_repositories_for_virtualbox_on_debian(){
       return 0
       ;;
     trixie)
-      install_kicksecure_repository_debian
+      install_unstable_repository_debian
       return 0
       ;;
   esac
@@ -1798,6 +1811,17 @@ install_kicksecure_repository_debian() {
     log notice "Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
     write_sources_debian "${kicksecure_url}" "${kicksecure_file_debsource}"
   fi
+}
+
+
+install_unstable_repository_debian() {
+  if test "${unstable_found}" = "1" && test "${unstable_found_with_contrib}" = "1"; then
+    log info "Skipped adding additional APT repositories because unstable (with contrib) were already found."
+    return 0
+  fi
+
+  log notice "Adding Unstable ${connection_type_debsource} repository to ${unstable_file_debsource}"
+  write_sources_debian "${unstable_url}" "${unstable_file_debsource}"
 }
 
 
