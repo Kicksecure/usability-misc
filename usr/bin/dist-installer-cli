@@ -1521,11 +1521,11 @@ install_repositories_for_virtualbox_on_debian(){
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="$distro_codename_real"
 
-  case "${distro_codename_real}" in
-    trixie)
-      distro_codename_common_use="bookworm"
-      ;;
-  esac
+#   case "${distro_codename_real}" in
+#     trixie)
+#       distro_codename_common_use="trixie"
+#       ;;
+#   esac
 
   if test "${dev}" = "1"; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
