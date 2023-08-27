@@ -353,6 +353,13 @@ get_os(){
 
   if [ "$debian_testing_detected" = "true" ]; then
     log notice "Debian testing detection: 'success'"
+    if test "${oracle_repo}" = "1"; then
+      if test "${ci}" = "1"; then
+        die 0 "${underline}Distribution Check:${nounderline} Oracle doesn't provide a Debian testing repository. Skipped on CI to avoid breaking the CI testing."
+      else
+        die 101 "${underline}Distribution Check:${nounderline} Oracle doesn't provide a Debian testing repository."
+      fi
+    fi
     return 0
   fi
 
@@ -1535,12 +1542,6 @@ install_repositories_for_virtualbox_on_debian(){
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="$distro_codename_real"
 
-#   case "${distro_codename_real}" in
-#     trixie)
-#       distro_codename_common_use="trixie"
-#       ;;
-#   esac
-
   log info "VirtualBox Package Availability Check: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
   if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
     ## Package 'virtualbox' is installable on Debian unstable ("sid").
@@ -1658,7 +1659,6 @@ install_repositories_for_virtualbox_on_debian(){
     test_pkg apt-transport-tor ||
       die 1 "${underline}Torified APT CHECK:${nounderline} APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
   fi
-
 
   ## If user has onion repositories configured, prefer it.
   if test "${apt_onion}"; then
