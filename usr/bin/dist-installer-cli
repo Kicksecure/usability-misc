@@ -1834,6 +1834,22 @@ install_unstable_repository_debian() {
     return 0
   fi
 
+  log notice "Adding APT pinning configuration to prefer testing over unstable."
+  file="/etc/apt/preferences.d/40-installer-dist-pinning"
+  echo "\
+## This file was created by: $0
+## It can be safely deleted if you know what you are doing.
+
+Package: *
+Pin: release a=testing
+Pin-Priority: 700
+
+Package: *
+Pin: release a=unstable
+Pin-Priority: 650
+" | root_cmd tee "$file" ||
+    die 1 "${underline}APT Preferences Configuration Writer:${nounderline} Failed to write to file: '$file'"
+
   log notice "Adding Unstable ${connection_type_debsource} repository to ${unstable_file_debsource}"
   write_sources_debian "${unstable_url}" "${unstable_file_debsource}"
 }
