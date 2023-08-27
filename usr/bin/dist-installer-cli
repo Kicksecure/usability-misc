@@ -1540,14 +1540,13 @@ install_repositories_for_virtualbox_on_debian(){
 #       ;;
 #   esac
 
-  log info "VirtualBox Package Availability Check: Checking if package 'virtualbox' is already installable from an already enabled repository..."
-  ## Show output if virtualbox package is installable for debugging purposes,
-  ## but hide apt-cache error message if not found using 2>/dev/null.
-  if log_run notice apt-cache policy virtualbox 2>/dev/null ; then
+  log info "VirtualBox Package Availability Check: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
+  if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
     ## Package 'virtualbox' is installable on Debian unstable ("sid").
-    log notice "VirtualBox Package Availability Check: 'success' - Package 'virtualbox' is already installable from an already enabled repository. No need to add any extra repositories."
+    log notice "VirtualBox Package Availability Check: 'success' - Package 'virtualbox-qt' is already installable from an already enabled repository. No need to add any extra repositories."
     return 0
   fi
+  log info "VirtualBox Package Availability Check: Not yet Available. Enabling additional repository..."
 
   if test "${dev}" = "1"; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
