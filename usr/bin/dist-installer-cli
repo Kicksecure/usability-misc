@@ -1527,6 +1527,13 @@ install_repositories_for_virtualbox_on_debian(){
 #       ;;
 #   esac
 
+  log info "VirtualBox Package Availability Check: Checking if package 'virtualbox' is already installable from an already enabled repository..."
+  if apt-cache policy virtualbox 2>/dev/null ; then
+    ## Package 'virtualbox' is installable on Debian unstable ("sid").
+    log info "VirtualBox Package Availability Check: 'success' - Package 'virtualbox' is already installable from an already enabled repository. No need to add any extra repositories."
+    return 0
+  fi
+
   if test "${dev}" = "1"; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
   else
