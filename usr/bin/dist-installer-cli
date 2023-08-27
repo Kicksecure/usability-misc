@@ -1566,7 +1566,11 @@ install_repositories_for_virtualbox_on_debian(){
   unstable_clearnet="deb.debian.org"
   unstable_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
   unstable_file_debsource="/etc/apt/sources.list.d/unstable.list"
-  unstable_prefix_debsource="deb "
+  ## CI /etc/apt/sources.list.d/debian.sources uses:
+  ## Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+  ## So we have to use signed-by here too, otherwise we get an apt-get error:
+  ## E: Conflicting values set for option Signed-By regarding source
+  unstable_prefix_debsource="deb [signed-by=/usr/share/keyrings/debian-archive-keyring.gpg] "
   unstable_suffix_debsource="/debian/ unstable main contrib non-free"
 
   backports_found=""
