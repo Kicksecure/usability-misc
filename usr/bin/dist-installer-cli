@@ -361,7 +361,6 @@ get_os(){
         die 101 "${underline}Distribution Check:${nounderline} Oracle doesn't provide a Debian testing or unstable repository."
       fi
     fi
-    return 0
   fi
 
   ## This at last so the user can hopefully post his system info from the
