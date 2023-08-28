@@ -1,3 +1,227 @@
+commit c45affea38341b7633f0dbbaaba9ca59e789cb22
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 11:26:32 2023 -0400
+
+    CI
+
+commit d526a726b8691f8f93cdfe383b238a39ab6622c9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 11:16:09 2023 -0400
+
+    improve detection of Debian testing based distributions
+
+commit 0619813f4c60c67ac9aac6e8a06a030bc3f60a05
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 11:10:14 2023 -0400
+
+    refactoring
+
+commit 2dd7a46ba035e43d8c20982ba25f0865456be03c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 10:49:20 2023 -0400
+
+    dist-installer-cli Debian testing ("trixie") support
+
+commit 72e1b785b8e855516773b26a9ad09150a424001f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 10:29:27 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit 0995abf024a2efc58366df58c82020e830ae78ef
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 10:23:19 2023 -0400
+
+    refactoring
+
+commit 4e9e728683247cdb6d3c4588c08d133e44317fbb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 10:10:18 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit 05939d87e7125f4e792f901c154d3ffc68bfaf81
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 10:06:20 2023 -0400
+
+    improve Debian testing / unstable detection
+
+commit 4e2dd8bdb521eff3f4af558b4bf4efa0ad036aa4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:51:25 2023 -0400
+
+    user adduser instead of usermod on Debian
+
+commit 5effa51b515b844c37b9b08e45fd37981447985a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:44:26 2023 -0400
+
+    CI
+
+commit 400aafcd5f472f8f18872f85aac2ef03005f22e7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:39:16 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit 29a438b2c85c6fe0f38fffa6a4f8a3945a544d8b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:32:51 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit e86f7fa3aa73bcec5c55523d5f8f5a87c24e8b1a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:22:22 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit 007e90a4ea2d5e3e411804f2f304cc6db00b5c35
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:18:52 2023 -0400
+
+    comment
+
+commit 443a123402b1b0c7f6169a8fea00343bc797305d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:13:59 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit 3a57d21817f95dc8209261366d477ded1006f68c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 09:02:09 2023 -0400
+
+    comment
+
+commit 1dbc598188830af6729652ea551589a4d5257166
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 08:59:25 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit 9ea975c0c1f5491ce6a6b2acd983a8e2420995cf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 08:45:29 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit 51e1ca9738522960344a73bf65bd0c61b23ed59d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 08:16:05 2023 -0400
+
+    dist-installer-cli Debian unstable ("sid") support
+
+commit cdcd0a377292d39350caf6d90e1fb2d149a28f79
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 07:54:55 2023 -0400
+
+    CI
+
+commit e09040bc81cde83677c1c138b89bec91d3b80882
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 07:54:38 2023 -0400
+
+    CI
+
+commit 1462097ae73fc51a7a7e8df45ecba5b01bd0309c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 27 07:34:25 2023 -0400
+
+    dist-installer-cli Debian trixie support
+
+commit 248b85a0b36223de3e0c2a47609f79ef672f6ea4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 26 16:08:17 2023 -0400
+
+    comment
+
+commit 45c257bcd1febc7c28707408d79a67fdbf94600a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 26 16:06:47 2023 -0400
+
+    try to start VMs before trying to start VirtualBox Manager
+    
+    because if it fails, it is less confusing to avoid starting VirtualBox Manager
+
+commit e76c5c17f0809c8577a4f1ad3292207535236289
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 26 15:54:19 2023 -0400
+
+    fix, don't notify that VirtualBox has been started into the background when using --dry-run
+
+commit a20e7144bc592b1670b965c156626b0de469a70a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 26 15:52:28 2023 -0400
+
+    fix, start both, VirtualBox Manager and VMs
+
+commit ac71b766b7a246fb9cee9f0430d80a0e194e900e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 26 15:18:21 2023 -0400
+
+    fix duplicate starts of VirtualBox Manager; new installer success message at the end
+
+commit b58091cdfd8b90c1b08a56a3826fd34cdcc9a243
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 26 15:01:43 2023 -0400
+
+    output
+
+commit 3b7a1f863419f5f06c7de84983f2d443b69254cf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Aug 26 15:00:53 2023 -0400
+
+    fix launching VirtualBox Manager into the background
+    
+    instead of foreground
+    
+    to free the terminal
+
+commit 2f241433544d37cff9d118780fe1ce63b675ad60
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 24 11:50:27 2023 -0400
+
+    refactoring
+
+commit 6ceb3e874a10962b9e7a5c7442d4b147ef1a6e8f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 24 11:33:36 2023 -0400
+
+    view VirtualBox dkmks make.log on Debian if installation of VirtualBox failed
+
+commit 79a2c085264426b0eff5ffd08194ff8bfd4cb241
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 24 10:38:17 2023 -0400
+
+    if using `--dev` and if enabling Kicksecure repository, use Kicksecure developers repository
+    
+    instead of Kicksecure stable repository
+
+commit 94b0d9297f617b499d9c83ea868015271111b07b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 24 10:32:18 2023 -0400
+
+    towards support for different codename for Kicksecure repository
+
+commit 924bb84488d0fddf59038b59efceafed3410947d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 24 10:30:57 2023 -0400
+
+    refactoring
+
+commit 25669e7fffc5216fe9d12a78a3e967bdffc2de8c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Aug 24 08:50:49 2023 -0400
+
+    package lsb-release needed for also for VirtualBox Installer
+
+commit 8e574f695e13ebe42bc0214e141e3f990a518d71
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 22 17:53:28 2023 -0400
+
+    bumped changelog version
+
 commit 90a9ce04925f75e398a1fcb291576f81ff16912c
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 22 11:00:55 2023 -0400
