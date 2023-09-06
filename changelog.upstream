@@ -1,3 +1,17 @@
+commit c2ea7b47bf3a9a7591fd9da704eed84912ef9216
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Sep 6 08:11:12 2023 -0400
+
+    install VirtualBox from bullseye-fasttrack instead from Kicksecure repository
+    
+    because VirtualBox is now available from bullseye-fasttrack repository
+
+commit 72eb6079b4c6044b2335c6a36750b97c5fa0eb65
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 29 16:08:55 2023 -0400
+
+    bumped changelog version
+
 commit 4698847a4e01f95b69b6d57cfbe46652ec12ebf4
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 29 15:01:07 2023 -0400
