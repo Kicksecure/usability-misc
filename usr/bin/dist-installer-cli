@@ -1731,7 +1731,7 @@ install_repositories_for_virtualbox_on_debian(){
       return 0
       ;;
     bookworm)
-      install_kicksecure_repository_debian
+      install_backports_and_fasttrack_repository_debian
       return 0
       ;;
     trixie)
