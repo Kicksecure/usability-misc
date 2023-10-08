@@ -5,4 +5,8 @@
 
 set -e
 
-env VISUAL="$VISUAL" sudoedit "$@"
+if ! test -f "$@" ; then
+  exit 1
+fi
+
+pkexec sudo -u "$(whoami)" env DISPLAY="$DISPLAY" VISUAL="$VISUAL" sudoedit "$@"
