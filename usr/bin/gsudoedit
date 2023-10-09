@@ -5,8 +5,9 @@
 
 set -e
 
-if ! test -f "$@" ; then
-  exit 1
-fi
+## Cannot check if it is a file first because then no new files could be created.
+# if ! test -f "$@" ; then
+#   exit 1
+# fi
 
 pkexec sudo -u "$(whoami)" env DISPLAY="$DISPLAY" VISUAL="$VISUAL" sudoedit "$@"
