@@ -10,4 +10,32 @@ set -e
 #   exit 1
 # fi
 
-pkexec sudo -u "$(whoami)" env DISPLAY="$DISPLAY" VISUAL="$VISUAL" sudoedit "$@"
+## Running any editor as root is insecure.
+## sudoedit copies the file to a temporary location, edits it as a normal user
+## and then overwrites the original using sudo.
+## This way is much more secure as it does not run the editor as root.
+##
+## How to prompt for the sudo password with a graphical GUI when using sudoedit?
+##
+## Must be Wayland compatible.
+##
+## /usr/lib/openssh/gnome-ssh-askpass is provided by package ssh-askpass-gnome.
+## Has a confusing window title "OpenSSH".
+##
+## /usr/bin/ssh-askpass-fullscreen is provided by package ssh-askpass-fullscreen
+## but has a dependency on a X11 library libx11-6.
+##
+## lxqt-openssh-askpass by package lxqt-openssh-askpass
+## Has a confusing "Enter your SSH passphrase for request:" message.
+##
+## ksshaskpass bundled with KDE Wallet Service.
+
+askpass_title="$0: Authorization Required."
+askpass_message="Open the following file with root rights?
+
+'$@'"
+
+export askpass_title
+export askpass_message
+
+SUDO_ASKPASS=/usr/libexec/usablity-misc/sudo-askpass-gui sudoedit --askpass -- "$@"
