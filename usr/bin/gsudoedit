@@ -30,12 +30,13 @@ set -e
 ##
 ## ksshaskpass bundled with KDE Wallet Service.
 
-askpass_title="$0: Authorization Required."
-askpass_message="Open the following file with root rights?
-
-'$@'"
-
-export askpass_title
-export askpass_message
+## sudo does not pass environment variables to SUDO_ASKPASS tool.
+# askpass_title="$0: Authorization Required."
+# askpass_message="Open the following file with root rights?
+#
+# '$@'"
+#
+# export askpass_title
+# export askpass_message
 
 SUDO_ASKPASS=/usr/libexec/usablity-misc/sudo-askpass-gui sudoedit --askpass -- "$@"

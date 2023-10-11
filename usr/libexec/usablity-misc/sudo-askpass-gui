@@ -5,7 +5,9 @@
 
 ## https://askubuntu.com/questions/314395/proper-way-to-let-user-enter-password-for-a-bash-script-using-only-the-gui-with
 
+## SUDO_ASKPASS does not pass environment variables.
+askpass_title="Authorization required."
+
 zenity \
-   --password \
-   --title="$askpass_title"
-   --message="$askpass_message"
+   --title="$askpass_title" \
+   --password
