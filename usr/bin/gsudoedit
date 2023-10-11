@@ -3,6 +3,7 @@
 ## Copyright (C) 2019 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+#set -x
 set -e
 
 ## Cannot check if it is a file first because then no new files could be created.
@@ -19,16 +20,19 @@ set -e
 ##
 ## Must be Wayland compatible.
 ##
-## /usr/lib/openssh/gnome-ssh-askpass is provided by package ssh-askpass-gnome.
+## /usr/lib/openssh/gnome-ssh-askpass is provided by package ssh-askpass-gnome
 ## Has a confusing window title "OpenSSH".
 ##
 ## /usr/bin/ssh-askpass-fullscreen is provided by package ssh-askpass-fullscreen
 ## but has a dependency on a X11 library libx11-6.
 ##
 ## lxqt-openssh-askpass by package lxqt-openssh-askpass
-## Has a confusing "Enter your SSH passphrase for request:" message.
+## but has a confusing "Enter your SSH passphrase for request:" message.
 ##
-## ksshaskpass bundled with KDE Wallet Service.
+## ksshaskpass by package ksshaskpass
+## but comes bundled with KDE Wallet Service.
+##
+## /usr/libexec/seahorse/ssh-askpass by package seahorse
 
 ## sudo does not pass environment variables to SUDO_ASKPASS tool.
 # askpass_title="$0: Authorization Required."

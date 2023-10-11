@@ -3,11 +3,16 @@
 ## Copyright (C) 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+set -x
+set -e
+
 ## https://askubuntu.com/questions/314395/proper-way-to-let-user-enter-password-for-a-bash-script-using-only-the-gui-with
 
 ## SUDO_ASKPASS does not pass environment variables.
-askpass_title="Authorization required."
+SEAHORSE_SSH_ASKPASS_TITLE="Authorization required."
+SEAHORSE_SSH_ASKPASS_MESSAGE="Enter your password."
 
-zenity \
-   --title="$askpass_title" \
-   --password
+export SEAHORSE_SSH_ASKPASS_TITLE
+export SEAHORSE_SSH_ASKPASS_MESSAGE
+
+/usr/libexec/seahorse/ssh-askpass
