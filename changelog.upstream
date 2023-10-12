@@ -1,3 +1,42 @@
+commit ebd696f76b9d1533b80317da5e05e39dda3e3375
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 12 10:40:28 2023 -0400
+
+    refactoring environment variables loading mechanism
+
+commit 204301fe92aefcbfd6029a8295dcbf632fecd55f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 12 09:17:22 2023 -0400
+
+    wayland
+
+commit ce17abcc59d5f4eb90d24e57bf84eb73b368fa83
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 12 09:06:42 2023 -0400
+
+    comment
+
+commit 6826f55825b673e87421eb354461327b8da103e4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Oct 11 10:56:04 2023 -0400
+
+    `Depends:` `seahorse`
+    
+    provides `/usr/libexec/seahorse/ssh-askpass`
+    used by `gsudoedit`
+
+commit 29d3b4f7a47d4a0ab47c9d4cf01acb2dd6e03da7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Oct 11 10:52:20 2023 -0400
+
+    wayland
+
+commit 6d778e55eb19a79e1a476906e56fe15a90f50788
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Oct 11 09:09:26 2023 -0400
+
+    bumped changelog version
+
 commit 4efcbc260f223fd7f85cecfd9d7f59b05527eb17
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Oct 11 08:55:18 2023 -0400
