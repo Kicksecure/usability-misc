@@ -26,7 +26,7 @@ set -e
 ## /usr/bin/ssh-askpass-fullscreen is provided by package ssh-askpass-fullscreen
 ## but has a dependency on a X11 library libx11-6.
 ##
-## lxqt-openssh-askpass by package lxqt-openssh-askpass
+## /usr/bin/lxqt-openssh-askpass by package lxqt-openssh-askpass
 ## but has a confusing "Enter your SSH passphrase for request:" message.
 ##
 ## ksshaskpass by package ksshaskpass
