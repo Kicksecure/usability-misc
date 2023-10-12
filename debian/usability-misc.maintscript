@@ -1,1 +1,2 @@
 rm_conffile /etc/lightdm/lightdm.conf.d/autologin.conf
+rm_conffile /etc/X11/Xsession.d/50default_editor
