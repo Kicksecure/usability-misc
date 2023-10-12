@@ -13,6 +13,12 @@
 ## please provide /usr/bin/visual
 ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=758228
 
+if [ "$XDG_SESSION_TYPE" = "tty" ]; then
+   true "$0: INFO: Running inside tty. Stop."
+   return 0
+   exit 0
+fi
+
 if [ "$VISUAL" = "" ]; then
    if command -v mousepad 1>/dev/null 2>/dev/null ; then
       VISUAL="mousepad"
