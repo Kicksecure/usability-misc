@@ -6,13 +6,31 @@
 set -x
 set -e
 
-## https://askubuntu.com/questions/314395/proper-way-to-let-user-enter-password-for-a-bash-script-using-only-the-gui-with
+## /usr/lib/openssh/gnome-ssh-askpass is provided by package ssh-askpass-gnome
+## Has a confusing window title "OpenSSH".
+##
+## /usr/bin/ssh-askpass-fullscreen is provided by package ssh-askpass-fullscreen
+## but has a dependency on a X11 library libx11-6.
+##
+## /usr/bin/lxqt-openssh-askpass by package lxqt-openssh-askpass
+## but has a confusing "Enter your SSH passphrase for request:" message.
+##
+## ksshaskpass by package ksshaskpass
+## but comes bundled with KDE Wallet Service.
+##
+## /usr/libexec/seahorse/ssh-askpass by package seahorse
 
 ## SUDO_ASKPASS does not pass environment variables.
-SEAHORSE_SSH_ASKPASS_TITLE="Authorization required."
-SEAHORSE_SSH_ASKPASS_MESSAGE="Enter your password."
 
-export SEAHORSE_SSH_ASKPASS_TITLE
-export SEAHORSE_SSH_ASKPASS_MESSAGE
+## Not using ssh-askpass by seahorse due to dependency on seahorse.
+#SEAHORSE_SSH_ASKPASS_TITLE="Authorization required."
+#SEAHORSE_SSH_ASKPASS_MESSAGE="Enter your password."
+#export SEAHORSE_SSH_ASKPASS_TITLE
+#export SEAHORSE_SSH_ASKPASS_MESSAGE
+#/usr/libexec/seahorse/ssh-askpass
 
-/usr/libexec/seahorse/ssh-askpass
+## https://askubuntu.com/questions/314395/proper-way-to-let-user-enter-password-for-a-bash-script-using-only-the-gui-with
+
+zenity \
+  --password \
+  --title="Authentication required"

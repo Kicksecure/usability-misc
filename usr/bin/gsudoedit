@@ -19,20 +19,6 @@ set -e
 ## How to prompt for the sudo password with a graphical GUI when using sudoedit?
 ##
 ## Must be Wayland compatible.
-##
-## /usr/lib/openssh/gnome-ssh-askpass is provided by package ssh-askpass-gnome
-## Has a confusing window title "OpenSSH".
-##
-## /usr/bin/ssh-askpass-fullscreen is provided by package ssh-askpass-fullscreen
-## but has a dependency on a X11 library libx11-6.
-##
-## /usr/bin/lxqt-openssh-askpass by package lxqt-openssh-askpass
-## but has a confusing "Enter your SSH passphrase for request:" message.
-##
-## ksshaskpass by package ksshaskpass
-## but comes bundled with KDE Wallet Service.
-##
-## /usr/libexec/seahorse/ssh-askpass by package seahorse
 
 ## sudo does not pass environment variables to SUDO_ASKPASS tool.
 # askpass_title="$0: Authorization Required."
