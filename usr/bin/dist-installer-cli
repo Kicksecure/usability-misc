@@ -158,8 +158,6 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 =Rv7/
 -----END PGP PUBLIC KEY BLOCK-----"
 
-virtualbox_linux_user_group="vboxusers"
-
 ########################
 ## END DEFAULT VALUES ##
 ########################
@@ -3256,6 +3254,7 @@ set_default(){
   run_background=""
   background_pid=""
   debian_derivative_detected=""
+  virtualbox_linux_user_group="vboxusers"
 }
 
 
