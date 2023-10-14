@@ -6,9 +6,16 @@
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
-# shellcheck disable=SC2317
-set -o errexit
-set -o nounset
+: ${BASH_SOURCE:=""}
+
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+  dist_installer_cli_was_sourced="true"
+else
+  dist_installer_cli_was_sourced="false"
+  # shellcheck disable=SC2317
+  set -o errexit
+  set -o nounset
+fi
 
 
 set_globals() {
@@ -3592,13 +3599,9 @@ run_installer(){
   main
 }
 
-set_arg BASH_SOURCE ""
-
-if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-  ## Do not run the install script if it was 'source'd.
-  dist_installer_cli_was_sourced="true"
+if [ "$dist_installer_cli_was_sourced" = "true" ]; then
+  true "INFO: Not running the install script because it was sourced by another script."
 else
-  dist_installer_cli_was_sourced="false"
-  ## Run the install script.
+  true "INFO: Running the install script because it was executed."
   run_installer "${@}"
 fi
