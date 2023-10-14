@@ -3589,5 +3589,13 @@ run_installer(){
   main
 }
 
-## Run the install script.
-run_installer "${@}"
+set_arg BASH_SOURCE ""
+
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+  ## Do not run the install script if it was 'source'd.
+  dist_installer_cli_was_sourced="true"
+else
+  dist_installer_cli_was_sourced="false"
+  ## Run the install script.
+  run_installer "${@}"
+fi
