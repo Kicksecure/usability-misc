@@ -62,50 +62,16 @@ copy of the Program in return for a fee.
   # shellcheck disable=SC2034
   all_args="${*}"
   start_time="$(date +%s)"
-}
 
-## colors
-get_colors(){
-  ## Disable colors if some environment variables are present.
-  if test -n "${NO_COLOR:-}" || test -n "${ANSI_COLORS_DISABLED:-}"; then
-    # shellcheck disable=SC2034
-    nocolor=""
-    bold=""
-    nobold=""
-    underline=""
-    nounderline=""
-    red=""
-    green=""
-    yellow=""
-    #blue=""
-    magenta=""
-    cyan=""
-    return 0
-  fi
+  ## https://www.whonix.org/wiki/Main/Project_Signing_Key#cite_note-7
+  adrelanos_signify="untrusted comment: Patrick Schleizer adrelanos@whonix.org signify public key
+  RWQ6KRormNEETq+M8IysxRe/HAWlqZRlO8u7ACIiv5poAW0ztsirOjCQ"
+  ## https://www.whonix.org/wiki/KVM/Project_Signing_Key#cite_note-4
+  hulahoop_signify="untrusted comment: signify public key
+  RWT2GZDQkp1NtTAC1IoQHUsyb/AQ2LIQF82cygQU+riOpPWSq730A/rq"
 
-  # shellcheck disable=SC2034
-  nocolor="\033[0m"
-  bold="\033[1m"
-  nobold="\033[22m"
-  underline="\033[4m"
-  nounderline="\033[24m"
-  red="\033[31m"
-  green="\033[32m"
-  yellow="\033[33m"
-  #blue="\033[34m"
-  magenta="\033[35m"
-  cyan="\033[36m"
-}
-
-## https://www.whonix.org/wiki/Main/Project_Signing_Key#cite_note-7
-adrelanos_signify="untrusted comment: Patrick Schleizer adrelanos@whonix.org signify public key
-RWQ6KRormNEETq+M8IysxRe/HAWlqZRlO8u7ACIiv5poAW0ztsirOjCQ"
-## https://www.whonix.org/wiki/KVM/Project_Signing_Key#cite_note-4
-hulahoop_signify="untrusted comment: signify public key
-RWT2GZDQkp1NtTAC1IoQHUsyb/AQ2LIQF82cygQU+riOpPWSq730A/rq"
-
-## https://www.virtualbox.org/wiki/Linux_Downloads
-oracle_pgp="-----BEGIN PGP PUBLIC KEY BLOCK-----
+  ## https://www.virtualbox.org/wiki/Linux_Downloads
+  oracle_pgp="-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
 mQINBFcZ9OEBEACSvycoAEIKJnyyIpZ9cZLCWa+rHjXJzPymndnPOwZr9lksZVYs
@@ -157,6 +123,41 @@ gF8Op7Br7loTNnp3yiI0jo2D+7DBFqtiSHCq1fIgktmKQoVLCfd3wlBJ/o9cguT4
 Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 =Rv7/
 -----END PGP PUBLIC KEY BLOCK-----"
+}
+
+## colors
+get_colors(){
+  ## Disable colors if some environment variables are present.
+  if test -n "${NO_COLOR:-}" || test -n "${ANSI_COLORS_DISABLED:-}"; then
+    # shellcheck disable=SC2034
+    nocolor=""
+    bold=""
+    nobold=""
+    underline=""
+    nounderline=""
+    red=""
+    green=""
+    yellow=""
+    #blue=""
+    magenta=""
+    cyan=""
+    return 0
+  fi
+
+  # shellcheck disable=SC2034
+  nocolor="\033[0m"
+  bold="\033[1m"
+  nobold="\033[22m"
+  underline="\033[4m"
+  nounderline="\033[24m"
+  red="\033[31m"
+  green="\033[32m"
+  yellow="\033[33m"
+  #blue="\033[34m"
+  magenta="\033[35m"
+  cyan="\033[36m"
+}
+
 
 ########################
 ## END DEFAULT VALUES ##
