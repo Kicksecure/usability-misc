@@ -3603,6 +3603,7 @@ run_installer(){
   main
 }
 
+
 if [ "$dist_installer_cli_was_sourced" = "true" ]; then
   true "INFO: Not running the install script because it was sourced by another script."
 else
