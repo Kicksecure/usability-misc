@@ -9,8 +9,10 @@
 : ${BASH_SOURCE:=""}
 
 if [ "$BASH_SOURCE" != "${0}" ]; then
+  ## Script was sourced.
   dist_installer_cli_was_sourced="true"
 else
+  ## Script was executed.
   dist_installer_cli_was_sourced="false"
   # shellcheck disable=SC2317
   set -o errexit
