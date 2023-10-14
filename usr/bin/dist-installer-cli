@@ -12,6 +12,13 @@ set -o nounset
 
 
 set_globals() {
+  ## Version is commit based: https://github.com/Whonix/usability-misc
+  version="commit-hash-replace-me"
+  me="${0##*/}"
+  # shellcheck disable=SC2034
+  all_args="${*}"
+  start_time="$(date +%s)"
+
   dialog_title="License agreement (scroll with arrows)"
   license="
 Please do NOT continue unless you understand everything!
@@ -55,13 +62,6 @@ an absolute waiver of all civil liability in connection with the
 Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 "
-
-  ## Version is commit based: https://github.com/Whonix/usability-misc
-  version="commit-hash-replace-me"
-  me="${0##*/}"
-  # shellcheck disable=SC2034
-  all_args="${*}"
-  start_time="$(date +%s)"
 
   ## https://www.whonix.org/wiki/Main/Project_Signing_Key#cite_note-7
   adrelanos_signify="untrusted comment: Patrick Schleizer adrelanos@whonix.org signify public key
