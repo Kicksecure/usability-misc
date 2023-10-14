@@ -8,7 +8,7 @@
 ##########################
 : ${BASH_SOURCE:=""}
 
-if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+if [ "$BASH_SOURCE" != "${0}" ]; then
   dist_installer_cli_was_sourced="true"
 else
   dist_installer_cli_was_sourced="false"
