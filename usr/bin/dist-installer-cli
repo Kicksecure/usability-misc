@@ -2122,7 +2122,10 @@ get_su_cmd(){
     has doas && sucmd=doas && break
     has su && sucmd=su && break
     test -z "${sucmd}" && {
-      die 1 "${underline}get_su_cmd:${nounderline} Failed to find program to run as another user."
+      die 1 "${underline}get_su_cmd:${nounderline} Failed to find program to run commands with administrative (\"root\") privileges. This installer requires either one of the following programs to be installed:
+- sudo (recommended)
+- doas
+- su"
     }
     case "${sucmd}" in
       sudo) :;;
@@ -2130,7 +2133,7 @@ get_su_cmd(){
     esac
   done
 
-  log info "Testing root_cmd function"
+  log info "Testing root_cmd function..."
   root_cmd echo "test" ||
     die 1 "${underline}get_su_cmd:${nounderline} Failed to run test command as root."
 
@@ -2149,7 +2152,7 @@ get_su_cmd(){
       log info "User system is using credential caching: 'No'"
       return 0
     fi
-    log info "User system is using credential caching: Yes"
+    log info "User system is using credential caching: 'Yes'"
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
       log error "sudo output: '${root_output}'"
