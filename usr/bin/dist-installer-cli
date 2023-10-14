@@ -11,7 +11,7 @@
 if [ "$BASH_SOURCE" != "${0}" ]; then
   ## Script was sourced.
   ## This is useful for other programs / scripts to be able to `source` the
-  ## functions of this script for code re-use.
+  ## functions of this script for code re-use. dist-installer-gui will do this.
   dist_installer_cli_was_sourced="true"
 else
   ## Script was executed.
