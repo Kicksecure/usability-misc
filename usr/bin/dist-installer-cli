@@ -11,8 +11,9 @@ set -o errexit
 set -o nounset
 
 
-dialog_title="License agreement (scroll with arrows)"
-license="
+set_globals() {
+  dialog_title="License agreement (scroll with arrows)"
+  license="
 Please do NOT continue unless you understand everything!
  DISCLAIMER OF WARRANTY.
  .
@@ -55,12 +56,13 @@ Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 "
 
-## Version is commit based: https://github.com/Whonix/usability-misc
-version="commit-hash-replace-me"
-me="${0##*/}"
-# shellcheck disable=SC2034
-all_args="${*}"
-start_time="$(date +%s)"
+  ## Version is commit based: https://github.com/Whonix/usability-misc
+  version="commit-hash-replace-me"
+  me="${0##*/}"
+  # shellcheck disable=SC2034
+  all_args="${*}"
+  start_time="$(date +%s)"
+}
 
 ## colors
 get_colors(){
@@ -3570,6 +3572,7 @@ end_installer() {
 
 ## Wrapper to call all necessary functions in one.
 run_installer(){
+  set_globals "${@}"
   ## Set default values.
   set_default
   not_as_root
