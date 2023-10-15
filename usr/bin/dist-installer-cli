@@ -1075,14 +1075,10 @@ check_vm_exists_virtualbox(){
       ## Test if machine exists.
       workstation_exists=0
       gateway_exists=0
-      if vboxmanage showvminfo \
-        "${guest_pretty}-Gateway-${interface_name}" >/dev/null 2>&1
-      then
+      if vboxmanage showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
         gateway_exists=1
       fi
-      if vboxmanage showvminfo \
-        "${guest_pretty}-Workstation-${interface_name}" >/dev/null 2>&1
-      then
+      if vboxmanage showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
         workstation_exists=1
       fi
       ## Find discrepancies.
@@ -1104,20 +1100,19 @@ check_vm_exists_virtualbox(){
         if test "${reimport}" = "1"; then
           ## Remove Gateway if it exists.
           if test "${gateway_exists}" = "1"; then
-            check_vm_running_virtualbox "${guest_pretty}-Gateway-${interface_name}"
+            check_vm_running_virtualbox "${guest_full_vm_name_gateway}"
             ## Do not remove gateway if import_only is set to workstation
             if test "${import_only}" = "workstation"; then
               log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
               log info "If you wish to reimport both machines, do not specify import_only."
             else
               log warn "Deleting previously imported gateway because reimport is set..."
-              log_run notice vboxmanage unregistervm \
-                "${guest_pretty}-Gateway-${interface_name}" --delete
+              log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
             fi
           fi
           ## Remove Workstation if it exists.
           if test "${workstation_exists}" = "1"; then
-            check_vm_running_virtualbox "${guest_pretty}-Workstation-${interface_name}"
+            check_vm_running_virtualbox "${guest_full_vm_name_workstation}"
             ## Do not remove workstation if import_only is set to gateway
             if test "${import_only}" = "gateway"; then
               log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
@@ -1125,7 +1120,7 @@ check_vm_exists_virtualbox(){
             else
               log warn "Deleting previously imported workstation because reimport is set."
               log_run notice vboxmanage unregistervm \
-                "${guest_pretty}-Workstation-${interface_name}" --delete
+                "${guest_full_vm_name_workstation}" --delete
             fi
           fi
         elif test -n "${import_only}"; then
@@ -1158,17 +1153,15 @@ check_vm_exists_virtualbox(){
       fi
       ;;
     kicksecure)
-      if vboxmanage showvminfo \
-        "${guest_pretty}-${interface_name}" >/dev/null 2>&1
+      if vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1
       then
         log notice "${underline}Existing VM Check:${nounderline} Virtual Machine(s) were imported previously."
         if test "${reimport}" = "1"; then
-          check_vm_running_virtualbox "${guest_pretty}-${interface_name}"
+          check_vm_running_virtualbox "${guest_full_vm_name_kicksecure}"
           ## If VMs exists and reimport is set, remove VMs as they are gonna
           ## be imported later by main.
           log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          log_run notice vboxmanage unregistervm \
-            "${guest_pretty}-${interface_name}" --delete
+          log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
         else
           ## VMs already exist, check if user wants to start them.
           log info "Checking if user wants to start Virtual Machine(s) now."
@@ -1204,11 +1197,11 @@ check_guest_boot(){
 
   case "${guest}" in
     whonix)
-      log notice "Available guest: '${guest_pretty}-Gateway-${interface_name}'"
-      log notice "Available guest: '${guest_pretty}-Workstation-${interface_name}'"
+      log notice "Available guest: '${guest_full_vm_name_gateway}'"
+      log notice "Available guest: '${guest_full_vm_name_workstation}'"
       ;;
     kicksecure)
-      log notice "Available guest: '${guest_pretty}-${interface_name}'"
+      log notice "Available guest: '${guest_full_vm_name_kicksecure}'"
       ;;
   esac
 
@@ -1384,14 +1377,11 @@ start_virtualbox_vm() {
   ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
   case "${guest}" in
     whonix)
-      log_run notice vboxmanage startvm \
-        "${guest_pretty}-Gateway-${interface_name}" || virtualbox_start_failed
-      log_run notice vboxmanage startvm \
-        "${guest_pretty}-Workstation-${interface_name}" || virtualbox_start_failed
+      log_run notice vboxmanage startvm "${guest_full_vm_name_gateway}" || virtualbox_start_failed
+      log_run notice vboxmanage startvm "${guest_full_vm_name_workstation}" || virtualbox_start_failed
       ;;
     kicksecure)
-      log_run notice vboxmanage startvm \
-        "${guest_pretty}-${interface_name}" || virtualbox_start_failed
+      log_run notice vboxmanage startvm "${guest_full_vm_name_kicksecure}" || virtualbox_start_failed
       ;;
   esac
   log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
@@ -3060,6 +3050,16 @@ main(){
   log info "Starting main function."
 
   guest_pretty="$(capitalize_first_char "${guest}")"
+
+  case "${guest}" in
+    whonix)
+      guest_full_vm_name_gateway="${guest_pretty}-Gateway-${interface_name}"
+      guest_full_vm_name_workstation="${guest_pretty}-Workstation-${interface_name}"
+      ;;
+    kicksecure)
+      guest_full_vm_name_kicksecure="${guest_pretty}-${interface_name}"
+      ;;
+  esac
 
   case "${hypervisor}" in
     virtualbox)
