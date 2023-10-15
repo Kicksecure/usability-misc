@@ -861,7 +861,10 @@ get_independent_host_pkgs(){
   ## Platform independent packages
   if has signify-openbsd; then
     ## fix Debian unconventional naming
-    signify(){ signify-openbsd "${@}"; }
+    signify(){
+      # shellcheck disable=SC2317
+      signify-openbsd "${@}"
+    }
   fi
 
   has timeout || die 1 "${underline}Packages Installed Check:${nounderline} Timeout utility is missing."
