@@ -1,3 +1,149 @@
+commit 91e48c2c3aa3a453e7ee0867f7a0d35db974eda0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 10:55:06 2023 -0400
+
+    CI
+
+commit 217d01b1606ce219541dc80feb9d17add49d5192
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 10:48:11 2023 -0400
+
+    shellcheck
+
+commit 74e947a8c7984e9875153acbc2518afa0bd1fbec
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 10:46:25 2023 -0400
+
+    shellcheck
+
+commit aee833e57e86c6b4ee71f0f9e6bba6c43084456f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 10:40:47 2023 -0400
+
+    shellcheck
+
+commit b1b309809a69b668d5404886c59e92daacbda8c1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 09:58:35 2023 -0400
+
+    refactor setting full name of VM variable
+
+commit 3485e940f9802098994653dc6c7c42e0cf4cb53f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 09:31:48 2023 -0400
+
+    fix log_term_and_file_bash user log creation
+
+commit 6afe2b456135cabb817b5185786cf8092ea1c18c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 09:20:29 2023 -0400
+
+    improve log_term_and_file_bash
+
+commit be41fc398a3e9860a179010eb4839999d8468641
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 15 08:56:44 2023 -0400
+
+    set variable if credential caching is enabled
+    
+    so it can be read by dist-installer-gui
+
+commit 56f463c367f0abe17badf4740d48a303c9365354
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 14:10:01 2023 -0400
+
+    output
+
+commit 1116b9d594cc8bc987f0278339f0e6efb7f0c1c2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:53:40 2023 -0400
+
+    newline
+
+commit cacf94d2cba2ceee4781478708313b66421f5579
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:52:27 2023 -0400
+
+    copyright
+
+commit e556524a2177e0685325a7b015ca5f4414d63424
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:51:49 2023 -0400
+
+    refactoring
+
+commit a79e80b28c43f2ee96653315edb8d97f757016cb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:51:10 2023 -0400
+
+    comments
+
+commit e9fab820bf2b8f8280f7a6d4d07ce5ab96ef603b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:50:50 2023 -0400
+
+    comments
+
+commit 06b7532d49936fa83d485e52e3c6d24a53df50ce
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:49:52 2023 -0400
+
+    comments
+
+commit 132e2f9635a6b5abc50168b04d9b5fdfda3a7523
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:40:22 2023 -0400
+
+    sh comparability fix
+
+commit 8fd985edad61545bf6dabd3fc19013a28a0cbabb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:38:56 2023 -0400
+
+    refactoring
+
+commit 2ef04b3be00230d73390bd017eb2b797c8e9d93c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:32:06 2023 -0400
+
+    refactoring
+
+commit 4ed92ca14d35497136e48018dba510dca963334d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:31:23 2023 -0400
+
+    refactoring
+
+commit 16e6064a41818b72c670b95cb97f6c9de7de854c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:30:20 2023 -0400
+
+    refactoring
+
+commit e19b6303503f329fae0ea9315039f491d5f93bb7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:29:37 2023 -0400
+
+    refactoring
+
+commit 3410ad77e8225537de4b4913ca27bb43dbfdba25
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:27:07 2023 -0400
+
+    Do not run the install script if it was `source`d.
+
+commit a4ba0d359a5aa27d22d22bd8b25deddddf2d6371
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 14 13:14:30 2023 -0400
+
+    output
+
+commit 685b092c70631ebfdb8832840cd54334c29a4470
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 12 12:52:17 2023 -0400
+
+    bumped changelog version
+
 commit 728d6730ee8034f5f90e99f27a7cdf3eeaefcea7
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Oct 12 12:10:55 2023 -0400
