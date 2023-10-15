@@ -2164,6 +2164,8 @@ get_su_cmd(){
       log warn "Credential Caching Status: 'No' - Without credential caching, this installer will prompt for sudo authorization multiple times. Consider configuring sudo credential caching to streamline the installation process."
       return 0
     fi
+    ## Used by dist-installer-gui.
+    credential_caching_status=yes
     log info "Credential Caching Status: 'Yes'"
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
@@ -3267,6 +3269,7 @@ set_default(){
   background_pid=""
   debian_derivative_detected=""
   virtualbox_linux_user_group="vboxusers"
+  credential_caching_status=""
 }
 
 
