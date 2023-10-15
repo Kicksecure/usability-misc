@@ -3521,8 +3521,9 @@ parse_opt(){
 log_term_and_file_bash(){
   touch "${log_file_user}"
   touch "${log_file_debug}"
-  true "exec > >(tee -a \"${log_file_user}\") 2> >(tee -a \"${log_file_debug}\" >&2) &"
-  exec > >(tee -a "${log_file_user}") 2> >(tee -a "${log_file_debug}" >&2) &
+  ## By appending '&' at the end, log_file_user would remain empty.
+  true "exec > >(tee -a \"${log_file_user}\") 2> >(tee -a \"${log_file_debug}\" >&2)"
+  exec > >(tee -a "${log_file_user}") 2> >(tee -a "${log_file_debug}" >&2)
   ## Bash has built-in feature to redirect xtrace to the specified file.
   # shellcheck disable=SC2039
   true "exec 9>>${log_file_debug}"
