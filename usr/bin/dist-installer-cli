@@ -6,7 +6,7 @@
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
-: ${BASH_SOURCE:=""}
+: "${BASH_SOURCE:=""}"
 
 if [ "${BASH_SOURCE}" != "${0}" ]; then
   ## Script was sourced.
