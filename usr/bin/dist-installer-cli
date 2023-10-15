@@ -3519,6 +3519,9 @@ parse_opt(){
 ## Bash supports process substitution and saving xtrace to a file, which is a
 ## simpler way to log to file and console.
 log_term_and_file_bash(){
+  touch "${log_file_user}"
+  touch "${log_file_debug}"
+  true "exec > >(tee -a \"${log_file_user}\") 2> >(tee -a \"${log_file_debug}\" >&2) &"
   exec > >(tee -a "${log_file_user}") 2> >(tee -a "${log_file_debug}" >&2) &
   ## Bash has built-in feature to redirect xtrace to the specified file.
   # shellcheck disable=SC2039
@@ -3527,7 +3530,6 @@ log_term_and_file_bash(){
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
-  touch "${log_file_debug}"
 }
 
 
