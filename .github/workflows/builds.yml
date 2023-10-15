@@ -91,5 +91,9 @@ jobs:
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo
             - name: Run VirtualBox Installer - back to default repository
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
+            ## When `source`d the script should exit in less than a second because it should not perform actual work.
+            ## If it was running longer that would mean that it can no longer be `source`d without actually running.
+            - name: Run Bash to test 'source'ing the script
+              run: sudo -u user -- timeout 5 bash -c "set -x && source usr/bin/dist-installer-cli"
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/dist-installer-cli
