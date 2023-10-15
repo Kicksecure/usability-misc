@@ -1940,20 +1940,20 @@ install_virtualbox_fedora(){
     virtualbox_qt_package_name="VirtualBox-7.0"
     return 0
 
-    log info "VirtualBox Version Detection: Running 'dnf search VirtualBox-*'. This can take a while..."
-    ## --cacheonly does not work.
-    ## Maybe dnf would need to be run with root_cmd.
-    virtualbox_version=$(dnf search "VirtualBox-*")
-    virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\.")
-    virtualbox_version=$(echo "$virtualbox_version" | tail -1)
-    virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
-    virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
-    virtualbox_version=$(echo "$virtualbox_version" | cut -d "." -f1)
-    virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
-    if test -z "$virtualbox_version"; then
-      ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
-      return 1
-    fi
+#     log info "VirtualBox Version Detection: Running 'dnf search VirtualBox-*'. This can take a while..."
+#     ## --cacheonly does not work.
+#     ## Maybe dnf would need to be run with root_cmd.
+#     virtualbox_version=$(dnf search "VirtualBox-*")
+#     virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\.")
+#     virtualbox_version=$(echo "$virtualbox_version" | tail -1)
+#     virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
+#     virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
+#     virtualbox_version=$(echo "$virtualbox_version" | cut -d "." -f1)
+#     virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
+#     if test -z "$virtualbox_version"; then
+#       ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
+#       return 1
+#     fi
   }
 
   has_virtualbox_qt=0
@@ -2155,6 +2155,7 @@ get_su_cmd(){
       return 0
     fi
     ## Used by dist-installer-gui.
+    # shellcheck disable=SC2034
     credential_caching_status=yes
     log info "Credential Caching Status: 'Yes'"
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
@@ -3269,6 +3270,7 @@ set_default(){
   background_pid=""
   debian_derivative_detected=""
   virtualbox_linux_user_group="vboxusers"
+  # shellcheck disable=SC2034
   credential_caching_status=""
 }
 
