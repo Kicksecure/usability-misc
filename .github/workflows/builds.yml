@@ -83,7 +83,6 @@ jobs:
                     exit 1
                   fi
             - name: Run default dist-installer-cli
-              #run: su -s /bin/bash user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci
             - name: Run VirtualBox Installer - default repository
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
