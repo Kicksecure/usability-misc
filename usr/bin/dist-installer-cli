@@ -3264,7 +3264,6 @@ set_default(){
   destroy_existing_guest=""
   testers=""
   allow_errors=""
-  no_show_errors=""
   mirror=""
   virtualbox_only=""
   url_version_domain=""
@@ -3349,9 +3348,6 @@ parse_opt(){
         ;;
       allow-errors)
         set_arg allow_errors 1
-        ;;
-      no-show-errors)
-        set_arg no_show_errors 1
         ;;
       redownload)
         set_arg redownload 1
