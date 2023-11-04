@@ -6,9 +6,8 @@
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
-: "${BASH_SOURCE:=""}"
 
-if [ "${BASH_SOURCE}" != "${0}" ]; then
+if test "${BASH_SOURCE-}" != "${0}"; then
   ## Script was sourced.
   ## This is useful for other programs / scripts to be able to `source` the
   ## functions of this script for code re-use. dist-installer-gui will do this.
@@ -1716,13 +1715,13 @@ install_repositories_for_virtualbox_on_debian(){
     backports_domain_debsource="${backports_clearnet}"
   fi
 
-  oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
   kicksecure_url="${kicksecure_prefix_debsource} ${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
   unstable_url="${unstable_prefix_debsource} ${protocol_prefix_debsource}${unstable_domain_debsource}${unstable_suffix_debsource}"
   fasttrack_url="${fasttrack_prefix_debsource} ${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
   backports_url="${backports_prefix_debsource} ${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
 
   if test "${oracle_repo}" = "1"; then
+    oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
     install_oracle_repository_debian
     return 0
   fi
@@ -3521,9 +3520,16 @@ parse_opt(){
 }
 
 
+## Logging mechanism.
 ## Bash supports process substitution and saving xtrace to a file, which is a
 ## simpler way to log to file and console.
-log_term_and_file_bash(){
+log_term_and_file(){
+  ## Discover if terminal is attached to stdout
+  if ! test -t 1; then
+    log warn "Output is not being sent to the terminal because terminal is not connected to stdout."
+    return 0
+  fi
+
   touch "${log_file_user}"
   touch "${log_file_debug}"
   ## By appending '&' at the end, log_file_user would remain empty.
@@ -3536,53 +3542,6 @@ log_term_and_file_bash(){
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
-}
-
-
-## Logging mechanism.
-log_term_and_file(){
-  ## Discover if terminal is attached to stdout
-  if ! test -t 1; then
-    log warn "Output is not being sent to the terminal because terminal is not connected to stdout."
-    return 0
-  fi
-
-  if test "${curr_shell}" = "bash"; then
-    log_term_and_file_bash
-    return 0
-  fi
-
-  ## Portable log and console redirection that has the downside of some
-  ## applications doing horrible line wrappings (apt >=2.6.1) if the output is
-  ## not a tty.
-
-  ## Send fd3 to the terminal
-  true "exec 3>$(tty)"
-  exec 3>>"$(tty)"
-  ## Current problem is that command-line option is necessary to hide stderr
-  ## by sending it to /dev/null, while the desired method would be to avoid
-  ## this workaround and simply be able to redirect with 2>/dev/null.
-  ## Send fd1/stdout to log file.
-  true "exec 1>>${log_file_user}"
-  exec 1>>"${log_file_user}"
-  ## Send fd2/stderr to log file by default.
-  true "exec 2>>${log_file_user}"
-  exec 2>>"${log_file_user}"
-  ## If no_show_errors is set, send fd2/stderr to /dev/null.
-  if test "${no_show_errors}" = "1"; then
-    true "exec 2>/dev/null"
-    exec 2>/dev/null
-  fi
-  ## Copy output of log file to fd3 and send process to the background.
-  if test -f "${log_file_debug}" && test "${log_level}" = "debug"; then
-    true "tail -qf ${log_file_debug} ${log_file_user} >&3 &"
-    tail -qf "${log_file_debug}" "${log_file_user}" >&3 &
-  else
-    true "tail -f ${log_file_user} >&3 &"
-    tail -f "${log_file_user}" >&3 &
-  fi
-  ## Get background job PID.
-  tail_pid="$!"
 }
 
 
