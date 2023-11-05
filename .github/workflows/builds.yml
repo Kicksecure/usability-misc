@@ -54,9 +54,9 @@ jobs:
             - name: System Basic Packages
               run: |
                   if command -v apt-get; then
-                    apt-get update -y && apt-get install -y shellcheck sudo adduser
+                    apt-get update -y && apt-get install -y shellcheck sudo adduser tor
                   elif command -v dnf; then
-                    dnf update -y && dnf install -y ShellCheck sudo
+                    dnf update -y && dnf install -y ShellCheck sudo tor
                   else
                     exit 1
                   fi
