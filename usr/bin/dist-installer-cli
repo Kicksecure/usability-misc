@@ -2432,19 +2432,21 @@ check_tor_proxy(){
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
   log info "Expected response header:"
   log info "'$expected_response_header'"
-  cmd_check_proxy="UTW_DEV_PASSTHROUGH=1 curl --silent --show-error --max-time 3 --head http://${proxy}"
+  cmd_check_proxy="env UTW_DEV_PASSTHROUGH=1 curl --silent --show-error --max-time 3 --head http://${proxy}"
   log info "Command used to check if proxy is functional:"
   log info "$cmd_check_proxy"
   # shellcheck disable=SC2086
-  actual_response_header="$(eval ${cmd_check_proxy} 2>&1 | head -1 | tr -d "\r")"
+  actual_response_header="$(${cmd_check_proxy} 2>&1)"
+  parsed_response_header=$(echo "${actual_response_header}" | head -1)
+  parsed_response_header=$(echo "${parsed_response_header}" | tr -d "\r")
   ## Globs are necessary to match patterns in the event the header has more
   ## characters them expected but still has the expected string.
   ## Rsync header response example:
   ##   bad response from proxy -- HTTP/1.0 501 Tor is not an HTTP Proxy
-  case "${actual_response_header}" in
+  case "${parsed_response_header}" in
     *"${expected_response_header}"*)
       log info "Received header:"
-      log info "'${actual_response_header}'"
+      log info "'${parsed_response_header}'"
       log notice "Connected to Tor SOCKS proxy successfully."
       return 0
       ;;
@@ -2455,10 +2457,15 @@ Unexpected proxy response, maybe not a Tor proxy?
 Debugging information:
 - Command used to check if proxy is functional:
 '$cmd_check_proxy'
+
 - Expected response header:
 '$expected_response_header'
-- Received header:
-'${actual_response_header}'"
+
+- Actual received header:
+'${actual_response_header}'
+
+- Parsed received header:
+'${parsed_response_header:}'"
       return 1
   esac
 }
