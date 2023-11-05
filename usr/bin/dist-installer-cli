@@ -239,7 +239,7 @@ ${underline}Non-Root Check:${nounderline} Running as root detected.
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
   test -z "${1:-}" && die 1 "${underline}root_cmd function:${nounderline} Failed to pass arguments to root_cmd."
-  : ${root_cmd_loglevel:=notice}
+  : "${root_cmd_loglevel:=notice}"
   case "${sucmd}" in
     su)
       ## Thanks to Congelli501 for su to not mess with quotes.
