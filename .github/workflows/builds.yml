@@ -70,6 +70,7 @@ jobs:
             - name: Enable Services
               run: |
                   service tor start
+                  service tor status
             - name: Normal user with sudo privileges
               run: |
                   if test -f /etc/debian_version; then
