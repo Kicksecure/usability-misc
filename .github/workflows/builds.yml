@@ -96,7 +96,7 @@ jobs:
             - name: Run VirtualBox Installer - Oracle repository - Clearnet
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo
             - name: Run VirtualBox Installer - Oracle repository - Onion
-            - run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo --onion
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo --onion
 
             - name: Run VirtualBox Installer - back to default repository
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
