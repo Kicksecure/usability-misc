@@ -73,8 +73,9 @@ jobs:
                     service tor start
                     service tor status
                   elif command -v dnf; then
-                    systemctl start tor || true
-                    systemctl status tor || true
+                    tor -f /etc/tor/torrc --RunAsDaemon 1
+                    sleep 3
+                    ps aux | grep tor
                   fi
             - name: Normal user with sudo privileges
               run: |
