@@ -901,7 +901,7 @@ get_independent_host_pkgs(){
 
 
 nested_virtualization_test() {
-  nested_virtualization_detected=""
+  #nested_virtualization_detected=""
   if test -z "${nested_virt_tool:-}"; then
     ## No hard fail, not a requirement, good to have only.
     log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
@@ -911,7 +911,7 @@ nested_virtualization_test() {
     else
       ## Check if we are a guest of virtualization.
       if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
-        nested_virtualization_detected=true
+        #nested_virtualization_detected=true
         log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
   - This might be a user error.
   - This installer is designed to run on the host operating system.
@@ -923,7 +923,7 @@ nested_virtualization_test() {
   fi
 
   if test -f /usr/share/qubes/marker-vm; then
-    nested_virtualization_detected=true
+    #nested_virtualization_detected=true
     log warn "${underline}QubesOS Detection Test:${nounderline} 'Qubes detected'
   - The installer is not designed for execution within Qubes.
   - Useful only for development purposes.
