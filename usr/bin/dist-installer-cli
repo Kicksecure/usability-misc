@@ -932,6 +932,23 @@ secure_boot_test() {
 }
 
 
+kernel_modules_load() {
+  local modules_disabled
+  if ! modules_disabled=$(cat /proc/sys/kernel/modules_disabled) ; then
+    module_load_reboot_required=maybe
+    log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /proc/sys/kernel/modules_disabled)"
+    return 0
+  fi
+  if [ "$modules_disabled" = "0" ]; then
+    module_load_reboot_required=no
+    log info "${underline}Kernel Module Load Check Result:${nounderline} modules can be load: 'yes' (sysctl kernel.modules_disabled=0 is set.)"
+    return 0
+  fi
+  module_load_reboot_required=yes
+  log info "${underline}Kernel Module Load Check Result:${nounderline} modules can be load: 'no' (sysctl kernel.modules_disabled=1 is set.)"
+}
+
+
 update_sources(){
   log notice "Updating package list."
 
@@ -2398,6 +2415,7 @@ pre_check(){
   get_independent_host_pkgs
   nested_virtualization_test
   secure_boot_test
+  kernel_modules_load
 
   ## onion=1 -- Always torify onion connections.
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
