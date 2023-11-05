@@ -1656,7 +1656,7 @@ kernel_modules_check() {
   if kernel_module_modprobe_output=$(root_cmd_loglevel=null root_cmd modprobe vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module modprobe output: '$kernel_module_modprobe_output'"
   else
-    log warn ${underline}"VirtualBox Kernel modprobe output${nounderline}: '$kernel_module_modprobe_output'"
+    log warn "${underline}VirtualBox Kernel modprobe output${nounderline}: '$kernel_module_modprobe_output'"
   fi
 }
 
