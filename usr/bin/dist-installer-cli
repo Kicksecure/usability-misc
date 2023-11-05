@@ -934,18 +934,19 @@ secure_boot_test() {
 
 kernel_modules_load() {
   local modules_disabled
-  if ! modules_disabled=$(cat /proc/sys/kernel/modules_disabled) ; then
+  ## Does usually not require root but might on some hardened systems.
+  if ! modules_disabled=$(root_cmd cat /proc/sys/kernel/modules_disabled) ; then
     module_load_reboot_required=maybe
     log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /proc/sys/kernel/modules_disabled)"
     return 0
   fi
   if [ "$modules_disabled" = "0" ]; then
     module_load_reboot_required=no
-    log info "${underline}Kernel Module Load Check Result:${nounderline} modules can be load: 'yes' (sysctl kernel.modules_disabled=0 is set.)"
+    log info "Kernel Module Load Check Result: 'yes' - modules can be load. (sysctl kernel.modules_disabled=0 is set.)"
     return 0
   fi
   module_load_reboot_required=yes
-  log info "${underline}Kernel Module Load Check Result:${nounderline} modules can be load: 'no' (sysctl kernel.modules_disabled=1 is set.)"
+  log info "${underline}Kernel Module Load Check Result:${nounderline}: 'no' - modules cannot be load. (sysctl kernel.modules_disabled=1 is set.)"
 }
 
 
@@ -1557,7 +1558,7 @@ install_virtualbox_fedora_common_end(){
 }
 
 
-## End installation of VirtualBox
+## End installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_end(){
   if ! has vboxmanage ; then
     if test "${dry_run}" = "1"; then
@@ -1568,6 +1569,19 @@ install_virtualbox_debian_common_end(){
   fi
 
   add_user_to_vbox_group
+}
+
+
+kernel_modules_check() {
+  if ! [ "${hypervisor}" = "virtualbox" ]; then
+    return 0
+  fi
+
+  if ! test -f /dev/vboxdrv ; then
+    log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file /dev/vboxdrv does not exist. This probably means that the vboxdrv kernel module has not been load yet."
+    return 0
+  fi
+  log warn "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
 }
 
 
@@ -2413,6 +2427,7 @@ pre_check(){
   get_system_stat
   get_host_pkgs
   get_independent_host_pkgs
+  kernel_modules_check
   nested_virtualization_test
   secure_boot_test
   kernel_modules_load
