@@ -1264,7 +1264,8 @@ check_guest_boot(){
 Kernel module has been load: $kernel_module_has_been_load
 Kernel module can be load: $kernel_modules_can_be_load (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
 Only signed kernel modules can be load: $modules_signed_only
-Kernel module vboxdrv signer: $kernel_module_signer"
+Kernel module vboxdrv signer: $kernel_module_signer
+kernel_module_modprobe_output ($sucmd modprobe vboxdrv): $kernel_module_modprobe_output"
 
     if [ "$kernel_modules_can_be_load" = "true" ]; then
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel module load have not been load yet.
@@ -1634,10 +1635,18 @@ kernel_modules_check() {
     log warn "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
   fi
 
+  log info "Running: $ $sucmd -- modinfo --field signer vboxdrv"
   if kernel_module_signer=$(root_cmd_loglevel=null root_cmd modinfo --field signer vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module Signer: '$kernel_module_signer'"
   else
     log warn ${underline}"VirtualBox Kernel Module Signer${nounderline}: '$kernel_module_signer'"
+  fi
+
+  log info "Running: $ $sucmd -- modprobe vboxdrv"
+  if kernel_module_modprobe_output=$(root_cmd_loglevel=null root_cmd modprobe vboxdrv 2>&1) ; then
+    log info "VirtualBox Kernel Module modprobe output: '$kernel_module_modprobe_output'"
+  else
+    log warn ${underline}"VirtualBox Kernel modprobe output${nounderline}: '$kernel_module_modprobe_output'"
   fi
 }
 
