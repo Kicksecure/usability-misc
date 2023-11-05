@@ -239,19 +239,20 @@ ${underline}Non-Root Check:${nounderline} Running as root detected.
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
   test -z "${1:-}" && die 1 "${underline}root_cmd function:${nounderline} Failed to pass arguments to root_cmd."
+  : ${root_cmd_loglevel:=notice}
   case "${sucmd}" in
     su)
       ## Thanks to Congelli501 for su to not mess with quotes.
       ## https://stackoverflow.com/a/32966744/2605155
       cmd="$(which -- "${1}")"
       shift
-      log_run notice su root -s "${cmd}" -- "${@}"
+      log_run "$root_cmd_loglevel" su root -s "${cmd}" -- "${@}"
       ;;
     sudo)
-      log_run notice sudo -- "${@}"
+      log_run "$root_cmd_loglevel" sudo -- "${@}"
       ;;
     doas)
-      log_run notice doas -u root -- "${@}"
+      log_run "$root_cmd_loglevel" doas -u root -- "${@}"
       ;;
     *)
       die 1 "${underline}root_cmd function:${nounderline} root_cmd does not support sucmd: '${sucmd}'"
@@ -606,6 +607,9 @@ log(){
     notice)
       log_color="${green}"
       ;;
+    null)
+      true
+      ;;
     *)
       log bug "Unsupported log type: '${log_type}'"
       die 1 "Please report this bug."
@@ -626,9 +630,12 @@ log(){
       printf %s"${log_full}\n" 1>&2
       return 0
       ;;
+    null)
+      true
+      ;;
   esac
   ## reverse importance order is required, excluding 'error'
-  all_log_levels="warn notice info debug"
+  all_log_levels="warn notice info debug null"
   if echo " ${all_log_levels} " | grep -o ".* ${log_level} " \
     | grep -q " ${log_type}"
   then
@@ -636,6 +643,9 @@ log(){
       warn)
         ## send warning to stdout and stderr
         printf %s"${log_full}\n" 1>&2
+        ;;
+      null)
+        true
         ;;
       *)
         printf %s"${log_full}\n"
@@ -1253,7 +1263,8 @@ check_guest_boot(){
     log warn "Debugging information:
 Kernel module has been load: $kernel_module_has_been_load
 Kernel module can be load: $kernel_modules_can_be_load (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
-Only signed kernel modules can be load: $modules_signed_only"
+Only signed kernel modules can be load: $modules_signed_only
+Kernel module vboxdrv signer: $kernel_module_signer"
 
     if [ "$kernel_modules_can_be_load" = "true" ]; then
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel module load have not been load yet.
@@ -1618,10 +1629,16 @@ kernel_modules_check() {
   if ! test -f /dev/vboxdrv ; then
     kernel_module_has_been_load=false
     log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file /dev/vboxdrv does not exist. This probably means that the vboxdrv kernel module has not been load yet."
-    return 0
+  else
+    kernel_module_has_been_load=true
+    log warn "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
   fi
-  kernel_module_has_been_load=true
-  log warn "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
+
+  if kernel_module_signer=$(root_cmd_loglevel=null root_cmd modinfo --field signer vboxdrv 2>&1) ; then
+    log info "VirtualBox Kernel Module Signer: '$kernel_module_signer'"
+  else
+    log warn ${underline}"VirtualBox Kernel Module Signer${nounderline}: '$kernel_module_signer'"
+  fi
 }
 
 
