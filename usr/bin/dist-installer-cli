@@ -935,17 +935,19 @@ secure_boot_test() {
 kernel_modules_load() {
   local modules_disabled
   ## Does usually not require root but might on some hardened systems.
-  if ! modules_disabled=$(root_cmd cat /proc/sys/kernel/modules_disabled) ; then
-    module_load_reboot_required=maybe
+  ## TODO: use root_cmd
+  ## TODO: allow root_cmd or similar to return output
+  if ! modules_disabled=$(cat /proc/sys/kernel/modules_disabled) ; then
+    kernel_modules_can_be_load=maybe
     log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /proc/sys/kernel/modules_disabled)"
     return 0
   fi
   if [ "$modules_disabled" = "0" ]; then
-    module_load_reboot_required=no
+    kernel_modules_can_be_load=true
     log info "Kernel Module Load Check Result: 'yes' - modules can be load. (sysctl kernel.modules_disabled=0 is set.)"
     return 0
   fi
-  module_load_reboot_required=yes
+  kernel_modules_can_be_load=false
   log info "${underline}Kernel Module Load Check Result:${nounderline}: 'no' - modules cannot be load. (sysctl kernel.modules_disabled=1 is set.)"
 }
 
@@ -1213,7 +1215,6 @@ check_vm_exists(){
 
 ## Check if guest should start or not
 check_guest_boot(){
-  log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
 
   case "${guest}" in
     whonix)
@@ -1224,6 +1225,30 @@ check_guest_boot(){
       log notice "Available guest: '${guest_full_vm_name_kicksecure}'"
       ;;
   esac
+
+
+  if [ "$kernel_module_has_been_load" = "false" ]; then
+    ## Kernel modules have not been load.
+
+    log warn "Debugging information:
+Kernel module has been load: $kernel_module_has_been_load
+Kernel module can be load: $kernel_modules_can_be_load (modules can be load. (sysctl kernel.modules_disabled=0 is set.)"
+
+    if [ "$kernel_modules_can_be_load" = "true" ]; then
+      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel module load have not been load yet.
+  - Kernel modules can be load in theory, should be loaded by now, but are not.
+  - This is a VirtualBox installation issue."
+      virtualbox_start_failed
+    else
+      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'REBOOT REQUIRED'${nobold}${nocolor} - because kernel module load is disabled on your system:
+  - The system administrator might have disabled module loading.
+  - It might have been disabled by Kicksecure / package security-misc.
+  - You can re-run this installer again after reboot."
+      virtualbox_start_failed
+    fi
+  fi
+
+  log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
 
   if test "${no_boot}" = "1"; then
     log info "no_boot is set."
@@ -1419,21 +1444,13 @@ start_virtualbox_gui() {
 
 
 virtualbox_start_failed() {
-  if [ "$nested_virtualization_detected" = "true" ] || [ "$virt_detection_success" = "false" ]; then
-    die 106 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
+  die 106 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
   - The installer succeeded with download and import, but
   - failed to start the virtual machines (VMs).
   - The root cause for this issue is likely not the installer.
   - This issue would likely also happen if the user tried to manually start the VMs.
   - This is likely happening due to the virtualization related warnings that have been reported above.
-  - Resolving these issues (as per documentation hyperlinks above) would likely resolve this issue."
-  fi
-  die 107 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
-  - The installer succeeded with download and import, but
-  - failed to start the virtual machines (VMs).
-  - The root cause for this issue is likely not the installer.
-  - This issue would likely also happen if the user tried to manually start the VMs.
-  - Refer to user documentation:
+  - Resolving these issues (as per documentation hyperlinks above) would likely resolve this issue.
   ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
 
@@ -1578,9 +1595,11 @@ kernel_modules_check() {
   fi
 
   if ! test -f /dev/vboxdrv ; then
+    kernel_module_has_been_load=false
     log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file /dev/vboxdrv does not exist. This probably means that the vboxdrv kernel module has not been load yet."
     return 0
   fi
+  kernel_module_has_been_load=true
   log warn "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
 }
 
