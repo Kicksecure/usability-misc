@@ -67,6 +67,10 @@ jobs:
                   echo "${PATH}"
                   cat /etc/sudoers
                   ls /etc/sudoers.d
+            - name: Enable Services
+              run: |
+                  systemctl start tor || true
+                  service tor start || true
             - name: Normal user with sudo privileges
               run: |
                   if test -f /etc/debian_version; then
