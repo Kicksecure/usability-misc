@@ -952,6 +952,26 @@ kernel_modules_load() {
 }
 
 
+kernel_modules_signed_only() {
+  local sig_enforce
+  ## Does usually not require root but might on some hardened systems.
+  ## TODO: use root_cmd
+  ## TODO: allow root_cmd or similar to return output
+  if ! sig_enforce=$(cat /sys/module/module/parameters/sig_enforce) ; then
+    modules_signed_only=maybe
+    log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
+    return 0
+  fi
+  if [ "$sig_enforce" = "Y" ]; then
+    modules_signed_only=true
+    log info "Kernel Module Load Check Result: 'yes' - only signed modules can be load. (kernel parameter module.sig_enforce=1 might be set.)"
+    return 0
+  fi
+  modules_signed_only=false
+  log info "${underline}Kernel Module Load Check Result:${nounderline}: 'no' - unsigned modules can be load."
+}
+
+
 update_sources(){
   log notice "Updating package list."
 
@@ -1232,7 +1252,8 @@ check_guest_boot(){
 
     log warn "Debugging information:
 Kernel module has been load: $kernel_module_has_been_load
-Kernel module can be load: $kernel_modules_can_be_load (modules can be load. (sysctl kernel.modules_disabled=0 is set.)"
+Kernel module can be load: $kernel_modules_can_be_load (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
+Only signed kernel modules can be load: $modules_signed_only"
 
     if [ "$kernel_modules_can_be_load" = "true" ]; then
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel module load have not been load yet.
@@ -2450,6 +2471,7 @@ pre_check(){
   nested_virtualization_test
   secure_boot_test
   kernel_modules_load
+  kernel_modules_signed_only
 
   ## onion=1 -- Always torify onion connections.
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
