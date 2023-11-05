@@ -82,25 +82,31 @@ jobs:
                   else
                     exit 1
                   fi
-            - name: Run default dist-installer-cli
-              run: |
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --onion
-            - name: Run VirtualBox Installer - default repository
-              run: |
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --onion
-            - name: Run VirtualBox Installer - Oracle repository
-              run: |
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo --onion
+
+            - name: Run default dist-installer-cli - Clearnet
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci
+            - name: Run default dist-installer-cli - Onion
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --onion
+
+            - name: Run VirtualBox Installer - default repository - Clearnet
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
+            - name: Run VirtualBox Installer - default repository - Onion
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --onion
+
+            - name: Run VirtualBox Installer - Oracle repository - Clearnet
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo
+            - name: Run VirtualBox Installer - Oracle repository - Onion
+            - run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo --onion
+
             - name: Run VirtualBox Installer - back to default repository
-              run: |
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
-                  sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --onion
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
+            - name: Run VirtualBox Installer - back to default repository - Clearnet
+              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --onion
+
             ## When `source`d the script should exit in less than a second because it should not perform actual work.
             ## If it was running longer that would mean that it can no longer be `source`d without actually running.
             - name: Run Bash to test 'source'ing the script
               run: sudo -u user -- timeout 5 bash -c "set -x && source usr/bin/dist-installer-cli"
+
             - name: Run Installer ShellCheck
               run: shellcheck usr/bin/dist-installer-cli
