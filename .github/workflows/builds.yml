@@ -69,8 +69,7 @@ jobs:
                   ls /etc/sudoers.d
             - name: Enable Services
               run: |
-                  systemctl start tor || true
-                  service tor start || true
+                  service tor start
             - name: Normal user with sudo privileges
               run: |
                   if test -f /etc/debian_version; then
