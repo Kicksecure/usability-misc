@@ -2465,7 +2465,7 @@ Debugging information:
 '${actual_response_header}'
 
 - Parsed received header:
-'${parsed_response_header:}'"
+'${parsed_response_header}'"
       return 1
   esac
 }
