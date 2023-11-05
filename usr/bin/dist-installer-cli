@@ -1647,7 +1647,7 @@ kernel_modules_check() {
   if kernel_module_signer=$(root_cmd_loglevel=null root_cmd modinfo --field signer vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module Signer: '$kernel_module_signer'"
   else
-    log warn ${underline}"VirtualBox Kernel Module Signer${nounderline}: '$kernel_module_signer'"
+    log warn "${underline}VirtualBox Kernel Module Signer${nounderline}: '$kernel_module_signer'"
   fi
 
   ## Debugging.
