@@ -947,9 +947,7 @@ secure_boot_test() {
 kernel_modules_load() {
   local modules_disabled
   ## Does usually not require root but might on some hardened systems.
-  ## TODO: use root_cmd
-  ## TODO: allow root_cmd or similar to return output
-  if ! modules_disabled=$(cat /proc/sys/kernel/modules_disabled) ; then
+  if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat /proc/sys/kernel/modules_disabled) ; then
     kernel_modules_can_be_load=maybe
     log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /proc/sys/kernel/modules_disabled)"
     return 0
@@ -967,9 +965,7 @@ kernel_modules_load() {
 kernel_modules_signed_only() {
   local sig_enforce
   ## Does usually not require root but might on some hardened systems.
-  ## TODO: use root_cmd
-  ## TODO: allow root_cmd or similar to return output
-  if ! sig_enforce=$(cat /sys/module/module/parameters/sig_enforce) ; then
+  if ! sig_enforce=$(root_cmd_loglevel=null root_cmd cat /sys/module/module/parameters/sig_enforce) ; then
     modules_signed_only=maybe
     log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
     return 0
