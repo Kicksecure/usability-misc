@@ -1557,7 +1557,7 @@ install_virtualbox_fedora_common_end(){
 }
 
 
-## End installation of VirtualBox on Debian and derived systems.
+## End installation of VirtualBox
 install_virtualbox_debian_common_end(){
   if ! has vboxmanage ; then
     if test "${dry_run}" = "1"; then
