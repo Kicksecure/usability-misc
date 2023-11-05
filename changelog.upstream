@@ -1,3 +1,223 @@
+commit 71fde154e1976f17abf923adf4a852c556d21eea
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:35:59 2023 -0500
+
+    shellcheck
+
+commit 862d0c5074e3fdec11548e7c6810119a328414d8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:34:08 2023 -0500
+
+    improve kernel modules checks
+
+commit c8e8ab6082b807ca5cc002923b17fd7f7e9f01b8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:32:28 2023 -0500
+
+    output
+
+commit 8ee87b0ab4af09740d2328ba2d46930d40abd984
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:31:39 2023 -0500
+
+    shellcheck
+
+commit 0d4310d67531beaa5fc113eb6f725b06a26393e9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:30:28 2023 -0500
+
+    fix
+
+commit 3d358172ac198e60cb2fd6a39c62e69e8fa3f147
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:29:49 2023 -0500
+
+    fix
+
+commit 4ebf0a4478cded2b2f732e6f667c44b93925dfe4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:28:39 2023 -0500
+
+    show Secure Boot status in case of VirtualBox kernel module could not be load
+
+commit d9a4ad3c8160e96159825aac9cc8812c58ac3d07
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:22:47 2023 -0500
+
+    CI
+
+commit 38b04569e370cd48ed7bab052760326758bb36a8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:20:40 2023 -0500
+
+    comments
+
+commit de39d89ea5dc67b72e98c9a233a45e9434bd0c34
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:19:51 2023 -0500
+
+    CI
+
+commit 137537df8671f841887aa37232cc7a452a3f332c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:16:43 2023 -0500
+
+    check output of modprobe vboxdrv
+
+commit 3f6da07c7ddac5a5dccf1ca2f5c79fca0537bdb3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 13:07:11 2023 -0500
+
+    show the signer of the vboxdrv kernel module
+
+commit 5b6805547b31c53e37b98c00ec3cba2f559082f6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 12:43:30 2023 -0500
+
+    check if only signed kernel modules can be load
+
+commit d433f64e5f1733d7423e86f0e0587299defa7bc7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 11:07:14 2023 -0500
+
+    check if kernel modules can be load and have been load
+
+commit 3b84bca313b2bbe78fca212903fe2d959e071a66
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 09:36:25 2023 -0500
+
+    check if vboxdrv kernel module has been load
+
+commit 3f6109afc3ff3ebc7ce4cb06570bcc9c82372d41
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 08:59:20 2023 -0500
+
+    CI Tor
+
+commit 33ad54566c288cb68a61bc8a5ff9c80e8fdcd1a4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 21:34:30 2023 -0400
+
+    fix comment
+
+commit 0fd1bbd015ebddb263b54016bf65b5fe73b720ea
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 21:30:59 2023 -0400
+
+    check if kernel modules can be load
+
+commit 8dcbacf41ca9df3b751a79f00ac0ce85a3a206e6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 21:13:54 2023 -0400
+
+    CI Tor
+
+commit 4c595af5508f453d189212705dd273d0604831a5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 21:10:47 2023 -0400
+
+    fix
+
+commit f9fb58c2fc54acac7468a6aa2da4111f1cc552f5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 21:05:40 2023 -0400
+
+    refactoring check_tor_proxy
+
+commit 3439108b836ec3e3af943e300eb873dad057c6c7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 20:50:11 2023 -0400
+
+    CI
+
+commit b4ee109aa8041c169c7b2e6a9345c155ea3f8b21
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 20:49:54 2023 -0400
+
+    CI
+
+commit 57ad6eee1a09bba21e01d44a3363e49b9e9d47a1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 20:45:29 2023 -0400
+
+    CI
+
+commit 7635133f8ef7544c5aa3c9c1d87e1d5fb07afe87
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 20:05:28 2023 -0400
+
+    CI
+
+commit 57b01bc22aaff80eb916d1f656c75fefcd284afa
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 20:03:20 2023 -0400
+
+    CI Tor
+
+commit 677c0a6d9d9d2289679ae00176f83501333fa247
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 20:01:15 2023 -0400
+
+    CI onion
+
+commit 3be6993b5304f6dc48326bb879c119da5b407bdd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 19:53:42 2023 -0400
+
+    onion
+
+commit f9ecdcb845b6ed7d2da01c699d579a20dfd7d5d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 19:52:29 2023 -0400
+
+    refactoring
+
+commit ff0fb1df2f5396e6078ceba8d05b057a7eb8d2ae
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 19:49:59 2023 -0400
+
+    cleanup
+
+commit e98e75f94781304f0e8d19de20ac34668f03c6cc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 19:47:16 2023 -0400
+
+    fix
+    
+    Invalid workflow file
+    The workflow is not valid. .github/workflows/builds.yml (Line: 94, Col: 15): 'run' is already defined
+
+commit f5349756a29c753174d7a6c2b1013d69b66c0209
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 19:03:16 2023 -0400
+
+    remove --no-show-errors leftovers
+
+commit 2ff96c46b9e07c9264e1ed49904af6f21305b508
+Merge: e271f4b b25e6a7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 4 18:55:36 2023 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit b25e6a732b6418c71f40491c8a99ce50e77d8b77
+Author: grass <grass@danwin1210.de>
+Date:   Sat Nov 4 22:00:30 2023 +0000
+
+    Phase out sh compatibility
+
+commit 090e3a81535bf58e335e3442b2190f5ddb073219
+Author: grass <grass@danwin1210.de>
+Date:   Sat Nov 4 21:55:29 2023 +0000
+
+    Fix unbound variable
+
+commit e271f4bb6d8bac4a08a290771501bba0a705731d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 21 12:35:42 2023 -0400
+
+    bumped changelog version
+
 commit 779dd2545dbfe435f1cb0b86e57da25a205ca85d
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Oct 21 12:25:38 2023 -0400
