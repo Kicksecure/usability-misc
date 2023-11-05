@@ -1639,6 +1639,7 @@ kernel_modules_check() {
     log warn "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
   fi
 
+  ## Debugging.
   log info "Running: $ $sucmd -- modinfo --field signer vboxdrv"
   if kernel_module_signer=$(root_cmd_loglevel=null root_cmd modinfo --field signer vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module Signer: '$kernel_module_signer'"
@@ -1646,6 +1647,8 @@ kernel_modules_check() {
     log warn ${underline}"VirtualBox Kernel Module Signer${nounderline}: '$kernel_module_signer'"
   fi
 
+  ## Debugging.
+  ## modprobe should be automatic but if it fails, figure out why.
   log info "Running: $ $sucmd -- modprobe vboxdrv"
   if kernel_module_modprobe_output=$(root_cmd_loglevel=null root_cmd modprobe vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module modprobe output: '$kernel_module_modprobe_output'"
