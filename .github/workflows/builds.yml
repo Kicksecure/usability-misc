@@ -73,7 +73,7 @@ jobs:
                     service tor start
                     service tor status
                   elif command -v dnf; then
-                    tor -f /etc/tor/torrc --RunAsDaemon 1
+                    sudo -u toranon tor -f /etc/tor/torrc --RunAsDaemon 1
                     sleep 3
                     ps aux | grep tor
                   fi
