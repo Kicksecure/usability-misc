@@ -935,9 +935,11 @@ nested_virtualization_test() {
 secure_boot_test() {
   local mokutil_output
   if mokutil_output=$(mokutil --sb-state 2>&1) ; then
-    log info "${underline}Secure Boot Check Result:${nounderline} 'enabled' (mokutil_output: '$mokutil_output') Ok."
+    secure_boot_status="'enabled' (mokutil_output: '$mokutil_output')"
+    log info "${underline}Secure Boot Check Result:${nounderline} $secure_boot_status Ok."
   else
-    log info "${underline}Secure Boot Check Result:${nounderline} 'disabled' (mokutil_output: '$mokutil_output') Ok."
+    secure_boot_status="'disabled' (mokutil_output: '$mokutil_output')"
+    log info "${underline}Secure Boot Check Result:${nounderline} $secure_boot_status Ok."
   fi
 }
 
@@ -1261,6 +1263,7 @@ check_guest_boot(){
     ## Kernel modules have not been load.
 
     log warn "Debugging information:
+Secure Boot Status: $secure_boot_status
 Kernel module has been load: $kernel_module_has_been_load
 Kernel module can be load: $kernel_modules_can_be_load (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
 Only signed kernel modules can be load: $modules_signed_only
