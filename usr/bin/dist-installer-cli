@@ -1652,7 +1652,7 @@ kernel_modules_check() {
 
   ## Debugging.
   ## modprobe should be automatic but if it fails, figure out why.
-  log info "Running: $ $sucmd -- modprobe vboxdrv"
+  log notice "Running: $ $sucmd -- modprobe vboxdrv"
   if kernel_module_modprobe_output=$(root_cmd_loglevel=null root_cmd modprobe vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module modprobe output: '$kernel_module_modprobe_output'"
   else
