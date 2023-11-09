@@ -363,36 +363,36 @@ get_os(){
     distro_derivative_version=$(cat /etc/whonix_version)
   fi
 
-  log notice "Detected architecture: '${arch}'"
-  log notice "Detected system: '${os}'"
-  log notice "Detected distribution / derivative name: '${distro}' / '${distro_derivative_name_pretty}'"
-  log notice "Detected distribution / derivative version: '${distro_version}' / '${distro_derivative_version}'"
+  log notice "Architecture detected:  '${arch}'"
+  log notice "System detected: '${os}'"
+  log notice "Distribution/Derivative name detected: '${distro}' / '${distro_derivative_name_pretty}'"
+  log notice "Distribution/Derivative version detected: '${distro_version}' / '${distro_derivative_version}'"
 
   if [ "$debian_testing_or_unstable_detected" = "true" ]; then
     log notice "Debian testing or unstable detection: 'success'"
     if test "${oracle_repo}" = "1"; then
-      log error "Attempting to use --oracle-repo on Debian testing."
+      log error "You are attempting to use --oracle-repo on Debian testing. This is impossible."
       if test "${ci}" = "1"; then
-        die 0 "${underline}Distribution Check:${nounderline} Oracle doesn't provide a Debian testing or unstable repository. Skipped on CI to avoid breaking the CI testing."
+        die 0 "${underline}Distribution Test Result:${nounderline} Oracle doesn't provide a Debian testing or unstable repository. Skipped on CI to avoid breaking the CI testing."
       else
-        die 101 "${underline}Distribution Check:${nounderline} Oracle doesn't provide a Debian testing or unstable repository."
+        die 101 "${underline}Distribution Test Result:${nounderline} Oracle doesn't provide a Debian testing or unstable repository."
       fi
     fi
-    log info "Not attempting to use --oracle-repo on Debian testing."
+    log info "Not attempting to use --oracle-repo on Debian testing, good."
     ## In Debian testing distro_version was previously observed as 'n/a' or empty, because
     ## Debian testing /etc/os-release does not contain VERSION_ID.
     return 0
   fi
-  log info "Debian testing or unstable detection: 'Not detected.'"
+  log info "Debian testing or unstable detection: 'not detected'"
 
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
   if [ -z "${distro_version}" ]; then
     if test -f /etc/os-release; then
-      log notice "File /etc/os-release contents:"
+      log notice "Contents of /etc/os-release:"
       cat /etc/os-release || true
     else
-      log notice "File /etc/os-release does not exist."
+      log notice "/etc/os-release file not found."
     fi
     die 101 "${underline}Distribution Check:${nounderline} Failed to find distribution version."
     ## it will fail later on get_host_pkgs if the system is not supported.
@@ -611,7 +611,7 @@ log(){
       true
       ;;
     *)
-      log bug "Unsupported log type: '${log_type}'"
+      log bug "Unsupported log type specified: '${log_type}'"
       die 1 "Please report this bug."
   esac
   ## uniform log format
@@ -667,7 +667,7 @@ log(){
 die(){
   log error "${2}"
   if test "${allow_errors}" = "1"; then
-    log warn "Skipping exiting now with code '${1}' because allow_errors is set."
+    log warn "Skipping termination because of with code '${1}' due to 'allow_errors' setting."
     return 0
   fi
   case "${1}" in
@@ -675,7 +675,7 @@ die(){
       true
       ;;
     *)
-      log error "Aborting installer."
+      log error "Installer aborting."
       ;;
   esac
   exit "${1}"
@@ -689,19 +689,19 @@ log_run(){
   ## Extra spaces appearing when breaking log_run on multiple lines.
   command_without_extrarenous_spaces="$(echo "${@}" | tr -s " ")"
   if test "${dry_run}" = "1"; then
-    log "${level}" "Skipping: $ ${command_without_extrarenous_spaces}"
+    log "${level}" "Skipping command: $ ${command_without_extrarenous_spaces}"
     return 0
   fi
 
   ## TODO: Still an issue? CI expects no output from root_cmd() which calls log_run().
 
   if test "${run_background}" = "1"; then
-    log "${level}" "Running: $ ${command_without_extrarenous_spaces} &"
+    log "${level}" "Background command starting: $ ${command_without_extrarenous_spaces} &"
     "${@}" &
     background_pid="$!"
     disown "$background_pid"
   else
-    log "${level}" "Running: $ ${command_without_extrarenous_spaces}"
+    log "${level}" "Command executing: $ ${command_without_extrarenous_spaces}"
     "${@}" || return 1
   fi
 }
@@ -715,7 +715,7 @@ get_elapsed_time(){
 
 ## Log elapsed time, the name explains itself.
 log_time(){
-  log info "Elapsed time: $(get_elapsed_time)s."
+  log info "Time elapsed: $(get_elapsed_time)s."
 }
 
 
@@ -752,7 +752,7 @@ handle_exit(){
   # shellcheck disable=SC3028
   if test -n "${BASH_COMMAND:-}"; then
     # shellcheck disable=SC2039,3028,3054
-    log notice "Executed script, function, command: '${0}' '${FUNCNAME[1]}' '${BASH_COMMAND}'"
+    log notice "Executed script, function, command executed: '${0}' '${FUNCNAME[1]}' '${BASH_COMMAND}'"
   else
     log notice "Executed script: '${0}'"
   fi
