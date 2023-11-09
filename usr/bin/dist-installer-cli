@@ -981,7 +981,7 @@ kernel_modules_signed_only() {
 
 
 update_sources(){
-  log notice "Updating package list."
+  log notice "Updating package list..."
 
   if tty >/dev/null >&1 ; then
     console_write_command="tee /dev/tty"
@@ -2116,8 +2116,10 @@ install_virtualbox_debian(){
     install_pkg gcc udev
   fi
 
+.
+  linux_image="linux-image-$(dpkg --print-architecture)"
   linux_headers="linux-headers-$(dpkg --print-architecture)"
-  install_pkg "${linux_headers}"
+  install_pkg "${linux_image}" "${linux_headers}"
 
   has_virtualbox_qt=0
   if get_virtualbox_version_debian ; then
