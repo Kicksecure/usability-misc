@@ -1661,13 +1661,13 @@ install_repositories_for_virtualbox_on_debian(){
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="${distro_codename_real}"
 
-  log info "VirtualBox Package Availability Check: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
+  log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
   if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
     ## Package 'virtualbox' is installable on Debian unstable ("sid").
-    log notice "VirtualBox Package Availability Check: 'success' - Package 'virtualbox-qt' is already installable from an already enabled repository. No need to add any extra repositories."
+    log notice "VirtualBox Package Availability Test Result: 'success' - Package 'virtualbox-qt' is already installable from an already enabled repository. No need to add any extra repositories."
     return 0
   fi
-  log info "VirtualBox Package Availability Check: Not yet Available. Enabling additional repository..."
+  log info "VirtualBox Package Availability Test Result: Not yet Available. Enabling additional repository..."
 
   if test "${dev}" = "1"; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
@@ -1776,7 +1776,7 @@ install_repositories_for_virtualbox_on_debian(){
     ## tor by other means to ensure a working connection (bridges, proxy etc).
     log info "APT is supposed to be torified, checking if package apt-transport-tor is installed."
     test_pkg apt-transport-tor ||
-      die 1 "${underline}Torified APT CHECK:${nounderline} APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
+      die 1 "${underline}Torified APT Test Result:${nounderline} APT is supposed to be torified, but package apt-transport-tor is not installed. Please install."
   fi
 
   ## If user has onion repositories configured, prefer it.
@@ -2479,7 +2479,7 @@ get_system_stat(){
 
   if [ "${free_space_available}" -lt "$free_space_required" ]; then
     die 101 "\
-${underline}Free Disk Space Check:${nounderline} Insufficient free disk space!
+${underline}Free Disk Space Check Result:${nounderline} Insufficient free disk space!
 
   - available: '${free_space_available}G'
   - required : '${free_space_required}G'
@@ -2684,10 +2684,10 @@ get_version(){
   ## that could inhibit the user from seeing the error message.
   ## The user would still see a failed exit code.
   [ "${guest_version%%*[^0-9.]*}" ] ||
-    die 1 "${underline}Version Check:${nounderline} Invalid guest version: contains unexpected characters."
+    die 1 "${underline}Version Check Result:${nounderline} Invalid guest version: contains unexpected characters."
   ## block string containing more than 12 chars
   [ "${#guest_version}" -le 12 ] ||
-    die 1 "${underline}Version Check:${nounderline} Invalid guest version: contains more than 12 characters."
+    die 1 "${underline}Version Check Result:${nounderline} Invalid guest version: contains more than 12 characters."
 }
 
 
