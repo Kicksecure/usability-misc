@@ -1053,7 +1053,7 @@ install_pkg(){
 
   if test -n "${pkg_not_installed}"; then
     if test "${dry_run}" = "1"; then
-      log notice "Skipping installing the following packages because dry_run is set: '${pkg_not_installed}'"
+      log notice "Skipping installation of the following packages because dry_run is set: '${pkg_not_installed}'"
       return 0
     fi
 
@@ -1829,7 +1829,7 @@ install_repositories_for_virtualbox_on_debian(){
     return 0
   fi
 
-  log info "Installing packages required for backports and fasttrack repository."
+  log info "Installing packages required for backports and fasttrack repository..."
   install_pkg apt-transport-https ca-certificates fasttrack-archive-keyring
 
   case "${distro_codename_real}" in
@@ -2236,7 +2236,7 @@ get_su_cmd(){
     }
     case "${sucmd}" in
       sudo) :;;
-      *) log warn "Using sucmd '$sucmd'. Consider installing sudo instead to cache your passwords instead of typing them every time.";;
+      *) log warn "Using sucmd '$sucmd'. Consider installation of sudo instead to cache your passwords instead of typing them every time.";;
     esac
   done
 
@@ -2607,7 +2607,7 @@ torify_conn(){
     log warn "  or by your uplink network, the proxy check mail fail."
     log warn "The installer with torified connections depends on a working SOCKS proxy,"
     log warn "  it won't configure the proxy, only establish the connection."
-    log warn "If the proxy connection fails, try installing 'tor' on your system."
+    log warn "If the proxy connection fails, try installation of the 'tor' package on your system."
   fi
   ## curl and many other viable applications do not support SOCKS proxy to
   ## connect with Unix Domain Socket:
