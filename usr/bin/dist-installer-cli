@@ -788,7 +788,7 @@ handle_exit(){
     fi
   fi
   ## Print exit code.
-  log error "Exit code: '${last_exit}'"
+  log error "Installer exited with code: '${last_exit}'"
   end_exit
 }
 
@@ -804,8 +804,8 @@ handle_exit(){
 claim_unsupported_distro(){
   status="${1}"
   distro="${2}"
-  log error "At this moment, your Operating System is unsupported by the ${guest_pretty} Installer."
-  log error "Check if manual installation is supported by visiting:"
+  log error "At this time, your Operating System is unsupported by the ${guest_pretty} Installer."
+  log error "Visit the following URL to check support for manual installation:"
   log error "    ${url_version_domain}/wiki/Virtualbox"
   die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status} '${distro}') system."
 }
@@ -817,13 +817,13 @@ get_host_pkgs(){
     Linux*)
       case "${distro}" in
         "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
-          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
+          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while."
           debian_derivative_detected=1
           install_package_debian_common
           install_virtualbox_debian
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
-          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
+          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
           debian_derivative_detected=1
           install_package_debian_common
           install_virtualbox_ubuntu
@@ -832,13 +832,13 @@ get_host_pkgs(){
           if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
-          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
+          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
           debian_derivative_detected=1
           install_package_debian_common
           install_virtualbox_ubuntu
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          log notice "Preparing to install packages required for the hypervisor usage, this may take some time."
+          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
           install_package_fedora_common
           install_virtualbox_fedora
           ;;
@@ -904,10 +904,10 @@ nested_virtualization_test() {
   #nested_virtualization_detected=""
   if test -z "${nested_virt_tool:-}"; then
     ## No hard fail, not a requirement, good to have only.
-    log warn "${underline}Nested Virtualization Test:${nounderline} Program to detect nested virtualization not found."
+    log warn "${underline}Nested Virtualization Test:${nounderline} Detection tool for nested virtualization is missing."
   else
     if test "${dry_run}" = "1"; then
-      log notice "${underline}Nested Virtualization Test:${nounderline} Skipping because dry_run is set."
+      log notice "${underline}Nested Virtualization Test:${nounderline} Skipping test due to dry_run mode."
     else
       ## Check if we are a guest of virtualization.
       if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
