@@ -758,14 +758,14 @@ handle_exit(){
   fi
   ## some shells have a bug that displays line 1 as LINENO
   if test "${line_number}" -gt 2; then
-    log error "Error detected. Installer aborted."
+    log error "Installer aborted due to an error."
     log error "No need to panic. Nothing is broken. Just some rare condition has been hit."
-    log error "There is likely a solution for this problem."
-    log error "Try again. If this issue is transient (not happening again) it can be safely ignored."
-    log error "Please see ${guest_pretty} News and ${guest_pretty} User Help Forum."
-    log error "If not already reported, please report this bug!"
+    log error "A solution likely exists for this issue."
+    log error "If the issue does not recur on retry, it can be safely ignored as transient."
+    log error "Consult ${guest_pretty} News and the User Help Forum for assistance."
+    log error "Please report this bug if it has not been already."
     echo ""
-    log error "Error occurred in line: '${line_number}'"
+    log error "An error occurred at line: '${line_number}'"
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
     # pr -tn "${0}" | tail -n+$((line_number - 3)) | head -n3
@@ -784,7 +784,7 @@ handle_exit(){
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
       signal_caught="$(kill -l "${signal_code}")"
-      log error "Received signal: '${signal_caught}'"
+      log error "Signal received: '${signal_caught}'"
     fi
   fi
   ## Print exit code.
