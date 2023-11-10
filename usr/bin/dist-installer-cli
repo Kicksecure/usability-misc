@@ -982,6 +982,7 @@ kernel_modules_signed_only() {
 
 
 need_reboot_check() {
+  true "fedora_derivative_detected: $fedora_derivative_detected"
   if [ "$fedora_derivative_detected" = "1" ]; then
     ## part of dnf-plugins-core
     if ! log_run notice needs-restarting --reboothint ; then
