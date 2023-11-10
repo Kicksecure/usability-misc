@@ -84,8 +84,11 @@ jobs:
                     # sudo -u toranon tor -f /etc/tor/torrc --RunAsDaemon 1
                     # sleep 3
                     # ps aux | grep tor
+                    ## 'service' not available on Fedora.
                     #service tor start || true
                     #service tor status || true
+                    ## systemd installation in this way does not work. Error message:
+                    ## System has not been booted with systemd as init system (PID 1). Can't operate.
                     systemctl enable tor || true
                     systemctl start tor || true
                     systemctl status tor || true
