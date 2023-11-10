@@ -38,7 +38,9 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - image: fedora:latest
+                    - image: fedora:38
+                    ## https://download.virtualbox.org/virtualbox/rpm/fedora/ no longer has fedora39.
+                    #- image: fedora:latest
                     - image: debian:oldstable
                     - image: debian:stable
                     - image: debian:testing
