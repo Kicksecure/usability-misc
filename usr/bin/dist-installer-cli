@@ -1012,15 +1012,10 @@ need_reboot_check_second() {
     return 0
   fi
 
-  ## Debugging.
-  ls -la /usr/bin/needs-restarting || true "ls failed"
-  test -f /usr/bin/needs-restarting || true "not a file"
-  test -x /usr/bin/needs-restarting || true "not executable"
-  /usr/bin/needs-restarting --reboothint || true "/usr/bin/needs-restarting failed"
-
+  ## Fedora 38: Part of dnf-utils. Not installed by default (on CI).
   ## Fedora 39: Part of dnf-plugins-core. Not installed by default (on CI).
   ## Therefore this can only run after install_package_fedora_common.
-  if ! log_run notice /usr/bin/needs-restarting --reboothint ; then
+  if ! root_cmd /usr/bin/needs-restarting --reboothint ; then
     die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
 
 Please reboot your system and restart this installer.
@@ -1660,7 +1655,8 @@ install_package_fedora_common(){
     return 0
   fi
 
-  install_pkg torsocks redhat-lsb-core dnf-plugins-core
+  ## TODO: remove dnf-utils when removing Fedora 38 support from CI.
+  install_pkg torsocks redhat-lsb-core dnf-plugins-core dnf-utils
   install_signify signify
 }
 
