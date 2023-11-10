@@ -2235,7 +2235,6 @@ install_virtualbox_debian(){
     install_pkg gcc udev
   fi
 
-.
   linux_image="linux-image-$(dpkg --print-architecture)"
   linux_headers="linux-headers-$(dpkg --print-architecture)"
   install_pkg "${linux_image}" "${linux_headers}"
