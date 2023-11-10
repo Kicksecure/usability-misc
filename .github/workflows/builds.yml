@@ -56,9 +56,13 @@ jobs:
             - name: System Basic Packages
               run: |
                   if command -v apt-get; then
-                    apt-get update -y && apt-get install -y shellcheck sudo adduser tor
+                    apt-get update --error-on=any
+                    ## Installer aborts if package upgrades are pending.
+                    apt-get dist-upgrade --yes
+                    apt-get install --yes shellcheck sudo adduser tor
                   elif command -v dnf; then
-                    dnf update -y && dnf install -y ShellCheck sudo tor systemd
+                    dnf upgrade --assumeyes
+                    dnf install --assumeyes ShellCheck sudo tor systemd
                   else
                     exit 1
                   fi
@@ -67,8 +71,8 @@ jobs:
                   cat /etc/os-release
                   uname -a
                   echo "${PATH}"
-                  cat /etc/sudoers
-                  ls /etc/sudoers.d
+                  #cat /etc/sudoers
+                  #ls /etc/sudoers.d
             - name: Enable Services
               run: |
                   if command -v apt-get; then
