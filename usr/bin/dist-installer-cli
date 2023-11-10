@@ -1013,7 +1013,7 @@ need_reboot_check_second() {
 
   ## Fedora 39: Part of dnf-plugins-core. Not installed by default (on CI).
   ## Therefore this can only run after install_package_fedora_common.
-  if ! log_run notice needs-restarting --reboothint ; then
+  if ! log_run notice /usr/bin/needs-restarting --reboothint ; then
     die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
 
 Please reboot your system and restart this installer.
