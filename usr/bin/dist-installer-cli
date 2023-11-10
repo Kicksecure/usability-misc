@@ -984,19 +984,7 @@ kernel_modules_signed_only() {
 }
 
 
-need_reboot_check() {
-  true "fedora_derivative_detected: $fedora_derivative_detected"
-  if [ "$fedora_derivative_detected" = "1" ]; then
-    ## part of dnf-plugins-core
-    if ! log_run notice needs-restarting --reboothint ; then
-      die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
-
-Please reboot your system and restart this installer.
-
-Debugging information: needs-restarting reported that a reboot is required."
-    fi
-  fi
-
+need_reboot_check_first() {
   ## Debian: /var/run/reboot-required
   ## Fedora: Does not have this.
   if ! test -f /var/run/reboot-required ; then
@@ -1011,6 +999,24 @@ Debugging information: needs-restarting reported that a reboot is required."
 Please reboot your system and restart this installer.
 
 Debugging information: file /var/run/reboot-required exists."
+}
+
+
+need_reboot_check_second() {
+  true "fedora_derivative_detected: $fedora_derivative_detected"
+  if [ ! "$fedora_derivative_detected" = "1" ]; then
+    return 0
+  fi
+
+  ## Part of dnf-plugins-core. Not installed by default (on CI).
+  ## Therefore this can only run after install_package_fedora_common.
+  if ! log_run notice needs-restarting --reboothint ; then
+    die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
+
+Please reboot your system and restart this installer.
+
+Debugging information: needs-restarting reported that a reboot is required."
+  fi
 }
 
 
@@ -1644,7 +1650,7 @@ install_package_fedora_common(){
     return 0
   fi
 
-  install_pkg torsocks redhat-lsb-core
+  install_pkg torsocks redhat-lsb-core dnf-plugins-core
   install_signify signify
 }
 
@@ -2612,8 +2618,9 @@ $df_output"
 pre_check(){
   get_os
   get_system_stat
-  need_reboot_check
+  need_reboot_check_first
   get_host_pkgs
+  need_reboot_check_second
   get_independent_host_pkgs
   kernel_modules_check
   nested_virtualization_test
