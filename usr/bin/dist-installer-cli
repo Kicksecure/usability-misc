@@ -981,8 +981,15 @@ kernel_modules_signed_only() {
 
 
 need_reboot_check() {
-  if test -f /var/run/reboot-required ; then
-    die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
+  ## Debian: /var/run/reboot-required
+  if ! test -f /var/run/reboot-required ; then
+    log info "${underline}Reboot Check Result:${nounderline} File /var/run/reboot-required does not exist, good."
+    return 0
+  fi
+
+  ## Building for an old kernel might result in missing kernel headers for that kernel
+  ## In result, VirtualBox would fail to start.
+  die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
 
 Please reboot your system and restart this installer.
 
