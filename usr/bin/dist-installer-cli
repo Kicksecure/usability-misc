@@ -404,7 +404,10 @@ get_os(){
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
   is_integer "${distro_version_without_dot}" ||
      die 101 "${underline}Distribution Check:${nounderline} Distribution version without dot is still not a number: '${distro_version_without_dot}'"
+}
 
+
+get_distro() {
   true "distro: ${distro}"
   case "${os}" in
     Linux*)
@@ -2622,6 +2625,7 @@ $df_output"
 ## Sanity checks that should be called before execution of main
 pre_check(){
   get_os
+  get_distro
   get_system_stat
   need_reboot_check_first
   get_host_pkgs
