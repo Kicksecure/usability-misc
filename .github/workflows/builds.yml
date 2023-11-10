@@ -38,7 +38,8 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - image: fedora:38
+                    #- image: fedora:38
+                    - image: fedora/38-cloud-base
                     ## https://download.virtualbox.org/virtualbox/rpm/fedora/ no longer has fedora39.
                     #- image: fedora:latest
                     - image: debian:oldstable
@@ -81,6 +82,7 @@ jobs:
                     service tor start
                     service tor status
                   elif command -v dnf; then
+                    cat /etc/tor/torrc || true
                     # sudo -u toranon tor -f /etc/tor/torrc --RunAsDaemon 1
                     # sleep 3
                     # ps aux | grep tor
@@ -89,7 +91,7 @@ jobs:
                     #service tor status || true
                     ## systemd installation in this way does not work. Error message:
                     ## System has not been booted with systemd as init system (PID 1). Can't operate.
-                    systemctl enable tor || true
+                    systemctl enable --now tor || true
                     systemctl start tor || true
                     systemctl status tor || true
                   fi
