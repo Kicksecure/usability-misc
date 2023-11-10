@@ -838,6 +838,7 @@ get_host_pkgs(){
           install_virtualbox_ubuntu
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
+          fedora_derivative_detected=1
           log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
           install_package_fedora_common
           install_virtualbox_fedora
@@ -981,7 +982,19 @@ kernel_modules_signed_only() {
 
 
 need_reboot_check() {
+  if [ "$fedora_derivative_detected" = "1" ]; then
+    ## part of dnf-plugins-core
+    if ! log_run notice needs-restarting --reboothint ; then
+      die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
+
+Please reboot your system and restart this installer.
+
+Debugging information: needs-restarting reported that a reboot is required."
+    fi
+  fi
+
   ## Debian: /var/run/reboot-required
+  ## Fedora: Does not have this.
   if ! test -f /var/run/reboot-required ; then
     log info "${underline}Reboot Check Result:${nounderline} File /var/run/reboot-required does not exist, good."
     return 0
@@ -3482,6 +3495,7 @@ set_default(){
   run_background=""
   background_pid=""
   debian_derivative_detected=""
+  fedora_derivative_detected=""
   virtualbox_linux_user_group="vboxusers"
   # shellcheck disable=SC2034
   credential_caching_status=""
