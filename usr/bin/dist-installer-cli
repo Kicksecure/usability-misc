@@ -1008,7 +1008,8 @@ need_reboot_check_second() {
     return 0
   fi
 
-  ## Part of dnf-plugins-core. Not installed by default (on CI).
+  ## Fedora 38: Part of yum-utils Not installed by default (on CI).
+  ## Fedora 39: Part of dnf-plugins-core. Not installed by default (on CI).
   ## Therefore this can only run after install_package_fedora_common.
   if ! log_run notice needs-restarting --reboothint ; then
     die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
@@ -1650,7 +1651,8 @@ install_package_fedora_common(){
     return 0
   fi
 
-  install_pkg torsocks redhat-lsb-core dnf-plugins-core
+  ## TODO: remove yum-utils when removing CI support for Fedora 38
+  install_pkg torsocks redhat-lsb-core dnf-plugins-core yum-utils
   install_signify signify
 }
 
