@@ -83,7 +83,7 @@ jobs:
                     service tor start
                     service tor status
                   elif command -v dnf; then
-                    cat /etc/tor/torrc || true
+                    #cat /etc/tor/torrc || true
 
                     ## Manual start without systemd.
                     # sudo -u toranon tor -f /etc/tor/torrc --RunAsDaemon 1
@@ -95,6 +95,7 @@ jobs:
                     #service tor status || true
 
                     /lib/systemd/systemd --system || true
+                    /usr/sbin/init || true
 
                     ## systemd installation in this way does not work. Error message:
                     ## System has not been booted with systemd as init system (PID 1). Can't operate.
