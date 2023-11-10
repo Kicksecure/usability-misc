@@ -994,7 +994,6 @@ need_reboot_check() {
 Please reboot your system and restart this installer.
 
 Debugging information: file /var/run/reboot-required exists."
-  fi
 }
 
 
