@@ -857,10 +857,10 @@ get_host_pkgs(){
     log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
     if [ "$ubuntu_derivative_detected" = "1" ]; then
       install_package_debian_common
-      install_virtualbox_debian
+      install_virtualbox_ubuntu
     elif [ "$debian_derivative_detected" = "1" ]; then
       install_package_debian_common
-      install_virtualbox_ubuntu
+      install_virtualbox_debian
     elif [ "$fedora_derivative_detected" = "1" ]; then
       install_package_fedora_common
       install_virtualbox_fedora
