@@ -983,6 +983,7 @@ kernel_modules_signed_only() {
 update_sources(){
   log notice "Updating package list..."
 
+  ## global console_write_command
   if tty >/dev/null >&1 ; then
     console_write_command="tee /dev/tty"
   else
@@ -1015,6 +1016,13 @@ update_sources(){
 }
 
 
+package_manager_issue_extra_help_text="The user is advised to attempt to debug this with the following steps:
+1. Run above command as root (with sudo).
+2. If there is an issue, use search engines, documentation and if needed
+   contact the support of your operating system.
+3. Once this has been fixed fixed, re-run this installer."
+
+
 update_sources_error() {
   die 1 "${underline}Package List Update:${nounderline} Could not update package lists.
   - This issue is most likely not caused by this installer.
@@ -1022,13 +1030,79 @@ update_sources_error() {
 
 This is the command which the installer has just run that failed:
 
-$command_without_extrarenous_spaces
+${sucmd} $command_without_extrarenous_spaces
 
-The user is advised to attempt to debug this with the following steps:
-1. Run above command.
-2. If there is an issue, use search engines, documentation and if needed
-   contact the support of your operating system.
-3. Once this has been fixed fixed, re-run this installer."
+${package_manager_issue_extra_help_text}"
+}
+
+
+check_upgrades_simulation() {
+  # shellcheck disable=SC2086
+  if upgrade_simulate_output=$(root_cmd ${pkg_mngr_upgrade_check} 2>&1 | $console_write_command) ; then
+    true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
+    if echo "$upgrade_simulate_output" | grep --quiet --ignore-case "Error:" ; then
+      log error "${underline}Package Upgrade Simulation:${nounderline} Exit code was 0 but 'Error:' found in output."
+      upgrade_simulate_sources_error
+    fi
+  else
+    log error "${underline}Package Upgrade Simulation:${nounderline} Non-zero exit code. Stop."
+    upgrade_simulate_sources_error
+  fi
+
+   true "INFO: No error found in upgrade_simulate_output output, ok."
+
+   true "INFO: setting fallback number_upgraded=invalid"
+   number_upgraded=invalid
+
+   OIFS="$IFS"
+   IFS='
+'
+
+   for line in $upgrade_simulate_output; do
+      IFS="$OIFS"
+      true "line: $line"
+      first_char="${line:0:1}"
+      if [[ "$first_char" = "" ]]; then
+         continue
+      fi
+      if [[ "$first_char" != *[!0-9]* ]]; then
+         true "'$first_char' is strictly numeric."
+         read -r number_upgraded _ <<< "$line"
+         true "number_upgraded: $number_upgraded"
+         break
+      fi
+   done
+
+   IFS="$OIFS"
+
+   if [ "$number_upgraded" = "0" ]; then
+      ## TODO: not error
+      log error "${underline}Package Upgrade Simulation:${nounderline} No packages require upgrading, ok."
+      return 0
+   fi
+
+   die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
+
+$number_upgraded packages can be upgraded.
+
+Please upgrade your operating system first. Otherwise this installer cannot proceed.
+
+${sucmd} ${pkg_mngr_upgrade_install}
+
+${package_manager_issue_extra_help_text}"
+
+}
+
+upgrade_simulate_sources_error() {
+  die 1 "${underline}Package Upgrade Simulation:${nounderline} Failed.
+  - This issue is most likely not caused by this installer.
+  - This is most likely a package manager configuration or network issue.
+
+This is the command which the installer has just run that failed:
+
+${sucmd} ${pkg_mngr_upgrade_check}
+
+${package_manager_issue_extra_help_text}"
 }
 
 
@@ -1526,9 +1600,12 @@ install_package_fedora_common(){
   ## --assumeyes good or bad idea? For now not needed. So not using.
   #pkg_mngr_update="${pkg_mngr} makecache"
   pkg_mngr_update="${pkg_mngr} --assumeyes update"
-  pkg_mngr_check_installed="dnf list installed"
+  pkg_mngr_check_installed="${pkg_mngr} list installed"
+  pkg_mngr_upgrade_check="/bin/true dnf does not seem to support an alternative to 'apt-get dist-upgrade --simulate', skipping."
+  pkg_mngr_upgrade_install="${pkg_mngr} upgrade"
 
   update_sources
+  #check_upgrades_simulation
 
   if test "${virtualbox_only}" = "1"; then
     return 0
@@ -1544,6 +1621,8 @@ install_package_debian_common(){
   pkg_mngr_install="${pkg_mngr} install --yes --no-install-recommends"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
   pkg_mngr_check_installed="check_installed_debian"
+  pkg_mngr_upgrade_check="${pkg_mngr} dist-upgrade --simulate"
+  pkg_mngr_upgrade_install="${pkg_mngr} dist-upgrade"
 
   ## 'dpkg --audit' does not return non-zero exit code on failure.
   dpkg_audit_output="$(dpkg --audit 2>&1)"
@@ -1568,6 +1647,7 @@ install_package_debian_common(){
   fi
 
   update_sources
+  check_upgrades_simulation
 
   install_pkg lsb-release
 
