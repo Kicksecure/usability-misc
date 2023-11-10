@@ -1030,7 +1030,7 @@ update_sources_error() {
 
 This is the command which the installer has just run that failed:
 
-${sucmd} $command_without_extrarenous_spaces
+${sucmd} ${pkg_mngr_update}
 
 ${package_manager_issue_extra_help_text}"
 }
