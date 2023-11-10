@@ -78,6 +78,9 @@ jobs:
                     # ps aux | grep tor
                     service tor start || true
                     service tor status || true
+                    service enable tor || true
+                    service start tor || true
+                    service status tor || true
                   fi
             - name: Normal user with sudo privileges
               run: |
