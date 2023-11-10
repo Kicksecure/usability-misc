@@ -1076,8 +1076,7 @@ check_upgrades_simulation() {
    IFS="$OIFS"
 
    if [ "$number_upgraded" = "0" ]; then
-      ## TODO: not error
-      log error "${underline}Package Upgrade Simulation:${nounderline} No packages require upgrading, ok."
+      log info "${underline}Package Upgrade Simulation:${nounderline} No packages require upgrading, ok."
       return 0
    fi
 
