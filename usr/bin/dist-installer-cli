@@ -416,6 +416,7 @@ get_distro() {
           debian_derivative_detected=1
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
+          ubuntu_derivative_detected=1
           debian_derivative_detected=1
           ;;
         *"buntu"*)
