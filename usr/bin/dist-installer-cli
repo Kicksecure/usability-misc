@@ -810,38 +810,27 @@ claim_unsupported_distro(){
   die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status} '${distro}') system."
 }
 
-## Get necessary packages for your host system to be able to set the guest.
-get_host_pkgs(){
+
+detect_host_os() {
   true "distro: ${distro}"
   case "${os}" in
     Linux*)
       case "${distro}" in
         "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
-          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while."
           debian_derivative_detected=1
-          install_package_debian_common
-          install_virtualbox_debian
           ;;
         "Linux Mint"*|"LinuxMint"*|"mint"*)
-          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
           debian_derivative_detected=1
-          install_package_debian_common
-          install_virtualbox_ubuntu
           ;;
         *"buntu"*)
+          ubuntu_derivative_detected=1
+          debian_derivative_detected=1
           if [ "${distro_version_without_dot}" -lt 2204 ]; then
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
-          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
-          debian_derivative_detected=1
-          install_package_debian_common
-          install_virtualbox_ubuntu
           ;;
         "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
           fedora_derivative_detected=1
-          log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
-          install_package_fedora_common
-          install_virtualbox_fedora
           ;;
         "Arch"*|"Artix"*|"ArcoLinux"*)
           claim_unsupported_distro known "${distro}"
@@ -864,6 +853,24 @@ get_host_pkgs(){
       claim_unsupported_distro unknown "${distro}"
       ;;
   esac
+}
+
+
+## Get necessary packages for your host system to be able to set the guest.
+get_host_pkgs(){
+    log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
+    if [ "$ubuntu_derivative_detected" = "1" ]; then
+      install_package_debian_common
+      install_virtualbox_ubuntu
+    elif [ "$debian_derivative_detected" = "1" ]; then
+      install_package_debian_common
+      install_virtualbox_ubuntu
+    elif [ "$fedora_derivative_detected" = "1" ]; then
+      install_package_fedora_common
+      install_virtualbox_fedora
+    else
+      die 1 "Operating system not found in get_host_pkgs. Please report this bug. Debug log required."
+    fi
 }
 
 
@@ -2609,6 +2616,7 @@ $df_output"
 pre_check(){
   get_os
   get_system_stat
+  detect_host_os
   need_reboot_check
   get_host_pkgs
   get_independent_host_pkgs
@@ -3496,6 +3504,7 @@ set_default(){
   run_background=""
   background_pid=""
   debian_derivative_detected=""
+  ubuntu_derivative_detected=""
   fedora_derivative_detected=""
   virtualbox_linux_user_group="vboxusers"
   # shellcheck disable=SC2034
