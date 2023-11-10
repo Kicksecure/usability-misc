@@ -2261,11 +2261,15 @@ ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
 
 ## Install VirtualBox on Ubuntu
 install_virtualbox_ubuntu(){
-  if has vboxmanage && test_pkg linux-headers-generic; then
-    install_virtualbox_debian_common_end
-    return 0
+  if has vboxmanage ; then
+    if test_pkg linux-image-generic; then
+      if test_pkg linux-headers-generic; then
+        install_virtualbox_debian_common_end
+        return 0
+      fi
+    fi
   fi
-  install_pkg virtualbox linux-headers-generic
+  install_pkg virtualbox linux-image-generic linux-headers-generic
   install_virtualbox_debian_common_end
 }
 
