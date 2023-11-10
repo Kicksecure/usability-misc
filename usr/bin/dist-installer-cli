@@ -980,6 +980,17 @@ kernel_modules_signed_only() {
 }
 
 
+need_reboot_check() {
+  if test -f /var/run/reboot-required ; then
+    die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
+
+Please reboot your system and restart this installer.
+
+Debugging information: file /var/run/reboot-required exists."
+  fi
+}
+
+
 update_sources(){
   log notice "Updating package list..."
 
@@ -2578,6 +2589,7 @@ $df_output"
 pre_check(){
   get_os
   get_system_stat
+  need_reboot_check
   get_host_pkgs
   get_independent_host_pkgs
   kernel_modules_check
