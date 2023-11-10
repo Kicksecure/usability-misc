@@ -78,11 +78,11 @@ jobs:
                     # sudo -u toranon tor -f /etc/tor/torrc --RunAsDaemon 1
                     # sleep 3
                     # ps aux | grep tor
-                    service tor start || true
-                    service tor status || true
-                    service enable tor || true
-                    service start tor || true
-                    service status tor || true
+                    #service tor start || true
+                    #service tor status || true
+                    systemctl enable tor || true
+                    systemctl start tor || true
+                    systemctl status tor || true
                   fi
             - name: Normal user with sudo privileges
               run: |
