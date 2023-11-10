@@ -404,6 +404,48 @@ get_os(){
   distro_version_without_dot="$(echo "${distro_version}" | tr -d ".")"
   is_integer "${distro_version_without_dot}" ||
      die 101 "${underline}Distribution Check:${nounderline} Distribution version without dot is still not a number: '${distro_version_without_dot}'"
+
+  true "distro: ${distro}"
+  case "${os}" in
+    Linux*)
+      case "${distro}" in
+        "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
+          debian_derivative_detected=1
+          ;;
+        "Linux Mint"*|"LinuxMint"*|"mint"*)
+          debian_derivative_detected=1
+          ;;
+        *"buntu"*)
+          ubuntu_derivative_detected=1
+          debian_derivative_detected=1
+          if [ "${distro_version_without_dot}" -lt 2204 ]; then
+            die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
+          fi
+          ;;
+        "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
+          fedora_derivative_detected=1
+          ;;
+        "Arch"*|"Artix"*|"ArcoLinux"*)
+          claim_unsupported_distro known "${distro}"
+          ;;
+        *)
+          claim_unsupported_distro unknown "${distro}"
+          ;;
+      esac
+    ;;
+    "OpenBSD"*)
+      claim_unsupported_distro known "${distro}"
+      ;;
+    "NetBSD"*)
+      claim_unsupported_distro known "${distro}"
+      ;;
+    "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
+      claim_unsupported_distro known "${distro}"
+      ;;
+    *)
+      claim_unsupported_distro unknown "${distro}"
+      ;;
+  esac
 }
 
 ##############
@@ -809,52 +851,6 @@ claim_unsupported_distro(){
   log error "    ${url_version_domain}/wiki/Virtualbox"
   die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status} '${distro}') system."
 }
-
-
-detect_host_os() {
-  true "distro: ${distro}"
-  case "${os}" in
-    Linux*)
-      case "${distro}" in
-        "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
-          debian_derivative_detected=1
-          ;;
-        "Linux Mint"*|"LinuxMint"*|"mint"*)
-          debian_derivative_detected=1
-          ;;
-        *"buntu"*)
-          ubuntu_derivative_detected=1
-          debian_derivative_detected=1
-          if [ "${distro_version_without_dot}" -lt 2204 ]; then
-            die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
-          fi
-          ;;
-        "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
-          fedora_derivative_detected=1
-          ;;
-        "Arch"*|"Artix"*|"ArcoLinux"*)
-          claim_unsupported_distro known "${distro}"
-          ;;
-        *)
-          claim_unsupported_distro unknown "${distro}"
-          ;;
-      esac
-    ;;
-    "OpenBSD"*)
-      claim_unsupported_distro known "${distro}"
-      ;;
-    "NetBSD"*)
-      claim_unsupported_distro known "${distro}"
-      ;;
-    "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
-      claim_unsupported_distro known "${distro}"
-      ;;
-    *)
-      claim_unsupported_distro unknown "${distro}"
-      ;;
-  esac
-}
-
 
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
@@ -2616,7 +2612,6 @@ $df_output"
 pre_check(){
   get_os
   get_system_stat
-  detect_host_os
   need_reboot_check
   get_host_pkgs
   get_independent_host_pkgs
