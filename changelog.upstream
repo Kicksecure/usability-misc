@@ -1,3 +1,239 @@
+commit bc1cf5b77ef460147621bbb08f17fe54a22837eb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 11 14:43:10 2023 -0500
+
+    copyright
+
+commit d14f0a5335aed6663a71b83c68c187244c61f4fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:54:10 2023 -0500
+
+    CI
+
+commit df8e8654f3c327d60a0c583f730a27d16367eafb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:44:18 2023 -0500
+
+    CI
+
+commit 1f37af8acbbdb64d98e1b0c5133ac3154aebf17d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:33:41 2023 -0500
+
+    CI
+
+commit eeeaf2d84c48f43a25291716acf5ab30ca3925e1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:21:23 2023 -0500
+
+    comments
+
+commit d2c24c794d62a0cdd3f94b25713f0691641a0cd1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:19:35 2023 -0500
+
+    fix Fedora 38
+
+commit c3ce9a4780153441e072113ef5a914a55728c63a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:12:19 2023 -0500
+
+    fix Linux Mint
+
+commit 69c442cb9bd0dc8e8e0c06dfea1a6a7a4df0a231
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:11:08 2023 -0500
+
+    debugging
+
+commit 977d75546e5409a16d7b40cea994668d682b1430
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:09:59 2023 -0500
+
+    /usr/bin/needs-restarting
+
+commit 4153d70e8e43ae975df1afc2d0b025ae41be03e5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 21:01:38 2023 -0500
+
+    Fedora needs-restarting
+
+commit 98e2d219d94c17286c74259cbbac50b45a8dc9c5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:57:04 2023 -0500
+
+    fix distro detection
+
+commit 7d8f3fa2bae506f9230f988d431f09dab10537b4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:46:02 2023 -0500
+
+    fix needs-restarting installation on Fedora 38
+
+commit c00d5e277f4629864728ea31d5f51cc0070d93d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:41:08 2023 -0500
+
+    fix
+
+commit 7012e94645bd683aa0cbb1de64aff8c70c8373d8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:28:34 2023 -0500
+
+    consistent kernel image and headers installation
+
+commit 01402c26bd6a333983605253d7a8154d586d11c2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:26:17 2023 -0500
+
+    fix
+
+commit 58c9a997dddf904efbd8fb794348359ff1a86d3b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:24:09 2023 -0500
+
+    fix need restart check on Fedora
+
+commit 12a270bf2861c9a2625b5a57beb76b47c8fc3682
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:19:42 2023 -0500
+
+    CI
+
+commit 5edef848b7ae14c55d7fd515da07beec68dba07e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:16:09 2023 -0500
+
+    CI
+
+commit 28e732c850fe3a9ba09894ee47b8a5a99a2656f7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:14:41 2023 -0500
+
+    fix
+
+commit 096af388b4ea5d60d48252756e7f4ac39a530ac0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:10:47 2023 -0500
+
+    CI
+
+commit db70a67c221460b96a2d73c9f706cffada1b41d3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:06:35 2023 -0500
+
+    refactoring
+
+commit 2a19e5b74eac1aaabcbd590615398863ebb5df3b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 20:04:06 2023 -0500
+
+    refactoring to fix need_reboot_check
+
+commit a0757431bd61bd14685e449607538fbfdee88226
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:49:31 2023 -0500
+
+    debugging
+
+commit 6d344dddd218eb50963b0bdbe912cf82115c6765
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:36:56 2023 -0500
+
+    CI
+
+commit 34103e06b2c6155a05a2dcf3c75750d9b548e348
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:32:01 2023 -0500
+
+    check if a reboot is required
+
+commit 0f54f3555ecf52be1a0305ee49b15de0acb3da64
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:17:41 2023 -0500
+
+    fix
+
+commit f242cc624f7c0c7229f85387062cfa89ed950348
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:17:10 2023 -0500
+
+    refactoring
+
+commit 27ffd2780a90eb9c2ad786c4a2116619e8a03f94
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:12:13 2023 -0500
+
+    check if a reboot is required
+
+commit 92f121929982ad5fae1e7c2855b229d47a776036
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:04:06 2023 -0500
+
+    output
+
+commit 501a3959550277611fde92f5343e7a4566a63094
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:03:23 2023 -0500
+
+    fix loglevel
+
+commit b692c8cd84d5c91a230e86b2575ce68a82195527
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 19:02:24 2023 -0500
+
+    check if upgrades are available
+    
+    https://forums.whonix.org/t/whonix-linux-installer-development-discussion/15917/149
+
+commit a73596c54433e8b73e5aead2ade51c58a0006df5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 18:37:20 2023 -0500
+
+    output
+
+commit e42760cb0c30bd9530aa58c1e37ccf43dfe0d603
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 18:17:25 2023 -0500
+
+    output
+
+commit 07b2c53d8067df559865128fb4821b1c10462642
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 18:12:37 2023 -0500
+
+    output
+
+commit 3563e606d836df609ee66f22aebd082cd356d204
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 18:06:39 2023 -0500
+
+    output
+
+commit 4a1201503789d21852413d0ba30c64cdd225fdab
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 17:26:50 2023 -0500
+
+    output
+
+commit 970a2c320941b50ee23922917ee5f0d88571d13e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 17:24:57 2023 -0500
+
+    CI
+
+commit 624cce4f67ff98bd515dd1d1824c741d445780b6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 9 17:23:53 2023 -0500
+
+    output
+
+commit 027643143bff77378fc321407ec32f6f2190982a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 5 14:56:29 2023 -0500
+
+    bumped changelog version
+
 commit 71fde154e1976f17abf923adf4a852c556d21eea
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Nov 5 13:35:59 2023 -0500
