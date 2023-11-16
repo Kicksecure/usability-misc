@@ -1385,16 +1385,16 @@ Kernel module vboxdrv signer: $kernel_module_signer
 kernel_module_modprobe_output ($sucmd modprobe vboxdrv): $kernel_module_modprobe_output"
 
     if [ "$kernel_modules_can_be_load" = "true" ]; then
-      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel module load have not been load yet.
+      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel modules have not been load yet.
   - Kernel modules can be load in theory, should be loaded by now, but are not.
   - This is a VirtualBox installation issue."
       if ! test "${ci}" = "1"; then
         virtualbox_start_failed
       fi
     else
-      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'REBOOT REQUIRED'${nobold}${nocolor} - because kernel module load is disabled on your system:
+      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'REBOOT REQUIRED'${nobold}${nocolor} - because kernel module loading is disabled on your system:
   - The system administrator might have disabled module loading.
-  - It might have been disabled by Kicksecure / package security-misc.
+  - Module loading might have been disabled by Kicksecure package security-misc.
   - You can re-run this installer again after reboot."
       if ! test "${ci}" = "1"; then
         virtualbox_start_failed
