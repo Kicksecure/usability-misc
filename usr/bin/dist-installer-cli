@@ -3065,8 +3065,8 @@ get_download_links(){
       ;;
     *)
       ## Variables need to be set for --virtualbox-only.
-      site_clearnet=""
-      site_onion=""
+      site_clearnet="${site_onion_kicksecure}"
+      site_onion="${site_clearnet_kicksecure}"
       ;;
   esac
 
