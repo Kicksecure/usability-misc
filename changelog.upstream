@@ -1,3 +1,33 @@
+commit dea35967e281af8c36be4711efe16aa017ef96ae
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 16 00:43:43 2023 -0500
+
+    fix documentation url for --virtualbox-only
+
+commit 6e2fe5b74095ee686807ac5b5ede06d7d3bdfc80
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 16 00:39:15 2023 -0500
+
+    output
+
+commit f58b5a584d29ce9990d18bb0bbd45b91ffda5825
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 16 00:37:42 2023 -0500
+
+    output
+
+commit 86ba52fc357dc49f1fce254b5375408f7a73196f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 16 00:35:36 2023 -0500
+
+    output
+
+commit 445cad912b3e8ae3343c8fce1048bc25e8e62733
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 11 20:27:17 2023 +0000
+
+    bumped changelog version
+
 commit bc1cf5b77ef460147621bbb08f17fe54a22837eb
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Nov 11 14:43:10 2023 -0500
