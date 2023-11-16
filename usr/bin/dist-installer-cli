@@ -975,16 +975,16 @@ kernel_modules_signed_only() {
   ## Does usually not require root but might on some hardened systems.
   if ! sig_enforce=$(root_cmd_loglevel=null root_cmd cat /sys/module/module/parameters/sig_enforce) ; then
     modules_signed_only=maybe
-    log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
+    log warn "${underline}Kernel Module Signature Enforcement Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
     return 0
   fi
   if [ "$sig_enforce" = "Y" ]; then
     modules_signed_only=true
-    log info "Kernel Module Load Check Result: 'yes' - only signed modules can be load. (kernel parameter module.sig_enforce=1 might be set.)"
+    log info "Kernel Module Signature Enforcement Check Result: 'yes' - only signed modules can be load. (kernel parameter module.sig_enforce=1 might be set.)"
     return 0
   fi
   modules_signed_only=false
-  log info "${underline}Kernel Module Load Check Result:${nounderline}: 'no' - unsigned modules can be load."
+  log info "${underline}Kernel Module Signature Enforcement Check Result:${nounderline}: 'no' - unsigned modules can be load."
 }
 
 
