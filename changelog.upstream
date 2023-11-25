@@ -1,3 +1,19 @@
+commit 5e022218c1d7ab91e06f3a7170362a5387a13ba2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 25 02:18:58 2023 -0500
+
+    fix, /dev/vboxdrv is not a file, it's a device
+    
+    hence test -f does not work
+    
+    using test -e instead works
+
+commit 5ccf886ffc43f843b5d8a284cf94dfa1e3f0a49a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 16 05:45:26 2023 +0000
+
+    bumped changelog version
+
 commit dea35967e281af8c36be4711efe16aa017ef96ae
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Nov 16 00:43:43 2023 -0500
