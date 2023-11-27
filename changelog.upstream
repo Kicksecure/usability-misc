@@ -1,3 +1,26 @@
+commit ba1e03d629c719e89dcb3c001f42724b73bd0505
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 26 23:30:23 2023 -0500
+
+    Revert "add new usability helper scripts for Qubes VM backups"
+    
+    This reverts commit 61f2444188c3628135e0dbbc9dd7ec11fbef0091.
+
+commit 61f2444188c3628135e0dbbc9dd7ec11fbef0091
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 26 23:22:37 2023 -0500
+
+    add new usability helper scripts for Qubes VM backups
+    
+    qubes-mount-dev-xvdi
+    qubes-unmount-dev-xvdi
+
+commit eb3d0dd3ee8b7c52ffb543345b6f13fb546acd3b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 25 07:19:36 2023 +0000
+
+    bumped changelog version
+
 commit 5e022218c1d7ab91e06f3a7170362a5387a13ba2
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Nov 25 02:18:58 2023 -0500
