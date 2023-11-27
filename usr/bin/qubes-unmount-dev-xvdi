@@ -1,0 +1,14 @@
+#!/bin/bash
+
+## Copyright (C) 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+set -x
+set -e
+
+sudo umount /mnt/disk
+
+sudo cryptsetup luksClose disk
+
+true "INFO: rmdir does not delete the folders in case not empty."
+rmdir /mnt/disk

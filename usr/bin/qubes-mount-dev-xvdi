@@ -1,0 +1,17 @@
+#!/bin/bash
+
+## Copyright (C) 2023 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+set -x
+set -e
+
+sudo mkdir --parents /mnt/disk
+
+sudo chown --recursive user:user /mnt/disk
+
+sudo cryptsetup luksOpen /dev/xvdi disk
+
+sudo mount /dev/mapper/disk /mnt/disk
+
+test -w /mnt/disk/testfile
