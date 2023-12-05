@@ -1704,10 +1704,23 @@ install_package_debian_common(){
   ## 'dpkg --audit' does not return non-zero exit code on failure.
   dpkg_audit_output="$(dpkg --audit 2>&1)"
   if test -n "${dpkg_audit_output}"; then
-    log error "Auditing dpkg database returned non-zero exit code."
-    log error "Learn how to fix this issue at:"
-    log error "  https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT"
-    return 1
+    die 1 "${underline}DPKG Audit Test Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor}
+- What happened in simple terms? This installer has performed a check to ensure it's sane to proceed, which has failed.
+- What exactly happened? The command 'dpkg --audit' generated output, signaling a system issue.
+- What was the expected behavior? The 'dpkg --audit' command should execute without producing any output.
+- Is this installer to blame for the issue? It's unlikely that this installer is the root cause of the issue.
+- So, what might have caused it? The issue likely originates from pre-existing DPKG / APT package management system issues on your machine.
+- What steps should you take now? Start by running the following command yourself:
+
+dpkg --audit
+
+- What should you do after that? Analyze the output of the command to identify and address the underlying problem. Once resolved, you can re-run this installer.
+
+- Do you have any suggestions? The following link might offer helpful insights:
+
+https://www.kicksecure.com/wiki/Operating_System_Software_and_Updates#Broken_APT
+
+If that doesn't resolve the issue, consider reaching out to your operating system's support team for assistance."
   fi
 
   ## Dumping all sources.list files could have privacy implications.
