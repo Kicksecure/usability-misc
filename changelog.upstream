@@ -1,3 +1,106 @@
+commit 6c0d701c0d5ef9a707d72ca0d772276811d62e4f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 02:53:41 2023 -0500
+
+    debugging
+
+commit ac4bd0aa126355c74a3db37762326c8bb33d4dc0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 02:52:10 2023 -0500
+
+    Ignore need_reboot_check_second if on CI.
+
+commit 5e60bc8c3bb36f5b9dd9c79916fda0352626948f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 02:50:42 2023 -0500
+
+    refactoring
+
+commit addd33a80a13c0b156c6d4111d7a73cc1c4acc6d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 02:45:45 2023 -0500
+
+    Install also the virtualbox-guest-additions-iso package if available.
+    
+    - It is available from Debian fasttrack and Ubuntu.
+    - Unavailable from Oracle repository.
+    
+    virtualbox-guest-additions-iso is Freedom Software:
+    https://www.kicksecure.com/wiki/Dev/VirtualBox#VirtualBox_Guest_Additions_ISO_Freedom_vs_Non-Freedom
+    
+    Provides file: `/usr/share/virtualbox/VBoxGuestAdditions.iso`
+    
+    Useful to easily install matching version of VirtualBox guest additions in custom VirtualBox VMs.
+
+commit c61e1f83ae518be8879e72cc6f07cf85a1e6cb78
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 02:33:19 2023 -0500
+
+    minor: remove extraneous newlines from script source code
+
+commit dda7bd5e9acb1eeb86c47ba761e3f9d41673a93f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 02:21:10 2023 -0500
+
+    improve error message in case of `dpkg --audit` showing errors
+
+commit 61eebef0429f22077d89caffdcd809ac78cb522c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 02:12:49 2023 -0500
+
+    fix:
+    - prohibit downloading VM images in Qubes Template
+    - do not start VirtualBox in Qubes Template
+    
+    Downloading non-Qubes VM images in Qubes Template makes no sense. Not even for development purposes.
+    Installing VirtualBox inside Qubes however makes sense for development purposes.
+    For example, this permits building non-Qubes VM images inside Qubes VMs.
+
+commit 674cc2e85ce948d125c17e7707867a4564db4873
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 00:40:54 2023 -0500
+
+    comments
+
+commit e12a5451759829db153b684663105e10a7490d0f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 00:25:29 2023 -0500
+
+    fix: if using --no-boot do not prompt to start VirtualBox and also do not start
+    VirtualBox if using --non-interactive
+
+commit d59cb611a3e648cfddcca3313144f7997bfd0e7f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 00:21:45 2023 -0500
+
+    remove confusing comment
+    "Default to start guest without interaction"
+    because not really starting guest VMs without interaction unless using --non-interactive
+
+commit 36a920f55004a9187c336f40fd87d4e6f7dbc058
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 00:21:20 2023 -0500
+
+    comment
+
+commit ef459b7bf1c8f8255153806bf6f434b2a7f49c61
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 00:15:49 2023 -0500
+
+    localize response variable
+
+commit 35a760ec0eb1921e6c55c934f37e6680c74ed2d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 00:15:02 2023 -0500
+
+    output
+
+commit 278469b11053528d722e9015a52f2a397b47d930
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 27 04:55:09 2023 +0000
+
+    bumped changelog version
+
 commit ba1e03d629c719e89dcb3c001f42724b73bd0505
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Nov 26 23:30:23 2023 -0500
