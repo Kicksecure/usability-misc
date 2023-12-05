@@ -1424,6 +1424,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
       log notice "${bold}Question:${nobold} Do you want to start VirtualBox and the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
     fi
     printf '%s' "Your answer: "
+    local response
     read -r response
     log notice "User replied: '${response}'"
     case ${response} in
