@@ -1412,7 +1412,6 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     #end_installer
   fi
 
-  ## Default to start guest without interaction
   if test "${non_interactive}" = "1"; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
     if test "${virtualbox_only}" = "1"; then
