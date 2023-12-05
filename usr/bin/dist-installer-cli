@@ -452,6 +452,28 @@ get_distro() {
   esac
 }
 
+
+check_not_qubes_template() {
+  if ! test -f /run/qubes/this-is-templatevm; then
+    true "INFO: Not running inside a Qubes Template."
+    return 0
+  fi
+
+  qubes_template_detected=true
+  log warn "${underline}QubesOS Template Detection Test:${nounderline} 'Template detected'
+- The installer has detected being run inside a Qubes Template."
+
+  if test "${virtualbox_only}" = "1"; then
+    true "INFO: Running inside a Qubes Template. Continuing because virtualbox_only."
+    return 0
+  fi
+
+  ## Downloading non-Qubes VM images in Qubes Template makes no sense. Not even for development purposes.
+  ## Installing VirtualBox inside Qubes however makes sense for development purposes.
+  ## For example, this permits building non-Qubes VM images inside Qubes VMs.
+  die 1 "${underline}QubesOS Template Detection Test:${nounderline} Only virtualbox-installer-cli (--virtualbox-only) allowed in Qubes Template."
+}
+
 ##############
 ## END MISC ##
 ##############
@@ -1404,7 +1426,15 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
 
-  if test "${no_boot}" = "1"; then
+  if test "${qubes_template_detected}" = "true"; then
+    log notice "${underline}VirtualBox Startup Check:${nounderline} Not starting VirtualBox because running inside a Qubes Template."
+    ## Avoid needlessly starting VirtualBox inside a Qubes Template.
+    ## That would not be useful, would create unnecessary files inside the Template's home folder and might be confusing.
+    ## What instead might be useful for development purposes is to install VirtualBox inside a Qubes Template for the purpose
+    ## of using a Qubes App Qube for building VirtualBox VM images.
+    ## Run end_installer here, because no VMs were downloaded anyhow if a Qubes Template was detected.
+    end_installer
+  elif test "${no_boot}" = "1"; then
     log info "no_boot is set."
     log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via no_boot setting."
     log notice "VirtualBox can be started manually."
@@ -2629,6 +2659,7 @@ $df_output"
 pre_check(){
   get_os
   get_distro
+  check_not_qubes_template
   get_system_stat
   need_reboot_check_first
   get_host_pkgs
@@ -3523,6 +3554,7 @@ set_default(){
   virtualbox_linux_user_group="vboxusers"
   # shellcheck disable=SC2034
   credential_caching_status=""
+  qubes_template_detected=""
 }
 
 
