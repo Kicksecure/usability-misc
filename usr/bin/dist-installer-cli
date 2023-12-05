@@ -1041,6 +1041,11 @@ need_reboot_check_second() {
     return 0
   fi
 
+  if test "${ci}" = "1"; then
+    true "INFO: Ignore need_reboot_check_second because running on CI."
+    return 0
+  fi
+
   die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
 
 Please reboot your system and restart this installer.
