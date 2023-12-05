@@ -1383,7 +1383,6 @@ check_vm_exists(){
 
 ## Check if guest should start or not
 check_guest_boot(){
-
   case "${guest}" in
     whonix)
       log notice "Available guest: '${guest_full_vm_name_gateway}'"
@@ -1393,7 +1392,6 @@ check_guest_boot(){
       log notice "Available guest: '${guest_full_vm_name_kicksecure}'"
       ;;
   esac
-
 
   if [ "$kernel_module_has_been_load" = "false" ]; then
     ## Kernel modules have not been load.
