@@ -2265,12 +2265,19 @@ install_virtualbox_debian(){
       virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
       virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
       virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
+      ## Package virtualbox-guest-additions-iso is unavailable from Oracle repository.
+      virtualbox_guest_additions_iso_package_name=""
       if test -z "$virtualbox_version"; then
         ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
         return 1
       fi
     else
       virtualbox_qt_package_name=virtualbox-qt
+      ## virtualbox-guest-additions-iso is Freedom Software:
+      ## https://www.kicksecure.com/wiki/Dev/VirtualBox#VirtualBox_Guest_Additions_ISO_Freedom_vs_Non-Freedom
+      ## Provides file: /usr/share/virtualbox/VBoxGuestAdditions.iso
+      ## Useful to easily install VirtualBox guest additions in custom VirtualBox VMs.
+      virtualbox_guest_additions_iso_package_name="virtualbox-guest-additions-iso"
     fi
   }
 
@@ -2303,7 +2310,8 @@ install_virtualbox_debian(){
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
 
-  install_pkg "$virtualbox_qt_package_name"
+  ## Cannot quote $virtualbox_guest_additions_iso_package_name because is unset in case of using oracle_repo.
+  install_pkg "$virtualbox_qt_package_name" $virtualbox_guest_additions_iso_package_name
   install_virtualbox_debian_common_end
 }
 
@@ -2318,7 +2326,7 @@ install_virtualbox_ubuntu(){
       fi
     fi
   fi
-  install_pkg virtualbox linux-image-generic linux-headers-generic
+  install_pkg virtualbox virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
   install_virtualbox_debian_common_end
 }
 
