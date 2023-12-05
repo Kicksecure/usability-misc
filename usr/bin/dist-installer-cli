@@ -1410,9 +1410,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     log notice "VirtualBox can be started manually."
     ## Not running end_installer here, because that happens below and we want the following output messages.
     #end_installer
-  fi
-
-  if test "${non_interactive}" = "1"; then
+  elif test "${non_interactive}" = "1"; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
     if test "${virtualbox_only}" = "1"; then
       start_virtualbox_gui
