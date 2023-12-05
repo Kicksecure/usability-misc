@@ -1038,6 +1038,7 @@ need_reboot_check_second() {
   ## Fedora 39: Part of dnf-plugins-core. Not installed by default (on CI).
   ## Therefore this can only run after install_package_fedora_common.
   if root_cmd /usr/bin/needs-restarting --reboothint ; then
+    true "INFO: No reboot required."
     return 0
   fi
 
