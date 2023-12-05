@@ -1408,6 +1408,8 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     log info "no_boot is set."
     log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via no_boot setting."
     log notice "VirtualBox can be started manually."
+    ## Not running end_installer here, because that happens below and we want the following output messages.
+    #end_installer
   fi
 
   ## Default to start guest without interaction
