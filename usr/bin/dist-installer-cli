@@ -1406,7 +1406,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   if test "${no_boot}" = "1"; then
     log info "no_boot is set."
-    log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via command line."
+    log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via no_boot setting."
     log notice "VirtualBox can be started manually."
   fi
 
@@ -1450,7 +1450,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
   fi
   ## Skip guest boot
   if test "${no_boot}" = "1"; then
-    log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via command line."
+    log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via no_boot setting."
     log notice "Virtual Machine(s) can be started manually."
     end_installer
   fi
