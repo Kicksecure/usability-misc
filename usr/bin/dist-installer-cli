@@ -1448,14 +1448,16 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
   if test "${reimport}" != "1"; then
     log notice "If you would like to reimport the image, read about --reimport (danger)."
   fi
-  ## Skip guest boot
+
   if test "${no_boot}" = "1"; then
+    ## Skip guest boot
     log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via no_boot setting."
     log notice "Virtual Machine(s) can be started manually."
     end_installer
   fi
-  ## Default to start guest without interaction
+
   if test "${non_interactive}" = "1"; then
+    ## start guest without interaction
     log notice "${underline}VM Startup Check:${nounderline} VM start agreed by the user by setting non_interactive."
     ## Try to start VMs before trying to start VirtualBox Manager,
     ## because if it fails, it is less confusing to avoid starting VirtualBox Manager.
