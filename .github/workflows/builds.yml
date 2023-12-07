@@ -42,6 +42,8 @@ jobs:
                       ## systemd
                       options: --privileged
                     ## https://download.virtualbox.org/virtualbox/rpm/fedora/ no longer has fedora39.
+                    ## Fedora 39 not in VirtualBox Fedora Repository
+                    ## https://www.virtualbox.org//ticket/21929
                     #- image: fedora:latest
                     - image: debian:oldstable
                     - image: debian:stable
