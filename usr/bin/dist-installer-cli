@@ -1858,13 +1858,13 @@ install_repositories_for_virtualbox_on_debian(){
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="${distro_codename_real}"
 
-  log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
-  if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
-    ## Package 'virtualbox' is installable on Debian unstable ("sid").
-    log notice "VirtualBox Package Availability Test Result: 'success' - Package 'virtualbox-qt' is already installable from an already enabled repository. No need to add any extra repositories."
-    return 0
-  fi
-  log info "VirtualBox Package Availability Test Result: Not yet Available. Enabling additional repository..."
+#   log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
+#   if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
+#     ## Package 'virtualbox' is installable on Debian unstable ("sid").
+#     log notice "VirtualBox Package Availability Test Result: 'success' - Package 'virtualbox-qt' is already installable from an already enabled repository. No need to add any extra repositories."
+#     return 0
+#   fi
+#   log info "VirtualBox Package Availability Test Result: Not yet Available. Enabling additional repository..."
 
   if test "${dev}" = "1"; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
