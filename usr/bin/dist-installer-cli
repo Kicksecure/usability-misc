@@ -2177,7 +2177,7 @@ install_backports_and_fasttrack_repository_debian() {
   ## If not using APT with option '--target-release=bookworm-fasttrack' then
   ## APT would download an outdated version from Debian stable instead the
   ## newer version from Debian fasttrack.
-  install_pkg_fasttrack_extra_args_maybe="--target-release=bookworm-fasttrack"
+  install_pkg_fasttrack_extra_args_maybe="--target-release=${distro_codename_common_use}-fasttrack"
 }
 
 
