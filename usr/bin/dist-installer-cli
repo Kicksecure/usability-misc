@@ -363,7 +363,7 @@ get_os(){
     distro_derivative_version=$(cat /etc/whonix_version)
   fi
 
-  log notice "Architecture detected:  '${arch}'"
+  log notice "Architecture detected: '${arch}'"
   log notice "System detected: '${os}'"
   log notice "Distribution/Derivative name detected: '${distro}' / '${distro_derivative_name_pretty}'"
   log notice "Distribution/Derivative version detected: '${distro_version}' / '${distro_derivative_version}'"
