@@ -2164,11 +2164,6 @@ Pin-Priority: 650
 
 
 install_backports_and_fasttrack_repository_debian() {
-  if test "${backports_found}" = "1" && test "${fasttrack_found}" = "1"; then
-    log info "Skipped adding additional APT repositories because backports and fasttrack were already found."
-    return 0
-  fi
-
   if test "${backports_found}" = "1"; then
     log info "Skipped adding Backports repository because it was already found."
   else
