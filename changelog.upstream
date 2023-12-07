@@ -1,3 +1,54 @@
+commit 57412fed5f9ed503049e77977691361155fff9f9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:37:42 2023 -0500
+
+    unconditionally enabling additional repositories without checking if VirtualBox is already installed
+    
+    to ensure that upgrades are installed
+
+commit ed305c6a549151206cb6e66ebd8513ae2f82d82e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:34:29 2023 -0500
+
+    comment
+
+commit f96865d8aaa7b8a38b5bb314bcb9a0b1b5c9a10e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:33:01 2023 -0500
+
+    refactoring
+
+commit 8f8c54547e8d7f843f0438e235237de5c6541124
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:31:48 2023 -0500
+
+    always run APT commands to install VirtualBox without checking if it is already installed
+    to make sure upgrades are installed from Debian fasttrack
+
+commit 96ba90db9514012595df66006cb2902f95a5a1a8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:24:01 2023 -0500
+
+    Ubuntu: install virtualbox-qt instead of virtualbox
+
+commit 282ad859a27ff44bf586e5d4861caf2c428ff916
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:21:48 2023 -0500
+
+    refactoring
+
+commit 1f4a9a8de2f949ae17ebf881b796af510c8340f2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:21:13 2023 -0500
+
+    output
+
+commit 42d22a94bce20f81c8997dda1f3a880ce8a05a0d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 16:13:11 2023 +0000
+
+    bumped changelog version
+
 commit 9b708f23ac766b590127c4d9476731cb4b48434e
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 11:11:58 2023 -0500
