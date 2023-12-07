@@ -1,3 +1,43 @@
+commit 9b708f23ac766b590127c4d9476731cb4b48434e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:11:58 2023 -0500
+
+    run check_upgrades_simulation after determination that fasttrack needs to be or is enabled
+    
+    because apt may not fetch upgrades from fasttrack by default
+    
+    this is the case for package virtualbox-guest-additions-iso
+
+commit 49a7e097ed142f3353f9ff7c67e15b546e21b94a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:03:44 2023 -0500
+
+    quotes
+
+commit 5f8c357712d8e3542f36a4eb37186dc4360d88bd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:02:18 2023 -0500
+
+    update: dist-upgrade -> full-upgrade
+
+commit 6664c3134634a08c0d5227ec0423c7c56a423eec
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:54:17 2023 -0500
+
+    comment
+
+commit c68bb5c4800d61f1ccca2afd6dbe42846de35bc6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:52:30 2023 -0500
+
+    output
+
+commit f235cd9daa1166dd4188b0577c9ccd4dbeb9b02a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 15:46:45 2023 +0000
+
+    bumped changelog version
+
 commit a29ceb4058419de33d6e71f11c6ea489c1d5a2c0
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 10:32:57 2023 -0500
