@@ -450,6 +450,18 @@ get_distro() {
       claim_unsupported_distro unknown "${distro}"
       ;;
   esac
+
+  if [ ! "$fedora_derivative_detected" = "1" ]; then
+    return 0
+  fi
+  if ! test "${ci}" = "1"; then
+    return 0
+  fi
+  if [ ! "${onion}" = "1" ]; then
+    return 0
+  fi
+
+  die 0 "${underline}Distribution Test Result:${nounderline} Fedora on CI does not run the Tor systemd service. Skipped on CI to avoid breaking the CI testing."
 }
 
 
