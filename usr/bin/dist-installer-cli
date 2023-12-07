@@ -1183,20 +1183,29 @@ ${package_manager_issue_extra_help_text}"
 ## Install package only if not installed already.
 install_pkg(){
   pkgs="${*}"
+  special_args=""
   pkg_not_installed=""
-  for pkg in ${pkgs}; do
-    ## Test if package exists as a binary or a library, using different tools.
-    # shellcheck disable=SC2086
-    if ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1; then
-      log info "Package already installed: '${pkg}'"
-      continue
-    fi
-    if has "${pkg}"; then
-      log info "Program already installed: '${pkg}'"
-      continue
-    fi
 
-    pkg_not_installed="${pkg_not_installed} ${pkg}"
+  for arg in ${pkgs}; do
+    case "${arg}" in
+      --target-release=*)
+        special_args="${special_args} ${arg}"
+        ;;
+      *)
+        ## Test if package exists as a binary or a library, using different tools.
+        # shellcheck disable=SC2086
+        if ${pkg_mngr_check_installed} "${arg}" >/dev/null 2>&1; then
+          log info "Package already installed: '${arg}'"
+          continue
+        fi
+        if has "${arg}"; then
+          log info "Program already installed: '${arg}'"
+          continue
+        fi
+
+        pkg_not_installed="${pkg_not_installed} ${arg}"
+        ;;
+    esac
   done
 
   if test -n "${pkg_not_installed}"; then
@@ -1206,16 +1215,17 @@ install_pkg(){
     fi
 
     log notice "Installing package(s): '${pkg_not_installed}'"
+    log info "special_args: '${special_args}'"
 
     # shellcheck disable=SC2086
-    if ! root_cmd ${pkg_mngr_install} ${pkg_not_installed} ; then
+    if ! root_cmd ${pkg_mngr_install} ${special_args} ${pkg_not_installed} ; then
       if echo "${pkg_not_installed}" | grep --quiet --ignore-case virtualbox ; then
         virtualbox_installation_failure_debug
       fi
       die 1 "${underline}Package Installation:${nounderline} Failed to install package: '${pkg_not_installed}'"
     fi
 
-    ## Test if installation worked.
+    ## Test if installation succeeded.
     test_pkg "${pkg_not_installed}"
   fi
 }
