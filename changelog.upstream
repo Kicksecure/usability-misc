@@ -1,3 +1,71 @@
+commit a29ceb4058419de33d6e71f11c6ea489c1d5a2c0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:32:57 2023 -0500
+
+    CI: skip testing Fedora with --onion
+    
+    because Fedora onion does not run the Tor systemd unit
+    does not come with systemd installed by default
+    
+    to unbreak the CI until this issue can be resolved
+
+commit 57d4f1c516bb680be70db30509d9bbddd233cd14
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:26:23 2023 -0500
+
+    output
+
+commit 62530a47488d8f1b4144077d73d32c5fd0e4e77e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:24:04 2023 -0500
+
+    --privileged option did not fix Fedora CI for starting Tor, hence removed the option
+
+commit 2b38ab953f14e52be22caa7bcb0dab1e73d78735
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:23:45 2023 -0500
+
+    comment
+
+commit d6625bb3dadb9dea6bfa7ac46a7729688436472e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:22:21 2023 -0500
+
+    shellcheck
+
+commit 34836bbcbd0c3e924f66d95cc719bc76786da538
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:11:45 2023 -0500
+
+    fix, do not hardcode distribution suite name such as for example `bookworm`
+
+commit 36ef4035a912e4a4687de483c2967fc06a1e10da
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 10:09:29 2023 -0500
+
+    add support to install_pkg for passing additional arguments to package install command
+    
+    required to pass `--target-release=bookworm-fasttrack`
+
+commit 297aacc05f95d1230441e111a196a50508cc5a90
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 09:48:16 2023 -0500
+
+    fix, use `apt-get --target-release=bookworm-fasttrack`
+    when installing from Debian fasttrack
+    
+    virtualbox-guest-additions-iso is available from Debian stable and fasttrack.
+    Debian stable version however is outdated.
+    If not using APT with option '--target-release=bookworm-fasttrack' then
+    APT would download an outdated version from Debian stable instead the
+    newer version from Debian fasttrack.
+
+commit a9ec6f9e426e1b8013a2df4b2c153ddf7511b7ab
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Dec 5 08:06:09 2023 +0000
+
+    bumped changelog version
+
 commit 6c0d701c0d5ef9a707d72ca0d772276811d62e4f
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Dec 5 02:53:41 2023 -0500
