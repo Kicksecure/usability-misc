@@ -2161,6 +2161,13 @@ install_backports_and_fasttrack_repository_debian() {
     log notice "Adding Fasttrack's ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
     write_sources_debian "${fasttrack_url}" "${fasttrack_file_debsource}"
   fi
+
+  ## virtualbox-guest-additions-iso is available from Debian stable and fasttrack.
+  ## Debian stable version however is outdated.
+  ## If not using APT with option '--target-release=bookworm-fasttrack' then
+  ## APT would download an outdated version from Debian stable instead the
+  ## newer version from Debian fasttrack.
+  install_pkg_fasttrack_extra_args_maybe="--target-release=bookworm-fasttrack"
 }
 
 
@@ -2319,7 +2326,7 @@ ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
 
   ## Cannot quote $virtualbox_guest_additions_iso_package_name because is unset in case of using oracle_repo.
-  install_pkg "$virtualbox_qt_package_name" $virtualbox_guest_additions_iso_package_name
+  install_pkg $install_pkg_fasttrack_extra_args_maybe "$virtualbox_qt_package_name" $virtualbox_guest_additions_iso_package_name
   install_virtualbox_debian_common_end
 }
 
@@ -3582,6 +3589,7 @@ set_default(){
   # shellcheck disable=SC2034
   credential_caching_status=""
   qubes_template_detected=""
+  install_pkg_fasttrack_extra_args_maybe=""
 }
 
 
