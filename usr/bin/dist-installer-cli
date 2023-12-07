@@ -2338,8 +2338,7 @@ install_virtualbox_debian(){
   install_repositories_for_virtualbox_on_debian
   update_sources
   check_upgrades_simulation
-  get_virtualbox_version_debian || die 2 "\
-${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
+  get_virtualbox_version_debian || die 2 "${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
 
   ## Cannot quote $virtualbox_guest_additions_iso_package_name because is unset in case of using oracle_repo.
   # shellcheck disable=SC2086
