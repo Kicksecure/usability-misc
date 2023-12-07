@@ -2367,7 +2367,7 @@ install_virtualbox_ubuntu(){
       fi
     fi
   fi
-  install_pkg virtualbox virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
+  install_pkg virtualbox-qt virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
   install_virtualbox_debian_common_end
 }
 
