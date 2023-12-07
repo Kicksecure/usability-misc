@@ -1125,7 +1125,7 @@ ${package_manager_issue_extra_help_text}"
 
 check_upgrades_simulation() {
   # shellcheck disable=SC2086
-  if upgrade_simulate_output=$(root_cmd ${pkg_mngr_upgrade_check} 2>&1 | $console_write_command) ; then
+  if upgrade_simulate_output=$(root_cmd ${pkg_mngr_upgrade_check} ${install_pkg_fasttrack_extra_args_maybe} 2>&1 | $console_write_command) ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if echo "$upgrade_simulate_output" | grep --quiet --ignore-case "Error:" ; then
       log error "${underline}Package Upgrade Simulation:${nounderline} Exit code was 0 but 'Error:' found in output."
@@ -1173,7 +1173,7 @@ $number_upgraded packages can be upgraded.
 
 Please upgrade your operating system first. Otherwise this installer cannot proceed.
 
-${sucmd} ${pkg_mngr_upgrade_install}
+${sucmd} ${pkg_mngr_upgrade_install} ${install_pkg_fasttrack_extra_args_maybe}
 
 ${package_manager_issue_extra_help_text}"
 
@@ -1186,7 +1186,7 @@ upgrade_simulate_sources_error() {
 
 This is the command which the installer has just run that failed:
 
-${sucmd} ${pkg_mngr_upgrade_check}
+${sucmd} ${pkg_mngr_upgrade_check} ${install_pkg_fasttrack_extra_args_maybe}
 
 ${package_manager_issue_extra_help_text}"
 }
@@ -2280,6 +2280,7 @@ install_virtualbox_fedora(){
     ## Does not work.
     #root_cmd dnf makecache --assumeyes '--disablerepo=*' --enablerepo=virtualbox
     update_sources
+    #check_upgrades_simulation
     get_virtualbox_version_fedora || die 2 "\
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
@@ -2345,6 +2346,7 @@ install_virtualbox_debian(){
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_repositories_for_virtualbox_on_debian
     update_sources
+    check_upgrades_simulation
     get_virtualbox_version_debian || die 2 "\
 ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
