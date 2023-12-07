@@ -1833,7 +1833,7 @@ kernel_modules_check() {
     log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file /dev/vboxdrv does not exist. This probably means that the vboxdrv kernel module has not been load yet."
   else
     kernel_module_has_been_load=true
-    log warn "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
+    log info "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
   fi
 
   ## Debugging.
