@@ -2332,6 +2332,7 @@ install_virtualbox_debian(){
 
   linux_image="linux-image-$(dpkg --print-architecture)"
   linux_headers="linux-headers-$(dpkg --print-architecture)"
+  ## Doing here and now below because we $install_pkg_fasttrack_extra_args_maybe should not be used here.
   install_pkg "${linux_image}" "${linux_headers}"
 
   log notice "VirtualBox Installation: Preparing to install VirtualBox..."
