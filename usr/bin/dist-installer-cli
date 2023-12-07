@@ -978,10 +978,10 @@ secure_boot_test() {
   local mokutil_output
   if mokutil_output=$(mokutil --sb-state 2>&1) ; then
     secure_boot_status="'enabled' (mokutil_output: '$mokutil_output')"
-    log info "${underline}Secure Boot Check Result:${nounderline} $secure_boot_status Ok."
+    log info "Secure Boot Check Result: $secure_boot_status Ok."
   else
     secure_boot_status="'disabled' (mokutil_output: '$mokutil_output')"
-    log info "${underline}Secure Boot Check Result:${nounderline} $secure_boot_status Ok."
+    log info "Secure Boot Check Result: $secure_boot_status Ok."
   fi
 }
 
@@ -1018,7 +1018,7 @@ kernel_modules_signed_only() {
     return 0
   fi
   modules_signed_only=false
-  log info "${underline}Kernel Module Signature Enforcement Check Result:${nounderline}: 'no' - unsigned modules can be load."
+  log info "Kernel Module Signature Enforcement Check Result: 'no' - unsigned modules can be load."
 }
 
 
@@ -1026,7 +1026,7 @@ need_reboot_check_first() {
   ## Debian: /var/run/reboot-required
   ## Fedora: Does not have this.
   if ! test -f /var/run/reboot-required ; then
-    log info "${underline}Reboot Check Result:${nounderline} File /var/run/reboot-required does not exist, good."
+    log info "Reboot Check Result: File /var/run/reboot-required does not exist, good."
     return 0
   fi
 
@@ -1163,7 +1163,7 @@ check_upgrades_simulation() {
    IFS="$OIFS"
 
    if [ "$number_upgraded" = "0" ]; then
-      log info "${underline}Package Upgrade Simulation:${nounderline} No packages require upgrading, ok."
+      log info "Package Upgrade Simulation: No packages require upgrading, ok."
       return 0
    fi
 
