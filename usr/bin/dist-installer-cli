@@ -2336,6 +2336,7 @@ ${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
   fi
 
   ## Cannot quote $virtualbox_guest_additions_iso_package_name because is unset in case of using oracle_repo.
+  # shellcheck disable=SC2086
   install_pkg $install_pkg_fasttrack_extra_args_maybe "$virtualbox_qt_package_name" $virtualbox_guest_additions_iso_package_name
   install_virtualbox_debian_common_end
 }
