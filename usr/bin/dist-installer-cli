@@ -1705,7 +1705,7 @@ install_package_fedora_common(){
   #pkg_mngr_update="${pkg_mngr} makecache"
   pkg_mngr_update="${pkg_mngr} --assumeyes update"
   pkg_mngr_check_installed="${pkg_mngr} list installed"
-  pkg_mngr_upgrade_check="/bin/true dnf does not seem to support an alternative to 'apt-get full-upgrade --simulate', skipping."
+  pkg_mngr_upgrade_check="/bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'"
   pkg_mngr_upgrade_install="${pkg_mngr} upgrade"
 
   update_sources
