@@ -1,3 +1,15 @@
+commit c6e8668c12c5de50f408d1fb165eacc259f800fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 11:44:53 2023 -0500
+
+    fix, make sure install_pkg_fasttrack_extra_args_maybe gets set and code simplification
+
+commit 8a70d4ba247e7bfb547562845891ad0678e4ec34
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 16:38:32 2023 +0000
+
+    bumped changelog version
+
 commit 57412fed5f9ed503049e77977691361155fff9f9
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 11:37:42 2023 -0500
