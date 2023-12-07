@@ -978,11 +978,10 @@ secure_boot_test() {
   local mokutil_output
   if mokutil_output=$(mokutil --sb-state 2>&1) ; then
     secure_boot_status="'enabled' (mokutil_output: '$mokutil_output')"
-    log info "Secure Boot Check Result: $secure_boot_status Ok."
   else
     secure_boot_status="'disabled' (mokutil_output: '$mokutil_output')"
-    log info "Secure Boot Check Result: $secure_boot_status Ok."
   fi
+  log info "Secure Boot Check Result: $secure_boot_status Ok."
 }
 
 
