@@ -2319,6 +2319,8 @@ install_virtualbox_debian(){
   }
 
   if test "${oracle_repo}" = "1"; then
+    ## Workaround for undeclared dependencies bug by virtualbox.org (Oracle) repository.
+    ##
     ## udev:
     ## https://www.virtualbox.org/ticket/21804
     ##
