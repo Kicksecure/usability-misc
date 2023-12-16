@@ -1,3 +1,29 @@
+commit f0c0e1b481e5cf5a0c44c71cf6d345f00c98e332
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 16 14:05:37 2023 -0500
+
+    virtualization test: hide CPU brand by default
+    
+    for better privacy
+
+commit 11531de02eabd3be83a13bbb72e5e8b0a21190ca
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 16 13:52:36 2023 -0500
+
+    local virt_flag brand
+
+commit 5f426323cace8cae256a87234c299a0387cf1557
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 16 13:50:07 2023 -0500
+
+    fix: show only "likely caused by warnings above" if applicable
+
+commit 403ceb02e4334e62ee81c0b9ddbf4de3c17c338a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Dec 7 16:45:24 2023 +0000
+
+    bumped changelog version
+
 commit c6e8668c12c5de50f408d1fb165eacc259f800fc
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 11:44:53 2023 -0500
