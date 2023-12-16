@@ -472,6 +472,7 @@ check_not_qubes_template() {
   fi
 
   qubes_template_detected=true
+  user_warned_potential_startup_issue=true
   log warn "${underline}QubesOS Template Detection Test:${nounderline} 'Template detected'
 - The installer has detected being run inside a Qubes Template."
 
@@ -946,6 +947,7 @@ nested_virtualization_test() {
   #nested_virtualization_detected=""
   if test -z "${nested_virt_tool:-}"; then
     ## No hard fail, not a requirement, good to have only.
+    user_warned_potential_startup_issue=true
     log warn "${underline}Nested Virtualization Test:${nounderline} Detection tool for nested virtualization is missing."
   else
     if test "${dry_run}" = "1"; then
@@ -954,6 +956,7 @@ nested_virtualization_test() {
       ## Check if we are a guest of virtualization.
       if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
         #nested_virtualization_detected=true
+        user_warned_potential_startup_issue=true
         log warn "${underline}Nested Virtualization Test:${nounderline} Nested virtualization detected.
   - This might be a user error.
   - This installer is designed to run on the host operating system.
@@ -966,6 +969,7 @@ nested_virtualization_test() {
 
   if test -f /usr/share/qubes/marker-vm; then
     #nested_virtualization_detected=true
+    user_warned_potential_startup_issue=true
     log warn "${underline}QubesOS Detection Test:${nounderline} 'Qubes detected'
   - The installer is not designed for execution within Qubes.
   - Useful only for development purposes.
@@ -990,6 +994,7 @@ kernel_modules_load() {
   ## Does usually not require root but might on some hardened systems.
   if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat /proc/sys/kernel/modules_disabled) ; then
     kernel_modules_can_be_load=maybe
+    user_warned_potential_startup_issue=true
     log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /proc/sys/kernel/modules_disabled)"
     return 0
   fi
@@ -1008,6 +1013,7 @@ kernel_modules_signed_only() {
   ## Does usually not require root but might on some hardened systems.
   if ! sig_enforce=$(root_cmd_loglevel=null root_cmd cat /sys/module/module/parameters/sig_enforce) ; then
     modules_signed_only=maybe
+    user_warned_potential_startup_issue=true
     log warn "${underline}Kernel Module Signature Enforcement Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
     return 0
   fi
@@ -1424,7 +1430,7 @@ check_guest_boot(){
 
   if [ "$kernel_module_has_been_load" = "false" ]; then
     ## Kernel modules have not been load.
-
+    user_warned_potential_startup_issue=true
     log warn "Debugging information:
 Secure Boot Status: '$secure_boot_status'
 Kernel module has been load: '$kernel_module_has_been_load'
@@ -1657,12 +1663,17 @@ start_virtualbox_gui() {
 
 
 virtualbox_start_failed() {
+  local likely_cause
+  likely_cause=""
+  if [ "$user_warned_potential_startup_issue" = "true" ]; then
+    likely_cause="- This is likely happening due to the warnings that have been reported above."
+  fi
   die 106 "${underline}Virtual Machine Startup Result:${nounderline} ${red}${bold}FAIL${nobold}${nocolor}
+  $likely_cause
   - The installer succeeded with download and import, but
   - failed to start the virtual machines (VMs).
   - The root cause for this issue is likely not the installer.
   - This issue would likely also happen if the user tried to manually start the VMs.
-  - This is likely happening due to the virtualization related warnings that have been reported above.
   - Resolving these issues (as per documentation hyperlinks above) would likely resolve this issue.
   ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
 }
@@ -1829,6 +1840,7 @@ kernel_modules_check() {
 
   if ! test -e /dev/vboxdrv ; then
     kernel_module_has_been_load=false
+    user_warned_potential_startup_issue=true
     log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file /dev/vboxdrv does not exist. This probably means that the vboxdrv kernel module has not been load yet."
   else
     kernel_module_has_been_load=true
@@ -1840,6 +1852,7 @@ kernel_modules_check() {
   if kernel_module_signer=$(root_cmd_loglevel=null root_cmd modinfo --field signer vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module Signer: '$kernel_module_signer'"
   else
+    user_warned_potential_startup_issue=true
     log warn "${underline}VirtualBox Kernel Module Signer${nounderline}: '$kernel_module_signer'"
   fi
 
@@ -1849,6 +1862,7 @@ kernel_modules_check() {
   if kernel_module_modprobe_output=$(root_cmd_loglevel=null root_cmd modprobe vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module modprobe output: '$kernel_module_modprobe_output'"
   else
+    user_warned_potential_startup_issue=true
     log warn "${underline}VirtualBox Kernel modprobe output${nounderline}: '$kernel_module_modprobe_output'"
   fi
 }
@@ -2632,6 +2646,7 @@ get_system_stat(){
   total_mem="$((total_mem_kB/1000))"
   ## capped to 4200MB to report that 4GB RAM on the host is too little
   if [ "${total_mem}" -lt "4200" ]; then
+    user_warned_potential_startup_issue=true
     log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: '${total_mem} MB'"
     if test "${virtualbox_only}" != "1"; then
       log warn "  - For more information, refer to:"
@@ -2975,16 +2990,19 @@ get_virtualization(){
       return 0
       ;;
     "")
+      user_warned_potential_startup_issue=true
       log warn "${underline}Virtualization Support Test:${nounderline} No virtualization flag found."
       virt_detection_success=false
       ;;
     *)
+      user_warned_potential_startup_issue=true
       log warn "${underline}Virtualization Support Test:${nounderline} Unknown virtualization flag: '${virt_flag}'"
       virt_detection_success=false
       ;;
   esac
 
   if [ "$virt_detection_success" = "false" ]; then
+    user_warned_potential_startup_issue=true
     log warn "  - The virtualization detection feature of this installer may not be flawless and could potentially fail to detect virtualization support (this is known as a 'false negative')."
     if [ "${hypervisor}" = "virtualbox" ]; then
       log warn "  - Refer to user documentation on how to enable virtualization:"
@@ -3032,6 +3050,7 @@ get_virtualization(){
         return 0
         ;;
       1)
+        user_warned_potential_startup_issue=true
         log warn "Virtualization can NOT be used."
         log warn "Virtualization availability can be a false negative."
         return 0
@@ -3039,6 +3058,7 @@ get_virtualization(){
         #return 1
         ;;
       2)
+        user_warned_potential_startup_issue=true
         log warn "Virtualization can be used, but not enabled."
         log warn "Virtualization availability can be a false negative."
         return 0
@@ -3063,6 +3083,7 @@ get_virtualization(){
     log notice "Device /dev/kvm exists"
     verdict 0
   else
+    user_warned_potential_startup_issue=true
     log warn "Device /dev/kvm does not exist"
     log warn "hint: '${sucmd} modprobe kvm_$brand'"
   fi
@@ -3098,6 +3119,7 @@ get_virtualization(){
   fi
 
   if [ "${virt_disabled}" -eq 1 ]; then
+    user_warned_potential_startup_issue=true
     log warn "'${virt}' is disabled by your BIOS"
     log warn "Enter your BIOS setup and enable Virtualization Technology (VT),"
     log warn "      and then reboot your system."
@@ -3594,6 +3616,7 @@ set_default(){
   credential_caching_status=""
   qubes_template_detected=""
   install_pkg_fasttrack_extra_args_maybe=""
+  user_warned_potential_startup_issue=""
 }
 
 
