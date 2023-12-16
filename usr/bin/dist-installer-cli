@@ -2974,9 +2974,10 @@ get_virtualization(){
   ## Check CPU flags for capability
   virt_flag="$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | grep -wo -E '(vmx|svm)' || true)"
 
-  case "${virt_flag:=}" in
+  case "${virt_flag:=none}" in
     vmx) brand=intel;;
     svm) brand=amd;;
+    *) brand=unknown;;
   esac
 
 #  if compgen -G "/sys/kernel/iommu_groups/*/devices/*" > /dev/null; then
@@ -2987,18 +2988,20 @@ get_virtualization(){
 
   case "${virt_flag:=}" in
     vmx|svm)
-      log notice "${underline}Virtualization Support Test:${nounderline} Your CPU supports virtualization: '${brand}': '${virt_flag}'"
+      log notice "Virtualization Support Test Result: 'success'"
+      log info "cpu_brand: '${brand}' virt_flag: '${virt_flag}'"
       virt_detection_success=true
       return 0
       ;;
-    "")
+    none)
       user_warned_potential_startup_issue=true
-      log warn "${underline}Virtualization Support Test:${nounderline} No virtualization flag found."
+      log warn "${underline}Virtualization Support Test:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - No virtualization flag found."
       virt_detection_success=false
       ;;
     *)
       user_warned_potential_startup_issue=true
-      log warn "${underline}Virtualization Support Test:${nounderline} Unknown virtualization flag: '${virt_flag}'"
+      log warn "${underline}Virtualization Support Test:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - Unknown virtualization flag. (Use --log-level=info for potentially privacy sensitive details.)"
+      log info "cpu_brand: '${brand}' virt_flag: '${virt_flag}'"
       virt_detection_success=false
       ;;
   esac
