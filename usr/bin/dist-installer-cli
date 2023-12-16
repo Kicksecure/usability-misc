@@ -2968,6 +2968,8 @@ download_files(){
 
 ## https://en.wikipedia.org/wiki/X86_virtualization
 get_virtualization(){
+  local virt_flag brand
+
   ## Check if virtualization is enabled.
   ## Check CPU flags for capability
   virt_flag="$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo | grep -wo -E '(vmx|svm)' || true)"
