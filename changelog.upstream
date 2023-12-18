@@ -1,3 +1,18 @@
+commit 8ddd6699cee1fb7c0559bf3e4f3a1be5543cced7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 18 07:45:37 2023 -0500
+
+    no longer install apt-transport-https
+    
+    because it is a dummy transitional package,
+    its functionality was merged into apt
+
+commit eaba8981099a35acbde375ff0a01470bcc08efbf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 16 19:12:50 2023 +0000
+
+    bumped changelog version
+
 commit f0c0e1b481e5cf5a0c44c71cf6d345f00c98e332
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Dec 16 14:05:37 2023 -0500
