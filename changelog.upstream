@@ -1,3 +1,17 @@
+commit 6b01e0e70523fdb564d106dde36d2692f2f342bd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 29 16:21:22 2023 -0500
+
+    update for new sha512sums link format
+    
+    https://forums.whonix.org/t/whonix-linux-installer-development-discussion/15917/161
+
+commit 7a0600c5921d7d525102048744877a5ab9308c61
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 18 14:47:25 2023 +0000
+
+    bumped changelog version
+
 commit 8ddd6699cee1fb7c0559bf3e4f3a1be5543cced7
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Dec 18 07:45:37 2023 -0500
