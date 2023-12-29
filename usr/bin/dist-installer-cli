@@ -2948,14 +2948,14 @@ download_files(){
 
   log notice "Downloads will be stored in the directory: '${directory_prefix}'"
   get_file large "${url_guest_file}.${guest_file_ext}" || return 1
-  get_file small "${url_guest_file}.sha512sums.sig" || return 1
-  get_file small "${url_guest_file}.sha512sums" || return 1
+  get_file small "${url_guest_file}.${guest_file_ext}.sha512sums.sig" || return 1
+  get_file small "${url_guest_file}.${guest_file_ext}.sha512sums" || return 1
 
   log notice "Checking if files exists locally."
   if test "${dry_run}" = "1" || {
     test -f "${directory_prefix}/${guest_file}.${guest_file_ext}" &&
-    test -f "${directory_prefix}/${guest_file}.sha512sums.sig" &&
-    test -f "${directory_prefix}/${guest_file}.sha512sums"
+    test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig" &&
+    test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"
   }
   then
     log_time
@@ -3336,14 +3336,14 @@ check_hash(){
 
 check_signature_test(){
   log info "Unit testing signature, expecting non-zero exit code."
-  rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
-  cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.test"
-  echo "" | tee "${directory_prefix}/${guest_file}.sha512sums.test" >/dev/null
-  if ! check_signature "${directory_prefix}/${guest_file}.sha512sums.test" 2>/dev/null; then
-    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+  rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  echo "" | tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  if ! check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
+    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
   fi
 }
@@ -3351,14 +3351,14 @@ check_signature_test(){
 
 check_hash_test(){
   log info "Unit testing checksum, expecting non-zero exit code."
-  rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
-  cp "${directory_prefix}/${guest_file}.sha512sums" "${directory_prefix}/${guest_file}.sha512sums.test"
-  echo "" | tee "${directory_prefix}/${guest_file}.sha512sums.test" >/dev/null
-  if ! check_hash "${directory_prefix}/${guest_file}.sha512sums.test" 2>/dev/null; then
-    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+  rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  echo "" | tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  if ! check_hash "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
+    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    rm -f "${directory_prefix}/${guest_file}.sha512sums.test"
+    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
   fi
 }
@@ -3374,8 +3374,8 @@ check_integrity(){
     return 0
   fi
   log notice "Performing integrity checks."
-  check_signature "${directory_prefix}/${guest_file}.sha512sums" || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
-  check_hash "${directory_prefix}/${guest_file}.sha512sums" \
+  check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
+  check_hash "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" \
     || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
 
   check_signature_test
