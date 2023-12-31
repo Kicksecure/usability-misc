@@ -1577,7 +1577,6 @@ import_guest(){
 
 ## Import VirtualBox images
 import_virtualbox(){
-  log notice "VM Import: Importing Virtual Machine(s)..."
   ## Check how many systems to import.
   ## vsys 0: gateway
   ## vsys 1: workstation
@@ -1601,6 +1600,8 @@ import_virtualbox(){
       esac
       ;;
   esac
+
+  log notice "VM Import: Importing Virtual Machine(s)..."
 
   ## import VirtualBox image
   # shellcheck disable=SC2086
