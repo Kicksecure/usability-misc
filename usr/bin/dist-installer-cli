@@ -893,7 +893,7 @@ claim_unsupported_distro(){
 
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
-    log notice "Initiating installation of hypervisor-required packages... Please wait, as this could take a while..."
+    log notice "Package Installation: installation of hypervisor-required packages... Please wait, as this could take a while..."
     if [ "$ubuntu_derivative_detected" = "1" ]; then
       install_package_debian_common
       install_virtualbox_ubuntu
@@ -1531,10 +1531,10 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   log info "Virtual Machine(s) already exist."
   if test "${redownload}" != "1"; then
-    log notice "If you would like to redownload the image, read about '--redownload' (safe)."
+    log notice "Hint: If you would like to redownload the image, read about '--redownload' (safe)."
   fi
   if test "${reimport}" != "1"; then
-    log notice "If you would like to reimport the image, read about '--reimport' (danger)."
+    log notice "Hint: If you would like to reimport the image, read about '--reimport' (danger)."
   fi
 
   if test "${no_boot}" = "1"; then
@@ -3429,10 +3429,10 @@ check_integrity(){
   fi
 
   if test "${dry_run}" = "1"; then
-    log notice "Skipping integrity checks because dry_run is set."
+    log notice "Integrity Check: Skipping integrity checks because dry_run is set."
     return 0
   fi
-  log notice "Performing integrity checks."
+  log notice "Integrity Check: Performing integrity checks..."
   check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
   check_hash "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" \
     || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
@@ -3909,14 +3909,14 @@ parse_opt(){
   fi
   if test "${dev}" = "1"; then
     if test -z "${guest_version}"; then
-      log notice "Setting dev software version."
+      log notice "Version Detection: Setting dev software version."
       guest_version="17.0.3.4"
     fi
   fi
   if test "${dry_run}" = "1"; then
     if test -z "${guest_version}"; then
-      log notice "dry_run set, commands will be printed but not executed."
-      log notice "Using simulated software version because of dry_run."
+      log notice "Simulation: dry_run set, commands will be printed but not executed."
+      log notice "Version Detection: Using simulated software version because of dry_run."
       guest_version="17.0.3.4"
     fi
   fi
@@ -3926,7 +3926,7 @@ parse_opt(){
     test "${curr_shell}" = "bash" && set +o errtrace
   fi
 
-  log info "Option parsing ended."
+  log info "Option Parsing: 'success'"
 }
 
 
