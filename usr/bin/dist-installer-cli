@@ -1366,19 +1366,21 @@ check_vm_exists_virtualbox(){
       fi
       ;;
     kicksecure)
-      if vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
-        log notice "${underline}Existing VM Check:${nounderline} Virtual Machine(s) were imported previously."
-        if test "${reimport}" = "1"; then
-          check_vm_running_virtualbox "${guest_full_vm_name_kicksecure}"
-          ## If VMs exists and reimport is set, remove VMs as they are gonna
-          ## be imported later by main.
-          log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
-          log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
-        else
-          ## VMs already exist, check if user wants to start them.
-          log info "Checking if user wants to start Virtual Machine(s) now."
-          check_guest_boot
-        fi
+      if ! vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
+        log info "${underline}Existing VM Check:${nounderline} None existing yet, ok."
+        return 0
+      fi
+      log notice "${underline}Existing VM Check:${nounderline} Virtual Machine(s) were imported previously."
+      if test "${reimport}" = "1"; then
+        check_vm_running_virtualbox "${guest_full_vm_name_kicksecure}"
+        ## If VMs exists and reimport is set, remove VMs as they are gonna
+        ## be imported later by main.
+        log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
+        log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
+      else
+        ## VMs already exist, check if user wants to start them.
+        log info "Checking if user wants to start Virtual Machine(s) now."
+        check_guest_boot
       fi
       ;;
   esac
