@@ -1313,56 +1313,62 @@ check_vm_exists_virtualbox(){
       if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0" ; then
         log warn "Workstation exists but Gateway doesn't."
       fi
+      local do_continue=false
       ## If either one of the Guests exists, proceed.
       if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1" ; then
-        log notice "${underline}Existing VM Check:${nounderline} Virtual Machine(s) have been imported previously."
-        if test "${reimport}" = "1"; then
-          ## Remove Gateway if it exists.
-          if test "${gateway_exists}" = "1"; then
-            check_vm_running_virtualbox "${guest_full_vm_name_gateway}"
-            ## Do not remove gateway if import_only is set to workstation
-            if test "${import_only}" = "workstation" ; then
-              log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
-              log info "If you wish to reimport both machines, do not specify import_only."
-            else
-              log warn "Deleting previously imported gateway because reimport is set..."
-              log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
-            fi
+        do_continue=true
+      fi
+      if test "${do_continue}" = "false" ; then
+        log info "${underline}Existing VM Check:${nounderline} None existing yet, ok."
+        return 0
+      fi
+      log notice "${underline}Existing VM Check:${nounderline} Virtual Machine(s) have been imported previously."
+      if test "${reimport}" = "1"; then
+        ## Remove Gateway if it exists.
+        if test "${gateway_exists}" = "1"; then
+          check_vm_running_virtualbox "${guest_full_vm_name_gateway}"
+          ## Do not remove gateway if import_only is set to workstation
+          if test "${import_only}" = "workstation" ; then
+            log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
+            log info "If you wish to reimport both machines, do not specify import_only."
+          else
+            log warn "Deleting previously imported gateway because reimport is set..."
+            log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
           fi
-          ## Remove Workstation if it exists.
-          if test "${workstation_exists}" = "1" ; then
-            check_vm_running_virtualbox "${guest_full_vm_name_workstation}"
-            ## Do not remove workstation if import_only is set to gateway
-            if test "${import_only}" = "gateway" ; then
-              log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
-              log info "If you wish to reimport both machines, do not specify import_only."
-            else
-              log warn "Deleting previously imported workstation because reimport is set."
-              log_run notice vboxmanage unregistervm \
-                "${guest_full_vm_name_workstation}" --delete
-            fi
-          fi
-        elif test -n "${import_only}" ; then
-          ## reimport was not set and the import_only is set to the same
-          ## machine that already exists.
-          if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
-            die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'gateway', but it already exists and reimport was not set."
-          elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
-            die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
-          fi
-        else
-          ## One of the guests doesn't exist, but neither reimport nor
-          ## import-only was not set.
-          if test "${workstation_exists}" = "0" || test "${gateway_exists}" = "0" ; then
-            test "${workstation_exists}" = "0" &&
-              die 1 "${underline}Check Existing VM Test:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
-            test "${gateway_exists}" = "0" &&
-              die 1 "${underline}Check Existing VM Test:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
-          fi
-          ## VMs already exist, check if user wants to start them.
-          log info "Checking if user wants to start Virtual Machine(s) now."
-          check_guest_boot
         fi
+        ## Remove Workstation if it exists.
+        if test "${workstation_exists}" = "1" ; then
+          check_vm_running_virtualbox "${guest_full_vm_name_workstation}"
+          ## Do not remove workstation if import_only is set to gateway
+          if test "${import_only}" = "gateway" ; then
+            log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
+            log info "If you wish to reimport both machines, do not specify import_only."
+          else
+            log warn "Deleting previously imported workstation because reimport is set."
+            log_run notice vboxmanage unregistervm \
+              "${guest_full_vm_name_workstation}" --delete
+          fi
+        fi
+      elif test -n "${import_only}" ; then
+        ## reimport was not set and the import_only is set to the same
+        ## machine that already exists.
+        if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
+          die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'gateway', but it already exists and reimport was not set."
+        elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
+          die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
+        fi
+      else
+        ## One of the guests doesn't exist, but neither reimport nor
+        ## import-only was not set.
+        if test "${workstation_exists}" = "0" || test "${gateway_exists}" = "0" ; then
+          test "${workstation_exists}" = "0" &&
+            die 1 "${underline}Check Existing VM Test:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
+          test "${gateway_exists}" = "0" &&
+            die 1 "${underline}Check Existing VM Test:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
+        fi
+        ## VMs already exist, check if user wants to start them.
+        log info "Checking if user wants to start Virtual Machine(s) now."
+        check_guest_boot
       fi
       ;;
     kicksecure)
