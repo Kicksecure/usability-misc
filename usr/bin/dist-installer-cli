@@ -1310,10 +1310,6 @@ check_vm_running_virtualbox(){
 
 ## Check if VM exists on VirtualBox
 check_vm_exists_virtualbox(){
-  if test "${virtualbox_only}" = "1"; then
-    return 0
-  fi
-
   case "${guest}" in
     whonix)
       ## Test if machine exists.
