@@ -2993,6 +2993,13 @@ get_file(){
 }
 
 
+files_already_downloaded_check() {
+  test -f "${directory_prefix}/${guest_file}.${guest_file_ext}"
+  test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig"
+  test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"
+}
+
+
 ## Check if files were already downloaded, if not, try to download everything
 ## and only if succeeds, set download flag.
 download_files(){
@@ -3005,20 +3012,11 @@ download_files(){
 
   log info "Download: Checking if files exists locally..."
 
-  if test "${dry_run}" = "1"; then
-    log_time
-    log_run notice touch "${download_flag}"
-    return 0
-  fi
-
-  if test -f "${directory_prefix}/${guest_file}.${guest_file_ext}" && \
-      test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig" && \
-      test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"; then
-        log_time
-        log_run notice touch "${download_flag}"
-  else
+  if ! files_already_downloaded_check ; then
     die 103 "${underline}Download:${nounderline} Failed to download files."
   fi
+
+  log_time
 }
 
 
@@ -3342,6 +3340,11 @@ should_download(){
     ## 'return 1' so the result of should_download is "no".
     return 1
   fi
+  if test "${dry_run}" = "1"; then
+    log notice "Creating download flag because dry_run is set."
+    log_run notice touch "${download_flag}"
+    return 0
+  fi
 
   if test "${redownload}" = "1"; then
     ## Do not print further messages as it was already printed before.
@@ -3436,6 +3439,8 @@ check_integrity(){
 
   check_signature_test
   check_hash_test
+
+  log_run notice touch "${download_flag}"
 
   log notice "Integrity Check Result: 'success'"
 }
