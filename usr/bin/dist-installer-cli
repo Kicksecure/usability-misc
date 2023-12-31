@@ -2926,10 +2926,10 @@ Additional details:
 get_version(){
   log notice "Detecting guest version..."
   if test -n "${guest_version:-}"; then
-    log notice "User defined, dry_run or dev version already configured. Autodetection form API not required."
+    log notice "User defined, dry_run or dev version already configured. Autodetection using API not required."
     return 0
   fi
-  log info "Acquiring guest version from API..."
+  log info "Acquiring guest version using API..."
   log info "API host: ${1}"
   cmd_raw_version="curl ${curl_transfer_proxy:-} $(get_proxy_cred version) \
       ${curl_opt_ssl:-} \
