@@ -2090,7 +2090,7 @@ install_repositories_for_virtualbox_on_debian(){
     return 0
   fi
 
-  log info "Installing packages required for backports and fasttrack repository..."
+  log info "Installing packages required for 'backports' and 'fasttrack' repository..."
   install_pkg ca-certificates fasttrack-archive-keyring
 
   case "${distro_codename_real}" in
@@ -2229,16 +2229,16 @@ Pin-Priority: 650
 
 install_backports_and_fasttrack_repository_debian() {
   if test "${backports_found}" = "1"; then
-    log info "Skipped adding Backports repository because it was already found."
+    log info "Skipped adding 'backports' repository because it was already found."
   else
-    log notice "Adding Backports's ${connection_type_debsource} repository to ${backports_file_debsource}"
+    log notice "Adding 'backports' ${connection_type_debsource} repository to ${backports_file_debsource}"
     write_sources_debian "${backports_url}" "${backports_file_debsource}"
   fi
 
   if test "${fasttrack_found}" = "1"; then
-    log info "Skipped adding Fasttrack repository because it was already found."
+    log info "Skipped adding 'fasttrack' repository because it was already found."
   else
-    log notice "Adding Fasttrack's ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
+    log notice "Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
     write_sources_debian "${fasttrack_url}" "${fasttrack_file_debsource}"
   fi
 
