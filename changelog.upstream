@@ -1,3 +1,258 @@
+commit fa6f2ce8a7fd67125347f6ae0bdb90ccb406322f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 17:41:44 2023 -0500
+
+    check if unexpected unregistered vbox file exists
+
+commit 31e45f7b47ca10e4457d7a61c862acdfde62e3df
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 17:01:33 2023 -0500
+
+    output
+
+commit 918016aaca1d89c08a1cd1db2ab814b881a3847d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:58:48 2023 -0500
+
+    comments
+
+commit b20b5b66421d5a8bbcaf7cdc0bb1c051f19e39b7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:56:59 2023 -0500
+
+    refactoring
+
+commit b55e6c578d09797e697bd6ff1df795d973b5eec7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:55:15 2023 -0500
+
+    output
+
+commit c4a69a94537e6060f1bc262d8f263080d0b715a1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:49:26 2023 -0500
+
+    output
+
+commit 6a31908eef0208fc8476cae63c8ca9cb926a1991
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:45:09 2023 -0500
+
+    output
+
+commit d6f692909c5e0a82e85697fdb08319d4e7fb23ef
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:42:14 2023 -0500
+
+    output
+
+commit 8f949a1eaacc9123cd8db65b42dba47b51d47cf1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:40:56 2023 -0500
+
+    output
+
+commit c23a6373f490a5eec1363750390367b3b78f489e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:40:15 2023 -0500
+
+    output
+
+commit de86d599c670b341969bff7ba2c90c900cef39b1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:37:46 2023 -0500
+
+    output
+
+commit 4e728abc68930bcc0407ac885d4cacdaed9060c6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:35:27 2023 -0500
+
+    set download flag only if integrity check succeeded
+
+commit 77674fa22c48efcc92e2ed1865bd2ed903c721a5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:30:17 2023 -0500
+
+    refactoring
+
+commit ebe944847daf999272110fe13a34ae7186edce6f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:24:18 2023 -0500
+
+    introduce --noupdate
+
+commit 3f52b3dc387672f098ef9cedfa9973fb936f647d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:20:18 2023 -0500
+
+    output
+
+commit de8973c243998eae64d50ca71ff98eafcc934630
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:17:28 2023 -0500
+
+    output
+
+commit e280284e647dedb9dcc09a85bf77c23e20895802
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 16:12:18 2023 -0500
+
+    fix: --import-only;
+    allow only importing one VM but not the other and starting it;
+    don't run package manager updates command when using --dev to safe time
+
+commit 4e10c68e7c773041897f3f2c48052fc28eb5fef9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 15:44:25 2023 -0500
+
+    split check_vm_exists_virtualbox function
+
+commit 653545067a5eff67ee454922cb79c066f305739c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 15:23:16 2023 -0500
+
+    refactoring
+
+commit a3a1805f152b02c83b97eb7bb367a65ff7862076
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 15:21:04 2023 -0500
+
+    fix setting vm_or_vms_already_existing_test_result for Kicksecure
+
+commit 47c46ba21c1b175d6ed48ffe6626aafc243b0fa5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 15:11:04 2023 -0500
+
+    output
+
+commit 3f5c8e9c67b8216a35cb1fd2f613f8f07db03493
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 14:47:39 2023 -0500
+
+    remove duplicate check
+
+commit 101a4543a788a88898db1dfcef7ec89bdefbb53f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 14:44:45 2023 -0500
+
+    fix: do not reimport unless using --reimport
+
+commit 9f6f6ece9b5b5a396206523a348d989fc240c165
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 14:37:48 2023 -0500
+
+    refactoring
+
+commit a46c72ebb33d114ece4f550ab544ccf3a3d38114
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:53:43 2023 -0500
+
+    output
+
+commit 1f51800520e16659ff51df1975ee06858faa0ad0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:53:13 2023 -0500
+
+    quotes
+
+commit e889522aa78425286182484174d63708e624c208
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:51:23 2023 -0500
+
+    refactoring
+
+commit dfdb922a1c899e726dfa856e4fb6174d6916628d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:47:16 2023 -0500
+
+    comments
+
+commit 1c185d30fddcd1f5d188cad3c703fa0fae66c9a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:43:14 2023 -0500
+
+    output
+
+commit edbcb2f305341ec79467c8a78b4ef3f92abe3ef9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:39:41 2023 -0500
+
+    fix: suppress stderr from vboxmanage showvminfo in case it is expected that no VMs exist yet
+
+commit 129470c05cef00b04ab6507fd5dd26d6ee0c27c0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:37:55 2023 -0500
+
+    output
+
+commit f3b258a350feec6d7d72758758ff7828d8b55e03
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:34:06 2023 -0500
+
+    output
+
+commit 5cc48879710b22e1d6ffa5a210e9308a4fb0c917
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 12:28:09 2023 -0500
+
+    code simplification;
+    check if VMs exist in dedicated function
+    refactor from where check_guest_boot is called
+    fix: --dry-run operating system updates check;
+    output
+
+commit 79570b18d3f85902798dfc2cc41e298da4cd4b7d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 11:33:37 2023 -0500
+
+    move check_vm_running_virtualbox to check_vm_exists
+
+commit ef79e623ee42f85b935074336b8b1ff3d25679a9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 11:28:27 2023 -0500
+
+    refactoring
+
+commit 0b3d8cf92bbd4eb015cae819252e96d8caae3ec7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 11:26:30 2023 -0500
+
+    refactoring
+
+commit 8674dc001e62545da73b997492aa73a939d0b339
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 11:23:55 2023 -0500
+
+    shorten conditional
+
+commit 8ed4278d3059e1f6c037c39d8cf7f4170409d4d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 11:14:16 2023 -0500
+
+    shorten conditional
+
+commit 36ed9e8707d768bc4f9b556723d8f8917e35edea
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 11:11:10 2023 -0500
+
+    refactoring
+
+commit 63c40bebe5a12a0646d490db87e1a245bed32947
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 31 10:40:13 2023 -0500
+
+    fix: localize and properly initialize dialog_box variable
+    
+    This fixes the the interactive license check if neither dialog nor whiptail
+    are installed.
+
+commit 017f043353a6e3b27e1b42435181bdccdce14838
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 29 21:21:51 2023 +0000
+
+    bumped changelog version
+
 commit 6b01e0e70523fdb564d106dde36d2692f2f342bd
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Dec 29 16:21:22 2023 -0500
