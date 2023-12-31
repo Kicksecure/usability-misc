@@ -1341,6 +1341,7 @@ check_vm_exists_virtualbox(){
         return 0
       fi
       log notice "${underline}Existing VM Check Result:${nounderline} Virtual Machine(s) have been imported previously."
+
       if test "${reimport}" = "1"; then
         ## Remove Gateway if it exists.
         if test "${gateway_exists}" = "1"; then
@@ -1353,6 +1354,7 @@ check_vm_exists_virtualbox(){
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
           fi
         fi
+
         ## Remove Workstation if it exists.
         if test "${workstation_exists}" = "1" ; then
           ## Do not remove workstation if import_only is set to gateway
