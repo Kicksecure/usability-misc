@@ -1612,7 +1612,7 @@ import_virtualbox(){
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}"; then
-    log_run notice vboxmanage unregistervm ${vm_purge} --delete ||
+    log_run notice vboxmanage unregistervm "${vm_purge}" --delete ||
       die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous virtual system."
   fi
 
