@@ -371,14 +371,14 @@ get_os(){
   if [ "$debian_testing_or_unstable_detected" = "true" ]; then
     log notice "Debian testing or unstable detection: 'success'"
     if test "${oracle_repo}" = "1"; then
-      log error "You are attempting to use --oracle-repo on Debian testing. This is impossible."
+      log error "You are attempting to use '--oracle-repo' on Debian testing. This is impossible."
       if test "${ci}" = "1"; then
         die 0 "${underline}Distribution Test Result:${nounderline} Oracle doesn't provide a Debian testing or unstable repository. Skipped on CI to avoid breaking the CI testing."
       else
         die 101 "${underline}Distribution Test Result:${nounderline} Oracle doesn't provide a Debian testing or unstable repository."
       fi
     fi
-    log info "Not attempting to use --oracle-repo on Debian testing, good."
+    log info "Not attempting to use '--oracle-repo' on Debian testing, good."
     ## In Debian testing distro_version was previously observed as 'n/a' or empty, because
     ## Debian testing /etc/os-release does not contain VERSION_ID.
     return 0
@@ -484,7 +484,7 @@ check_not_qubes_template() {
   ## Downloading non-Qubes VM images in Qubes Template makes no sense. Not even for development purposes.
   ## Installing VirtualBox inside Qubes however makes sense for development purposes.
   ## For example, this permits building non-Qubes VM images inside Qubes VMs.
-  die 1 "${underline}QubesOS Template Detection Test:${nounderline} Only virtualbox-installer-cli (--virtualbox-only) allowed in Qubes Template."
+  die 1 "${underline}QubesOS Template Detection Test:${nounderline} Only virtualbox-installer-cli ('--virtualbox-only') allowed in Qubes Template."
 }
 
 ##############
@@ -1513,10 +1513,10 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   log info "Virtual Machine(s) already exist."
   if test "${redownload}" != "1"; then
-    log notice "If you would like to redownload the image, read about --redownload (safe)."
+    log notice "If you would like to redownload the image, read about '--redownload' (safe)."
   fi
   if test "${reimport}" != "1"; then
-    log notice "If you would like to reimport the image, read about --reimport (danger)."
+    log notice "If you would like to reimport the image, read about '--reimport' (danger)."
   fi
 
   if test "${no_boot}" = "1"; then
@@ -1599,7 +1599,7 @@ import_virtualbox(){
 
   if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
     if ! test "${reimport}" = "1"; then
-      log notice "VM Import: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using --reimport."
+      log notice "VM Import: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using '--reimport'."
       return 0
     fi
   fi
@@ -2394,7 +2394,7 @@ check_license(){
   fi
 
   log notice "The license will be shown in 5 seconds."
-  log notice "(Use -n or --non-interactive for non-interactive mode.)"
+  log notice "(Use '-n' or '--non-interactive' for non-interactive mode.)"
 
   test "${dry_run}" != "1" && sleep 5
 
@@ -3016,7 +3016,7 @@ get_virtualization(){
       ;;
     *)
       user_warned_potential_startup_issue=true
-      log warn "${underline}Virtualization Support Test:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - Unknown virtualization flag. (Use --log-level=info for potentially privacy sensitive details.)"
+      log warn "${underline}Virtualization Support Test:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - Unknown virtualization flag. (Use '--log-level=info' for potentially privacy sensitive details.)"
       log info "cpu_brand: '${brand}' virt_flag: '${virt_flag}'"
       virt_detection_success=false
       ;;
@@ -3795,8 +3795,8 @@ parse_opt(){
 
   if test "${reimport}" = "1"; then
     if test -z "${destroy_existing_guest}"; then
-      log error "The option --reimport requires --destroy-existing-guest."
-      log error "The option --destroy-existing-guest was not set."
+      log error "The option '--reimport' requires '--destroy-existing-guest'."
+      log error "The option '--destroy-existing-guest' was not set."
       die 1 "User mistake, read the documentation to understand how to use the options."
     fi
   fi
