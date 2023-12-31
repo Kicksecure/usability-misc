@@ -951,7 +951,7 @@ nested_virtualization_test() {
     log warn "${underline}Nested Virtualization Test:${nounderline} Detection tool for nested virtualization is missing."
   else
     if test "${dry_run}" = "1"; then
-      log notice "${underline}Nested Virtualization Test:${nounderline} Skipping test due to dry_run mode."
+      log notice "Nested Virtualization Test: Skipping test due to dry_run mode."
     else
       ## Check if we are a guest of virtualization.
       if root_cmd "${nested_virt_tool:-}" >/dev/null 2>&1; then
@@ -1004,7 +1004,7 @@ kernel_modules_load() {
     return 0
   fi
   kernel_modules_can_be_load=false
-  log info "${underline}Kernel Module Load Check Result:${nounderline}: 'no' - modules cannot be load. (sysctl kernel.modules_disabled=1 is set.)"
+  log info "${underline}Kernel Module Load Check Result:${nounderline} 'no' - modules cannot be load. (sysctl kernel.modules_disabled=1 is set.)"
 }
 
 
