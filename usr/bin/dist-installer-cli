@@ -1323,18 +1323,18 @@ check_vm_exists_virtualbox(){
       gateway_exists=0
       if vboxmanage showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
         gateway_exists=1
-        log info "${underline}Existing VM Check Result:${nounderline} guest '${guest_full_vm_name_gateway}' exists."
+        log info "Existing VM Check Result: guest '${guest_full_vm_name_gateway}' exists."
       fi
       if vboxmanage showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
         workstation_exists=1
-        log info "${underline}Existing VM Check Result:${nounderline} guest '${guest_full_vm_name_workstation}' exists."
+        log info "Existing VM Check Result: guest '${guest_full_vm_name_workstation}' exists."
       fi
       ## Find discrepancies.
       if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1" ; then
-        log warn "${underline}Existing VM Check Result:${nounderline} Gateway exists but Workstation doesn't."
+        log warn "Existing VM Check Result: Gateway exists but Workstation doesn't."
       fi
       if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0" ; then
-        log warn "${underline}Existing VM Check Result:${nounderline} Workstation exists but Gateway doesn't."
+        log warn "Existing VM Check Result: Workstation exists but Gateway doesn't."
       fi
       vm_or_vms_already_existing_test_result=false
       if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1" ; then
@@ -1343,18 +1343,18 @@ check_vm_exists_virtualbox(){
       fi
       if test "${vm_or_vms_already_existing_test_result}" = "false" ; then
         ## Both guests are still non-existing. Therefore return from this function.
-        log info "${underline}Existing VM Check Result:${nounderline} None existing yet, ok."
+        log info "Existing VM Check Result: None existing yet, ok."
         return 0
       fi
-      log notice "${underline}Existing VM Check Result:${nounderline} Virtual Machine(s) have been imported previously."
+      log notice "Existing VM Check Result: Virtual Machine(s) have been imported previously."
       ;;
     kicksecure)
       vm_or_vms_already_existing_test_result=false
       if ! vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
-        log info "${underline}Existing VM Check Result:${nounderline} None existing yet, ok."
+        log info "Existing VM Check Result: None existing yet, ok."
         return 0
       fi
-      log notice "${underline}Existing VM Check Result:${nounderline} Virtual Machine(s) were imported previously."
+      log notice "Existing VM Check Result: Virtual Machine(s) were imported previously."
       vm_or_vms_already_existing_test_result=true
       ;;
   esac
