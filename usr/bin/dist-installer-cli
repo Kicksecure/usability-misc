@@ -1361,10 +1361,12 @@ check_vm_exists_virtualbox(){
         ## One of the guests doesn't exist, but neither reimport nor
         ## import-only was not set.
         if test "${workstation_exists}" = "0" || test "${gateway_exists}" = "0" ; then
-          test "${workstation_exists}" = "0" &&
+          if test "${workstation_exists}" = "0" ; then
             die 1 "${underline}Check Existing VM Test:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
-          test "${gateway_exists}" = "0" &&
+          fi
+          if test "${gateway_exists}" = "0" ; then
             die 1 "${underline}Check Existing VM Test:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
+          fi
         fi
         ## VMs already exist, check if user wants to start them.
         log info "Checking if user wants to start Virtual Machine(s) now."
