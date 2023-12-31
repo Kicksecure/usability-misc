@@ -1345,8 +1345,7 @@ check_vm_exists_virtualbox(){
             log info "If you wish to reimport both machines, do not specify import_only."
           else
             log warn "Deleting previously imported workstation because reimport is set."
-            log_run notice vboxmanage unregistervm \
-              "${guest_full_vm_name_workstation}" --delete
+            log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
           fi
         fi
       elif test -n "${import_only}" ; then
