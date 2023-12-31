@@ -1405,12 +1405,12 @@ vm_delete_maybe() {
           fi
         fi
       elif test -n "${import_only}" ; then
-        log info "${underline}Existing VM Check Result:${nounderline} reimport was not set and the import_only is set to the same machine that already exists."
         if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
           die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'gateway', but it already exists and reimport was not set."
         elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
           die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
         fi
+        log info "${underline}Existing VM Check:${nounderline} reimport was not set and import_only was also not set to the same machine that already exists, ok."
       fi
       ;;
     kicksecure)
