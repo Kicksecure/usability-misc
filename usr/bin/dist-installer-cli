@@ -1335,11 +1335,12 @@ check_vm_exists_virtualbox(){
         log warn "${underline}Existing VM Check Result:${nounderline} Workstation exists but Gateway doesn't."
       fi
       local do_continue=false
-      ## If either one of the Guests exists, proceed.
       if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1" ; then
+        ## If either one of the guests exists, proceed.
         do_continue=true
       fi
       if test "${do_continue}" = "false" ; then
+        ## Both guests are still non-existing. Therefore return from this function.
         log info "${underline}Existing VM Check Result:${nounderline} None existing yet, ok."
         return 0
       fi
