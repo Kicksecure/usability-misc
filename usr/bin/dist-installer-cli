@@ -1092,7 +1092,7 @@ update_sources(){
   ## won't be updated.
 
   local simulate_only_maybe=""
-  if test "${dev}" = "1"; then
+  if test "${noupdate}" = "1"; then
     ## Too slow to run over and over again during testing.
     simulate_only_maybe=true
   fi
@@ -3610,6 +3610,7 @@ Developer options:
  -n, --non-interactive
                      Set non-interactive mode, license will be accepted.
  -D, --dev           Set development mode. Empty image to download.
+ --noupdate          Do not run package manager list update command. For development only.
  --ci                Set CI mode. Test running in CI.
  --testers           Set testers version to be downloaded.
  -d, --dry-run       Simulated run, log commands to info level without executing.
@@ -3647,6 +3648,7 @@ set_default(){
   onion=""
   non_interactive=""
   dev=""
+  noupdate=""
   dry_run=""
   getversion=""
   getopt=""
@@ -3769,6 +3771,9 @@ parse_opt(){
         ;;
       D|dev)
         set_arg dev 1
+        ;;
+      noupdate)
+        set_arg noupdate 1
         ;;
       testers)
         set_arg testers 1
