@@ -2121,11 +2121,11 @@ install_oracle_repository_fedora(){
     dnf config-manager --set-enabled virtualbox
   fi
   if test "${oracle_found}" = "1"; then
-    log info "Skipped adding Oracle repository because it was already found."
+    log info "Oracle Repository: Skipped adding Oracle repository because it was already found."
   else
-    log notice "Adding Oracle's clearnet repository to /etc/yum.repos.d/oracle.repo"
+    log notice "Oracle Repository: Adding Oracle's clearnet repository to /etc/yum.repos.d/oracle.repo"
     if test -f /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle; then
-      log info "Key /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle already exists."
+      log info "Oracle Repository: Key /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle already exists."
     else
       echo "${oracle_pgp}" | \
         tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
@@ -2159,11 +2159,11 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
 
 install_oracle_repository_debian(){
   if test "${oracle_found}" = "1"; then
-    log info "Skipped adding Oracle repository because it was already found."
+    log info "Oracle Repository: Skipped adding Oracle repository because it was already found."
   else
-    log notice "Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_debsource}"
+    log notice "Oracle Repository: Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_debsource}"
     if test -f /usr/share/keyrings/oracle.asc ; then
-      log info "Key /usr/share/keyrings/oracle.asc already exists."
+      log info "Oracle Repository: Key /usr/share/keyrings/oracle.asc already exists."
     else
       echo "${oracle_pgp}" | \
         tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
@@ -2185,16 +2185,16 @@ install_kicksecure_repository_debian() {
   ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037254
 
   if test -f /usr/share/keyrings/derivative.asc ; then
-    log info "Key /usr/share/keyrings/derivative.asc already exists."
-    log info "Not copying /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc to /usr/share/keyrings/derivative.asc."
+    log info "Kicksecure Repository: Key /usr/share/keyrings/derivative.asc already exists."
+    log info "Kicksecure Repository: Not copying /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc to /usr/share/keyrings/derivative.asc."
   else
     root_cmd cp --verbose /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc /usr/share/keyrings/derivative.asc
   fi
 
   if test "${kicksecure_found}" = "1"; then
-    log info "Skipped adding Kicksecure repository because it was already found."
+    log info "Kicksecure Repository: Skipped adding Kicksecure repository because it was already found."
   else
-    log notice "Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
+    log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
     write_sources_debian "${kicksecure_url}" "${kicksecure_file_debsource}"
   fi
 }
@@ -2202,11 +2202,11 @@ install_kicksecure_repository_debian() {
 
 install_unstable_repository_debian() {
   if test "${unstable_found}" = "1" && test "${unstable_found_with_contrib}" = "1"; then
-    log info "Skipped adding additional APT repositories because unstable (with contrib) were already found."
+    log info "APT Repository Configuration: Skipped adding additional APT repositories because 'unstable' (with 'contrib') were already found."
     return 0
   fi
 
-  log notice "Adding APT pinning configuration to prefer testing over unstable."
+  log notice "APT Preferences Configuration Writer: Adding APT pinning configuration to prefer testing over unstable."
   file="/etc/apt/preferences.d/40-installer-dist-pinning"
   echo "\
 ## This file was created by: $0
@@ -2222,23 +2222,23 @@ Pin-Priority: 650
 " | root_cmd tee "$file" ||
     die 1 "${underline}APT Preferences Configuration Writer:${nounderline} Failed to write to file: '$file'"
 
-  log notice "Adding Unstable ${connection_type_debsource} repository to ${unstable_file_debsource}"
+  log notice "APT Repository Configuration: Adding 'unstable' ${connection_type_debsource} repository to ${unstable_file_debsource}"
   write_sources_debian "${unstable_url}" "${unstable_file_debsource}"
 }
 
 
 install_backports_and_fasttrack_repository_debian() {
   if test "${backports_found}" = "1"; then
-    log info "Skipped adding 'backports' repository because it was already found."
+    log info "APT Repository Configuration: Skipped adding 'backports' repository because it was already found."
   else
-    log notice "Adding 'backports' ${connection_type_debsource} repository to ${backports_file_debsource}"
+    log notice "APT Repository Configuration: Adding 'backports' ${connection_type_debsource} repository to ${backports_file_debsource}"
     write_sources_debian "${backports_url}" "${backports_file_debsource}"
   fi
 
   if test "${fasttrack_found}" = "1"; then
-    log info "Skipped adding 'fasttrack' repository because it was already found."
+    log info "APT Repository Configuration: Skipped adding 'fasttrack' repository because it was already found."
   else
-    log notice "Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
+    log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
     write_sources_debian "${fasttrack_url}" "${fasttrack_file_debsource}"
   fi
 
