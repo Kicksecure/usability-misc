@@ -1091,8 +1091,14 @@ update_sources(){
   ## But if root_cmd is run in a subshell using $(root_cmd ...) then command_without_extrarenous_spaces
   ## won't be updated.
 
+  local simulate_only_maybe=""
+  if test "${dev}" = "1"; then
+    ## Too slow to run over and over again during testing.
+    simulate_only_maybe=true
+  fi
+
   # shellcheck disable=SC2086
-  if update_output=$(root_cmd ${pkg_mngr_update} 2>&1 | $console_write_command) ; then
+  if update_output=$(root_cmd ${simulate_only_maybe} ${pkg_mngr_update} 2>&1 | $console_write_command) ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if echo "$update_output" | grep --quiet --ignore-case "Error:" ; then
       log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
@@ -1428,10 +1434,17 @@ check_guest_boot(){
     return 0
   fi
 
+  ## Refresh variables gateway_exists and workstation_exists.
+  check_vm_exists_general
+
   case "${guest}" in
     whonix)
-      log notice "Available guest: '${guest_full_vm_name_gateway}'"
-      log notice "Available guest: '${guest_full_vm_name_workstation}'"
+      if test "${gateway_exists}" = "1" ; then
+        log notice "Available guest: '${guest_full_vm_name_gateway}'"
+      fi
+      if test "${workstation_exists}" = "1" ; then
+        log notice "Available guest: '${guest_full_vm_name_workstation}'"
+      fi
       ;;
     kicksecure)
       log notice "Available guest: '${guest_full_vm_name_kicksecure}'"
@@ -1602,27 +1615,21 @@ import_virtualbox(){
       ;;
   esac
 
+  local do_continue
   if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
-    if ! test "${reimport}" = "1"; then
-      log notice "VM Import: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using '--reimport'."
-      return 0
-
-      if [ "${guest}" = "whonix" ]; then
-        ## Maybe one of the VMs does not exist, but neither reimport nor import-only was not set.
-        if ! test -n "${import_only}"; then
-          ## One of the VMs does not exist.
-          ## reimport is not yet.
-          ## import_only is not set.
-          if test "${workstation_exists}" = "0" ; then
-            die 1 "${underline}Existing VM Check Result:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
-          fi
-          if test "${gateway_exists}" = "0" ; then
-            die 1 "${underline}Existing VM Check Result:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
-          fi
-        fi
-      fi
-
+    if test "${reimport}" = "1"; then
+      do_continue=yes
+    elif test -n "${import_only}"; then
+      do_continue=yes
+    else
+      do_continue=no
     fi
+  else
+    do_continue=yes
+  fi
+  if [ "$do_continue" = "no" ]; then
+    log notice "VM Import Check Result: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using 'import-only' or '--reimport'."
+    return 0
   fi
 
   log notice "VM Import: Importing Virtual Machine(s)..."
@@ -1676,8 +1683,12 @@ start_virtualbox_vm() {
   ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
   case "${guest}" in
     whonix)
-      log_run notice vboxmanage startvm "${guest_full_vm_name_gateway}" || virtualbox_start_failed
-      log_run notice vboxmanage startvm "${guest_full_vm_name_workstation}" || virtualbox_start_failed
+      if test "${gateway_exists}" = "1" ; then
+        log_run notice vboxmanage startvm "${guest_full_vm_name_gateway}" || virtualbox_start_failed
+      fi
+      if test "${workstation_exists}" = "1" ; then
+        log_run notice vboxmanage startvm "${guest_full_vm_name_workstation}" || virtualbox_start_failed
+      fi
       ;;
     kicksecure)
       log_run notice vboxmanage startvm "${guest_full_vm_name_kicksecure}" || virtualbox_start_failed
