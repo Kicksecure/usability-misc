@@ -1426,8 +1426,6 @@ check_guest_boot(){
     return 0
   fi
 
-  log info "Check Guest Boot: Checking if user wants to start Virtual Machine(s) now..."
-
   case "${guest}" in
     whonix)
       log notice "Available guest: '${guest_full_vm_name_gateway}'"
@@ -1467,7 +1465,9 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     fi
   fi
 
-  log notice "${underline}VirtualBox Installation Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
+  log notice "${underline}VirtualBox Installation Result:${nounderline} 'success'"
+
+  log info "VM Start: Checking if user wants to start Virtual Machine(s) now..."
 
   if test "${qubes_template_detected}" = "true"; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} Not starting VirtualBox because running inside a Qubes Template."
@@ -1645,7 +1645,7 @@ start_guest(){
 
 ## Start the hypervisor with the desired guest
 start_virtualbox_vm() {
-  log notice "Starting Virtual Machine(s)."
+  log notice "Virtual Machine Startup: Starting Virtual Machine(s)..."
   ## 'virtualbox' is called after 'vboxmanage' because it hangs till the app
   ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
   case "${guest}" in
@@ -1657,7 +1657,7 @@ start_virtualbox_vm() {
       log_run notice vboxmanage startvm "${guest_full_vm_name_kicksecure}" || virtualbox_start_failed
       ;;
   esac
-  log notice "${underline}Virtual Machine Startup Result:${nounderline} ${green}${bold}'SUCCESS'${nobold}${nocolor}"
+  log notice "${underline}Virtual Machine Startup Result:${nounderline} 'success'"
 }
 
 
@@ -2957,12 +2957,12 @@ get_file(){
 download_files(){
   log_time
 
-  log notice "Downloads will be stored in the directory: '${directory_prefix}'"
+  log notice "Download: Files will be stored in the directory: '${directory_prefix}'"
   get_file large "${url_guest_file}.${guest_file_ext}" || return 1
   get_file small "${url_guest_file}.${guest_file_ext}.sha512sums.sig" || return 1
   get_file small "${url_guest_file}.${guest_file_ext}.sha512sums" || return 1
 
-  log notice "Checking if files exists locally."
+  log info "Download: Checking if files exists locally..."
   if test "${dry_run}" = "1" || {
     test -f "${directory_prefix}/${guest_file}.${guest_file_ext}" &&
     test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig" &&
@@ -3900,7 +3900,7 @@ log_term_and_file(){
 
 
 end_installer() {
-  log notice "Installer Result: 'success'"
+  log notice "Installer Result: ${green}${bold}'SUCCESS'${nobold}${nocolor}"
   end_exit
 }
 
