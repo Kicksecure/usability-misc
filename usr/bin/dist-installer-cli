@@ -1167,10 +1167,16 @@ check_upgrades_simulation() {
 
    IFS="$OIFS"
 
-   if [ "$number_upgraded" = "0" ]; then
-      log info "Package Upgrade Simulation: No packages require upgrading, ok."
-      return 0
-   fi
+  if test "${dry_run}" = "1"; then
+    if [ "$number_upgraded" = "invalid" ]; then
+      number_upgraded=0
+    fi
+  fi
+
+  if [ "$number_upgraded" = "0" ]; then
+    log info "Package Upgrade Simulation: No packages require upgrading, ok."
+    return 0
+  fi
 
    die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
 
@@ -1273,6 +1279,19 @@ test_pkg(){
 }
 
 
+check_vm_running_general() {
+  case "${guest}" in
+    whonix)
+        check_vm_running_virtualbox "${guest_full_vm_name_gateway}"
+        check_vm_running_virtualbox "${guest_full_vm_name_workstation}"
+      ;;
+    kicksecure)
+        check_vm_running_virtualbox "${guest_full_vm_name_kicksecure}"
+      ;;
+  esac
+}
+
+
 ## Abort if user wants to reimport a VM that is running.
 ## This function is called before attempting to reimport an image.
 check_vm_running_virtualbox(){
@@ -1302,9 +1321,11 @@ check_vm_exists_virtualbox(){
       gateway_exists=0
       if vboxmanage showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
         gateway_exists=1
+        log info "${underline}Existing VM Test:${nounderline} guest '${guest_full_vm_name_gateway}' exists."
       fi
       if vboxmanage showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
         workstation_exists=1
+        log info "${underline}Existing VM Test:${nounderline} guest '${guest_full_vm_name_workstation}' exists."
       fi
       ## Find discrepancies.
       if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1" ; then
@@ -1347,27 +1368,20 @@ check_vm_exists_virtualbox(){
           fi
         fi
       elif test -n "${import_only}" ; then
-        ## reimport was not set and the import_only is set to the same
-        ## machine that already exists.
+        log info "${underline}Existing VM Test:${nounderline} reimport was not set and the import_only is set to the same machine that already exists."
         if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
-          die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'gateway', but it already exists and reimport was not set."
+          die 1 "${underline}Existing VM Test:${nounderline} import_only was set to 'gateway', but it already exists and reimport was not set."
         elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
-          die 1 "${underline}Check Existing VM Test:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
+          die 1 "${underline}Existing VM Test:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
         fi
       else
-        ## One of the guests doesn't exist, but neither reimport nor
-        ## import-only was not set.
-        if test "${workstation_exists}" = "0" || test "${gateway_exists}" = "0" ; then
-          if test "${workstation_exists}" = "0" ; then
-            die 1 "${underline}Check Existing VM Test:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
-          fi
-          if test "${gateway_exists}" = "0" ; then
-            die 1 "${underline}Check Existing VM Test:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
-          fi
+        ## Maybe one of the guests doesn't exist, but neither reimport nor import-only was not set.
+        if test "${workstation_exists}" = "0" ; then
+          die 1 "${underline}Existing VM Test:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
         fi
-        ## VMs already exist, check if user wants to start them.
-        log info "Checking if user wants to start Virtual Machine(s) now."
-        check_guest_boot
+        if test "${gateway_exists}" = "0" ; then
+          die 1 "${underline}Existing VM Test:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
+        fi
       fi
       ;;
     kicksecure)
@@ -1381,10 +1395,6 @@ check_vm_exists_virtualbox(){
         ## be imported later by main.
         log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
         log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
-      else
-        ## VMs already exist, check if user wants to start them.
-        log info "Checking if user wants to start Virtual Machine(s) now."
-        check_guest_boot
       fi
       ;;
   esac
@@ -1392,26 +1402,16 @@ check_vm_exists_virtualbox(){
 
 
 ## Check if VM exists using hypervisor tools.
-check_vm_exists(){
+check_vm_exists_general(){
   if test "${virtualbox_only}" = "1"; then
     return 0
   fi
-
-  log info "Checking if Virtual Machine(s) have been already imported."
 
   if [ "${hypervisor}" = "kvm" ]; then
     return 0
   fi
 
-  case "${guest}" in
-    whonix)
-        check_vm_running_virtualbox "${guest_full_vm_name_gateway}"
-        check_vm_running_virtualbox "${guest_full_vm_name_workstation}"
-      ;;
-    kicksecure)
-        check_vm_running_virtualbox "${guest_full_vm_name_kicksecure}"
-      ;;
-  esac
+  log info "${underline}Existing VM Test:${nounderline} Checking if Virtual Machine(s) have been already imported..."
 
   check_vm_exists_virtualbox
 }
@@ -1419,6 +1419,15 @@ check_vm_exists(){
 
 ## Check if guest should start or not
 check_guest_boot(){
+  if test "${virtualbox_only}" = "1"; then
+    return 0
+  fi
+  if [ "${hypervisor}" = "kvm" ]; then
+    return 0
+  fi
+
+  log info "Check Guest Boot: Checking if user wants to start Virtual Machine(s) now..."
+
   case "${guest}" in
     whonix)
       log notice "Available guest: '${guest_full_vm_name_gateway}'"
@@ -1555,8 +1564,6 @@ import_guest(){
     end_installer
   fi
 
-  check_vm_exists
-
   case "${hypervisor}" in
     virtualbox)
       import_virtualbox
@@ -1569,7 +1576,7 @@ import_guest(){
 
 ## Import VirtualBox images
 import_virtualbox(){
-  log notice "Importing Virtual Machine(s)..."
+  log notice "VM Import: Importing Virtual Machine(s)..."
   ## Check how many systems to import.
   ## vsys 0: gateway
   ## vsys 1: workstation
@@ -1593,6 +1600,7 @@ import_virtualbox(){
       esac
       ;;
   esac
+
   ## import VirtualBox image
   # shellcheck disable=SC2086
   log_run notice vboxmanage import \
@@ -3443,10 +3451,6 @@ main(){
 
   log_time
 
-  ## Check if VM were already imported, if true then ask to start
-  if test "${redownload}" != "1"; then
-    check_vm_exists
-  fi
   #############
   ## END PRE ##
   #############
@@ -3498,6 +3502,8 @@ main(){
   ## BEGIN VERIFICATION, IMPORT AND START ##
   ##########################################
   check_integrity
+  check_vm_running_general
+  check_vm_exists_general
   import_guest
   check_guest_boot
   ########################################
