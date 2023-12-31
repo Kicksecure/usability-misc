@@ -1601,6 +1601,13 @@ import_virtualbox(){
       ;;
   esac
 
+  if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
+    if ! test "${reimport}" = "1"; then
+      log notice "VM Import: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using --reimport."
+      return 0
+    fi
+  fi
+
   log notice "VM Import: Importing Virtual Machine(s)..."
 
   ## import VirtualBox image
