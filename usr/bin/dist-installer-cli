@@ -3440,7 +3440,7 @@ check_integrity(){
   check_signature_test
   check_hash_test
 
-  log_run notice touch "${download_flag}"
+  log_run info touch "${download_flag}"
 
   log notice "Integrity Check Result: 'success'"
 }
