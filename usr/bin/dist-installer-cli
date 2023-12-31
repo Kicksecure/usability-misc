@@ -1619,13 +1619,17 @@ import_virtualbox(){
   if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
     if test "${reimport}" = "1"; then
       do_continue=yes
+      log info "VM Import Check Result: Continue because reimport is set."
     elif test -n "${import_only}"; then
       do_continue=yes
+      log info "VM Import Check Result: Continue because import_only is set."
     else
       do_continue=no
+      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither reimport nor import_only is set."
     fi
   else
     do_continue=yes
+    log info "VM Import Check Result: Continue because no VM(s) exist yet."
   fi
   if [ "$do_continue" = "no" ]; then
     log notice "VM Import Check Result: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using 'import-only' or '--reimport'."
