@@ -1382,11 +1382,13 @@ check_vm_exists_virtualbox(){
       fi
       ;;
     kicksecure)
+      vm_or_vms_already_existing_test_result=false
       if ! vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
         log info "${underline}Existing VM Check Result:${nounderline} None existing yet, ok."
         return 0
       fi
       log notice "${underline}Existing VM Check Result:${nounderline} Virtual Machine(s) were imported previously."
+      vm_or_vms_already_existing_test_result=true
       if test "${reimport}" = "1"; then
         ## If VMs exists and reimport is set, remove VMs as they are gonna
         ## be imported later by main.
