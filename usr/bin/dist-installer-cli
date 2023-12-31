@@ -1381,7 +1381,7 @@ vm_delete_maybe() {
   case "${guest}" in
     whonix)
       if test "${reimport}" = "1"; then
-        ## Remove Gateway if it exists.
+        ## Remove Gateway if it exists when using --reimport.
         if test "${gateway_exists}" = "1"; then
           ## Do not remove gateway if import_only is set to workstation
           if test "${import_only}" = "workstation" ; then
@@ -1393,7 +1393,7 @@ vm_delete_maybe() {
           fi
         fi
 
-        ## Remove Workstation if it exists.
+        ## Remove Workstation if it exists when using --reimport.
         if test "${workstation_exists}" = "1" ; then
           ## Do not remove workstation if import_only is set to gateway
           if test "${import_only}" = "gateway" ; then
