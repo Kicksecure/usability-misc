@@ -3341,7 +3341,7 @@ should_download(){
     return 1
   fi
   if test "${dry_run}" = "1"; then
-    log notice "Creating download flag because dry_run is set."
+    log notice "Download: Creating download flag because dry_run is set."
     log_run notice touch "${download_flag}"
     return 0
   fi
@@ -3352,11 +3352,11 @@ should_download(){
     test "${download_msg_done:-}" = "1" && return 0
     download_msg_done=1
     ## Download if redownload option is set.
-    log notice "Downloading files because redownload is set."
+    log notice "Download: Re-downloading files because redownload is set."
     return 0
   elif test -f "${download_flag:-}"; then
     ## Do not download if flag exists.
-    log notice "Skipping download. Flag found: '${download_flag}'"
+    log notice "Download: Skipping download because download and integrity check previously succeeded."
     return 1
   fi
   ## Download as no obstacles prohibit it.
