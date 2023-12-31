@@ -3004,14 +3004,18 @@ download_files(){
   get_file small "${url_guest_file}.${guest_file_ext}.sha512sums" || return 1
 
   log info "Download: Checking if files exists locally..."
-  if test "${dry_run}" = "1" || {
-    test -f "${directory_prefix}/${guest_file}.${guest_file_ext}" &&
-    test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig" &&
-    test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"
-  }
-  then
+
+  if test "${dry_run}" = "1"; then
     log_time
     log_run notice touch "${download_flag}"
+    return 0
+  fi
+
+  if test -f "${directory_prefix}/${guest_file}.${guest_file_ext}" && \
+      test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig" && \
+      test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"; then
+        log_time
+        log_run notice touch "${download_flag}"
   else
     die 103 "${underline}Download:${nounderline} Failed to download files."
   fi
