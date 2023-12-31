@@ -1377,6 +1377,43 @@ check_vm_exists_general(){
 }
 
 
+check_vm_file_exists_virtualbox_general() {
+  ## '/home/user/VirtualBox VMs/Kicksecure-Xfce/Kicksecure-Xfce.vbox'
+  ## '/home/user/VirtualBox VMs/Whonix-Gateway-Xfce/Whonix-Gateway-Xfce.vbox'
+  ## '/home/user/VirtualBox VMs/Whonix-Workstation-Xfce/Whonix-Workstation-Xfce.vbox'
+
+  local file_name_list=()
+  case "${guest}" in
+    whonix)
+      if test "${import_only}" = "gateway" ; then
+        file_name_list+=("/home/user/VirtualBox VMs/${guest_full_vm_name_kicksecure}/${guest_full_vm_name_kicksecure}.vbox")
+      elif test "${import_only}" = "workstation" ; then
+        file_name_list+=("/home/user/VirtualBox VMs/${guest_full_vm_name_workstation}/${guest_full_vm_name_workstation}.vbox")
+      else
+        file_name_list+=("/home/user/VirtualBox VMs/${guest_full_vm_name_gateway}/${guest_full_vm_name_gateway}.vbox")
+        file_name_list+=("/home/user/VirtualBox VMs/${guest_full_vm_name_workstation}/${guest_full_vm_name_workstation}.vbox")
+      fi
+    ;;
+    kicksecure)
+      file_name_list+=("/home/user/VirtualBox VMs/${guest_full_vm_name_kicksecure}/${guest_full_vm_name_kicksecure}.vbox")
+    ;;
+  esac
+
+  local file_name_item
+  for file_name_item in "${file_name_list[@]}" ; do
+    if test -e "$file_name_item" ; then
+      die 1 "VM Import Check: Aborted before importing VM because of inconsistent state.
+File '$file_name_item' exists but there is no associated VM registered in VirtualBox.
+If you attempt to re-install without preserving VM user data you might want to delete the file using the following command.
+Danger - potential data loss of VM data!
+
+rm '$file_name_item'
+"
+    fi
+  done
+}
+
+
 vm_delete_maybe() {
   case "${guest}" in
     whonix)
@@ -1635,6 +1672,8 @@ import_virtualbox(){
     log notice "VM Import Check Result: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using 'import-only' or '--reimport'."
     return 0
   fi
+
+  check_vm_file_exists_virtualbox_general
 
   log notice "VM Import: Importing Virtual Machine(s)..."
 
