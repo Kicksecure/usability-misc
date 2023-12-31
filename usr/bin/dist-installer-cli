@@ -1341,7 +1341,39 @@ check_vm_exists_virtualbox(){
         return 0
       fi
       log notice "${underline}Existing VM Check Result:${nounderline} Virtual Machine(s) have been imported previously."
+      ;;
+    kicksecure)
+      vm_or_vms_already_existing_test_result=false
+      if ! vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
+        log info "${underline}Existing VM Check Result:${nounderline} None existing yet, ok."
+        return 0
+      fi
+      log notice "${underline}Existing VM Check Result:${nounderline} Virtual Machine(s) were imported previously."
+      vm_or_vms_already_existing_test_result=true
+      ;;
+  esac
+}
 
+
+## Check if VM exists using hypervisor tools.
+check_vm_exists_general(){
+  if test "${virtualbox_only}" = "1"; then
+    return 0
+  fi
+
+  if [ "${hypervisor}" = "kvm" ]; then
+    return 0
+  fi
+
+  log info "Existing VM Check: Checking if Virtual Machine(s) have been already imported..."
+
+  check_vm_exists_virtualbox
+}
+
+
+vm_delete_maybe() {
+  case "${guest}" in
+    whonix)
       if test "${reimport}" = "1"; then
         ## Remove Gateway if it exists.
         if test "${gateway_exists}" = "1"; then
@@ -1373,24 +1405,9 @@ check_vm_exists_virtualbox(){
         elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
           die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
         fi
-      else
-        ## Maybe one of the guests doesn't exist, but neither reimport nor import-only was not set.
-        if test "${workstation_exists}" = "0" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
-        fi
-        if test "${gateway_exists}" = "0" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
-        fi
       fi
       ;;
     kicksecure)
-      vm_or_vms_already_existing_test_result=false
-      if ! vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
-        log info "${underline}Existing VM Check Result:${nounderline} None existing yet, ok."
-        return 0
-      fi
-      log notice "${underline}Existing VM Check Result:${nounderline} Virtual Machine(s) were imported previously."
-      vm_or_vms_already_existing_test_result=true
       if test "${reimport}" = "1"; then
         ## If VMs exists and reimport is set, remove VMs as they are gonna
         ## be imported later by main.
@@ -1399,22 +1416,6 @@ check_vm_exists_virtualbox(){
       fi
       ;;
   esac
-}
-
-
-## Check if VM exists using hypervisor tools.
-check_vm_exists_general(){
-  if test "${virtualbox_only}" = "1"; then
-    return 0
-  fi
-
-  if [ "${hypervisor}" = "kvm" ]; then
-    return 0
-  fi
-
-  log info "Existing VM Check: Checking if Virtual Machine(s) have been already imported..."
-
-  check_vm_exists_virtualbox
 }
 
 
@@ -1605,6 +1606,22 @@ import_virtualbox(){
     if ! test "${reimport}" = "1"; then
       log notice "VM Import: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using '--reimport'."
       return 0
+
+      if [ "${guest}" = "whonix" ]; then
+        ## Maybe one of the VMs does not exist, but neither reimport nor import-only was not set.
+        if ! test -n "${import_only}"; then
+          ## One of the VMs does not exist.
+          ## reimport is not yet.
+          ## import_only is not set.
+          if test "${workstation_exists}" = "0" ; then
+            die 1 "${underline}Existing VM Check Result:${nounderline} Workstation cannot be started because it doesn't exist, try '--import-only=workstation'."
+          fi
+          if test "${gateway_exists}" = "0" ; then
+            die 1 "${underline}Existing VM Check Result:${nounderline} Gateway cannot be started because it doesn't exist, try '--import-only=gateway'."
+          fi
+        fi
+      fi
+
     fi
   fi
 
@@ -3513,6 +3530,7 @@ main(){
   check_integrity
   check_vm_running_general
   check_vm_exists_general
+  vm_delete_maybe
   import_guest
   check_guest_boot
   ########################################
