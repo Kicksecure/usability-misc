@@ -2384,6 +2384,8 @@ check_license(){
 
   test "${dry_run}" != "1" && sleep 5
 
+  local dialog_box
+  dialog_box=""
   ## 'whiptail' is the Debian version of Dialog with much less features.
   ## Dialog types problems:
   ## - whiptail does not allow to set default option with scrolltext on.
