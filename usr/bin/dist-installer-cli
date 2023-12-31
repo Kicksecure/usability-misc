@@ -1385,10 +1385,10 @@ vm_delete_maybe() {
         if test "${gateway_exists}" = "1"; then
           ## Do not remove gateway if import_only is set to workstation
           if test "${import_only}" = "workstation" ; then
-            log info "Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
+            log info "VM Deletion: 'no' - Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
             log info "If you wish to reimport both machines, do not specify import_only."
           else
-            log warn "Deleting previously imported gateway because reimport is set..."
+            log warn "VM Deletion: 'yes' - Deleting previously imported gateway because reimport is set..."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
           fi
         fi
@@ -1397,10 +1397,10 @@ vm_delete_maybe() {
         if test "${workstation_exists}" = "1" ; then
           ## Do not remove workstation if import_only is set to gateway
           if test "${import_only}" = "gateway" ; then
-            log info "Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
+            log info "VM Deletion: 'no' - Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
             log info "If you wish to reimport both machines, do not specify import_only."
           else
-            log warn "Deleting previously imported workstation because reimport is set."
+            log warn "VM Deletion: 'yes' - Deleting previously imported workstation because reimport is set."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
           fi
         fi
@@ -1417,7 +1417,7 @@ vm_delete_maybe() {
       if test "${reimport}" = "1"; then
         ## If VMs exists and reimport is set, remove VMs as they are gonna
         ## be imported later by main.
-        log warn "Deleting previously imported Virtual Machine(s) because reimport is set."
+        log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) because reimport is set."
         log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
       fi
       ;;
