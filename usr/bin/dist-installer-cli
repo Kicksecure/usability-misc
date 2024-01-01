@@ -2379,7 +2379,7 @@ install_virtualbox_fedora(){
     update_sources
     #check_upgrades_simulation
     get_virtualbox_version_fedora || die 2 "\
-${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
+${underline}VirtualBox Package Version Detection:${nounderline} 'FAIL'"
   fi
 
   ## This is to make sure loglevel info message is shown:
@@ -2437,7 +2437,7 @@ install_virtualbox_debian(){
   install_repositories_for_virtualbox_on_debian
   update_sources
   check_upgrades_simulation
-  get_virtualbox_version_debian || die 2 "${underline}VirtualBox Package Version Detection:${nounderline} 'failure'"
+  get_virtualbox_version_debian || die 2 "${underline}VirtualBox Package Version Detection:${nounderline} 'FAIL'"
 
   ## Cannot quote $virtualbox_guest_additions_iso_package_name because is unset in case of using oracle_repo.
   # shellcheck disable=SC2086
@@ -2942,7 +2942,7 @@ torify_conn(){
     fi
   fi
   check_tor_proxy || die 2 "\
-${underline}Check Tor Proxy:${nounderline} 'failure'
+${underline}Check Tor Proxy:${nounderline} 'FAIL'
 
 Unable to connect to Tor SOCKS proxy.
 
@@ -2963,13 +2963,13 @@ Additional details:
 
 ## Set version by user input or by querying the API
 get_version(){
-  log notice "Detecting guest version..."
+  log notice "Version Detection: Detecting guest version..."
   if test -n "${guest_version:-}"; then
-    log notice "User defined, dry_run or dev version already configured. Autodetection using API not required."
+    log notice "Version Detection: User defined, dry_run or dev version already configured. Autodetection using API not required."
     return 0
   fi
-  log info "Acquiring guest version using API..."
-  log info "API host: ${1}"
+  log info "Version Detection: Acquiring guest version using API..."
+  log info "Version Detection: API host: ${1}"
   cmd_raw_version="curl ${curl_transfer_proxy:-} $(get_proxy_cred version) \
       ${curl_opt_ssl:-} \
       --max-time ${transfer_max_time_small_file} \
@@ -3442,7 +3442,7 @@ check_signature_test(){
     log info "Received expected non-zero exit code from unit test."
   else
     rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
+    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
 
@@ -3457,7 +3457,7 @@ check_hash_test(){
     log info "Received expected non-zero exit code from unit test."
   else
     rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'failure' - received a zero as exit code, expected non-zero."
+    die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
 
@@ -3472,9 +3472,9 @@ check_integrity(){
     return 0
   fi
   log notice "Integrity Check: Performing integrity checks..."
-  check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" || die 104 "${underline}Signify Signature Verification:${nounderline} 'failure'"
+  check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" || die 104 "${underline}Signify Signature Verification:${nounderline} 'FAIL'"
   check_hash "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" \
-    || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'failure'"
+    || die 104 "${underline}SHA512 Hash Verification:${nounderline} 'FAIL'"
 
   check_signature_test
   check_hash_test
@@ -3558,15 +3558,15 @@ main(){
 
   if should_download; then
     if test "${dry_run}" != "1"; then
-      log notice "Testing internet connection..."
+      log notice "Connectivity Test: Testing internet connection to '${url_origin}'..."
       cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
       log info "Executing: $ ${cmd_check_internet}"
       ${cmd_check_internet} >/dev/null ||
-        die $? "${underline}Connectivity Test:${nounderline} Cannot connect to ${url_origin}, perhaps no internet?"
-      log notice "Connection to ${url_origin} succeeded."
+        die $? "${underline}Connectivity Test Result:${nounderline} 'FAIL' - Cannot connect, perhaps no internet?"
+      log notice "Connectivity Test Result: 'success'"
     fi
     get_version "${url_version}"
-    log notice "Version: '${guest_version}'"
+    log notice "Version Detection Result: '${guest_version}'"
     guest_file="${guest_pretty}-${interface_name}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
     url_domain="${url_domain}/${guest_version:?}"
@@ -3580,7 +3580,7 @@ main(){
     if test "${virtualbox_only}" = "1"; then
       true "INFO: Skip showing version because virtualbox_only."
     else
-      log notice "Version: '${guest_version}'"
+      log notice "Version Detection Result: '${guest_version}'"
     fi
   fi
   ##################
