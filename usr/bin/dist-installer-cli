@@ -1636,6 +1636,14 @@ import_guest(){
   esac
 }
 
+
+extract_vm_name_from_virtualbox_ova() {
+  local output="$1"
+  local system_number="$2"
+  echo "$output" | grep --max-count=1 --after-context=4 "Virtual system $system_number:" | grep "Suggested VM name" | grep -oP '"\K[^"]+'
+}
+
+
 ## Import VirtualBox images
 import_virtualbox(){
   ## Check how many systems to import.
@@ -1685,12 +1693,36 @@ import_virtualbox(){
 
   check_vm_file_exists_virtualbox_general
 
+  log notice "dry-run Command executing: $ vboxmanage import '${directory_prefix}/${guest_file}.${guest_file_ext}' ${vbox_arg} --dry-run"
+
+  local output
+  output=$(log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} --dry-run) || \
+    die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
+
+  case "${guest}" in
+    whonix)
+      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0)
+      vsys_1_actual=$(extract_vm_name_from_virtualbox_ova "$output" 1)
+      if [ ! "${guest_full_vm_name_gateway}" = "${vsys_0_actual}" ]; then
+        die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_gateway}'."
+      fi
+      if [ ! "${guest_full_vm_name_workstation}" = "$vsys_1_actual" ]; then
+        die 105 "${underline}VM Import:${nounderline} BUG: vsys1 is actually '${vsys_0_actual}', not '${guest_full_vm_name_workstation}'."
+      fi
+    ;;
+    kicksecure)
+      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0)
+      if [ ! "${guest_full_vm_name_kicksecure}" = "${vsys_0_actual}" ]; then
+        die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_kicksecure}'."
+      fi
+    ;;
+  esac
+
   log notice "VM Import: Importing Virtual Machine(s)..."
 
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run notice vboxmanage import \
-    "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} ||
+  log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
