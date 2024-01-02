@@ -92,10 +92,7 @@ case "$state" in
     mirrors=(
       '0:[DE] download.whonix.org (onion available)'
       '1:[DK] mirrors.dotsrc.org (onion available)'
-      '2:[DE] mirror.koljasagorski.de'
-      '3:[HU] quantum-mirror.hu'
-      '4:[PL] ftp.icm.edu.pl'
-      '5:[US] mirrors.gigenet.com'
+      '2:[HU] quantum-mirror.hu'
     )
     _describe -t mirrors 'mirrors' mirrors && ret=0
     ;;
