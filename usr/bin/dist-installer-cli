@@ -1709,6 +1709,7 @@ import_virtualbox(){
   log notice "dry-run Command executing: $ vboxmanage import '${directory_prefix}/${guest_file}.${guest_file_ext}' ${vbox_arg_normal} --dry-run"
 
   local output
+  # shellcheck disable=SC2086
   output=$(log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
