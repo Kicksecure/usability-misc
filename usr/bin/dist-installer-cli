@@ -1433,7 +1433,7 @@ vm_delete_maybe() {
         if test "${gateway_exists}" = "1"; then
           ## Do not remove gateway if import_only is set to workstation
           if test "${import_only}" = "workstation" ; then
-            log info "VM Deletion: 'no' - Although '--destroy-existing-guest' is set, not deleting previously imported gateway because '--import-only' option is set to 'workstation'."
+            log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported gateway because '--import-only' option is set to 'workstation'."
             log info "If you wish to reimport (re-install) both machines, do not specify the '--import-only' option."
           else
             log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-existing-guest' option..."
