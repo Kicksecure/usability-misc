@@ -1546,7 +1546,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     ## Not running end_installer here, because that happens below and we want the following output messages.
     #end_installer
   elif test "${non_interactive}" = "1"; then
-    log notice "${underline}VirtualBox Startup Check:${nounderline} Starting VirtualBox automatically as per '--non-interactive' option."
+    log notice "${underline}VirtualBox Startup Check:${nounderline} Starting VirtualBox automatically via '--non-interactive' option."
     if test "${virtualbox_only}" = "1"; then
       start_virtualbox_gui
       end_installer
