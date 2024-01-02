@@ -923,6 +923,7 @@ get_independent_host_pkgs(){
   has curl || install_pkg curl
   has rsync || install_pkg rsync
   has mokutil || install_pkg mokutil
+  has pgrep || install_pkg procps
 
   ## Install openssl and ca-certificates.
   ## openssl is required:
@@ -1801,10 +1802,15 @@ start_virtualbox_vm() {
 
 
 start_virtualbox_gui() {
+  if pgrep -i virtualbox ; then
+    log notice "VirtualBox Manager Startup Result: Not starting duplicate VirtualBox GUI because already running."
+    return 0
+  fi
+
   run_background=1
   log_run notice virtualbox
   if ! test "${dry_run}" = "1"; then
-    log notice "VirtualBox Manager Startup Result: Launched into the background. (pid: '$background_pid')"
+    log notice "VirtualBox Manager Startup Result: Launched VirtualBox GUI into the background. (pid: '$background_pid')"
   fi
   run_background=""
 }
