@@ -106,18 +106,12 @@ The guest and interface can also be set by renaming the script following the for
 .fi
 .IP "" 0
 .P
-\fB\-\-reimport\fR
-.IP "" 4
-.nf
-    Re\-import the guest into the hypervisor\. The installer will attempt to import
-    any existing files if found\. This option requires the \-\-destroy\-existing\-guest pledge\.
-.fi
-.IP "" 0
-.P
 \fB\-\-destroy\-existing\-guest\fR
 .IP "" 4
 .nf
-    This option is a prerequisite pledge for \-\-reimport\.
+    Deletes any existing virtual machine(s) and re\-imports them\.
+    Warning: This action poses a risk of data loss as it involves
+             a complete reinstallation of the VM(s)\. Proceed with caution\.
 .fi
 .IP "" 0
 .P
