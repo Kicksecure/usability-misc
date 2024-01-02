@@ -477,7 +477,7 @@ check_not_qubes_template() {
 - The installer has detected being run inside a Qubes Template."
 
   if test "${virtualbox_only}" = "1"; then
-    true "INFO: Running inside a Qubes Template. Continuing because virtualbox_only."
+    true "INFO: Running inside a Qubes Template. Continuing via '--virtualbox-only' option."
     return 0
   fi
 
@@ -1922,7 +1922,7 @@ install_virtualbox_fedora_common_end(){
 install_virtualbox_debian_common_end(){
   if ! has vboxmanage ; then
     if test "${dry_run}" = "1"; then
-      log error "Failed to locate 'vboxmanage' program. - ignoring via '--dry-run' option."
+      log error "Failed to locate 'vboxmanage' program. - Ignoring via '--dry-run' option."
     else
       die 1 "${underline}vboxmanage test:${nounderline} Failed to locate 'vboxmanage' program."
     fi
@@ -3401,7 +3401,7 @@ should_download(){
     test "${download_msg_done:-}" = "1" && return 0
     download_msg_done=1
     ## Download if redownload option is set.
-    log notice "Download: Re-downloading files because via '--redownload' option."
+    log notice "Download: Re-downloading files via '--redownload' option."
     return 0
   elif test -f "${download_flag:-}"; then
     ## Do not download if flag exists.
@@ -3478,7 +3478,7 @@ check_integrity(){
   fi
 
   if test "${dry_run}" = "1"; then
-    log notice "Integrity Check: Skipping integrity checks because via '--dry-run' option."
+    log notice "Integrity Check: Skipping integrity checks via '--dry-run' option."
     return 0
   fi
   log notice "Integrity Check: Performing integrity checks..."
@@ -3588,7 +3588,7 @@ main(){
     fi
   else
     if test "${virtualbox_only}" = "1"; then
-      true "INFO: Skip showing version because virtualbox_only."
+      true "INFO: Skip showing version via '--virtualbox-only' option."
     else
       log notice "Version Detection Result: '${guest_version}'"
     fi
