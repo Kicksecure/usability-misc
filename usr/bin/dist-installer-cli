@@ -1147,31 +1147,31 @@ check_upgrades_simulation() {
     upgrade_simulate_sources_error
   fi
 
-   true "INFO: No error found in upgrade_simulate_output output, ok."
+  true "INFO: No error found in upgrade_simulate_output output, ok."
 
-   true "INFO: setting fallback number_upgraded=invalid"
-   number_upgraded=invalid
+  true "INFO: setting fallback number_upgraded=invalid"
+  number_upgraded=invalid
 
-   OIFS="$IFS"
-   IFS='
+  OIFS="$IFS"
+  IFS='
 '
 
-   for line in $upgrade_simulate_output; do
-      IFS="$OIFS"
-      true "line: $line"
-      first_char="${line:0:1}"
-      if [[ "$first_char" = "" ]]; then
-         continue
-      fi
-      if [[ "$first_char" != *[!0-9]* ]]; then
-         true "'$first_char' is strictly numeric."
-         read -r number_upgraded _ <<< "$line"
-         true "number_upgraded: $number_upgraded"
-         break
-      fi
-   done
+  for line in $upgrade_simulate_output; do
+    IFS="$OIFS"
+    true "line: $line"
+    first_char="${line:0:1}"
+    if [[ "$first_char" = "" ]]; then
+      continue
+    fi
+    if [[ "$first_char" != *[!0-9]* ]]; then
+      true "'$first_char' is strictly numeric."
+      read -r number_upgraded _ <<< "$line"
+      true "number_upgraded: $number_upgraded"
+      break
+    fi
+  done
 
-   IFS="$OIFS"
+  IFS="$OIFS"
 
   if test "${dry_run}" = "1"; then
     if [ "$number_upgraded" = "invalid" ]; then
@@ -1184,7 +1184,7 @@ check_upgrades_simulation() {
     return 0
   fi
 
-   die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
+  die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
 
 $number_upgraded packages can be upgraded.
 
