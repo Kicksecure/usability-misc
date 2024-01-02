@@ -3651,7 +3651,7 @@ Developer options:
  --redownload        Redo the download of the guest instead of stopping if it
                        was already successfully downloaded.
  --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
-                       Options: workstation and gateway'.
+                       Options: workstation and gateway.
  --no-import         Don't import guest. Default is to import.
  --reimport          Redo the import of the guest to the hypervisor. Will try
                        to import already existing files if found. This option
