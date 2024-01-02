@@ -1640,10 +1640,14 @@ import_guest(){
 extract_vm_name_from_virtualbox_ova() {
   local output="$1"
   local system_number="$2"
+  local a b c d
   a=$(echo "$output" | grep --max-count=1 --after-context=4 "Virtual system $system_number:")
   b=$(echo "$a" | grep "Suggested VM name")
   c=$(echo "$b" | grep -oP '"\K[^"]+')
-  echo "$c"
+  ## Take first word only because VirtualBox would suggest name "Whonix-Gateway-Xfce 1" in case,
+  ## a VM "Whonix-Gateway-Xfce" is already registered in VirtualBox.
+  d=$(echo "$c" | awk '{print $1}')
+  echo "$d"
 }
 
 
@@ -1652,24 +1656,30 @@ import_virtualbox(){
   ## Check how many systems to import.
   ## vsys 0: gateway
   ## vsys 1: workstation
+
+  case "${guest}" in
+    whonix)
+      ## if importing whonix, import 2 virtual systems
+      vbox_arg_normal="--vsys 0 --eula accept --vsys 1 --eula accept"
+    ;;
+    kicksecure)
+      vbox_arg_normal="--vsys 0 --eula accept"
+    ;;
+  esac
+
+  vbox_arg_general="${vbox_arg_normal}"
   vm_purge="purgeme"
+
   case "${import_only}" in
     workstation)
-      vbox_arg="--vsys 0 --eula accept --vmname ${vm_purge} --vsys 1 --eula accept"
+      vbox_arg_importonly="--vsys 0 --eula accept --vmname ${vm_purge} --vsys 1 --eula accept"
+      vbox_arg_general="${vbox_arg_importonly}"
       ;;
     gateway)
-      vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept --vmname ${vm_purge}"
+      vbox_arg_importonly="--vsys 0 --eula accept --vsys 1 --eula accept --vmname ${vm_purge}"
+      vbox_arg_general="${vbox_arg_importonly}"
       ;;
     "")
-      case "${guest}" in
-        whonix)
-          ## if importing whonix, import 2 virtual systems
-          vbox_arg="--vsys 0 --eula accept --vsys 1 --eula accept"
-        ;;
-        kicksecure)
-          vbox_arg="--vsys 0 --eula accept"
-        ;;
-      esac
       ;;
   esac
 
@@ -1696,10 +1706,10 @@ import_virtualbox(){
 
   check_vm_file_exists_virtualbox_general
 
-  log notice "dry-run Command executing: $ vboxmanage import '${directory_prefix}/${guest_file}.${guest_file_ext}' ${vbox_arg} --dry-run"
+  log notice "dry-run Command executing: $ vboxmanage import '${directory_prefix}/${guest_file}.${guest_file_ext}' ${vbox_arg_normal} --dry-run"
 
   local output
-  output=$(log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} --dry-run) || \
+  output=$(log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   case "${guest}" in
@@ -1712,12 +1722,15 @@ import_virtualbox(){
       if [ ! "${guest_full_vm_name_workstation}" = "$vsys_1_actual" ]; then
         die 105 "${underline}VM Import:${nounderline} BUG: vsys1 is actually '${vsys_1_actual}', not '${guest_full_vm_name_workstation}'."
       fi
+      log info "vsys_0_actual: ${vsys_0_actual}"
+      log info "vsys_1_actual: ${vsys_1_actual}"
     ;;
     kicksecure)
       vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0) || true
       if [ ! "${guest_full_vm_name_kicksecure}" = "${vsys_0_actual}" ]; then
         die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_kicksecure}'."
       fi
+      log info "vsys_0_actual: ${vsys_0_actual}"
     ;;
   esac
 
@@ -1725,7 +1738,7 @@ import_virtualbox(){
 
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg} || \
+  log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_general} || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
