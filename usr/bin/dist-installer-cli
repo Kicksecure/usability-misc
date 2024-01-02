@@ -3619,47 +3619,45 @@ usage(){
   printf %s"Usage: ${me} [options...]
 
 User Options:
- -g, --guest=<guest> Set guest. Options: kicksecure, whonix (default)
+ -g, --guest=<guest> Specify the guest. Options: kicksecure, whonix (default)
  -u, --guest-version=<version>
-                     Set guest version, else query from API.
+                     Specify guest version, or query from API if not provided.
  -i, --interface=<interface>
-                     Set interface. Options: cli, xfce (default)
+                     Choose the interface. Options: cli, xfce (default)
  -m, --hypervisor=<platform>
-                     Set virtualization. Options: kvm, virtualbox (default)
- --oracle-repo       Set Oracle's repository for VirtualBox
- -o, --onion         Download files over onion.
+                     Select the virtualization platform. Options: kvm, virtualbox (default)
+ --oracle-repo       Use Oracle's repository for VirtualBox
+ -o, --onion         Enable downloading files via onion.
  -s, --socks-proxy=<proxy>
                      Set TCP SOCKS proxy for onion client connections.
-                       (default: TOR_SOCKS_HOST:TOR_SOCKS_PORT, if not set, try
-                       TBB (Tor Browser Bundle) proxy at port 9150,
-                       else try system Tor (little-t-tor) proxy at port 9050.)
+                       (Defaults to TOR_SOCKS_HOST:TOR_SOCKS_PORT; if unset,
+                       attempts to use TBB (Tor Browser Bundle) proxy at port 9150,
+                       or system Tor (little-t-tor) proxy at port 9050.)
  -l, --log-level=<level>
-                     Set log level. Options: debug, info,
+                     Choose log verbosity. Options: debug, info,
                        notice (default), warn, error.
- -V, --version       Show version and quit.
- -h, --help          Show help for commands and quit.
+ -V, --version       Display version information and exit.
+ -h, --help          Show this help message and exit.
 
 Developer options:
- --no-show-errors    Don't print errors.
- --allow-errors      Don't exit on errors. Dirty mode.
- --mirror=<number>   Select a mirror based on its index number. If no mirror is
-                       selected, the default is mirror 1 for clearnet and
-                       mirror 0 for onion.
+ --no-show-errors    Suppress error messages.
+ --allow-errors      Continue execution despite errors.  Dirty mode. Use with caution.
+ --mirror=<number>   Choose a download mirror by index. Defaults to mirror 1 for
+                       clearnet and mirror 0 for onion if unspecified.
                        Mirror indices:
                          0 [DE] download.whonix.org (onion available)
                          1 [DK] mirrors.dotsrc.org (onion available)
                          2 [HU] quantum-mirror.hu
- --redownload        Redo the download of the guest instead of stopping if it
-                       was already successfully downloaded.
- --import-only=<vm>  Choose the missing VM to import when the guest is whonix.
-                       Options: workstation and gateway.
- --no-import         Don't import guest. Default is to import.
+ --redownload        Re-download the guest image, even if previously successful.
+ --import-only=<vm>  Select specific VM to import. Only if guest is Whonix.
+                       Options: workstation, gateway.
+ --no-import         Skip guest import. Default behavior is to import.
  --reimport          Redo the import of the guest to the hypervisor. Will try
                        to import already existing files if found. This option
                        requires --destroy-existing-guest as pledge.
- -k, --no-boot       Don't boot guest at the end of run. Default is to start.
+ -k, --no-boot       Do not boot the guest after setup. Default is to start.
  --destroy-existing-guest
-                     Required pledge for --reimport.
+                     Mandatory for using --reimport.
  -P, --directory-prefix=<dir>
                      Set absolute path to directory prefix to save files to.
                        The directory must already exist and have read and
@@ -3668,20 +3666,19 @@ Developer options:
                        are not changed to the new directory, the download
                        start again. \$HOME/dist-installer-cli-download (default).
  -n, --non-interactive
-                     Set non-interactive mode, license will be accepted.
- -D, --dev           Set development mode. Empty image to download.
- --noupdate          Do not run package manager list update command. For development only.
- --ci                Set CI mode. Test running in CI.
- --testers           Set testers version to be downloaded.
- -d, --dry-run       Simulated run, log commands to info level without executing.
- --virtualbox-only   Only downloads and installs VirtualBox.
- -t, --getopt        Show parsed options and quit.
-
+                     Enable non-interactive mode; license will be accepted.
+ -D, --dev           Activate development mode. Downloads an empty image.
+ --noupdate          Skip package manager list update. For development only.
+ --ci                Enable Continuous Integration (CI) mode.
+ --testers           Download the tester's version.
+ -d, --dry-run       Simulate execution; log commands without executing.
+ --virtualbox-only   Restrict actions to downloading and installing VirtualBox.
+ -t, --getopt        Display parsed options and exit.
 File name:
-  The default file name is dist-installer-cli. Some basic options can be set as
-  the file name if they follow the format 'guest-installer-interface'.
-  Anything different than the default name or the allowed format is rejected.
-  Command line options override the file name definition.
+  The default file name is dist-installer-cli. Basic options can be set by using
+  file name following the format 'guest-installer-interface'.
+  Names not adhering to this format or the default are rejected.
+  Command-line options take precedence over file name settings.
 "
   exit "${1:-0}"
 }
