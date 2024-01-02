@@ -1640,7 +1640,10 @@ import_guest(){
 extract_vm_name_from_virtualbox_ova() {
   local output="$1"
   local system_number="$2"
-  echo "$output" | grep --max-count=1 --after-context=4 "Virtual system $system_number:" | grep "Suggested VM name" | grep -oP '"\K[^"]+'
+  a=$(echo "$output" | grep --max-count=1 --after-context=4 "Virtual system $system_number:")
+  b=$(echo "$a" | grep "Suggested VM name")
+  c=$(echo "$b" | grep -oP '"\K[^"]+')
+  echo "$c"
 }
 
 
@@ -1701,17 +1704,17 @@ import_virtualbox(){
 
   case "${guest}" in
     whonix)
-      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0)
-      vsys_1_actual=$(extract_vm_name_from_virtualbox_ova "$output" 1)
+      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0) || true
+      vsys_1_actual=$(extract_vm_name_from_virtualbox_ova "$output" 1) || true
       if [ ! "${guest_full_vm_name_gateway}" = "${vsys_0_actual}" ]; then
         die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_gateway}'."
       fi
       if [ ! "${guest_full_vm_name_workstation}" = "$vsys_1_actual" ]; then
-        die 105 "${underline}VM Import:${nounderline} BUG: vsys1 is actually '${vsys_0_actual}', not '${guest_full_vm_name_workstation}'."
+        die 105 "${underline}VM Import:${nounderline} BUG: vsys1 is actually '${vsys_1_actual}', not '${guest_full_vm_name_workstation}'."
       fi
     ;;
     kicksecure)
-      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0)
+      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0) || true
       if [ ! "${guest_full_vm_name_kicksecure}" = "${vsys_0_actual}" ]; then
         die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_kicksecure}'."
       fi
