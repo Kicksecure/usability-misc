@@ -1,3 +1,165 @@
+commit 073a3f196adaf65a008973ad9b1e9e51e9342b11
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 09:21:25 2024 -0500
+
+    avoid starting duplicate VirtualBox GUI if already running
+
+commit ae9ff79d2e42feda3e26a498bb98643603a9ff14
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 09:10:54 2024 -0500
+
+    output
+
+commit a4ee4fa780ed8942f0a1604a5001dfa673519a3e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 09:09:08 2024 -0500
+
+    shellcheck
+
+commit 04a8355111b1695ea311c7421b2f729b234a6c45
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 09:06:09 2024 -0500
+
+    fix: ova vsys sanity test when using `--import-only`
+
+commit 79315b289fc0ea68fac13bd2043d9ab590259147
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 08:55:38 2024 -0500
+
+    improve ova vsys sanity test
+
+commit 9b0cc47eeffeff8a18735154d485b3055540b07e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 08:47:54 2024 -0500
+
+    added a sanity test to check if vsys0 and vsys1 inside ova correspond to the expected VM names
+
+commit 97c2df48f4d9b4ae1ccf141851af5f89dbaacfa3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 08:00:21 2024 -0500
+
+    output
+
+commit cf3b2f7e87fe8e12fec69d3eddabce0115e55541
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:44:32 2024 -0500
+
+    output
+
+commit 7b68c70c64b5446d843354d95270f87a6053b3fd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:43:49 2024 -0500
+
+    fix filename
+
+commit df87a854fba860f2df0569b9a3f1379496782a24
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:42:26 2024 -0500
+
+    output
+
+commit 5b72c395cc9185f4e0a3612fd6eea8d4454f7b89
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:41:56 2024 -0500
+
+    output
+
+commit f772e248ecb1fc2c48d5e611a716bd0146bd047f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:24:52 2024 -0500
+
+    update mirrors
+
+commit fd5890eb75bec2bef5041ddfb92f9e4c837109f1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:24:06 2024 -0500
+
+    genmkfile manpages
+
+commit b4cb6156d2f6500af60b55d03ec83b393a1d16a5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:23:58 2024 -0500
+
+    output
+
+commit 5029d670ca7977f4987c6c939aa82c673c589c30
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:21:10 2024 -0500
+
+    genmkfile manpages
+
+commit 4ab8faab11cad7d5827477d4af99a5e067b6c09c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:20:52 2024 -0500
+
+    output
+
+commit a1c5a9b5fadf0871f59b1cec04bc6fc4f45b7218
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 07:17:40 2024 -0500
+
+    replace `--reimport` with `--destroy-existing-guest`
+
+commit 542ac9f6343e133de129430c1f3064fe97dea91b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:58:39 2024 -0500
+
+    output
+
+commit 16c94c1d56b057fa9bd3aee4ad4e02ddec1a31fb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:55:34 2024 -0500
+
+    output
+
+commit 79784d91cf07722c47165de4164f43c9579231db
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:39:07 2024 -0500
+
+    output
+
+commit e53cb346c488940fdd2128ba9616af33ff196e17
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:36:35 2024 -0500
+
+    output
+
+commit 3cfab9cd4276fcb29ee93efb3c305a9653f0af94
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:30:19 2024 -0500
+
+    If package upgrades are available allow proceeding anyhow if using `--noupdate`.
+
+commit f267cfefe018d7100dd21a195924596d133ae973
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:28:12 2024 -0500
+
+    output
+
+commit f095b0db517096f34c574fcac513c56728395223
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:26:30 2024 -0500
+
+    indent
+
+commit 8913455e727574072995f2d222d6ec31b5045a26
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:23:53 2024 -0500
+
+    check if HOME variable exists
+
+commit 60f3c1711e2aaefd9b8ecf44e0d4f3a01ad346d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 06:06:21 2024 -0500
+
+    fix: replace hardcoded `/home/user` with `$HOME`
+
+commit 0555f1f8cf975c1b70bdff1395d4c1ffcf7d1802
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 1 16:36:07 2024 +0000
+
+    bumped changelog version
+
 commit 2439b937a7cd5515d9d8381f97fce85c7877e6ab
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Jan 1 11:35:51 2024 -0500
