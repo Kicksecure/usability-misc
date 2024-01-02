@@ -1095,7 +1095,7 @@ update_sources(){
   if test "${noupdate}" = "1"; then
     ## Too slow to run over and over again during testing.
     simulate_only_maybe=true
-    log warn "Package List Update: Simulate only, because noupdate is set."
+    log warn "Package List Update: Simulate only, via '--noupdate' option."
   fi
 
   # shellcheck disable=SC2086
@@ -1186,7 +1186,7 @@ check_upgrades_simulation() {
   fi
 
   if test "${noupdate}" = "1"; then
-    log warn "Package Upgrade Simulation: Package upgrades available but proceeding anyhow, because noupdate is set."
+    log warn "Package Upgrade Simulation: Package upgrades available but proceeding anyhow via '--noupdate' option."
     return 0
   fi
 
@@ -1245,7 +1245,7 @@ install_pkg(){
 
   if test -n "${pkg_not_installed}"; then
     if test "${dry_run}" = "1"; then
-      log notice "Skipping installation of the following packages because dry_run is set: '${pkg_not_installed}'"
+      log notice "Skipping installation of the following packages via '--dry-run' option: '${pkg_not_installed}'"
       return 0
     fi
 
@@ -1282,7 +1282,7 @@ test_pkg(){
 
   if test -n "${pkg_not_installed}"; then
     if test "${dry_run}" = "1"; then
-      log error "Failed to locate package(s) and ignoring because dry_run is set: '${pkg_not_installed}'"
+      log error "Failed to locate package(s) and ignoring via '--dry-run' option: '${pkg_not_installed}'"
     else
       log error "Failed to locate package(s): '${pkg_not_installed}'"
       return 1
@@ -1433,10 +1433,10 @@ vm_delete_maybe() {
         if test "${gateway_exists}" = "1"; then
           ## Do not remove gateway if import_only is set to workstation
           if test "${import_only}" = "workstation" ; then
-            log info "VM Deletion: 'no' - Although '--destroy-existing-guest' is set, not deleting previously imported gateway because import_only is set to workstation."
-            log info "If you wish to reimport (re-install) both machines, do not specify import_only."
+            log info "VM Deletion: 'no' - Although '--destroy-existing-guest' is set, not deleting previously imported gateway because '--import-only' option is set to 'workstation'."
+            log info "If you wish to reimport (re-install) both machines, do not specify the '--import-only' option."
           else
-            log warn "VM Deletion: 'yes' - Deleting previously imported gateway because '--destroy-existing-guest' is set..."
+            log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-existing-guest' option..."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
           fi
         fi
@@ -1445,18 +1445,18 @@ vm_delete_maybe() {
         if test "${workstation_exists}" = "1" ; then
           ## Do not remove workstation if import_only is set to gateway
           if test "${import_only}" = "gateway" ; then
-            log info "VM Deletion: 'no' - Although '--destroy-existing-guest' is set, not deleting previously imported workstation because import_only is set to gateway."
-            log info "If you wish to '--destroy-existing-guest' both machines, do not specify import_only."
+            log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported workstation because '--import-only' option is set to 'gateway'."
+            log info "If you wish to '--destroy-existing-guest' both machines, do not specify the '--import-only' option."
           else
-            log warn "VM Deletion: 'yes' - Deleting previously imported workstation because '--destroy-existing-guest' is set."
+            log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--destroy-existing-guest' option."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
           fi
         fi
       elif test -n "${import_only}" ; then
         if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'gateway', but it already exists and '--destroy-existing-guest' was not set."
+          die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'gateway', but it already exists and '--destroy-existing-guest' option was not set."
         elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'workstation', but it already exists and '--destroy-existing-guest' was not set."
+          die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
         fi
         log info "${underline}Existing VM Check:${nounderline} '--destroy-existing-guest' was not set and import_only was also not set to the same machine that already exists, ok."
       fi
@@ -1465,7 +1465,7 @@ vm_delete_maybe() {
       if test "${destroy_existing_guest}" = "1"; then
         ## If VMs exists and '--destroy-existing-guest' is set, remove VMs as they are gonna
         ## be imported later by main.
-        log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) because '--destroy-existing-guest' is set."
+        log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) via '--destroy-existing-guest' option."
         log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
       fi
       ;;
@@ -1541,13 +1541,12 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     ## Run end_installer here, because no VMs were downloaded anyhow if a Qubes Template was detected.
     end_installer
   elif test "${no_boot}" = "1"; then
-    log info "no_boot is set."
-    log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via no_boot setting."
+    log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via '--no-boot' option."
     log notice "VirtualBox can be started manually."
     ## Not running end_installer here, because that happens below and we want the following output messages.
     #end_installer
   elif test "${non_interactive}" = "1"; then
-    log notice "${underline}VirtualBox Startup Check:${nounderline} VirtualBox start agreed by the user by setting non_interactive."
+    log notice "${underline}VirtualBox Startup Check:${nounderline} Starting VirtualBox automatically as per '--non-interactive' option."
     if test "${virtualbox_only}" = "1"; then
       start_virtualbox_gui
       end_installer
@@ -1587,7 +1586,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   if test "${no_boot}" = "1"; then
     ## Skip guest boot
-    log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via no_boot setting."
+    log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via '--no-boot' option."
     log notice "Virtual Machine(s) can be started manually."
     end_installer
   fi
@@ -1623,7 +1622,7 @@ import_guest(){
   fi
 
   if test "${no_import}" = "1"; then
-    log notice "Not importing guest because no_import is set."
+    log notice "VM Import: Not importing guest via '--import-only' option."
     end_installer
   fi
 
@@ -1667,20 +1666,20 @@ import_virtualbox(){
   if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
     if test "${destroy_existing_guest}" = "1"; then
       do_continue=yes
-      log info "VM Import Check Result: Continue because '--destroy-existing-guest' is set."
+      log info "VM Import Check Result: Continue via '--destroy-existing-guest' option."
     elif test -n "${import_only}"; then
       do_continue=yes
-      log info "VM Import Check Result: Continue because import_only is set."
+      log info "VM Import Check Result: Continue via '--import-only' option."
     else
       do_continue=no
-      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither '--destroy-existing-guest' nor import_only is set."
+      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither '--destroy-existing-guest' option nor '--import_only' option is set."
     fi
   else
     do_continue=yes
     log info "VM Import Check Result: Continue because no VM(s) exist yet."
   fi
   if [ "$do_continue" = "no" ]; then
-    log notice "VM Import Check Result: Skipping to '--destroy-existing-guest', because Virtual Machine(s) have been imported previously and not using 'import-only' or '--destroy-existing-guest'."
+    log notice "VM Import Check Result: Skipping to import, because Virtual Machine(s) have been imported previously and not using '--import-only' option or '--destroy-existing-guest' option."
     return 0
   fi
 
@@ -1909,7 +1908,7 @@ add_user_to_vbox_group(){
 install_virtualbox_fedora_common_end(){
   if ! has vboxmanage ; then
     if test "${dry_run}" = "1"; then
-      log error "Failed to locate 'vboxmanage' program. Ignoring because dry_run is set."
+      log error "Failed to locate 'vboxmanage' program. Ignoring via '--dry-run' option."
     else
       die 1 "${underline}vboxmanage test:${nounderline} Failed to locate 'vboxmanage' program."
     fi
@@ -1923,7 +1922,7 @@ install_virtualbox_fedora_common_end(){
 install_virtualbox_debian_common_end(){
   if ! has vboxmanage ; then
     if test "${dry_run}" = "1"; then
-      log error "Failed to locate 'vboxmanage' program. - ignoring because dry_run is set."
+      log error "Failed to locate 'vboxmanage' program. - ignoring via '--dry-run' option."
     else
       die 1 "${underline}vboxmanage test:${nounderline} Failed to locate 'vboxmanage' program."
     fi
@@ -2475,7 +2474,7 @@ install_signify(){
 ## Test if user accepts the license, if not, abort.
 check_license(){
   if [ "${non_interactive}" = "1" ]; then
-    log notice "License Check: 'success' - User agreement confirmed via non_interactive setting."
+    log notice "License Check: 'success' - User agreement confirmed via '--non-interactive' option."
     return 0
   fi
 
@@ -2835,7 +2834,7 @@ pre_check(){
 
   ## Functions below are difficult to emulate
   if test "${dry_run}" = "1"; then
-    log info "Skipping rest or pre_check() because dry_run is set."
+    log info "Skipping rest or pre_check() because via '--dry-run' option."
     return 0
   fi
 
@@ -3391,7 +3390,7 @@ should_download(){
     return 1
   fi
   if test "${dry_run}" = "1"; then
-    log notice "Download: Creating download flag because dry_run is set."
+    log notice "Download: Creating download flag via '--dry-run' option."
     log_run notice touch "${download_flag}"
     return 0
   fi
@@ -3402,7 +3401,7 @@ should_download(){
     test "${download_msg_done:-}" = "1" && return 0
     download_msg_done=1
     ## Download if redownload option is set.
-    log notice "Download: Re-downloading files because redownload is set."
+    log notice "Download: Re-downloading files because via '--redownload' option."
     return 0
   elif test -f "${download_flag:-}"; then
     ## Do not download if flag exists.
@@ -3479,7 +3478,7 @@ check_integrity(){
   fi
 
   if test "${dry_run}" = "1"; then
-    log notice "Integrity Check: Skipping integrity checks because dry_run is set."
+    log notice "Integrity Check: Skipping integrity checks because via '--dry-run' option."
     return 0
   fi
   log notice "Integrity Check: Performing integrity checks..."
