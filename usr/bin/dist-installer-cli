@@ -1397,7 +1397,7 @@ check_vm_file_exists_virtualbox_general() {
   case "${guest}" in
     whonix)
       if test "${import_only}" = "gateway" ; then
-        file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_kicksecure}/${guest_full_vm_name_kicksecure}.vbox")
+        file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_gateway}/${guest_full_vm_name_gateway}.vbox")
       elif test "${import_only}" = "workstation" ; then
         file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_workstation}/${guest_full_vm_name_workstation}.vbox")
       else
