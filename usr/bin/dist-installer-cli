@@ -1185,6 +1185,11 @@ check_upgrades_simulation() {
     return 0
   fi
 
+  if test "${noupdate}" = "1"; then
+    log warn "Package Upgrade Simulation: Package upgrades available but proceeding anyhow, because noupdate is set."
+    return 0
+  fi
+
   die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
 
 $number_upgraded packages can be upgraded.
