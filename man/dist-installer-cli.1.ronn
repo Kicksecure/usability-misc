@@ -102,14 +102,11 @@ format <guest-interface-installer>.
 `--mirror`=<number>
 
         Select a mirror based on its index number. If no mirror is selected,
-        the default is mirror 1 for clearnet and mirror 0 for onion.
+        the default is mirror 0 for clearnet and mirror 0 for onion.
         Mirror indices:
           0 [DE] download.whonix.org (onion available)
           1 [DK] mirrors.dotsrc.org (onion available)
-          2 [DE] mirror.koljasagorski.de
-          3 [HU] quantum-mirror.hu
-          4 [PL] ftp.icm.edu.pl
-          5 [US] mirrors.gigenet.com
+          2 [HU] quantum-mirror.hu
 
 `--virtualbox-only`
 

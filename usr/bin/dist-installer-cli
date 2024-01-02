@@ -3642,7 +3642,7 @@ User Options:
 Developer options:
  --no-show-errors    Suppress error messages.
  --allow-errors      Continue execution despite errors. Dirty mode. Use with caution.
- --mirror=<number>   Choose a download mirror by index. Defaults to mirror 1 for
+ --mirror=<number>   Choose a download mirror by index. Defaults to mirror 0 for
                        clearnet and mirror 0 for onion if unspecified.
                        Mirror indices:
                          0 [DE] download.whonix.org (onion available)
