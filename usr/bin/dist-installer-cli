@@ -1095,6 +1095,7 @@ update_sources(){
   if test "${noupdate}" = "1"; then
     ## Too slow to run over and over again during testing.
     simulate_only_maybe=true
+    log warn "Package List Update: Simulate only, because noupdate is set."
   fi
 
   # shellcheck disable=SC2086
