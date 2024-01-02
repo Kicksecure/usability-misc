@@ -1428,44 +1428,44 @@ rm '$file_name_item'
 vm_delete_maybe() {
   case "${guest}" in
     whonix)
-      if test "${reimport}" = "1"; then
-        ## Remove Gateway if it exists when using --reimport.
+      if test "${destroy_existing_guest}" = "1"; then
+        ## Remove Gateway if it exists when using --destroy-existing-guest.
         if test "${gateway_exists}" = "1"; then
           ## Do not remove gateway if import_only is set to workstation
           if test "${import_only}" = "workstation" ; then
-            log info "VM Deletion: 'no' - Although reimport is set, not deleting previously imported gateway because import_only is set to workstation."
-            log info "If you wish to reimport both machines, do not specify import_only."
+            log info "VM Deletion: 'no' - Although '--destroy-existing-guest' is set, not deleting previously imported gateway because import_only is set to workstation."
+            log info "If you wish to reimport (re-install) both machines, do not specify import_only."
           else
-            log warn "VM Deletion: 'yes' - Deleting previously imported gateway because reimport is set..."
+            log warn "VM Deletion: 'yes' - Deleting previously imported gateway because '--destroy-existing-guest' is set..."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
           fi
         fi
 
-        ## Remove Workstation if it exists when using --reimport.
+        ## Remove Workstation if it exists when using --destroy-existing-guest.
         if test "${workstation_exists}" = "1" ; then
           ## Do not remove workstation if import_only is set to gateway
           if test "${import_only}" = "gateway" ; then
-            log info "VM Deletion: 'no' - Although reimport is set, not deleting previously imported workstation because import_only is set to gateway."
-            log info "If you wish to reimport both machines, do not specify import_only."
+            log info "VM Deletion: 'no' - Although '--destroy-existing-guest' is set, not deleting previously imported workstation because import_only is set to gateway."
+            log info "If you wish to '--destroy-existing-guest' both machines, do not specify import_only."
           else
-            log warn "VM Deletion: 'yes' - Deleting previously imported workstation because reimport is set."
+            log warn "VM Deletion: 'yes' - Deleting previously imported workstation because '--destroy-existing-guest' is set."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
           fi
         fi
       elif test -n "${import_only}" ; then
         if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'gateway', but it already exists and reimport was not set."
+          die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'gateway', but it already exists and '--destroy-existing-guest' was not set."
         elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'workstation', but it already exists and reimport was not set."
+          die 1 "${underline}Existing VM Check Result:${nounderline} import_only was set to 'workstation', but it already exists and '--destroy-existing-guest' was not set."
         fi
-        log info "${underline}Existing VM Check:${nounderline} reimport was not set and import_only was also not set to the same machine that already exists, ok."
+        log info "${underline}Existing VM Check:${nounderline} '--destroy-existing-guest' was not set and import_only was also not set to the same machine that already exists, ok."
       fi
       ;;
     kicksecure)
-      if test "${reimport}" = "1"; then
-        ## If VMs exists and reimport is set, remove VMs as they are gonna
+      if test "${destroy_existing_guest}" = "1"; then
+        ## If VMs exists and '--destroy-existing-guest' is set, remove VMs as they are gonna
         ## be imported later by main.
-        log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) because reimport is set."
+        log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) because '--destroy-existing-guest' is set."
         log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
       fi
       ;;
@@ -1581,8 +1581,8 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
   if test "${redownload}" != "1"; then
     log notice "Hint: If you would like to redownload the image, read about '--redownload' (safe)."
   fi
-  if test "${reimport}" != "1"; then
-    log notice "Hint: If you would like to reimport the image, read about '--reimport' (danger)."
+  if test "${destroy_existing_guest}" != "1"; then
+    log notice "Hint: If you would like to '--destroy-existing-guest' the image, read about '--destroy-existing-guest' (danger)."
   fi
 
   if test "${no_boot}" = "1"; then
@@ -1665,22 +1665,22 @@ import_virtualbox(){
 
   local do_continue
   if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
-    if test "${reimport}" = "1"; then
+    if test "${destroy_existing_guest}" = "1"; then
       do_continue=yes
-      log info "VM Import Check Result: Continue because reimport is set."
+      log info "VM Import Check Result: Continue because '--destroy-existing-guest' is set."
     elif test -n "${import_only}"; then
       do_continue=yes
       log info "VM Import Check Result: Continue because import_only is set."
     else
       do_continue=no
-      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither reimport nor import_only is set."
+      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither '--destroy-existing-guest' nor import_only is set."
     fi
   else
     do_continue=yes
     log info "VM Import Check Result: Continue because no VM(s) exist yet."
   fi
   if [ "$do_continue" = "no" ]; then
-    log notice "VM Import Check Result: Skipping to reimport, because Virtual Machine(s) have been imported previously and not using 'import-only' or '--reimport'."
+    log notice "VM Import Check Result: Skipping to '--destroy-existing-guest', because Virtual Machine(s) have been imported previously and not using 'import-only' or '--destroy-existing-guest'."
     return 0
   fi
 
@@ -3652,12 +3652,10 @@ Developer options:
  --import-only=<vm>  Select specific VM to import. Only if guest is Whonix.
                        Options: workstation, gateway.
  --no-import         Skip guest import. Default behavior is to import.
- --reimport          Redo the import of the guest to the hypervisor. Will try
-                       to import already existing files if found. This option
-                       requires --destroy-existing-guest as pledge.
+ --destroy-existing-guest Deletes any existing virtual machine(s) and re-imports them.
+                       Warning: This action poses a risk of data loss as it involves
+                       a complete reinstallation of the VM(s). Proceed with caution.
  -k, --no-boot       Do not boot the guest after setup. Default is to start.
- --destroy-existing-guest
-                     Mandatory for using --reimport.
  -P, --directory-prefix=<dir>
                     Specify the absolute path for the directory where
                       files will be saved. Ensure that the directory already exists
@@ -3714,7 +3712,6 @@ set_default(){
   no_import=""
   no_boot=""
   redownload=""
-  reimport=""
   import_only=""
   destroy_existing_guest=""
   testers=""
@@ -3812,9 +3809,6 @@ parse_opt(){
       redownload)
         set_arg redownload 1
         ;;
-      reimport)
-        set_arg reimport 1
-        ;;
       destroy-existing-guest)
         set_arg destroy_existing_guest 1
         ;;
@@ -3892,14 +3886,6 @@ parse_opt(){
   test -n "${mirror}" && range_arg mirror 0 1 2
 
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
-
-  if test "${reimport}" = "1"; then
-    if test -z "${destroy_existing_guest}"; then
-      log error "The option '--reimport' requires '--destroy-existing-guest'."
-      log error "The option '--destroy-existing-guest' was not set."
-      die 1 "User mistake, read the documentation to understand how to use the options."
-    fi
-  fi
 
   if test -n "${directory_prefix}"; then
     ## Remove trailing slash from directory.
