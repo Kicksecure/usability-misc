@@ -3659,12 +3659,12 @@ Developer options:
  --destroy-existing-guest
                      Mandatory for using --reimport.
  -P, --directory-prefix=<dir>
-                     Set absolute path to directory prefix to save files to.
-                       The directory must already exist and have read and
-                       write capabilities for the calling user. If you change
-                       this directory, but the previously downloaded files
-                       are not changed to the new directory, the download
-                       start again. \$HOME/dist-installer-cli-download (default).
+                    Specify the absolute path for the directory where
+                      files will be saved. Ensure that the directory already exists
+                      and is readable and writable by the user. If this directory
+                      is changed and previously downloaded files are not moved
+                      to the new directory, the download will restart. Default:
+                      \$HOME/dist-installer-cli-download.
  -n, --non-interactive
                      Enable non-interactive mode; license will be accepted.
  -D, --dev           Activate development mode. Downloads an empty image.
