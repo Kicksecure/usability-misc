@@ -3638,6 +3638,7 @@ User Options:
                        notice (default), warn, error.
  -V, --version       Show version and quit.
  -h, --help          Show help for commands and quit.
+
 Developer options:
  --no-show-errors    Don't print errors.
  --allow-errors      Don't exit on errors. Dirty mode.
@@ -3675,6 +3676,7 @@ Developer options:
  -d, --dry-run       Simulated run, log commands to info level without executing.
  --virtualbox-only   Only downloads and installs VirtualBox.
  -t, --getopt        Show parsed options and quit.
+
 File name:
   The default file name is dist-installer-cli. Some basic options can be set as
   the file name if they follow the format 'guest-installer-interface'.
