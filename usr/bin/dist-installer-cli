@@ -1382,6 +1382,11 @@ check_vm_file_exists_virtualbox_general() {
   ## '/home/user/VirtualBox VMs/Whonix-Gateway-Xfce/Whonix-Gateway-Xfce.vbox'
   ## '/home/user/VirtualBox VMs/Whonix-Workstation-Xfce/Whonix-Workstation-Xfce.vbox'
 
+  if [ -z "${HOME+x}" ]; then
+    log warn "VM Import Check: Skip testing if there is an extraneous '.vbox' file because environment variable HOME is unset."
+    return 0
+  fi
+
   local file_name_list=()
   case "${guest}" in
     whonix)
