@@ -1434,7 +1434,7 @@ vm_delete_maybe() {
           ## Do not remove gateway if import_only is set to workstation
           if test "${import_only}" = "workstation" ; then
             log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported gateway because '--import-only' option is set to 'workstation'."
-            log info "If you wish to reimport (re-install) both machines, do not specify the '--import-only' option."
+            log info "If you wish to reimport (re-install) both, gateway and workstation, do not specify the '--import-only' option."
           else
             log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-existing-guest' option..."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
@@ -1446,7 +1446,7 @@ vm_delete_maybe() {
           ## Do not remove workstation if import_only is set to gateway
           if test "${import_only}" = "gateway" ; then
             log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported workstation because '--import-only' option is set to 'gateway'."
-            log info "If you wish to '--destroy-existing-guest' both machines, do not specify the '--import-only' option."
+            log info "If you wish to reimport (re-install) both, gateway and workstation, do not specify the '--import-only' option."
           else
             log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--destroy-existing-guest' option."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
