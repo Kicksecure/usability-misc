@@ -1802,7 +1802,7 @@ start_virtualbox_vm() {
 
 
 start_virtualbox_gui() {
-  if pgrep -i virtualbox ; then
+  if pgrep 'VirtualBox$' >/dev/null ; then
     log notice "VirtualBox Manager Startup Result: Not starting duplicate VirtualBox GUI because already running."
     return 0
   fi
