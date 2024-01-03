@@ -3091,7 +3091,6 @@ get_file(){
   # shellcheck disable=SC2046,SC2086
   download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
-  log notice "Downloading: '${url:-}'"
   # shellcheck disable=SC2086
   log_run notice ${download_opt_full} || return 1
 }
