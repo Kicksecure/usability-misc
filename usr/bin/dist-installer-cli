@@ -2002,7 +2002,7 @@ kernel_modules_check() {
   fi
 
   ## Debugging.
-  log info "Running: $ $sucmd -- modinfo --field signer vboxdrv"
+  log info "Command executing: $ $sucmd -- modinfo --field signer vboxdrv"
   if kernel_module_signer=$(root_cmd_loglevel=null root_cmd modinfo --field signer vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module Signer: '$kernel_module_signer'"
   else
@@ -2012,7 +2012,7 @@ kernel_modules_check() {
 
   ## Debugging.
   ## modprobe should be automatic but if it fails, figure out why.
-  log notice "Running: $ $sucmd -- modprobe vboxdrv"
+  log notice "Command executing: $ $sucmd -- modprobe vboxdrv"
   if kernel_module_modprobe_output=$(root_cmd_loglevel=null root_cmd modprobe vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module modprobe output: '$kernel_module_modprobe_output'"
   else
