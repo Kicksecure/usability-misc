@@ -3030,7 +3030,7 @@ Additional details:
 get_version(){
   log notice "Version Detection: Detecting guest version..."
   if test -n "${guest_version:-}"; then
-    log notice "Version Detection: User defined, dry_run or dev version already configured. Autodetection using API not required."
+    log notice "Version Detection: 'skipped' - Autodetection using API not required via '--dry_run' or '--dev' option."
     return 0
   fi
   log info "Version Detection: Acquiring guest version using API..."
