@@ -1,3 +1,33 @@
+commit 5d14ab1668f3d6d01a7e0b6fd88a4dd13eb78fee
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jan 3 05:29:44 2024 -0500
+
+    output
+
+commit b05887ebf604f14c836ab96fb67f367305bb702e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jan 3 05:27:32 2024 -0500
+
+    output
+
+commit 88d1f66d926f2507f20627209b3be0f55dd05511
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jan 3 05:26:44 2024 -0500
+
+    output
+
+commit 1e834b27c17766931d2994a441b9574ba0522c59
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jan 3 05:25:39 2024 -0500
+
+    fix: VirtualBox GUI already running detection
+
+commit 215966971fdfe7aacdc129b7bf30d6dde99929e3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 2 14:55:38 2024 +0000
+
+    bumped changelog version
+
 commit 073a3f196adaf65a008973ad9b1e9e51e9342b11
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Jan 2 09:21:25 2024 -0500
