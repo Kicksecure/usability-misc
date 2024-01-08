@@ -25,6 +25,7 @@ args=(
   '(--import-only)'--import-only='[Set VM to import when using whonix]:<vms>:->vms'
   '(-k --no-boot)'{-k,--no-boot}'[Do not boot guest]'
   '(--redownload)'--redownload'[Redo download]'
+  '(--destroy-all)'--destroy-all'[Delete and re-import both, gateway and workstation.]'
   '(--destroy-existing-guest)'--destroy-existing-guest'[Delete and re-import. Danger! Risk of data loss!]'
   '(-n --non-interactive)'{-n,--non-interactive}'[Set non-interactive mode]'
   '(--allow-errors)'--allow-errors'[Set dirty mode]'

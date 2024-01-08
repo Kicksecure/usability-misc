@@ -88,6 +88,10 @@ format <guest-interface-installer>.
         Warning: This action poses a risk of data loss as it involves
                  a complete reinstallation of the VM(s). Proceed with caution.
 
+`--destroy-all`
+
+        Deletes both VMs, gateway and workstation. Only if guest is Whonix.
+
 `-P`, `--directory-prefix`=<directory>
 
         Define the absolute path directory to store downloaded files. Defaults to

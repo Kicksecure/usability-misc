@@ -1432,25 +1432,29 @@ vm_delete_maybe() {
       if test "${destroy_existing_guest}" = "1"; then
         ## Remove Gateway if it exists when using --destroy-existing-guest.
         if test "${gateway_exists}" = "1"; then
-          ## Do not remove gateway if import_only is set to workstation
+          ## Do not remove gateway if '--import-only' option is set to 'workstation'.
           if test "${import_only}" = "workstation" ; then
             log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported gateway because '--import-only' option is set to 'workstation'."
             log info "If you wish to reimport (re-install) both, gateway and workstation, do not specify the '--import-only' option."
-          else
-            log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-existing-guest' option..."
+          elif test "${destroy_all}" = "1" ; then
+            log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-all' option..."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
+          else
+            log warn "VM Deletion: 'no' - Not deleting previously imported gateway via because neither using '--import-only' nor '--destroy-all' option..."
           fi
         fi
 
-        ## Remove Workstation if it exists when using --destroy-existing-guest.
+        ## Remove Workstation if it exists when using '--destroy-existing-guest' option.
         if test "${workstation_exists}" = "1" ; then
-          ## Do not remove workstation if import_only is set to gateway
+          ## Do not remove workstation if '--import-only' option is set to 'gateway'.
           if test "${import_only}" = "gateway" ; then
             log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported workstation because '--import-only' option is set to 'gateway'."
             log info "If you wish to reimport (re-install) both, gateway and workstation, do not specify the '--import-only' option."
-          else
-            log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--destroy-existing-guest' option."
+          elif test "${destroy_all}" = "1" ; then
+            log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--destroy-all' option..."
             log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
+          else
+            log warn "VM Deletion: 'no' - Not deleting previously imported workstation via because neither using '--import-only' nor '--destroy-all' option..."
           fi
         fi
       elif test -n "${import_only}" ; then
@@ -1459,7 +1463,7 @@ vm_delete_maybe() {
         elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
           die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
         fi
-        log info "${underline}Existing VM Check:${nounderline} '--destroy-existing-guest' was not set and import_only was also not set to the same machine that already exists, ok."
+        log info "${underline}Existing VM Check:${nounderline} '--destroy-existing-guest' option was not set. Neither '--import-only' option was set to the same machine that already exists, ok."
       fi
       ;;
     kicksecure)
@@ -3708,6 +3712,7 @@ Developer options:
  --destroy-existing-guest Deletes any existing virtual machine(s) and re-imports them.
                        Warning: This action poses a risk of data loss as it involves
                        a complete reinstallation of the VM(s). Proceed with caution.
+ --destroy-all       Deletes both VMs, gateway and workstation. Only if guest is Whonix.
  -k, --no-boot       Do not boot the guest after setup. Default is to start.
  -P, --directory-prefix=<dir>
                     Specify the absolute path for the directory where
@@ -3766,6 +3771,7 @@ set_default(){
   no_boot=""
   redownload=""
   import_only=""
+  destroy_all=""
   destroy_existing_guest=""
   testers=""
   allow_errors=""
@@ -3862,6 +3868,9 @@ parse_opt(){
       redownload)
         set_arg redownload 1
         ;;
+      destroy-all)
+        set_arg destroy_all 1
+        ;;
       destroy-existing-guest)
         set_arg destroy_existing_guest 1
         ;;
@@ -3934,7 +3943,15 @@ parse_opt(){
   esac
 
   if test "${guest}" != "whonix" && test -n "${import_only}"; then
-    die 1 "The option import_only can only be set when the guest is whonix."
+    die 1 "The option '--import-only' option can only be set when the guest is 'whonix'."
+  fi
+  if test "${guest}" != "whonix" && test -n "${destroy_all}}"; then
+    die 1 "The option '--destroy-all' option can only be set when the guest is 'whonix'."
+  fi
+  if test "${destroy_all}" = "1" && test -n "${import_only}"; then
+    ## Maybe makes sense in theory but the code getting too complex.
+    ## Best to run twice in this corner case.
+    die 1 "The option '--import-only' option cannot be combined with '--destroy-all'."
   fi
   test -n "${mirror}" && range_arg mirror 0 1 2
 
