@@ -1690,22 +1690,22 @@ import_virtualbox(){
 
   local do_continue
   if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
-    if test "${destroy_existing_guest}" = "1"; then
+    if test "${destroy_all}" = "1"; then
       do_continue=yes
-      log info "VM Import Check Result: Continue via '--destroy-existing-guest' option."
+      log info "VM Import Check Result: Continue via '--destroy-all' option."
     elif test -n "${import_only}"; then
       do_continue=yes
       log info "VM Import Check Result: Continue via '--import-only' option."
     else
       do_continue=no
-      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither '--destroy-existing-guest' option nor '--import_only' option is set."
+      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither '--destroy-all' option nor '--import_only' option is set."
     fi
   else
     do_continue=yes
     log info "VM Import Check Result: Continue because no VM(s) exist yet."
   fi
   if [ "$do_continue" = "no" ]; then
-    log notice "VM Import Check Result: Skipping to import, because Virtual Machine(s) have been imported previously and not using '--import-only' option or '--destroy-existing-guest' option."
+    log notice "VM Import Check Result: Skipping to import, because Virtual Machine(s) have been imported previously and not using '--import-only' option or '--destroy-all' option."
     return 0
   fi
 
