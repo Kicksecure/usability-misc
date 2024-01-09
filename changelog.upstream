@@ -1,3 +1,63 @@
+commit 57d79890b269ec2501f2e961d46c890ed0aefd03
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 00:53:12 2024 -0500
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit 2a0e4165cebbd7b6935b3974c6d4b414efc116bf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 00:49:19 2024 -0500
+
+    comment
+
+commit 660d1ed59cf9954b1fc0caa9782dc1c82590e50b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 00:48:50 2024 -0500
+
+    output
+
+commit 9ab296e5e7e4f7c97a8057ca558aa7ea6a2990c2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 00:44:53 2024 -0500
+
+    output
+
+commit 04f77ec9796ce3e9f5cc74107d120d489c2741ff
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 00:39:12 2024 -0500
+
+    output
+
+commit fefabefae5ea59c4d44f9c45d043a1c74d6ed29a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 00:37:45 2024 -0500
+
+    output
+
+commit 7002b70bd906950e36e8a079b25ab0982c7d1184
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 00:35:11 2024 -0500
+
+    complete `--destroy-all`
+
+commit 97bc802cb97de7c27441ba0328dcbbc2f8136b0a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 8 02:57:42 2024 -0500
+
+    `--destroy-all` WIP
+
+commit 986472fe9c24cd1036b6489d39e06fbfc3977274
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 8 02:55:42 2024 -0500
+
+    `--destroy-all` WIP
+
+commit 6457a156901328a19c74e4d5429121998bf5395f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 4 02:03:53 2024 +0000
+
+    bumped changelog version
+
 commit 5d14ab1668f3d6d01a7e0b6fd88a4dd13eb78fee
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Jan 3 05:29:44 2024 -0500
