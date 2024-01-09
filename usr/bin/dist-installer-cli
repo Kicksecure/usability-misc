@@ -1415,6 +1415,7 @@ check_vm_file_exists_virtualbox_general() {
   for file_name_item in "${file_name_list[@]}" ; do
     if test -e "$file_name_item" ; then
       die 1 "VM Import Check: Aborted before importing VM because of inconsistent state.
+This might have happened by previously using VirtualBox GUI 'Remove...' with 'Remove only' instead of 'Delete all files'.
 File '$file_name_item' exists but there is no associated VM registered in VirtualBox.
 If you attempt to re-install without preserving VM user data you might want to delete the file using the following command.
 Danger - potential data loss of VM data!
@@ -1426,52 +1427,73 @@ rm '$file_name_item'
 }
 
 
+vm_delete_kicksecure() {
+  if test "${vm_or_vms_already_existing_test_result}" = "true"; then
+    log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
+  else
+    log notice "VM Deletion: Kicksecure VM does not exist, no need to delete, ok."
+  fi
+}
+
+
+vm_delete_gateway() {
+  if test "${gateway_exists}" = "1"; then
+    log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
+  else
+    log notice "VM Deletion: Gateway VM does not exist, no need to delete, ok."
+  fi
+}
+
+
+vm_delete_workstation() {
+  if test "${workstation_exists}" = "1"; then
+    log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
+  else
+    log notice "VM Deletion: Workstation VM does not exist, no need to delete, ok."
+  fi
+}
+
+
 vm_delete_maybe() {
   case "${guest}" in
     whonix)
       if test "${destroy_existing_guest}" = "1"; then
-        ## Remove Gateway if it exists when using --destroy-existing-guest.
-        if test "${gateway_exists}" = "1"; then
-          ## Do not remove gateway if '--import-only' option is set to 'workstation'.
-          if test "${import_only}" = "workstation" ; then
-            log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported gateway because '--import-only' option is set to 'workstation'."
-            log info "If you wish to reimport (re-install) both, gateway and workstation, do not specify the '--import-only' option."
-          elif test "${destroy_all}" = "1" ; then
-            log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-all' option..."
-            log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
-          else
-            log warn "VM Deletion: 'no' - Not deleting previously imported gateway via because neither using '--import-only' nor '--destroy-all' option..."
+        ## '--destroy-existing-guest' option is set.
+        if test "${import_only}" = "gateway" ; then
+          log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--import-only=gateway' option... (If it exists.)"
+          vm_delete_gateway
+        elif test "${import_only}" = "workstation" ; then
+          log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--import-only=workstation' option... (If it exists.)"
+          vm_delete_workstation
+        elif test "${destroy_all}" = "1" ; then
+          log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-all' option... (If it exists.)"
+          vm_delete_gateway
+          log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--destroy-all' option... (If it exists.)"
+          vm_delete_workstation
+        else
+          die 1 "VM Deletion: 'no' - Not deleting previously any imported VMs because neither using '--import-only' nor '--destroy-all' option..."
+        fi
+      else
+        ## '--destroy-existing-guest' option not yet.
+        if test -n "${import_only}" ; then
+          if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
+            die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'gateway', but it already exists and '--destroy-existing-guest' option was not set."
+          elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
+            die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
           fi
+        else
+          log info "${underline}Existing VM Check:${nounderline} '--destroy-existing-guest' option was not set. Neither '--import-only' option was set, ok."
         fi
-
-        ## Remove Workstation if it exists when using '--destroy-existing-guest' option.
-        if test "${workstation_exists}" = "1" ; then
-          ## Do not remove workstation if '--import-only' option is set to 'gateway'.
-          if test "${import_only}" = "gateway" ; then
-            log info "VM Deletion: 'no' - Although using '--destroy-existing-guest' option, not deleting previously imported workstation because '--import-only' option is set to 'gateway'."
-            log info "If you wish to reimport (re-install) both, gateway and workstation, do not specify the '--import-only' option."
-          elif test "${destroy_all}" = "1" ; then
-            log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--destroy-all' option..."
-            log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
-          else
-            log warn "VM Deletion: 'no' - Not deleting previously imported workstation via because neither using '--import-only' nor '--destroy-all' option..."
-          fi
-        fi
-      elif test -n "${import_only}" ; then
-        if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'gateway', but it already exists and '--destroy-existing-guest' option was not set."
-        elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
-          die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
-        fi
-        log info "${underline}Existing VM Check:${nounderline} '--destroy-existing-guest' option was not set. Neither '--import-only' option was set to the same machine that already exists, ok."
       fi
       ;;
     kicksecure)
       if test "${destroy_existing_guest}" = "1"; then
         ## If VMs exists and '--destroy-existing-guest' is set, remove VMs as they are gonna
         ## be imported later by main.
-        log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) via '--destroy-existing-guest' option."
-        log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
+        log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) via '--destroy-existing-guest' option. (If it exists.)"
+        vm_delete_kicksecure
+        else
+        log notice "VM Deletion: 'no' - Not deleting previously any imported VMs because neither using '--destroy-existing-guest' option."
       fi
       ;;
   esac
@@ -1583,10 +1605,10 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   log info "Virtual Machine(s) already exist."
   if test "${redownload}" != "1"; then
-    log notice "Hint: If you would like to redownload the image, read about '--redownload' (safe)."
+    log notice "Hint: If you would like to redownload the image, read about '--redownload' option (safe)."
   fi
   if test "${destroy_existing_guest}" != "1"; then
-    log notice "Hint: If you would like to '--destroy-existing-guest' the image, read about '--destroy-existing-guest' (danger)."
+    log notice "Hint: If you would like to '--destroy-existing-guest' the image, read about '--destroy-existing-guest' option (danger)."
   fi
 
   if test "${no_boot}" = "1"; then
@@ -1598,7 +1620,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   if test "${non_interactive}" = "1"; then
     ## start guest without interaction
-    log notice "${underline}VM Startup Check:${nounderline} VM start agreed by the user by setting non_interactive."
+    log notice "${underline}VM Startup Check:${nounderline} VM start agreed by the user via '--non-interactive' setting."
     ## Try to start VMs before trying to start VirtualBox Manager,
     ## because if it fails, it is less confusing to avoid starting VirtualBox Manager.
     start_guest
@@ -3870,6 +3892,8 @@ parse_opt(){
         ;;
       destroy-all)
         set_arg destroy_all 1
+        ## '--destroy-all' option implies '--destroy-existing-guest' option.
+        set_arg destroy_existing_guest 1
         ;;
       destroy-existing-guest)
         set_arg destroy_existing_guest 1
@@ -3942,17 +3966,22 @@ parse_opt(){
       ;;
   esac
 
-  if test "${guest}" != "whonix" && test -n "${import_only}"; then
-    die 1 "The option '--import-only' option can only be set when the guest is 'whonix'."
+  if test "${guest}" != "whonix"; then
+    ## Guest is not 'whonix'. I.e. is 'kicksecure'
+    if test -n "${import_only}"; then
+      die 1 "The option '--import-only' option can only be set when the guest is 'whonix'."
+    fi
+    if test -n "${destroy_all}}"; then
+      die 1 "The option '--destroy-all' option can only be set when the guest is 'whonix'."
+    fi
   fi
-  if test "${guest}" != "whonix" && test -n "${destroy_all}}"; then
-    die 1 "The option '--destroy-all' option can only be set when the guest is 'whonix'."
-  fi
+
   if test "${destroy_all}" = "1" && test -n "${import_only}"; then
     ## Maybe makes sense in theory but the code getting too complex.
     ## Best to run twice in this corner case.
     die 1 "The option '--import-only' option cannot be combined with '--destroy-all'."
   fi
+
   test -n "${mirror}" && range_arg mirror 0 1 2
 
   test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
