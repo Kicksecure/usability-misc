@@ -1510,7 +1510,7 @@ check_guest_boot(){
     return 0
   fi
 
-  ## Refresh variables gateway_exists and workstation_exists.
+  ## Refresh variables vm_or_vms_already_existing_test_result, gateway_exists and workstation_exists.
   check_vm_exists_general "(check after import)"
 
   case "${guest}" in
