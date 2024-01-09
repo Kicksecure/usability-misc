@@ -1323,6 +1323,9 @@ check_vm_running_virtualbox(){
 
 ## Check if VM exists on VirtualBox
 check_vm_registered_virtualbox(){
+  local extra_message
+  extra_message="$1"
+
   case "${guest}" in
     whonix)
       ## Test if machine exists.
@@ -1330,18 +1333,18 @@ check_vm_registered_virtualbox(){
       gateway_exists=0
       if vboxmanage showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
         gateway_exists=1
-        log info "Existing VM Check Result: guest '${guest_full_vm_name_gateway}' exists."
+        log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_gateway}' exists."
       fi
       if vboxmanage showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
         workstation_exists=1
-        log info "Existing VM Check Result: guest '${guest_full_vm_name_workstation}' exists."
+        log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_workstation}' exists."
       fi
       ## Find discrepancies.
       if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1" ; then
-        log warn "Existing VM Check Result: Gateway exists but Workstation doesn't."
+        log warn "Existing VM Check Result $extra_message: Gateway exists but Workstation doesn't."
       fi
       if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0" ; then
-        log warn "Existing VM Check Result: Workstation exists but Gateway doesn't."
+        log warn "Existing VM Check Result $extra_message: Workstation exists but Gateway doesn't."
       fi
       vm_or_vms_already_existing_test_result=false
       if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1" ; then
@@ -1350,18 +1353,18 @@ check_vm_registered_virtualbox(){
       fi
       if test "${vm_or_vms_already_existing_test_result}" = "false" ; then
         ## Both guests are still non-existing. Therefore return from this function.
-        log info "Existing VM Check Result: None existing yet, ok."
+        log info "Existing VM Check Result $extra_message: None existing yet, ok."
         return 0
       fi
-      log notice "Existing VM Check Result: Virtual Machine(s) have been imported previously."
+      log notice "Existing VM Check Result $extra_message: Virtual Machine(s) have been imported previously."
       ;;
     kicksecure)
       vm_or_vms_already_existing_test_result=false
       if ! vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
-        log info "Existing VM Check Result: None existing yet, ok."
+        log info "Existing VM Check Result $extra_message: None existing yet, ok."
         return 0
       fi
-      log notice "Existing VM Check Result: Virtual Machine(s) were imported previously."
+      log notice "Existing VM Check Result $extra_message: Virtual Machine(s) were imported previously."
       vm_or_vms_already_existing_test_result=true
       ;;
   esac
@@ -1378,7 +1381,7 @@ check_vm_exists_general(){
     return 0
   fi
 
-  check_vm_registered_virtualbox
+  check_vm_registered_virtualbox "$1"
 }
 
 
@@ -1508,7 +1511,7 @@ check_guest_boot(){
   fi
 
   ## Refresh variables gateway_exists and workstation_exists.
-  check_vm_exists_general
+  check_vm_exists_general "(check after import)"
 
   case "${guest}" in
     whonix)
@@ -3680,7 +3683,7 @@ main(){
   ##########################################
   check_integrity
   check_vm_running_general
-  check_vm_exists_general
+  check_vm_exists_general "(check before import)"
   vm_delete_maybe
   import_guest
   check_guest_boot
