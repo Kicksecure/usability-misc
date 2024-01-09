@@ -1341,10 +1341,10 @@ check_vm_registered_virtualbox(){
       fi
       ## Find discrepancies.
       if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1" ; then
-        log warn "Existing VM Check Result $extra_message: Gateway exists but Workstation doesn't."
+        log info "Existing VM Check Result $extra_message: Gateway exists but Workstation doesn't."
       fi
       if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0" ; then
-        log warn "Existing VM Check Result $extra_message: Workstation exists but Gateway doesn't."
+        log info "Existing VM Check Result $extra_message: Workstation exists but Gateway doesn't."
       fi
       vm_or_vms_already_existing_test_result=false
       if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1" ; then
