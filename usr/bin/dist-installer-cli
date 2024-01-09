@@ -1493,7 +1493,7 @@ vm_delete_maybe() {
         ## be imported later by main.
         log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) via '--destroy-existing-guest' option. (If it exists.)"
         vm_delete_kicksecure
-        else
+      else
         log notice "VM Deletion: 'no' - Not deleting previously any imported VMs because neither using '--destroy-existing-guest' option."
       fi
       ;;
