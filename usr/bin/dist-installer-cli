@@ -1378,8 +1378,6 @@ check_vm_exists_general(){
     return 0
   fi
 
-  log info "Existing VM Check: Checking if Virtual Machine(s) have been already imported..."
-
   check_vm_registered_virtualbox
 }
 
