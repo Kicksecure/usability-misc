@@ -1415,14 +1415,17 @@ check_vm_file_exists_virtualbox_general() {
   local file_name_item
   for file_name_item in "${file_name_list[@]}" ; do
     if test -e "$file_name_item" ; then
-      die 1 "VM Import Check: Aborted before importing VM because of inconsistent state.
+      log warn "VM Import Check: Inconsistent state.
 This might have happened by previously using VirtualBox GUI 'Remove...' with 'Remove only' instead of 'Delete all files'.
-File '$file_name_item' exists but there is no associated VM registered in VirtualBox.
-If you attempt to re-install without preserving VM user data you might want to delete the file using the following command.
-Danger - potential data loss of VM data!
-
-rm '$file_name_item'
-"
+File '$file_name_item' exists but there is no associated VM registered in VirtualBox."
+      if test -z "${import_only}"; then
+	die 1 "VM Import Check: Due to inconsistent state and '--import-only' not being set, aborting."
+      fi
+      if test "${destroy_existing_guest}" != "1"; then
+	die 1 "VM Import Check: Due to inconsistent state and '--destroy-existing-guest' not being set, aborting."
+      fi
+      log warn "Removing file '$file_name_item' becaues of inconsistent state, the options '--import-only=${import_only}' and '--destroy-existing-guest' being set."
+      log_run warn rm -f -- "${file_name_item}"
     fi
   done
 }
