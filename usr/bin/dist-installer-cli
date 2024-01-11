@@ -1419,12 +1419,12 @@ check_vm_file_exists_virtualbox_general() {
 This might have happened by previously using VirtualBox GUI 'Remove...' with 'Remove only' instead of 'Delete all files'.
 File '$file_name_item' exists but there is no associated VM registered in VirtualBox."
       if test -z "${import_only}"; then
-	die 1 "VM Import Check: Due to inconsistent state and '--import-only' not being set, aborting."
+        die 1 "VM Import Check: Due to inconsistent state and missing '--import-only' option, aborting."
       fi
       if test "${destroy_existing_guest}" != "1"; then
-	die 1 "VM Import Check: Due to inconsistent state and '--destroy-existing-guest' not being set, aborting."
+        die 1 "VM Import Check: Due to inconsistent state and missing '--destroy-existing-guest' option, aborting."
       fi
-      log warn "Removing file '$file_name_item' becaues of inconsistent state, the options '--import-only=${import_only}' and '--destroy-existing-guest' being set."
+      log warn "VM superfluous '.vbox' File Deletion: Removing file '$file_name_item' via '--import-only=${import_only}' and '--destroy-existing-guest' option."
       log_run warn rm -f -- "${file_name_item}"
     fi
   done
@@ -1486,7 +1486,7 @@ vm_delete_maybe() {
             die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
           fi
         else
-          log info "Existing VM Check: '--destroy-existing-guest' option was not set. Neither '--import-only' option was set, ok."
+          log info "Existing VM Check: Neither '--destroy-existing-guest' nor '--import-only' option was set, ok."
         fi
       fi
       ;;
