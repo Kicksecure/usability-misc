@@ -76,7 +76,7 @@ format <guest-interface-installer>.
 `--import-only`=<vm>
 
         Import only a specific Virtual Machine when the guest is Whonix.
-        Options: gateway, workstation.
+        Options: gateway, workstation, both.
 
 `--redownload`
 
@@ -87,10 +87,6 @@ format <guest-interface-installer>.
         Deletes any existing virtual machine(s) and re-imports them.
         Warning: This action poses a risk of data loss as it involves
                  a complete reinstallation of the VM(s). Proceed with caution.
-
-`--destroy-all`
-
-        Deletes both VMs, gateway and workstation. Only if guest is Whonix.
 
 `-P`, `--directory-prefix`=<directory>
 
