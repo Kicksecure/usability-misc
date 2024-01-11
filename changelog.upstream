@@ -1,3 +1,28 @@
+commit c24c16c5fcf924f4dc871ad41a2b7c62d49ef95c
+Merge: aa29d85 88b4eea
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 11 03:34:57 2024 -0500
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 88b4eeaa62b807cfa67fffc08906d5fb966dd164
+Author: grass <grass@danwin1210.de>
+Date:   Wed Jan 10 19:15:19 2024 +0000
+
+    Replace --destroy-all for --import-only=both
+
+commit 2bb5cec09264ffb7d16ba7d5db60d7ec78bf4f73
+Author: grass <grass@danwin1210.de>
+Date:   Wed Jan 10 18:54:19 2024 +0000
+
+    Remove inconsistent .vbox state when asked
+
+commit aa29d855ea76ac8262f95ab48713367c4d5160e2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 9 05:59:01 2024 +0000
+
+    bumped changelog version
+
 commit b1193fba8d7acedc98b3cc2bb55695be7788e043
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Jan 9 00:57:00 2024 -0500
