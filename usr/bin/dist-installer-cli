@@ -1415,14 +1415,17 @@ check_vm_file_exists_virtualbox_general() {
   local file_name_item
   for file_name_item in "${file_name_list[@]}" ; do
     if test -e "$file_name_item" ; then
-      die 1 "VM Import Check: Aborted before importing VM because of inconsistent state.
+      log warn "VM Import Check: Inconsistent state.
 This might have happened by previously using VirtualBox GUI 'Remove...' with 'Remove only' instead of 'Delete all files'.
-File '$file_name_item' exists but there is no associated VM registered in VirtualBox.
-If you attempt to re-install without preserving VM user data you might want to delete the file using the following command.
-Danger - potential data loss of VM data!
-
-rm '$file_name_item'
-"
+File '$file_name_item' exists but there is no associated VM registered in VirtualBox."
+      if test -z "${import_only}"; then
+	die 1 "VM Import Check: Due to inconsistent state and '--import-only' not being set, aborting."
+      fi
+      if test "${destroy_existing_guest}" != "1"; then
+	die 1 "VM Import Check: Due to inconsistent state and '--destroy-existing-guest' not being set, aborting."
+      fi
+      log warn "Removing file '$file_name_item' becaues of inconsistent state, the options '--import-only=${import_only}' and '--destroy-existing-guest' being set."
+      log_run warn rm -f -- "${file_name_item}"
     fi
   done
 }
@@ -1466,13 +1469,13 @@ vm_delete_maybe() {
         elif test "${import_only}" = "workstation" ; then
           log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--import-only=workstation' option... (If it exists.)"
           vm_delete_workstation
-        elif test "${destroy_all}" = "1" ; then
-          log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--destroy-all' option... (If it exists.)"
+        elif test "${import_only}" = "both" ; then
+          log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--import-only=both' option... (If it exists.)"
           vm_delete_gateway
-          log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--destroy-all' option... (If it exists.)"
+          log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--import-only=both' option... (If it exists.)"
           vm_delete_workstation
         else
-          die 1 "VM Deletion: 'no' - Not deleting previously any imported VMs because neither using '--import-only' nor '--destroy-all' option..."
+          die 1 "VM Deletion: 'no' - Not deleting previously any imported VMs because option '--import-only' is not set..."
         fi
       else
         ## '--destroy-existing-guest' option not yet.
@@ -1713,22 +1716,19 @@ import_virtualbox(){
 
   local do_continue
   if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
-    if test "${destroy_all}" = "1"; then
-      do_continue=yes
-      log info "VM Import Check Result: Continue via '--destroy-all' option."
-    elif test -n "${import_only}"; then
+    if test -n "${import_only}"; then
       do_continue=yes
       log info "VM Import Check Result: Continue via '--import-only' option."
     else
       do_continue=no
-      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but neither '--destroy-all' option nor '--import_only' option is set."
+      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but option '--import-only' is not set."
     fi
   else
     do_continue=yes
     log info "VM Import Check Result: Continue because no VM(s) exist yet."
   fi
   if [ "$do_continue" = "no" ]; then
-    log notice "VM Import Check Result: Skipping to import, because Virtual Machine(s) have been imported previously and not using '--import-only' option or '--destroy-all' option."
+    log notice "VM Import Check Result: Skipping to import, because Virtual Machine(s) have been imported previously and not using '--import-only' option."
     return 0
   fi
 
@@ -1773,7 +1773,7 @@ import_virtualbox(){
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
-  if test -n "${import_only}"; then
+  if test -n "${import_only}" && test "${import_only}" != "both"; then
     log_run notice vboxmanage unregistervm "${vm_purge}" --delete ||
       die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous VM '${vm_purge}'."
   fi
@@ -3735,7 +3735,6 @@ Developer options:
  --destroy-existing-guest Deletes any existing virtual machine(s) and re-imports them.
                        Warning: This action poses a risk of data loss as it involves
                        a complete reinstallation of the VM(s). Proceed with caution.
- --destroy-all       Deletes both VMs, gateway and workstation. Only if guest is Whonix.
  -k, --no-boot       Do not boot the guest after setup. Default is to start.
  -P, --directory-prefix=<dir>
                     Specify the absolute path for the directory where
@@ -3794,7 +3793,6 @@ set_default(){
   no_boot=""
   redownload=""
   import_only=""
-  destroy_all=""
   destroy_existing_guest=""
   testers=""
   allow_errors=""
@@ -3891,11 +3889,6 @@ parse_opt(){
       redownload)
         set_arg redownload 1
         ;;
-      destroy-all)
-        set_arg destroy_all 1
-        ## '--destroy-all' option implies '--destroy-existing-guest' option.
-        set_arg destroy_existing_guest 1
-        ;;
       destroy-existing-guest)
         set_arg destroy_existing_guest 1
         ;;
@@ -3955,7 +3948,7 @@ parse_opt(){
   range_arg guest none whonix kicksecure
   range_arg interface cli xfce
   range_arg hypervisor kvm virtualbox
-  range_arg import_only workstation gateway
+  range_arg import_only workstation gateway both
 
   case "${interface}" in
     xfce)
@@ -3972,15 +3965,6 @@ parse_opt(){
     if test -n "${import_only}"; then
       die 1 "The option '--import-only' option can only be set when the guest is 'whonix'."
     fi
-    if test -n "${destroy_all}"; then
-      die 1 "The option '--destroy-all' option can only be set when the guest is 'whonix'."
-    fi
-  fi
-
-  if test "${destroy_all}" = "1" && test -n "${import_only}"; then
-    ## Maybe makes sense in theory but the code getting too complex.
-    ## Best to run twice in this corner case.
-    die 1 "The option '--import-only' option cannot be combined with '--destroy-all'."
   fi
 
   test -n "${mirror}" && range_arg mirror 0 1 2
