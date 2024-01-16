@@ -1,3 +1,23 @@
+commit 817857b92099da21b74a087a0845ba64fa46b3dc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 16 07:53:35 2024 -0500
+
+    output
+
+commit 87b90bff7c7015e863007fb1dc0be704661fd135
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 16 07:47:55 2024 -0500
+
+    fix detection of how many packages require upgrading
+    
+    https://forums.whonix.org/t/debian-12-whonix-xfce-installer-cli-reports-packages-can-be-upgraded-although-already-upgraded-non-english-language-bug/18210
+
+commit bd7ed1647350dd38500ff98d2439075c934f493a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 11 11:03:43 2024 +0000
+
+    bumped changelog version
+
 commit b1c045e58d9c28e82ee303505c8dbb2ec96724ed
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jan 11 06:03:04 2024 -0500
