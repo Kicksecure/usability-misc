@@ -1400,10 +1400,10 @@ check_vm_file_exists_virtualbox_general() {
 This might have happened by previously using VirtualBox GUI 'Remove...' with 'Remove only' instead of 'Delete all files'.
 File '$file_name_item' exists but there is no associated VM registered in VirtualBox."
       if test -z "${import_only}"; then
-        die 1 "VM Import Check: Due to inconsistent state and missing '--import-only' option, aborting."
+        die 1 "VM Import Check: Aborting because of inconsistent state and missing '--import-only' option."
       fi
       if test "${destroy_existing_guest}" != "1"; then
-        die 1 "VM Import Check: Due to inconsistent state and missing '--destroy-existing-guest' option, aborting."
+        die 1 "VM Import Check: Aborting because ofinconsistent state and missing '--destroy-existing-guest' option."
       fi
       log warn "VM superfluous '.vbox' File Deletion: Removing file '$file_name_item' via '--import-only=${import_only}' and '--destroy-existing-guest' option."
       log_run warn rm -f -- "${file_name_item}"
@@ -1456,7 +1456,7 @@ vm_delete_maybe() {
           log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--import-only=both' option... (If it exists.)"
           vm_delete_workstation
         else
-          die 1 "VM Deletion: 'no' - Not deleting previously any imported VMs because option '--import-only' is not set..."
+          die 1 "VM Deletion: 'no' - Not deleting previously any imported VMs because '--import-only' option is not set..."
         fi
       else
         ## '--destroy-existing-guest' option not yet.
@@ -1702,7 +1702,7 @@ import_virtualbox(){
       log info "VM Import Check Result: Continue via '--import-only' option."
     else
       do_continue=no
-      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but option '--import-only' is not set."
+      log info "VM Import Check Result: Skipping import because at least 1 VM already exists but '--import-only' option is not set."
     fi
   else
     do_continue=yes
