@@ -1151,34 +1151,15 @@ check_upgrades_simulation() {
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
 
-  true "INFO: setting fallback number_upgraded=invalid"
-  number_upgraded=invalid
+  ## Fedora: Not implemented but this code path is also not called for Fedora.
+  local upgradeable_output_one upgradeable_output_two number_upgraded
+  upgradeable_output_one=$(apt list --upgradable 2>/dev/null)
+  upgradeable_output_two=$(echo "${upgradeable_output_one}" | awk -F'/' 'NR>1 {print $1}')
 
-  OIFS="$IFS"
-  IFS='
-'
-
-  for line in $upgrade_simulate_output; do
-    IFS="$OIFS"
-    true "line: $line"
-    first_char="${line:0:1}"
-    if [[ "$first_char" = "" ]]; then
-      continue
-    fi
-    if [[ "$first_char" != *[!0-9]* ]]; then
-      true "'$first_char' is strictly numeric."
-      read -r number_upgraded _ <<< "$line"
-      true "number_upgraded: $number_upgraded"
-      break
-    fi
-  done
-
-  IFS="$OIFS"
-
-  if test "${dry_run}" = "1"; then
-    if [ "$number_upgraded" = "invalid" ]; then
-      number_upgraded=0
-    fi
+  if [ -z "$upgradeable_output_two" ]; then
+    number_upgraded=0
+  else
+    number_upgraded=$(echo "${upgradeable_output_two}" | wc -l)
   fi
 
   if [ "$number_upgraded" = "0" ]; then
@@ -1193,7 +1174,7 @@ check_upgrades_simulation() {
 
   die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
 
-$number_upgraded packages can be upgraded.
+'${number_upgraded}' packages can be upgraded.
 
 Please upgrade your operating system first. Otherwise this installer cannot proceed.
 
