@@ -1150,6 +1150,7 @@ check_upgrades_simulation() {
   fi
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
+  local number_upgradable
   number_upgradable="$(${pkg_mngr_upgradable_check} 2>/dev/null| wc -l)"
   ## First line is just reports.
   number_upgradable="$((number_upgradable-1))"
