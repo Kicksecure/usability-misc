@@ -1150,19 +1150,15 @@ check_upgrades_simulation() {
   fi
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
+  number_upgradable="$(${pkg_mngr_upgradable_check} 2>/dev/null| wc -l)"
+  ## First line is just reports.
+  number_upgradable="$((number_upgradable-1))"
 
-  ## Fedora: Not implemented but this code path is also not called for Fedora.
-  local upgradeable_output_one upgradeable_output_two number_upgraded
-  upgradeable_output_one=$(apt list --upgradable 2>/dev/null)
-  upgradeable_output_two=$(echo "${upgradeable_output_one}" | awk -F'/' 'NR>1 {print $1}')
-
-  if [ -z "$upgradeable_output_two" ]; then
-    number_upgraded=0
-  else
-    number_upgraded=$(echo "${upgradeable_output_two}" | wc -l)
+  if test "${dry_run}" = "1"; then
+    number_upgradable=0
   fi
 
-  if [ "$number_upgraded" = "0" ]; then
+  if [ "$number_upgradable" = "0" ]; then
     log info "Package Upgrade Simulation: No packages require upgrading, ok."
     return 0
   fi
@@ -1174,7 +1170,7 @@ check_upgrades_simulation() {
 
   die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
 
-'${number_upgraded}' packages can be upgraded.
+'${number_upgradable}' packages can be upgraded.
 
 Please upgrade your operating system first. Otherwise this installer cannot proceed.
 
@@ -1715,12 +1711,15 @@ import_virtualbox(){
 
   check_vm_file_exists_virtualbox_general
 
-  log notice "dry-run Command executing: $ vboxmanage import '${directory_prefix}/${guest_file}.${guest_file_ext}' ${vbox_arg_normal} --dry-run"
-
   local output
+  # TODO: vboxmanage localce needs to be C so output can be grepped.
+  #lc_all="$LC_ALL"
+  #export LC_ALL=C
   # shellcheck disable=SC2086
   output=$(log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
+  log info "OUTPUT: $output"
+  #export LC_ALL="$lc_all"
 
   case "${guest}" in
     whonix)
@@ -1878,6 +1877,7 @@ install_package_fedora_common(){
   pkg_mngr_update="${pkg_mngr} --assumeyes update"
   pkg_mngr_check_installed="${pkg_mngr} list installed"
   pkg_mngr_upgrade_check="/bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'"
+  pkg_mngr_upgradable_check="/bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'"
   pkg_mngr_upgrade_install="${pkg_mngr} upgrade"
 
   update_sources
@@ -1899,6 +1899,7 @@ install_package_debian_common(){
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
   pkg_mngr_check_installed="check_installed_debian"
   pkg_mngr_upgrade_check="${pkg_mngr} full-upgrade --simulate"
+  pkg_mngr_upgradable_check="apt list --upgradable"
   pkg_mngr_upgrade_install="${pkg_mngr} full-upgrade"
 
   ## 'dpkg --audit' does not return non-zero exit code on failure.
