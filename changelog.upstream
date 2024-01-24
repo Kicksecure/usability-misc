@@ -1,3 +1,28 @@
+commit eef8f24caab6a69e4705ea4ef2d3f0f3cd057eb7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 23 10:55:41 2024 -0500
+
+    local number_upgradable
+
+commit 4d6348b14753c7970ce2f714f60a770563ef8ada
+Merge: 5ec01f7 7b3a8e9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 23 10:54:58 2024 -0500
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 7b3a8e916b7da9b55b4cba8af830b7f3154c800b
+Author: grass <grass@danwin1210.de>
+Date:   Tue Jan 23 15:24:53 2024 +0000
+
+    Partial fix for locale support
+
+commit 5ec01f780621daeac845725cdcf41e91a93916d6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 22 12:47:28 2024 +0000
+
+    bumped changelog version
+
 commit 95dccd30e9f9c8803d10f56e689910a9048d136f
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Jan 22 07:18:22 2024 -0500
