@@ -4038,7 +4038,7 @@ parse_opt(){
 log_term_and_file(){
   ## Discover if terminal is attached to stdout
   if ! test -t 1; then
-    log warn "Output is not being sent to the terminal because terminal is not connected to stdout."
+    log warn "Terminal: Output is not being sent to the terminal because terminal is not connected to stdout."
     return 0
   fi
 
