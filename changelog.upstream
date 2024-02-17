@@ -1,3 +1,15 @@
+commit 398c45345a5c46da7e731799abc0cfed1e992134
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Feb 17 07:56:21 2024 -0500
+
+    find out local usability-misc package version
+
+commit d624a857b106443f19917e539e05ce311f1c6d6a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Feb 16 14:00:11 2024 +0000
+
+    bumped changelog version
+
 commit c80e89485fee1a215b2babf3cccb104423562d58
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Feb 12 03:22:50 2024 -0500
