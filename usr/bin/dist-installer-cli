@@ -465,6 +465,43 @@ get_distro() {
 }
 
 
+get_installer_version() {
+  dist_installer_version_pretty="${me} ${version}"
+
+  get_installer_package_version
+  log notice "dist-installer-cli version: '${dist_installer_version_pretty}'"
+}
+
+
+get_installer_package_version() {
+  if [ ! "${debian_derivative_detected}" = "1" ]; then
+    ## usability-misc package only available for Debian derivatives.
+    ## Check using dpkg-query implemented below only available on Debian and derivatives.
+    true "INFO: No debian derivative detected."
+    return 0
+  fi
+  ## Do not use commit-hash replace-me as search string to avoid replacement script replacing this.
+  if ! echo "${version}" | grep --quiet --fixed-strings "replace-me" ; then
+    true "INFO: version variable does not match replace-me string."
+    return 0
+  fi
+  if ! echo "${0}" | grep --quiet '^/usr/bin' ; then
+    true "INFO: variable 0 does not match ^/usr/bin string. This means not for example /usr/bin/dist-installer-cli. So not packages dist-installer-cli version."
+    return 0
+  fi
+  if ! echo "${me}" | grep --quiet --fixed-strings "installer-cli" ; then
+    true "INFO: program name variable does not match installer-cli string."
+    return 0
+  fi
+
+  local dist_installer_package="usability-misc"
+  ## Overwrite with '|| true' as this is not important enough to hard fail here.
+  version="$(dpkg-query --show --showformat='${Version}' "${dist_installer_package}")" || true
+  dist_installer_version_pretty="${dist_installer_package} ${version}"
+  return 0
+}
+
+
 check_not_qubes_template() {
   if ! test -f /run/qubes/this-is-templatevm; then
     true "INFO: Not running inside a Qubes Template."
@@ -2878,6 +2915,7 @@ $df_output"
 pre_check(){
   get_os
   get_distro
+  get_installer_version
   check_not_qubes_template
   get_system_stat
   need_reboot_check_first
