@@ -1,3 +1,15 @@
+commit 89653efb1e7657e66f7074a70a95991b93444d22
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Mar 18 09:42:29 2024 -0400
+
+    Linux installer: check if VMs exist before and after condition based VM deletion decision
+
+commit 40b9a738461f9ac4f803f09f1a663452610ceaec
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Feb 17 12:57:33 2024 +0000
+
+    bumped changelog version
+
 commit 398c45345a5c46da7e731799abc0cfed1e992134
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Feb 17 07:56:21 2024 -0500
