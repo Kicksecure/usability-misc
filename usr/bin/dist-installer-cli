@@ -3704,8 +3704,9 @@ main(){
   ##########################################
   check_integrity
   check_vm_running_general
-  check_vm_exists_general "(check before import)"
+  check_vm_exists_general "(check before maybe deletion)"
   vm_delete_maybe
+  check_vm_exists_general "(check before import)"
   import_guest
   check_guest_boot
   ########################################
