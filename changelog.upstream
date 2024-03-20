@@ -1,3 +1,15 @@
+commit 29b7f1788a8de3300fca54b4b02efd9b0a04a046
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Mar 20 11:30:10 2024 -0400
+
+    dist-installer-cli: improve Secure Boot enabled test
+
+commit 5ec6bdd77f04cc89fcf9d436b5f96017efa47abf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Mar 18 14:01:45 2024 +0000
+
+    bumped changelog version
+
 commit 89653efb1e7657e66f7074a70a95991b93444d22
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Mar 18 09:42:29 2024 -0400
