@@ -48,7 +48,7 @@ jobs:
                     - image: debian:testing
                     - image: debian:unstable
                     - image: ubuntu:latest
-                    - image: linuxmintd/mint21.2-amd64:latest
+                    - image: linuxmintd/mint21.3-amd64:latest
                     - image: kalilinux/kali-rolling
 
         container:
