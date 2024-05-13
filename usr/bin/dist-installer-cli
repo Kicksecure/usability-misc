@@ -412,8 +412,12 @@ get_distro() {
   case "${os}" in
     Linux*)
       case "${distro}" in
-        [Dd]"ebian"*|[Kk]"ali"*|[Tt]"ails"*|[Kk]"icksecure"|[Ww]"honix")
+        [Dd]"ebian"*|[Tt]"ails"*|[Kk]"icksecure"|[Ww]"honix")
           debian_derivative_detected=1
+          ;;
+        [Kk]"ali"*)
+          debian_derivative_detected=1
+          kali_derivative_detected=1
           ;;
         "linux mint"*|"linuxmint"*|"Linux Mint"*|"LinuxMint"*|"mint"*)
           ubuntu_derivative_detected=1
@@ -931,7 +935,10 @@ claim_unsupported_distro(){
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
     log notice "Package Installation: installation of hypervisor-required packages... Please wait, as this could take a while..."
-    if [ "$ubuntu_derivative_detected" = "1" ]; then
+    if [ "$kali_derivative_detected" = "1" ]; then
+      install_package_debian_common
+      install_virtualbox_kali
+    elif [ "$ubuntu_derivative_detected" = "1" ]; then
       install_package_debian_common
       install_virtualbox_ubuntu
     elif [ "$debian_derivative_detected" = "1" ]; then
@@ -2076,8 +2083,17 @@ kernel_modules_check() {
 
 
 install_repositories_for_virtualbox_on_debian(){
-  distro_codename_real=$(lsb_release --short --codename)
-  distro_codename_common_use="${distro_codename_real}"
+  ## Oracle does not have a Kali dist section, use Debian equivalent.
+  case "${distro}"
+    [Kk]"ali"*)
+      distro_codename_real="bookworm"
+      distro_codename_common_use="bookworm"
+    ;;
+    *)
+      distro_codename_real=$(lsb_release --short --codename)
+      distro_codename_common_use="${distro_codename_real}"
+    ;;
+  esac
 
 #   log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
 #   if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
@@ -2566,6 +2582,13 @@ install_virtualbox_debian(){
 
 ## Install VirtualBox on Ubuntu
 install_virtualbox_ubuntu(){
+  install_pkg virtualbox-qt virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
+  install_virtualbox_debian_common_end
+}
+
+
+## Install VirtualBox on Kali
+install_virtualbox_kali(){
   install_pkg virtualbox-qt virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
   install_virtualbox_debian_common_end
 }
@@ -3831,6 +3854,7 @@ set_default(){
   background_pid=""
   debian_derivative_detected=""
   ubuntu_derivative_detected=""
+  kali_derivative_detected=""
   fedora_derivative_detected=""
   virtualbox_linux_user_group="vboxusers"
   # shellcheck disable=SC2034
