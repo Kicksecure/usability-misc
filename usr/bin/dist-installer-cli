@@ -1997,7 +1997,9 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
     return 0
   fi
 
-  install_pkg torsocks
+  if test "${kali_derivative_detected}" != "1"; then
+    install_pkg torsocks
+  fi
   install_signify signify-openbsd
 }
 
@@ -2083,17 +2085,14 @@ kernel_modules_check() {
 
 
 install_repositories_for_virtualbox_on_debian(){
-  ## Oracle does not have a Kali dist section, use Debian equivalent.
-  case "${distro}" in
-    [Kk]"ali"*)
-      distro_codename_real="bookworm"
-      distro_codename_common_use="bookworm"
-      ;;
-    *)
-      distro_codename_real=$(lsb_release --short --codename)
-      distro_codename_common_use="${distro_codename_real}"
-      ;;
-  esac
+  ## Oracle does not have a Kali dist section, use Debian stable.
+  if test "${kali_derivative_detected}" = "1"; then
+    distro_codename_real="bookworm"
+    distro_codename_common_use="bookworm"
+  else
+    distro_codename_real=$(lsb_release --short --codename)
+    distro_codename_common_use="${distro_codename_real}"
+  fi
 
 #   log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
 #   if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
@@ -2589,6 +2588,7 @@ install_virtualbox_ubuntu(){
 
 ## Install VirtualBox on Kali
 install_virtualbox_kali(){
+  ## TODO install from Oracle or Kali repo.
   install_pkg virtualbox-qt virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
   install_virtualbox_debian_common_end
 }
@@ -2737,7 +2737,17 @@ get_checkhash_cmd(){
 
 get_transfer_cmd(){
   ## curl|rsync
-  transfer_utility=rsync
+
+  ## rsync is always better to retry failed downloads, but some distributions
+  ## might not have torsocks installed, which is necessary for rsync as it
+  ## doesn't support SOCKS5.
+  ## https://pkg.kali.org/news/583693/torsocks-240-1-removed-from-kali-rolling/
+  if test "${kali_derivative_detected}" = "1"; then
+    transfer_utility=curl
+  else
+    transfer_utility=rsync
+  fi
+
   case "${transfer_utility}" in
     rsync)
       rsync=1

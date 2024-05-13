@@ -111,7 +111,6 @@ jobs:
                     ## Older Debian versions need "--gecos".
                     adduser --comment "" --disabled-password user || adduser --gecos "" --disabled-password user
                     usermod -aG sudo user
-                    cat /etc/apt/sources.list /etc/apt/sources.list.d/* || true
 
                   elif test -f /etc/fedora-release; then
                     adduser user
@@ -121,8 +120,6 @@ jobs:
                     exit 1
                   fi
 
-            - name: Test Kali Rolling can install torsocks
-              run: apt-get install --yes torsocks
             - name: Run default dist-installer-cli - Clearnet
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci
             - name: Run default dist-installer-cli - Onion
