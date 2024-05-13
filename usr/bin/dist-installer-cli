@@ -2084,15 +2084,15 @@ kernel_modules_check() {
 
 install_repositories_for_virtualbox_on_debian(){
   ## Oracle does not have a Kali dist section, use Debian equivalent.
-  case "${distro}"
+  case "${distro}" in
     [Kk]"ali"*)
       distro_codename_real="bookworm"
       distro_codename_common_use="bookworm"
-    ;;
+      ;;
     *)
       distro_codename_real=$(lsb_release --short --codename)
       distro_codename_common_use="${distro_codename_real}"
-    ;;
+      ;;
   esac
 
 #   log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
