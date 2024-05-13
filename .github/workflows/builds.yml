@@ -111,7 +111,6 @@ jobs:
                     ## Older Debian versions need "--gecos".
                     adduser --comment "" --disabled-password user || adduser --gecos "" --disabled-password user
                     usermod -aG sudo user
-
                   elif test -f /etc/fedora-release; then
                     adduser user
                     usermod -aG wheel user
