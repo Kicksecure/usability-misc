@@ -412,10 +412,10 @@ get_distro() {
   case "${os}" in
     Linux*)
       case "${distro}" in
-        "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
+        [Dd]"ebian"*|[Kk]"ali"*|[Tt]"ails"*|[Kk]"icksecure"|[Ww]"honix")
           debian_derivative_detected=1
           ;;
-        "Linux Mint"*|"LinuxMint"*|"mint"*)
+        "linux mint"*|"linuxmint"*|"Linux Mint"*|"LinuxMint"*|"mint"*)
           ubuntu_derivative_detected=1
           debian_derivative_detected=1
           ;;
@@ -426,10 +426,10 @@ get_distro() {
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
           ;;
-        "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
+        [Ff]"edora"*|"centos"*|"CentOS"*|"rhel"*|"Red hat"|"redhat"*|"Redhat"*|"Red hat")
           fedora_derivative_detected=1
           ;;
-        "Arch"*|"Artix"*|"ArcoLinux"*)
+        [Aa]"rch"*|[Aa]"rtix"*|"arcolinux"*|"ArcoLinux"*)
           claim_unsupported_distro known "${distro}"
           ;;
         *)
@@ -437,13 +437,13 @@ get_distro() {
           ;;
       esac
     ;;
-    "OpenBSD"*)
+    "openbsd"*|"OpenBSD"*)
       claim_unsupported_distro known "${distro}"
       ;;
-    "NetBSD"*)
+    "netbsd"*|"NetBSD"*)
       claim_unsupported_distro known "${distro}"
       ;;
-    "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
+    "freebsd"*|"hardenedbsd"*|"dragonfly"*|"FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
       claim_unsupported_distro known "${distro}"
       ;;
     *)
