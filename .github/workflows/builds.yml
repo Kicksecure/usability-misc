@@ -8,7 +8,7 @@ on:
 
 jobs:
     changes:
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu:latest
         permissions:
             pull-requests: read
         outputs:
@@ -33,7 +33,7 @@ jobs:
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu:latest
         strategy:
             fail-fast: false
             matrix:
