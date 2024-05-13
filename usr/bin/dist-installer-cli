@@ -2589,7 +2589,7 @@ install_virtualbox_ubuntu(){
 ## Install VirtualBox on Kali
 install_virtualbox_kali(){
   ## TODO install from Oracle or Kali repo.
-  install_pkg virtualbox-qt virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
+  install_pkg virtualbox-qt virtualbox-guest-additions-iso
   install_virtualbox_debian_common_end
 }
 
