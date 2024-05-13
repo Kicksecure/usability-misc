@@ -2149,7 +2149,6 @@ install_repositories_for_virtualbox_on_debian(){
 
   kali_found=""
   kali_clearnet="http.kali.org"
-  kali_onion=""
   kali_file_debsource="/etc/apt/sources.list.d/kali.list"
   kali_prefix_debsource="deb "
   kali_suffix_debsource=" ${distro_codename_common_use} main contrib non-free non-free-firmware"
@@ -2235,14 +2234,31 @@ install_repositories_for_virtualbox_on_debian(){
   if test "${apt_onion}"; then
     protocol_prefix_debsource="tor+http://"
     connection_type_debsource="onion"
-    if test "${oracle_repo}" = "1"; then
-      log warn "Oracle doesn't provide onion repositories."
+    if test "${oracle_repo}" = "1" || test "${kali_derivative_detected}" = "1"
+    then
+      if test "${oracle_repo}" = "1"; then
+        log warn "Oracle doesn't provide onion repositories."
+      fi
+      if test "${kali_derivative_detected}" = "1"; then
+        log warn "Kali doesn't provide onion repositories."
+      fi
+      kali_domain_debsource="${kali_clearnet}"
       oracle_domain_debsource="${oracle_clearnet}"
       if test "${apt_torified}"; then
-        log warn "Fallback Oracle repository to torified clearnet"
+        if test "${oracle_repo}" = "1"; then
+          log warn "Fallback Oracle repository to torified clearnet"
+        fi
+        if test "${kali_derivative_detected}" = "1"; then
+          log warn "Fallback Kali repository to torified clearnet"
+        fi
         protocol_prefix_debsource="tor+https://"
       else
-        log warn "Fallback Oracle repository to clearnet"
+        if test "${oracle_repo}" = "1"; then
+          log warn "Fallback Oracle repository to clearnet"
+        fi
+        if test "${kali_derivative_detected}" = "1"; then
+          log warn "Fallback Kali repository to clearnet"
+        fi
         protocol_prefix_debsource="https://"
       fi
     fi
@@ -2259,6 +2275,7 @@ install_repositories_for_virtualbox_on_debian(){
     unstable_domain_debsource="${unstable_clearnet}"
     fasttrack_domain_debsource="${fasttrack_clearnet}"
     backports_domain_debsource="${backports_clearnet}"
+    kali_domain_debsource="${kali_clearnet}"
   ## If user doesn't have torified repositories, use clearnet one.
   else
     protocol_prefix_debsource="https://"
@@ -2268,12 +2285,14 @@ install_repositories_for_virtualbox_on_debian(){
     unstable_domain_debsource="${unstable_clearnet}"
     fasttrack_domain_debsource="${fasttrack_clearnet}"
     backports_domain_debsource="${backports_clearnet}"
+    kali_domain_debsource="${kali_clearnet}"
   fi
 
   kicksecure_url="${kicksecure_prefix_debsource} ${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
   unstable_url="${unstable_prefix_debsource} ${protocol_prefix_debsource}${unstable_domain_debsource}${unstable_suffix_debsource}"
   fasttrack_url="${fasttrack_prefix_debsource} ${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
   backports_url="${backports_prefix_debsource} ${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
+  kali_url="${kali_prefix_debsource} ${protocol_prefix_debsource}${kali_domain_debsource}${kali_suffix_debsource}"
 
   if test "${oracle_repo}" = "1"; then
     oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
