@@ -2163,6 +2163,7 @@ install_repositories_for_virtualbox_on_debian(){
   ## - write sources.list files in one-line-style format or Deb822-style format?
   ##   https://forums.kicksecure.com/t/apt-sources-list-one-line-format-versus-deb822-style-format/267
   ## - unit tests
+  log warn "APT Repository List: Deb822-style Format is unsupported"
 
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     test -f "${file}" || continue
