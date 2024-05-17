@@ -1341,7 +1341,7 @@ check_vm_running_virtualbox(){
   ## Paused state should be considered as running. Instead of grepping
   ## possible states, grep VM from list of running VMs.
   # vboxmanage list runningvms | grep -q "^\"${vm}\" "
-  if vboxmanage showvminfo "${vm}" 2>&1 | \
+  if $vboxmanage showvminfo "${vm}" 2>&1 | \
     grep -qE "^State:[[:space:]]+(running|paused)"
   then
     log error "Cannot proceed. You have the following VM running: ${vm}"
@@ -1360,11 +1360,11 @@ check_vm_registered_virtualbox(){
       ## Test if machine exists.
       workstation_exists=0
       gateway_exists=0
-      if vboxmanage showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
+      if $vboxmanage showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
         gateway_exists=1
         log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_gateway}' exists."
       fi
-      if vboxmanage showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
+      if $vboxmanage showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
         workstation_exists=1
         log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_workstation}' exists."
       fi
@@ -1389,7 +1389,7 @@ check_vm_registered_virtualbox(){
       ;;
     kicksecure)
       vm_or_vms_already_existing_test_result=false
-      if ! vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
+      if ! $vboxmanage showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
         log info "Existing VM Check Result $extra_message: None existing yet, ok."
         return 0
       fi
@@ -1462,7 +1462,7 @@ File '$file_name_item' exists but there is no associated VM registered in Virtua
 
 vm_delete_kicksecure() {
   if test "${vm_or_vms_already_existing_test_result}" = "true"; then
-    log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
+    log_run notice $vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
   else
     log notice "VM Deletion: Kicksecure VM does not exist, no need to delete, ok."
   fi
@@ -1471,7 +1471,7 @@ vm_delete_kicksecure() {
 
 vm_delete_gateway() {
   if test "${gateway_exists}" = "1"; then
-    log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
+    log_run notice $vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
   else
     log notice "VM Deletion: Gateway VM does not exist, no need to delete, ok."
   fi
@@ -1480,7 +1480,7 @@ vm_delete_gateway() {
 
 vm_delete_workstation() {
   if test "${workstation_exists}" = "1"; then
-    log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
+    log_run notice $vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
   else
     log notice "VM Deletion: Workstation VM does not exist, no need to delete, ok."
   fi
@@ -1763,22 +1763,11 @@ import_virtualbox(){
 
   check_vm_file_exists_virtualbox_general
 
-  ## Store original locale variables.
-  lc_all="${LC_ALL:-}"
-  lang="${LANG:-}"
-  language="${LANGUAGE:-}"
-
   ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
-  export LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C
-
-  #vboxmanage setproperty language en_US
-
   local output
   # shellcheck disable=SC2086
-  output=$(log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
+  output=$(log_run notice $vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
-  ## Reset locale to original variables.
-  export LC_ALL="${lc_all}" LANG="${lang}" LANGUAGE="${language}"
 
   case "${guest}" in
     whonix)
@@ -1806,14 +1795,14 @@ import_virtualbox(){
 
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_general} || \
+  log_run notice $vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_general} || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if test -n "${import_only}" && test "${import_only}" != "both"; then
-    log_run notice vboxmanage unregistervm "${vm_purge}" --delete ||
+    log_run notice $vboxmanage unregistervm "${vm_purge}" --delete ||
       die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous VM '${vm_purge}'."
   fi
 
@@ -1853,14 +1842,14 @@ start_virtualbox_vm() {
   case "${guest}" in
     whonix)
       if test "${gateway_exists}" = "1" ; then
-        log_run notice vboxmanage startvm "${guest_full_vm_name_gateway}" || virtualbox_start_failed
+        log_run notice $vboxmanage startvm "${guest_full_vm_name_gateway}" || virtualbox_start_failed
       fi
       if test "${workstation_exists}" = "1" ; then
-        log_run notice vboxmanage startvm "${guest_full_vm_name_workstation}" || virtualbox_start_failed
+        log_run notice $vboxmanage startvm "${guest_full_vm_name_workstation}" || virtualbox_start_failed
       fi
       ;;
     kicksecure)
-      log_run notice vboxmanage startvm "${guest_full_vm_name_kicksecure}" || virtualbox_start_failed
+      log_run notice $vboxmanage startvm "${guest_full_vm_name_kicksecure}" || virtualbox_start_failed
       ;;
   esac
   log notice "${underline}Virtual Machine Startup Result:${nounderline} 'success'"
@@ -3932,6 +3921,7 @@ set_default(){
   qubes_template_detected=""
   install_pkg_fasttrack_extra_args_maybe=""
   user_warned_potential_startup_issue=""
+  vboxmanage="LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C vboxmanage"
 }
 
 
