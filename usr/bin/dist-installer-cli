@@ -1766,9 +1766,9 @@ import_virtualbox(){
   local output
 
   ## Store original locale variables.
-  lc_all="${LC_ALL}"
-  lang="${LANG}"
-  language="${LANGUAGE}"
+  lc_all="${LC_ALL:-}"
+  lang="${LANG:-}"
+  language="${LANGUAGE:-}"
 
   ## 'vboxmanage' locale needs to be C so output can be grepped.
   export LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C
