@@ -1,3 +1,255 @@
+commit c2df77b7170bbcef37cc5cba6355f7688835fc04
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:55:11 2024 -0400
+
+    refactoring
+
+commit e6ae6cfca71e5a6e44ee92c7d2aabff276b257e3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:37:34 2024 -0400
+
+    refactoring
+
+commit 974286f73460bd35e64d99407cbf06357004cebf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:22:55 2024 -0400
+
+    vboxmanage
+
+commit 52f445e1df53790173ab2ad184004d152848c89c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:17:27 2024 -0400
+
+    fix
+
+commit c9f9c6435671f7de696e7bdf3e840fb914a53f19
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:16:47 2024 -0400
+
+    fix
+
+commit 7ffced9947c5749047c843666e2611c69592359a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:13:16 2024 -0400
+
+    fix
+
+commit 43e12e9f53f956b314d4beffaef487fd24aa73c0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:12:56 2024 -0400
+
+    debugging
+
+commit a4a4310644972f4688b6358fb0412684e63a3802
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:10:44 2024 -0400
+
+    refactoring
+
+commit 2a0bb308d7d1c4a014a487a8a2321a82a2e4718e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:04:29 2024 -0400
+
+    fix
+
+commit 0a49a5d3c6e06030e8efa9bd578b2510bd30124f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 14:01:45 2024 -0400
+
+    comment
+
+commit 09ba8d2d934ddac6220d239b0f24bd13fae637bd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:59:02 2024 -0400
+
+    add support for non-US system languages
+
+commit 8529e54a88ed57f6eb6cbac4d45ee48faf03011c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:37:17 2024 -0400
+
+    comment
+
+commit dfc9a9aa72347bfc524272fe8aa6b4f02b049193
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:25:23 2024 -0400
+
+    refactoring
+
+commit 516aed422fa4875c9a82f681ff73c8197fe1f9bd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:19:56 2024 -0400
+
+    comment
+
+commit b22497b2ff28d9884ba0c75c9fec0e43010534dd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:16:23 2024 -0400
+
+    torsocks currently not available in Debian testing, do not attempt and fail to install it
+
+commit 67cf9f16ad537b29a5f41935b11c34839a854f1d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:08:30 2024 -0400
+
+    compatibility with nounset
+
+commit e67d87b1b4109058cb537474e4340a725e3de8b9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:04:32 2024 -0400
+
+    comments
+
+commit b3f94f15ed774ad890876f3443724eed5197fce7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 13:00:55 2024 -0400
+
+    typo
+
+commit 3e7c13e36a7a1be14e934bfadcaaa1faba02b101
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 12:56:07 2024 -0400
+
+    CI
+
+commit 1f2fe7a205bced85eb66e081000753676a88bcbd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 12:40:52 2024 -0400
+
+    CI
+
+commit cd6d33ef935b0f3b5ef25892d358f0408cfad9bf
+Merge: e91559f bba6691
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 12:34:19 2024 -0400
+
+    Merge remote-tracking branch 'nyxnor/master'
+
+commit e91559f060494954193d677cc0abeb3b85b74d54
+Merge: 86fc5e2 a6a56f1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 12:28:08 2024 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit bba66918cbc731fe13c7ea9a7007eb24927dad9a
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Tue May 14 00:05:13 2024 +0000
+
+    Exit on Kali Oracle repo not being found
+
+commit 78826bdf3dd9d8038b2eed905d84b810ede2b494
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 23:57:23 2024 +0000
+
+    Oracle repo does not work with Kali
+
+commit 156be00771c1536ea72299b5fa930b3985dafd40
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 23:35:17 2024 +0000
+
+    Shellcheck unbound variable
+
+commit 733d241dc1ab0e0a1e49064f3f5345987f7493c4
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 23:27:51 2024 +0000
+
+    Warn that deb822 is unsupported
+
+commit da3f0e30906416d4a1c755914026feb1ff0635be
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 23:19:01 2024 +0000
+
+    Kali option to install from oracle or contrib
+
+commit 7bc1c9bc4145106921831cd089bf0dbdee3b513b
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 15:26:01 2024 +0000
+
+    Remove linux headers for Kali
+
+commit a92e9c03aa3fea821304a5efcb7c33ce809cfc98
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 15:24:19 2024 +0000
+
+    Lower case red hat
+
+commit 0a6a2e3dd3e3d92de380099021ac5869c41a7814
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 15:14:19 2024 +0000
+
+    Add missing sudoers line
+
+commit 7508e9dd31857a14138a6c1e0f9fe6dedec87868
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 15:11:06 2024 +0000
+
+    Remove extra line from CI
+
+commit 67e6f3c1088c010d0e769e5a90fac27fbff7fa3f
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 15:08:27 2024 +0000
+
+    Kali without torsocks
+    
+    https://pkg.kali.org/news/583693/torsocks-240-1-removed-from-kali-rolling/
+
+commit 6914e4ee59ffdefe659e4177589ee6482153ade1
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 14:48:06 2024 +0000
+
+    Print Debian derivatives sources.list
+
+commit 34925653a39c8dc5cc5ca684e2a82561ebd03627
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 14:45:40 2024 +0000
+
+    Fix syntax error in case statement
+
+commit 3bb74fddb9ea5b20868c61569a06caa01ee8eb53
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 14:45:25 2024 +0000
+
+    Update Linux Mint version to 21.3
+
+commit bdef514bf974070dc9cd4022cffcfb8f6ce66267
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 14:34:01 2024 +0000
+
+    Discover if Kali has torsocks in repos
+
+commit d913372207f56d63686283aaaedb31ba22ddc087
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 12:37:56 2024 +0000
+
+    Future proofing lower-case OS names
+
+commit 73614d4c29403d175c74965095af6f89e8650726
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 12:28:00 2024 +0000
+
+    Add Kali to CI
+
+commit 9205c37d82b56cf6e8745ad9c64767d5a4ee73f6
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 12:22:50 2024 +0000
+
+    Test if GHA supports runner Ubuntu Latest
+    
+    Setting to version 24.04 made it to the queue
+
+commit 3f7fa111229d73165fb70ca85dc212001f19a115
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon May 13 12:17:47 2024 +0000
+
+    Test if GHA supports runner Ubuntu 24.04
+
+commit 86fc5e2e6a75bfe6a10a860cb107d7c379f0513c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Mar 20 15:49:10 2024 +0000
+
+    bumped changelog version
+
 commit 29b7f1788a8de3300fca54b4b02efd9b0a04a046
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Mar 20 11:30:10 2024 -0400
@@ -51,6 +303,18 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Feb 2 07:32:50 2024 -0500
 
     usrmerge debhelper systemd Debian package maintainer scripts fix
+
+commit a6a56f1fc21e5f21c56d2fc4c87a402417931268
+Author: grass <grass@danwin1210.de>
+Date:   Thu Jan 25 13:37:11 2024 +0000
+
+    Run CI with non-English locale
+
+commit eb803bb627b168ebcb71347570be964143004fdf
+Author: grass <grass@danwin1210.de>
+Date:   Thu Jan 25 13:23:29 2024 +0000
+
+    Set locale to C
 
 commit cd49e511991369981ba39637f78d319cd3d843de
 Author: Patrick Schleizer <adrelanos@whonix.org>
