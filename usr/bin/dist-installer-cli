@@ -1763,7 +1763,6 @@ import_virtualbox(){
 
   check_vm_file_exists_virtualbox_general
 
-  ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
   local output
   # shellcheck disable=SC2086
   output=$(log_run notice $vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
@@ -3921,6 +3920,7 @@ set_default(){
   qubes_template_detected=""
   install_pkg_fasttrack_extra_args_maybe=""
   user_warned_potential_startup_issue=""
+  ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
   vboxmanage="LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C vboxmanage"
 }
 
