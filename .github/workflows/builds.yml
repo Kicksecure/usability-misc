@@ -48,7 +48,8 @@ jobs:
                     - image: debian:testing
                     - image: debian:unstable
                     - image: ubuntu:latest
-                    - image: linuxmintd/mint21.2-amd64:latest
+                    - image: linuxmintd/mint21.3-amd64:latest
+                    - image: kalilinux/kali-rolling
 
         container:
             image: ${{ matrix.image }}
@@ -134,9 +135,15 @@ jobs:
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --onion
 
             - name: Run VirtualBox Installer - Oracle repository - Clearnet
-              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo
+              run: |
+                  if ! grep -iq "kali" /etc/os-release; then
+                    sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo
+                  fi
             - name: Run VirtualBox Installer - Oracle repository - Onion
-              run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo --onion
+              run: |
+                  if ! grep -iq "kali" /etc/os-release; then
+                    sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --oracle-repo --onion
+                  fi
 
             - name: Run VirtualBox Installer - back to default repository
               run: sudo -u user -- usr/bin/dist-installer-cli --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only

@@ -412,10 +412,14 @@ get_distro() {
   case "${os}" in
     Linux*)
       case "${distro}" in
-        "Debian"*|"Kali"*|"Tails"*|"Kicksecure"|"Whonix")
+        [Dd]"ebian"*|[Tt]"ails"*|[Kk]"icksecure"|[Ww]"honix")
           debian_derivative_detected=1
           ;;
-        "Linux Mint"*|"LinuxMint"*|"mint"*)
+        [Kk]"ali"*)
+          debian_derivative_detected=1
+          kali_derivative_detected=1
+          ;;
+        "linux mint"*|"linuxmint"*|"Linux Mint"*|"LinuxMint"*|"mint"*)
           ubuntu_derivative_detected=1
           debian_derivative_detected=1
           ;;
@@ -426,10 +430,10 @@ get_distro() {
             die 101 "${underline}Distribution Check:${nounderline} Minimal '${distro}' required version is '22.04', yours is '${distro_version}'."
           fi
           ;;
-        "Fedora"*|"CentOS"*|"rhel"*|"Redhat"*|"Red hat")
+        [Ff]"edora"*|"centos"*|"CentOS"*|"rhel"*|"red hat"|"redhat"*|"Redhat"*|"Red hat")
           fedora_derivative_detected=1
           ;;
-        "Arch"*|"Artix"*|"ArcoLinux"*)
+        [Aa]"rch"*|[Aa]"rtix"*|"arcolinux"*|"ArcoLinux"*)
           claim_unsupported_distro known "${distro}"
           ;;
         *)
@@ -437,19 +441,23 @@ get_distro() {
           ;;
       esac
     ;;
-    "OpenBSD"*)
+    "openbsd"*|"OpenBSD"*)
       claim_unsupported_distro known "${distro}"
       ;;
-    "NetBSD"*)
+    "netbsd"*|"NetBSD"*)
       claim_unsupported_distro known "${distro}"
       ;;
-    "FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
+    "freebsd"*|"hardenedbsd"*|"dragonfly"*|"FreeBSD"*|"HardenedBSD"*|"DragonFly"*)
       claim_unsupported_distro known "${distro}"
       ;;
     *)
       claim_unsupported_distro unknown "${distro}"
       ;;
   esac
+
+  if test "${oracle_repo}" = "1" && test "${kali_derivative_detected}"; then
+    die 1 "Distribution Extended Check: Oracle repository does not work with Kali"
+  fi
 
   if [ ! "$fedora_derivative_detected" = "1" ]; then
     return 0
@@ -930,19 +938,19 @@ claim_unsupported_distro(){
 
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs(){
-    log notice "Package Installation: installation of hypervisor-required packages... Please wait, as this could take a while..."
-    if [ "$ubuntu_derivative_detected" = "1" ]; then
-      install_package_debian_common
-      install_virtualbox_ubuntu
-    elif [ "$debian_derivative_detected" = "1" ]; then
-      install_package_debian_common
-      install_virtualbox_debian
-    elif [ "$fedora_derivative_detected" = "1" ]; then
-      install_package_fedora_common
-      install_virtualbox_fedora
-    else
-      die 1 "Operating system not found in get_host_pkgs. Please report this bug. Debug log required."
-    fi
+  log notice "Package Installation: installation of hypervisor-required packages... Please wait, as this could take a while..."
+  if [ "$ubuntu_derivative_detected" = "1" ]; then
+    install_package_debian_common
+    install_virtualbox_ubuntu
+  elif [ "$debian_derivative_detected" = "1" ]; then
+    install_package_debian_common
+    install_virtualbox_debian
+  elif [ "$fedora_derivative_detected" = "1" ]; then
+    install_package_fedora_common
+    install_virtualbox_fedora
+  else
+    die 1 "Operating system not found in get_host_pkgs. Please report this bug. Debug log required."
+  fi
 }
 
 
@@ -1992,7 +2000,9 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
     return 0
   fi
 
-  install_pkg torsocks
+  if test "${kali_derivative_detected}" != "1"; then
+    install_pkg torsocks
+  fi
   install_signify signify-openbsd
 }
 
@@ -2080,6 +2090,10 @@ kernel_modules_check() {
 install_repositories_for_virtualbox_on_debian(){
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="${distro_codename_real}"
+  ## Oracle does not have a Kali dist section, use Debian stable.
+  if test "${kali_derivative_detected}" = "1"; then
+    distro_codename_debian="bookworm"
+  fi
 
 #   log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
 #   if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
@@ -2100,7 +2114,12 @@ install_repositories_for_virtualbox_on_debian(){
   #oracle_onion=""
   oracle_file_debsource="/etc/apt/sources.list.d/oracle.list"
   oracle_prefix_debsource="deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.asc] "
-  oracle_suffix_debsource="/virtualbox/debian ${distro_codename_common_use} contrib"
+  ## Oracle does not have a Kali dist section, use Debian stable.
+  if test "${kali_derivative_detected}" = "1"; then
+    oracle_suffix_debsource="/virtualbox/debian ${distro_codename_debian} contrib"
+  else
+    oracle_suffix_debsource="/virtualbox/debian ${distro_codename_common_use} contrib"
+  fi
 
   unstable_found=""
   unstable_clearnet="deb.debian.org"
@@ -2134,6 +2153,12 @@ install_repositories_for_virtualbox_on_debian(){
   kicksecure_prefix_debsource="deb [signed-by=/usr/share/keyrings/derivative.asc] "
   kicksecure_suffix_debsource=" ${distro_codename_kicksecure_use} main contrib non-free"
 
+  kali_found=""
+  kali_clearnet="http.kali.org"
+  kali_file_debsource="/etc/apt/sources.list.d/kali.list"
+  kali_prefix_debsource="deb "
+  kali_suffix_debsource=" ${distro_codename_common_use} main contrib non-free non-free-firmware"
+
   apt_torified=""
   apt_onion=""
 
@@ -2143,6 +2168,7 @@ install_repositories_for_virtualbox_on_debian(){
   ## - write sources.list files in one-line-style format or Deb822-style format?
   ##   https://forums.kicksecure.com/t/apt-sources-list-one-line-format-versus-deb822-style-format/267
   ## - unit tests
+  log warn "APT Repository List: Deb822-style Format is unsupported"
 
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     test -f "${file}" || continue
@@ -2164,12 +2190,12 @@ install_repositories_for_virtualbox_on_debian(){
 
     ## Need to check if not only unstable repository or sid codename is enabled but also check if the 'contrib' suite is enabled,
     ## because VirtualBox is only available from 'contrib'.
-    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid).*contrib"
+    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.*\s(unstable|sid).*\scontrib"
     then
       unstable_found_with_contrib=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/? ${distro_codename_common_use}-backports"
+    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/?\s*${distro_codename_common_use}-backports"
     then
       backports_found=1
     fi
@@ -2177,6 +2203,17 @@ install_repositories_for_virtualbox_on_debian(){
     if get_pattern_sources_debian "${file}" "${fasttrack_clearnet}|${fasttrack_onion}"
     then
       fasttrack_found=1
+    fi
+
+    if get_pattern_sources_debian "${file}" "${kali_clearnet}"
+    then
+      kali_found=1
+    fi
+
+    ## Kali VirtualBox is in 'contrib'.
+    if get_pattern_sources_debian "${file}" "${kali_clearnet}/kali.*\scontrib"
+    then
+      kali_found_with_contrib=1
     fi
 
     if get_pattern_sources_debian "${file}" "tor://|tor\+"; then
@@ -2203,14 +2240,31 @@ install_repositories_for_virtualbox_on_debian(){
   if test "${apt_onion}"; then
     protocol_prefix_debsource="tor+http://"
     connection_type_debsource="onion"
-    if test "${oracle_repo}" = "1"; then
-      log warn "Oracle doesn't provide onion repositories."
+    if test "${oracle_repo}" = "1" || test "${kali_derivative_detected}" = "1"
+    then
+      if test "${oracle_repo}" = "1"; then
+        log warn "Oracle doesn't provide onion repositories."
+      fi
+      if test "${kali_derivative_detected}" = "1"; then
+        log warn "Kali doesn't provide onion repositories."
+      fi
+      kali_domain_debsource="${kali_clearnet}"
       oracle_domain_debsource="${oracle_clearnet}"
       if test "${apt_torified}"; then
-        log warn "Fallback Oracle repository to torified clearnet"
+        if test "${oracle_repo}" = "1"; then
+          log warn "Fallback Oracle repository to torified clearnet"
+        fi
+        if test "${kali_derivative_detected}" = "1"; then
+          log warn "Fallback Kali repository to torified clearnet"
+        fi
         protocol_prefix_debsource="tor+https://"
       else
-        log warn "Fallback Oracle repository to clearnet"
+        if test "${oracle_repo}" = "1"; then
+          log warn "Fallback Oracle repository to clearnet"
+        fi
+        if test "${kali_derivative_detected}" = "1"; then
+          log warn "Fallback Kali repository to clearnet"
+        fi
         protocol_prefix_debsource="https://"
       fi
     fi
@@ -2227,6 +2281,7 @@ install_repositories_for_virtualbox_on_debian(){
     unstable_domain_debsource="${unstable_clearnet}"
     fasttrack_domain_debsource="${fasttrack_clearnet}"
     backports_domain_debsource="${backports_clearnet}"
+    kali_domain_debsource="${kali_clearnet}"
   ## If user doesn't have torified repositories, use clearnet one.
   else
     protocol_prefix_debsource="https://"
@@ -2236,12 +2291,14 @@ install_repositories_for_virtualbox_on_debian(){
     unstable_domain_debsource="${unstable_clearnet}"
     fasttrack_domain_debsource="${fasttrack_clearnet}"
     backports_domain_debsource="${backports_clearnet}"
+    kali_domain_debsource="${kali_clearnet}"
   fi
 
   kicksecure_url="${kicksecure_prefix_debsource} ${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
   unstable_url="${unstable_prefix_debsource} ${protocol_prefix_debsource}${unstable_domain_debsource}${unstable_suffix_debsource}"
   fasttrack_url="${fasttrack_prefix_debsource} ${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
   backports_url="${backports_prefix_debsource} ${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
+  kali_url="${kali_prefix_debsource} ${protocol_prefix_debsource}${kali_domain_debsource}${kali_suffix_debsource}"
 
   if test "${oracle_repo}" = "1"; then
     oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
@@ -2263,6 +2320,10 @@ install_repositories_for_virtualbox_on_debian(){
       ;;
     trixie)
       install_unstable_repository_debian
+      return 0
+      ;;
+    kali-rolling)
+      install_kali_repository_debian
       return 0
       ;;
   esac
@@ -2356,6 +2417,17 @@ install_kicksecure_repository_debian() {
     log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
     write_sources_debian "${kicksecure_url}" "${kicksecure_file_debsource}"
   fi
+}
+
+
+install_kali_repository_debian() {
+  if test "${kali_found}" = "1" && test "${kali_found_with_contrib}" = "1"; then
+    log info "APT Repository Configuration: Skipped adding additional APT repositories because 'kali' (with 'contrib') were already found."
+    return 0
+  fi
+
+  log notice "APT Repository Configuration: Adding 'kali' ${connection_type_debsource} repository to ${kali_file_debsource}"
+  write_sources_debian "${kali_url}" "${kali_file_debsource}"
 }
 
 
@@ -2510,32 +2582,35 @@ ${underline}VirtualBox Package Version Detection:${nounderline} 'FAIL'"
 }
 
 
+## Discover the VirtualBox version to install in Debian and derivatives.
+get_virtualbox_version_debian(){
+  if test "${oracle_repo}" = "1"; then
+    virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
+    virtualbox_version=$(echo "$virtualbox_version" | tail -1)
+    virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
+    virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
+    virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
+    ## Package virtualbox-guest-additions-iso is unavailable from Oracle repository.
+    virtualbox_guest_additions_iso_package_name=""
+    if test -z "$virtualbox_version"; then
+      ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
+      return 1
+    fi
+  else
+    virtualbox_qt_package_name=virtualbox-qt
+    ## virtualbox-guest-additions-iso is Freedom Software:
+    ## https://www.kicksecure.com/wiki/Dev/VirtualBox#VirtualBox_Guest_Additions_ISO_Freedom_vs_Non-Freedom
+    ## Provides file: /usr/share/virtualbox/VBoxGuestAdditions.iso
+    ## Useful to easily install VirtualBox guest additions in custom VirtualBox VMs.
+    virtualbox_guest_additions_iso_package_name="virtualbox-guest-additions-iso"
+  fi
+}
+
+
+
 ## Install VirtualBox on Debian
 ## See also comments for install_virtualbox_fedora.
 install_virtualbox_debian(){
-  get_virtualbox_version_debian(){
-    if test "${oracle_repo}" = "1"; then
-      virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
-      virtualbox_version=$(echo "$virtualbox_version" | tail -1)
-      virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
-      virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
-      virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
-      ## Package virtualbox-guest-additions-iso is unavailable from Oracle repository.
-      virtualbox_guest_additions_iso_package_name=""
-      if test -z "$virtualbox_version"; then
-        ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
-        return 1
-      fi
-    else
-      virtualbox_qt_package_name=virtualbox-qt
-      ## virtualbox-guest-additions-iso is Freedom Software:
-      ## https://www.kicksecure.com/wiki/Dev/VirtualBox#VirtualBox_Guest_Additions_ISO_Freedom_vs_Non-Freedom
-      ## Provides file: /usr/share/virtualbox/VBoxGuestAdditions.iso
-      ## Useful to easily install VirtualBox guest additions in custom VirtualBox VMs.
-      virtualbox_guest_additions_iso_package_name="virtualbox-guest-additions-iso"
-    fi
-  }
-
   if test "${oracle_repo}" = "1"; then
     ## Workaround for undeclared dependencies bug by virtualbox.org (Oracle) repository.
     ##
@@ -2716,7 +2791,17 @@ get_checkhash_cmd(){
 
 get_transfer_cmd(){
   ## curl|rsync
-  transfer_utility=rsync
+
+  ## rsync is always better to retry failed downloads, but some distributions
+  ## might not have torsocks installed, which is necessary for rsync as it
+  ## doesn't support SOCKS5.
+  ## https://pkg.kali.org/news/583693/torsocks-240-1-removed-from-kali-rolling/
+  if test "${kali_derivative_detected}" = "1"; then
+    transfer_utility=curl
+  else
+    transfer_utility=rsync
+  fi
+
   case "${transfer_utility}" in
     rsync)
       rsync=1
@@ -3833,6 +3918,7 @@ set_default(){
   background_pid=""
   debian_derivative_detected=""
   ubuntu_derivative_detected=""
+  kali_derivative_detected=""
   fedora_derivative_detected=""
   virtualbox_linux_user_group="vboxusers"
   # shellcheck disable=SC2034
