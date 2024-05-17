@@ -62,7 +62,7 @@ jobs:
                     apt-get update --error-on=any
                     ## Installer aborts if package upgrades are pending.
                     apt-get dist-upgrade --yes
-                    apt-get install --yes shellcheck sudo adduser tor
+                    apt-get install --yes shellcheck sudo adduser tor locales
                   elif command -v dnf; then
                     dnf upgrade --assumeyes
                     dnf install --assumeyes ShellCheck sudo tor systemd
@@ -71,9 +71,10 @@ jobs:
                   else
                     exit 1
                   fi
-                  ## TODO
+                  ## TODO: test
                   sed -i "s/^# \(ru_RU.UTF-8 UTF-8\)$/\1/" /etc/locale.gen || true
-                  locale-gen
+                  ## TODO: Probably missing package on Fedora.
+                  locale-gen || true
             - name: System information
               run: |
                   cat /etc/os-release
