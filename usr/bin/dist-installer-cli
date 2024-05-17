@@ -3078,7 +3078,17 @@ set_transfer_proxy(){
 
 ## Useful to test if it is a SOCKS proxy before attempting to make requests.
 ## If connection to proxy fails, abort to avoid leaks.
-torify_conn(){
+torify_conn_maybe(){
+  ## onion=1 -- Always torify onion connections.
+  ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
+  if [ ! "${onion}" = "1" ]; then
+    if ! test -n "${socks_proxy:-}"; then
+      ## TODO: lower log level
+      log notice "Not torifying connection, because socks_proxy envrionment variable is unset nor using '--onion'."
+      return 0
+    fi
+  fi
+
   if ! has tor; then
     log warn "System tor binary (little-t-tor) was not found on the system."
     log warn "Unless your SOCKS connection is made available by the Tor Browser"
@@ -4188,18 +4198,10 @@ run_installer(){
   secure_boot_test
   kernel_modules_load
   kernel_modules_signed_only
-
-  ## TODO: move to a function
-  ## onion=1 -- Always torify onion connections.
-  ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
-  case "${onion}" in
-    1) torify_conn;;
-    *) test -n "${socks_proxy}" && torify_conn;;
-  esac
-
+  get_transfer_cmd
+  torify_conn_maybe
   get_virtualization
   get_checkhash_cmd
-  get_transfer_cmd
   get_download_links
 
   main
