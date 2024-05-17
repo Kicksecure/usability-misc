@@ -1757,13 +1757,15 @@ import_virtualbox(){
 
   local output
   # TODO: vboxmanage localce needs to be C so output can be grepped.
-  #lc_all="$LC_ALL"
-  #export LC_ALL=C
+  lc_all="${LC_ALL}"
+  lang="${LANG}"
+  language="${LANGUAGE}"
+  export LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C
+  #vboxmanage setproperty language en_US
   # shellcheck disable=SC2086
   output=$(log_run notice vboxmanage import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
-  log info "OUTPUT: $output"
-  #export LC_ALL="$lc_all"
+  export LC_ALL="${lc_all}" LANG="${lang}" LANGUAGE="${language}"
 
   case "${guest}" in
     whonix)
