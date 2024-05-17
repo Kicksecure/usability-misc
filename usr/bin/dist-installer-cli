@@ -1764,7 +1764,7 @@ import_virtualbox(){
   check_vm_file_exists_virtualbox_general
 
   local output
-  # TODO: vboxmanage localce needs to be C so output can be grepped.
+  # TODO: vboxmanage locale needs to be C so output can be grepped.
   lc_all="${LC_ALL}"
   lang="${LANG}"
   language="${LANGUAGE}"
