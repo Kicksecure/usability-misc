@@ -2004,7 +2004,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
     return 0
   fi
 
-  if test "${kali_derivative_detected}" != "1"; then
+  if "${debian_testing_or_unstable_detected}" != "true" || test "${kali_derivative_detected}" != "1"; then
     install_pkg torsocks
   fi
   install_signify signify-openbsd
