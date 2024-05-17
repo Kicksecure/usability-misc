@@ -3921,7 +3921,7 @@ set_default(){
   install_pkg_fasttrack_extra_args_maybe=""
   user_warned_potential_startup_issue=""
   ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
-  vboxmanage="LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C vboxmanage"
+  vboxmanage="env LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C vboxmanage"
 }
 
 
