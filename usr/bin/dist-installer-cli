@@ -1768,7 +1768,7 @@ import_virtualbox(){
   lang="${LANG:-}"
   language="${LANGUAGE:-}"
 
-  ## 'vboxmanage' locale needs to be C so output can be grepped.
+  ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
   export LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C
 
   #vboxmanage setproperty language en_US
