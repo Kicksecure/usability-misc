@@ -71,7 +71,8 @@ jobs:
                   else
                     exit 1
                   fi
-                  sed -i "s/^# \(ru_RU.UTF-8 UTF-8\)$/\1/" /etc/locale.gen
+                  ## TODO
+                  sed -i "s/^# \(ru_RU.UTF-8 UTF-8\)$/\1/" /etc/locale.gen || true
                   locale-gen
             - name: System information
               run: |
