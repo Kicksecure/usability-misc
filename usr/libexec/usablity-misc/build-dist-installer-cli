@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -eu
+
+target="../../bin/dist-installer-cli"
+template="dist-installer-cli.template"
+helper_path="/usr/libexec/helper-scripts/"
+
+cp "${template}" "${target}"
+awk -v h="source ${helper_path}" '$0 ~ h {system("cat "$2 ); next}; 1' "${template}" | tee "${target}" >/dev/null
+sed -i "/source \/usr\/libexec\/helper-scripts\//d" "${target}"
