@@ -1,6 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-set -eu
+set -e
+set -o errexit
+set -o nounset
+set -o errtrace
+set -o pipefail
 
 command -v git >/dev/null || exit 1
 toplevel="$(git rev-parse --show-toplevel)"
