@@ -7,6 +7,7 @@ set -o errtrace
 set -o pipefail
 
 command -v git >/dev/null || exit 1
+
 toplevel="$(git rev-parse --show-toplevel)"
 target="${toplevel}/usr/share/usability-misc/dist-installer-cli-standalone"
 template="${toplevel}/usr/bin/dist-installer-cli"
