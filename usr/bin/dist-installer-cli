@@ -3269,6 +3269,7 @@ print_getopt(){
 parse_name(){
   ## if using default file name, ignore the rest
   test "${me}" = "dist-installer-cli" && return 0
+  test "${me}" = "dist-installer-cli-standalone" && return 0
   ## check if file name is valid
   case "${me}" in
     whonix-xfce-installer-cli | whonix-cli-installer-cli | \
