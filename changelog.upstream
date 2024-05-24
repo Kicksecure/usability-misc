@@ -1,3 +1,72 @@
+commit 652ff3ce91c18e1718191efb72a62cc6cb1661b6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 14:24:51 2024 -0400
+
+    CI
+
+commit fad8909cade21b56036b7115c2e09d3e03a2f69c
+Merge: 1e4410a 1c4b903
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 14:21:47 2024 -0400
+
+    Merge commit '1c4b903'
+
+commit 1c4b903eef47787513ad8efe6860389f2e1565d9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 14:19:29 2024 -0400
+
+    minor
+
+commit fc83549659deb8e5a5d4f8af98c4b7f9153dee00
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 14:14:48 2024 -0400
+
+    shell options
+
+commit 6385835cdce34c4b20afb3379e038d37aa4352c2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 14:03:45 2024 -0400
+
+    minor
+
+commit 5c8612f556c5229e123d358d70931f60be68f109
+Merge: 382b1bb 82425df
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 14:03:16 2024 -0400
+
+    Merge remote-tracking branch 'grass/master' into HEAD
+
+commit 1e4410ab1809b225d6ad87421cb7fba954ff7810
+Merge: 382b1bb 82425df
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 13:57:47 2024 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 82425dfefdd2def0f227b29d2ec5ac3be8cc0314
+Author: grass <grass@danwin1210.de>
+Date:   Fri May 24 16:00:19 2024 +0000
+
+    Make build script for the installer easier to read
+
+commit 600b79744396b7b0f0fc4286c897ab26212b4abb
+Author: grass <grass@danwin1210.de>
+Date:   Tue May 21 14:51:16 2024 +0000
+
+    Build installer from sourced files
+
+commit 680dc0831e6747cb5408adb981f9af3b220e565f
+Author: grass <grass@danwin1210.de>
+Date:   Tue May 21 08:27:46 2024 +0000
+
+    Remove eval command
+
+commit 382b1bb768e377ffd86713b6eccf61294a30a6ff
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 17 19:00:36 2024 +0000
+
+    bumped changelog version
+
 commit c2df77b7170bbcef37cc5cba6355f7688835fc04
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri May 17 14:55:11 2024 -0400
