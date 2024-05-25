@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -e
 set -o errexit
 set -o nounset
 set -o errtrace
@@ -17,6 +16,10 @@ cp "${template}" "${target}"
 
 awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
   $0 ~ helper {
+    if (system("test -f "$2) != 0) {
+      print origin ": error: sourced file does not exist: "$2 > "/dev/stderr"
+      exit 1
+    }
     print "##### BEGIN pasted by "origin " from file "$2
     system("cat "$2)
     print "##### END pasted by "origin " from file "$2
