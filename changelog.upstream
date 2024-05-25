@@ -1,3 +1,15 @@
+commit e2084152af7362db5f9edf5c9bfcd7f04137fabe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 25 13:15:39 2024 -0400
+
+    add sanity test to prevent stale dist-installer-cli-standalone
+
+commit b9ea3a7707114c4f299608e1c502907931d2df35
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 25 13:21:46 2024 +0000
+
+    bumped changelog version
+
 commit 15d44f05855559b7a7c2a209a5a8e047eb150813
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat May 25 09:21:20 2024 -0400
