@@ -137,6 +137,8 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 }
 
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
+#!/bin/bash
+
 ## colors
 # shellcheck disable=SC2034
 get_colors(){
@@ -183,6 +185,8 @@ fi
 ## BEGIN MISC ##
 ################
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
+#!/bin/bash
+
 ## This is just a simple wrapper around 'command -v' to avoid
 ## spamming '>/dev/null' throughout this function. This also guards
 ## against aliases and functions.
@@ -193,12 +197,15 @@ has(){
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/capitalize_first_char.sh
+#!/bin/bash
+
 ## Capitalize only the first char of a string.
 capitalize_first_char(){
   echo "${1:-}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1'
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/capitalize_first_char.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/not_as_root.sh
+#!/bin/bash
 
 
 ## Block running as root.
@@ -212,6 +219,8 @@ ${underline}Non-Root Check:${nounderline} Running as root detected.
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/not_as_root.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/root_cmd.sh
+#!/bin/bash
+
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
@@ -290,6 +299,8 @@ get_su_cmd(){
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/root_cmd.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/ip_syntax.sh
+#!/bin/bash
+
 
 ## Check if variable is integer
 is_integer(){
@@ -335,6 +346,8 @@ is_addr_port(){
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/ip_syntax.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_os.sh
+#!/bin/bash
+
 ## TODO: how to handle installer specific code?
 
 
@@ -573,6 +586,8 @@ check_not_qubes_template() {
 ##########################
 
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/parse_opt.sh
+#!/bin/bash
+
 
 ## ------------------- ##
 ## Usage of parse_opt.sh
@@ -724,6 +739,8 @@ range_arg(){
 ###################
 
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/log_run_die.sh
+#!/bin/bash
+
 
 ## Logging mechanism with easy customization of message format as well as
 ## standardization on how the messages are delivered.
