@@ -1,0 +1,27 @@
+#!/bin/bash
+
+## Copyright (C) 2024 - 2024 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## See the file COPYING for copying conditions
+
+set -x
+set -e
+set -o pipefail
+set -o errtrace
+
+true "$0: START"
+
+command -v sha512sum >/dev/null
+
+hashsum_old=$(sha512sum ./usr/share/usability-misc/dist-installer-cli-standalone)
+
+./usr/share/usability-misc/build-dist-installer-cli
+
+hashsum_new=$(sha512sum ./usr/share/usability-misc/dist-installer-cli-standalone)
+
+if [ ! "$hashsum_old" = "$hashsum_new" ]; then
+  echo "$0: ERROR: ./usr/share/usability-misc/dist-installer-cli-standalone has not been rebuilt. Run:
+./usr/share/usability-misc/build-dist-installer-cli"
+  exit 1
+fi
+
+true "$0: END"

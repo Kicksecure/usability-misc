@@ -4,3 +4,7 @@
 ## See the file COPYING for copying conditions.
 
 genmkfile_lintian_post_opts+=" --suppress-tags no-manual-page "
+
+make_deb-pkg-build_hook_pre() {
+  ./usr/share/usability-misc/check-dist-installer-cli
+}
