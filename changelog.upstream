@@ -1,3 +1,28 @@
+commit 15d44f05855559b7a7c2a209a5a8e047eb150813
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 25 09:21:20 2024 -0400
+
+    build
+
+commit d1c472a95bdfa53e1a1055be21bb7b0b30556882
+Merge: 9133c53 29133ba
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 25 09:20:25 2024 -0400
+
+    Merge remote-tracking branch 'grass/master'
+
+commit 29133ba23d0b7d1d1194c157bf963207b1c9df44
+Author: grass <grass@danwin1210.de>
+Date:   Fri May 24 20:18:55 2024 +0000
+
+    Error build of installer if file is missing
+
+commit 9133c538f8869747b6914b194236af6f32402b36
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 24 18:42:21 2024 +0000
+
+    bumped changelog version
+
 commit 2bbcbc74508bda6272c93c72157fd83318bf53fb
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri May 24 14:42:06 2024 -0400
