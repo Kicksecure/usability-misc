@@ -412,12 +412,12 @@ nested_virtualization_test() {
 secure_boot_test() {
   local mokutil_output_sb_state
   secure_boot_dkms_key_enrolled=""
-  if mokutil_output_sb_state=$(mokutil --sb-state 2>&1) ; then
+  if mokutil_output_sb_state=$(root_cmd mokutil --sb-state 2>&1) ; then
     if echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
       secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
       secure_boot_status_short=true
       secure_boot_mokutil_dkms_test_key
-      secure_boot_mokutil_dkms_test_key="$(mokutil --test-key /var/lib/dkms/mok.pub)"
+      secure_boot_mokutil_dkms_test_key="$(root_cmd mokutil --test-key /var/lib/dkms/mok.pub)"
       if echo "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings TODO ; then
         secure_boot_dkms_key_enrolled=true
       fi
