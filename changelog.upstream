@@ -1,3 +1,21 @@
+commit 118ab5dc957fc3df42d20be0a2130a1f908d49f1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 13 16:24:24 2024 -0400
+
+    build
+
+commit 7eb18a12f6a5fd250090f3271b5d73e74f07dafe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 13 16:24:02 2024 -0400
+
+    improve upgrade simulation code
+
+commit 039b99b4bcdb678cfaf30b90fdf8e13fef659c35
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 13 20:15:38 2024 +0000
+
+    bumped changelog version
+
 commit da029e77dc2549769193a5477392a3f4a906e700
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Jul 13 16:15:18 2024 -0400
