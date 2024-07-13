@@ -417,8 +417,14 @@ secure_boot_test() {
       secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
       secure_boot_status_short=true
       secure_boot_mokutil_dkms_test_key
-      secure_boot_mokutil_dkms_test_key="$(root_cmd mokutil --test-key /var/lib/dkms/mok.pub)"
-      if echo "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings TODO ; then
+      ## sudo mokutil --test-key /var/lib/dkms/mok.pub
+      ## > /var/lib/dkms/mok.pub is already enrolled
+      ## > zsh: exit 1     sudo mokutil --test-key /var/lib/dkms/mok.pub#
+      ## Added "|| true" to handle the non-zero exit code.
+      ## Redirection '2>&1' not necessary yet but that could be considered a minor bug in mokutil to write to stdout instead
+      ## of writing to stderr.
+      secure_boot_mokutil_dkms_test_key="$(root_cmd mokutil --test-key "/var/lib/dkms/mok.pub" 2>&1)" || true
+      if echo "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings "already enrolled" ; then
         secure_boot_dkms_key_enrolled=true
       fi
     elif echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings disabled ; then
