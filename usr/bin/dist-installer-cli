@@ -652,7 +652,7 @@ check_upgrades_simulation() {
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
 
-  local number_upgradable
+  local upgradable_output
   ## TODO: 'sudo apt-get dist-upgrade --target-release=bookworm-fasttrack' is not same as 'apt list --upgradable'
   ##       It misses out on packages from "bookworm-fasttrack".
   upgradable_output="$(${pkg_mngr_upgradable_check} 2>/dev/null)"
