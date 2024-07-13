@@ -416,7 +416,7 @@ secure_boot_test() {
     if echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
       secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
       secure_boot_status_short=true
-      local secure_boot_mokutil_dkms_test_key
+      secure_boot_mokutil_dkms_test_key
       secure_boot_mokutil_dkms_test_key="$(mokutil --test-key /var/lib/dkms/mok.pub)"
       if echo "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings TODO ; then
         secure_boot_dkms_key_enrolled=true
@@ -450,6 +450,8 @@ dkms_signing_key_enrollment() {
     return 0
   fi
 
+  log notice "secure_boot_mokutil_dkms_test_key: '$secure_boot_mokutil_dkms_test_key'"
+
   ## Not simple to automate, because it requires a password prompt.
   ## https://git.launchpad.net/~ubuntu-core-dev/shim/+git/shim-signed/tree/update-secureboot-policy
   #root_cmd mokutil --import /var/lib/dkms/mok.pub
@@ -476,29 +478,8 @@ dkms_signing_key_enrollment() {
 
   die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline}
 
-Secure Boot is enabled, but the DKMS signing key is not enrolled. Please choose one of the following options:
-
-A) Enroll the DKMS signing key:
-   1. Run the following command:
-      sudo mokutil --import /var/lib/dkms/mok.pub
-   2. Reboot your system:
-      sudo reboot
-   3. Done.
-
-B) Disable Secure Boot using update-secureboot-policy (Debian-based distributions only):
-   1. Choose one of these methods:
-      - Terminal-based graphical user interface:
-        sudo update-secureboot-policy
-      - Command-line interface:
-        sudo update-secureboot-policy --disable
-   2. Reboot your system.
-   3. Done.
-
-C) Disable Secure Boot in BIOS/UEFI (firmware setup):
-   1. Restart your computer and enter the BIOS/UEFI settings.
-   2. Locate the Secure Boot option and disable it.
-   3. Save changes and exit.
-   4. Done."
+Secure Boot is enabled, but the DKMS signing key is not enrolled. For further information, see:
+https://www.kicksecure.com/wiki/Secure_Boot"
 }
 
 
