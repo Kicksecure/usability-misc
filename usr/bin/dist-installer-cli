@@ -445,6 +445,11 @@ dkms_signing_key_enrollment() {
     log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled and DKMS signing key has already been enrolled, ok."
     return 0
   fi
+  if ! [ "${hypervisor}" = "virtualbox" ]; then
+    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled, but the DKMS signing key is not enrolled. This is however unnecessary for hypervisor '${hypervisor}'."
+    return 0
+  fi
+
   ## Not simple to automate, because it requires a password prompt.
   ## https://git.launchpad.net/~ubuntu-core-dev/shim/+git/shim-signed/tree/update-secureboot-policy
   #root_cmd mokutil --import /var/lib/dkms/mok.pub
