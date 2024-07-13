@@ -443,15 +443,15 @@ secure_boot_test() {
 
 dkms_signing_key_enrollment() {
   if [ ! "$secure_boot_status_short" = "true" ]; then
-    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is disabled, therefore DKMS signing key enrollment is unnecessary, ok."
+    log info "Secure Boot DKMS Signing Key Enrollment Check Result: Secure Boot is disabled, therefore DKMS signing key enrollment is unnecessary, ok."
     return 0
   fi
   if [ "$secure_boot_dkms_key_enrolled" = "true" ]; then
-    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled and DKMS signing key has already been enrolled, ok."
+    log info "Secure Boot DKMS Signing Key Enrollment Check Result: Secure Boot is enabled and DKMS signing key has already been enrolled, ok."
     return 0
   fi
   if ! [ "${hypervisor}" = "virtualbox" ]; then
-    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled, but the DKMS signing key is not enrolled. This is however unnecessary for hypervisor '${hypervisor}'."
+    log info "Secure Boot DKMS Signing Key Enrollment Check Result: Secure Boot is enabled, but the DKMS signing key is not enrolled. This is however unnecessary for hypervisor '${hypervisor}'."
     return 0
   fi
 
