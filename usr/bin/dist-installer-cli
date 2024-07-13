@@ -653,19 +653,17 @@ check_upgrades_simulation() {
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
 
-  local upgradable_output
-  upgradable_output="$(pkg_mngr_upgradable_check 2>/dev/null)"
-
-  local number_upgradable
-  ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
-  ## APT has things to do.
-  number_upgradable="$(echo "${upgradable_output}" | wc -l)" || true
-
-  if test "${dry_run}" = "1"; then
-    number_upgradable=0
+  if pkg_mngr_upgradable_check ; then
+    packages_upgradable=false
+  else
+    packages_upgradable=true
   fi
 
-  if [ "$number_upgradable" = "0" ]; then
+  if test "${dry_run}" = "1"; then
+    packages_upgradable=false
+  fi
+
+  if [ "$packages_upgradable" = "false" ]; then
     log info "Package Upgrade Simulation: No packages require upgrading, ok."
     return 0
   fi
@@ -676,8 +674,6 @@ check_upgrades_simulation() {
   fi
 
   die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
-
-Packages can be upgraded.
 
 Please upgrade your operating system first. Otherwise this installer cannot proceed.
 
@@ -1388,6 +1384,7 @@ install_package_fedora_common(){
 
   pkg_mngr_upgradable_check() {
     /bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'
+    return 0
   }
 
   update_sources
@@ -1412,10 +1409,24 @@ install_package_debian_common(){
   pkg_mngr_upgrade_install="${pkg_mngr} full-upgrade"
 
   pkg_mngr_upgradable_check() {
+    local upgrade_check_output
     ## Not using 'apt list --upgradable', because it is not the same as
     ## 'sudo apt-get dist-upgrade --target-release=bookworm-fasttrack'.
     ## It misses out on packages from "bookworm-fasttrack".
-    root_cmd ${pkg_mngr_upgrade_check} | grep -e '^Inst' -e '^Conf'
+    upgrade_check_output="$(root_cmd ${pkg_mngr_upgrade_check} 2>&1)" || true
+    local upgrade_check_grep_output
+    ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
+    ## APT has things to do.
+    upgrade_check_grep_output="$(echo "${upgrade_check_output}" | grep -e '^Inst' -e '^Conf')" || true
+    local number_upgradable
+    number_upgradable="$(echo "${upgrade_check_grep_output}" | wc -l)" || true
+    if [ "$number_upgradable" = "" ]; then
+      number_upgradable=0
+    fi
+    if [ "$number_upgradable" -gt "0" ]; then
+      return 1
+    fi
+    return 0
   }
 
   ## 'dpkg --audit' does not return non-zero exit code on failure.
