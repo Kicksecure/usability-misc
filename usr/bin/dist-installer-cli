@@ -411,18 +411,79 @@ nested_virtualization_test() {
 
 secure_boot_test() {
   local mokutil_output_sb_state
+  secure_boot_dkms_key_enrolled=""
   if mokutil_output_sb_state=$(mokutil --sb-state 2>&1) ; then
     if echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
-      secure_boot_status="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
+      secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
+      secure_boot_status_short=true
+      local secure_boot_mokutil_dkms_test_key
+      secure_boot_mokutil_dkms_test_key="$(mokutil --test-key /var/lib/dkms/mok.pub)"
+      if echo "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings TODO ; then
+        secure_boot_dkms_key_enrolled=true
+      fi
     elif echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings disabled ; then
-      secure_boot_status="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
+      secure_boot_status_short=false
+      secure_boot_status_pretty="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     else
-      secure_boot_status="'unknown-please-report-this-minor-bug' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
+      secure_boot_status_short=false
+      secure_boot_status_pretty="'unknown-please-report-this-minor-bug' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     fi
   else
-    secure_boot_status="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
+    secure_boot_status_short=false
+    secure_boot_status_pretty="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
   fi
-  log info "Secure Boot Check Result: $secure_boot_status Ok."
+  log info "Secure Boot Check Result: $secure_boot_status_pretty Ok."
+}
+
+
+dkms_signing_key_enrollment() {
+  if [ ! "$secure_boot_status_short" = "true" ]; then
+    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is disabled, therefore DKMS signing key enrollment is unnecessary, ok."
+    return 0
+  fi
+  if [ "$secure_boot_dkms_key_enrolled" = "true" ]; then
+    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled and DKMS signing key has already been enrolled, ok."
+    return 0
+  fi
+  ## Not simple to automate, because it requires a password prompt.
+  ## https://git.launchpad.net/~ubuntu-core-dev/shim/+git/shim-signed/tree/update-secureboot-policy
+  #root_cmd mokutil --import /var/lib/dkms/mok.pub
+  ##
+  ## sudo mokutil --import /var/lib/dkms/mok.pub
+  ## if already enrolled:
+  ## > SKIP: /var/lib/dkms/mok.pub is already enrolled
+  ##
+  ## sudo mokutil --test-key /var/lib/dkms/mok.pub
+  ## > /var/lib/dkms/mok.pub is not enrolled
+  ## With exit code 0.
+  ##
+  ## sudo mokutil --root-pw --import /var/lib/dkms/mok.pub
+  ## This can fail if the root account is locked / has no password such as in Kicksecure.
+  ## > Failed to get root password hash
+  ##
+  ## This is a Debian DKMS issue:
+  ## - dkms Debian: enroll DKMS signing key / automate running "sudo mokutil --import /var/lib/dkms/mok.pub"
+  ##   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1076269
+  ## - shim-signed Debian: please update update-secureboot-policy / add '--new-key' option
+  ##   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1076278
+  ## - dkms upstream: automate running "`sudo mokutil --import /var/lib/dkms/mok.pub`"
+  ##   https://github.com/dell/dkms/issues/429
+
+  die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled, but DKMS signing key is not enrolled. The user has the following options. Choose one.
+
+- A) Enroll the DKMS signing key using the following command:
+1. Enroll key.
+    sudo mokutil --import /var/lib/dkms/mok.pub
+2. Reboot.
+    sudo reboot
+- B) Disable Secure Boot using update-secureboot-policy (Debian based Linux distributions only):
+1. Terminal based graphical user interface, or:
+    sudo update-secureboot-policy --disable
+command user interface:
+    sudo update-secureboot-policy --disable
+2. Reboot.
+
+- C) Disable Secure Boot in BIOS (firmware setup)."
 }
 
 
@@ -952,7 +1013,7 @@ check_guest_boot(){
     ## Kernel modules have not been load.
     user_warned_potential_startup_issue=true
     log warn "Debugging information:
-Secure Boot Status: '$secure_boot_status'
+Secure Boot Status: '$secure_boot_status_pretty'
 Kernel module has been load: '$kernel_module_has_been_load'
 Kernel module can be load: '$kernel_modules_can_be_load' (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
 Only signed kernel modules can be load: '$modules_signed_only'
@@ -3571,6 +3632,7 @@ run_installer(){
   kernel_modules_check
   nested_virtualization_test
   secure_boot_test
+  dkms_signing_key_enrollment
   kernel_modules_load
   kernel_modules_signed_only
   get_transfer_cmd
