@@ -651,10 +651,18 @@ check_upgrades_simulation() {
   fi
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
+
   local number_upgradable
-  number_upgradable="$(${pkg_mngr_upgradable_check} 2>/dev/null | wc -l)"
+  ## TODO: 'sudo apt-get dist-upgrade --target-release=bookworm-fasttrack' is not same as 'apt list --upgradable'
+  ##       It misses out on packages from "bookworm-fasttrack".
+  upgradable_output="$(${pkg_mngr_upgradable_check} 2>/dev/null)"
+
+  local number_upgradable
+  number_upgradable="$(echo "${upgradable_output}" | wc -l)"
   ## First line is just reports.
-  number_upgradable="$((number_upgradable-1))"
+  ## apt list --upgradable
+  ## > Listing... Done
+  number_upgradable="$(( number_upgradable - 1 ))"
 
   if test "${dry_run}" = "1"; then
     number_upgradable=0
