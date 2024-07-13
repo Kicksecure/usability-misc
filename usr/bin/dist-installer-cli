@@ -1419,9 +1419,9 @@ install_package_debian_common(){
     ## APT has things to do.
     upgrade_check_grep_output="$(echo "${upgrade_check_output}" | grep -e '^Inst' -e '^Conf')" || true
     local number_upgradable
-    number_upgradable="$(echo "${upgrade_check_grep_output}" | wc -l)" || true
-    if [ "$number_upgradable" = "" ]; then
-      number_upgradable=0
+    number_upgradable=0
+    if [ -n "$upgrade_check_grep_output" ]; then
+      number_upgradable="$(echo "${upgrade_check_grep_output}" | wc -l)"
     fi
     if [ "$number_upgradable" -gt "0" ]; then
       return 1
