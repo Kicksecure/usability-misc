@@ -469,21 +469,31 @@ dkms_signing_key_enrollment() {
   ## - dkms upstream: automate running "`sudo mokutil --import /var/lib/dkms/mok.pub`"
   ##   https://github.com/dell/dkms/issues/429
 
-  die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled, but DKMS signing key is not enrolled. The user has the following options. Choose one.
+  die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline}
 
-- A) Enroll the DKMS signing key using the following command:
-1. Enroll key.
-    sudo mokutil --import /var/lib/dkms/mok.pub
-2. Reboot.
-    sudo reboot
-- B) Disable Secure Boot using update-secureboot-policy (Debian based Linux distributions only):
-1. Terminal based graphical user interface, or:
-    sudo update-secureboot-policy --disable
-command user interface:
-    sudo update-secureboot-policy --disable
-2. Reboot.
+Secure Boot is enabled, but the DKMS signing key is not enrolled. Please choose one of the following options:
 
-- C) Disable Secure Boot in BIOS (firmware setup)."
+A) Enroll the DKMS signing key:
+   1. Run the following command:
+      sudo mokutil --import /var/lib/dkms/mok.pub
+   2. Reboot your system:
+      sudo reboot
+   3. Done.
+
+B) Disable Secure Boot using update-secureboot-policy (Debian-based distributions only):
+   1. Choose one of these methods:
+      - Terminal-based graphical user interface:
+        sudo update-secureboot-policy
+      - Command-line interface:
+        sudo update-secureboot-policy --disable
+   2. Reboot your system.
+   3. Done.
+
+C) Disable Secure Boot in BIOS/UEFI (firmware setup):
+   1. Restart your computer and enter the BIOS/UEFI settings.
+   2. Locate the Secure Boot option and disable it.
+   3. Save changes and exit.
+   4. Done."
 }
 
 
