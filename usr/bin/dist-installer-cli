@@ -481,12 +481,12 @@ dkms_signing_key_enrollment() {
   ## - dkms upstream: automate running "`sudo mokutil --import /var/lib/dkms/mok.pub`"
   ##   https://github.com/dell/dkms/issues/429
 
-  die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor}
+die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor}
 
 - Secure Boot is enabled, but the DKMS signing key is not enrolled.
-- This means that the VirtualBox kernel modules cannot be load.
-- To learn how to perform DKMS Signing Key Enrollment, see:
-https://www.kicksecure.com/wiki/Secure_Boot
+- VirtualBox kernel modules cannot be loaded due to this issue.
+- For instructions on DKMS Signing Key Enrollment, visit:
+  https://www.kicksecure.com/wiki/Secure_Boot
 "
 }
 
