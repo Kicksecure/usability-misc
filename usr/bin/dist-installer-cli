@@ -638,6 +638,7 @@ ${package_manager_issue_extra_help_text}"
 
 
 check_upgrades_simulation() {
+  local upgrade_simulate_output
   # shellcheck disable=SC2086
   if upgrade_simulate_output=$(root_cmd ${pkg_mngr_upgrade_check} ${install_pkg_fasttrack_extra_args_maybe} 2>&1 | $console_write_command) ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
