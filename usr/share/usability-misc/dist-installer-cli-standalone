@@ -1105,15 +1105,15 @@ secure_boot_test() {
 
 dkms_signing_key_enrollment() {
   if [ ! "$secure_boot_status_short" = "true" ]; then
-    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is disabled, therefore DKMS signing key enrollment is unnecessary, ok."
+    log info "Secure Boot DKMS Signing Key Enrollment Check Result: 'success' - Secure Boot is disabled, therefore DKMS signing key enrollment is unnecessary, ok."
     return 0
   fi
   if [ "$secure_boot_dkms_key_enrolled" = "true" ]; then
-    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled and DKMS signing key has already been enrolled, ok."
+    log info "Secure Boot DKMS Signing Key Enrollment Check Result: 'success' - Secure Boot is enabled and DKMS signing key has already been enrolled, ok."
     return 0
   fi
   if ! [ "${hypervisor}" = "virtualbox" ]; then
-    log info "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} Secure Boot is enabled, but the DKMS signing key is not enrolled. This is however unnecessary for hypervisor '${hypervisor}'."
+    log info "Secure Boot DKMS Signing Key Enrollment Check Result: 'success' - Secure Boot is enabled, but the DKMS signing key is not enrolled. This is however unnecessary for hypervisor '${hypervisor}'."
     return 0
   fi
 
@@ -1135,7 +1135,7 @@ dkms_signing_key_enrollment() {
   ## This can fail if the root account is locked / has no password such as in Kicksecure.
   ## > Failed to get root password hash
   ##
-  ## This is a Debian DKMS issue:
+  ## This is a Debian DKMS / shim-signed issue:
   ## - dkms Debian: enroll DKMS signing key / automate running "sudo mokutil --import /var/lib/dkms/mok.pub"
   ##   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1076269
   ## - shim-signed Debian: please update update-secureboot-policy / add '--new-key' option
@@ -1143,10 +1143,13 @@ dkms_signing_key_enrollment() {
   ## - dkms upstream: automate running "`sudo mokutil --import /var/lib/dkms/mok.pub`"
   ##   https://github.com/dell/dkms/issues/429
 
-  die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline}
+die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor}
 
-Secure Boot is enabled, but the DKMS signing key is not enrolled. For further information, see:
-https://www.kicksecure.com/wiki/Secure_Boot"
+- Secure Boot is enabled, but the DKMS signing key is not enrolled.
+- VirtualBox kernel modules cannot be loaded due to this issue.
+- For instructions on DKMS Signing Key Enrollment, visit:
+  https://www.kicksecure.com/wiki/Secure_Boot
+"
 }
 
 
