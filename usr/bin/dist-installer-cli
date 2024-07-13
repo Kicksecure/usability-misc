@@ -410,17 +410,17 @@ nested_virtualization_test() {
 
 
 secure_boot_test() {
-  local mokutil_output
-  if mokutil_output=$(mokutil --sb-state 2>&1) ; then
-    if echo "$mokutil_output" | grep --quiet --ignore-case --fixed-strings enabled ; then
-      secure_boot_status="'enabled' (mokutil_output: '$mokutil_output')"
-    elif echo "$mokutil_output" | grep --quiet --ignore-case --fixed-strings disabled ; then
-      secure_boot_status="'disabled' (mokutil_output: '$mokutil_output')"
+  local mokutil_output_sb_state
+  if mokutil_output_sb_state=$(mokutil --sb-state 2>&1) ; then
+    if echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
+      secure_boot_status="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
+    elif echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings disabled ; then
+      secure_boot_status="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     else
-      secure_boot_status="'unknown-please-report-this-minor-bug' (mokutil_output: '$mokutil_output')"
+      secure_boot_status="'unknown-please-report-this-minor-bug' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     fi
   else
-    secure_boot_status="'disabled' (mokutil_output: '$mokutil_output')"
+    secure_boot_status="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
   fi
   log info "Secure Boot Check Result: $secure_boot_status Ok."
 }
