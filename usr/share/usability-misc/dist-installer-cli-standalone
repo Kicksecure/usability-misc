@@ -1300,6 +1300,7 @@ ${package_manager_issue_extra_help_text}"
 
 
 check_upgrades_simulation() {
+  local upgrade_simulate_output
   # shellcheck disable=SC2086
   if upgrade_simulate_output=$(root_cmd ${pkg_mngr_upgrade_check} ${install_pkg_fasttrack_extra_args_maybe} 2>&1 | $console_write_command) ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
@@ -1313,10 +1314,14 @@ check_upgrades_simulation() {
   fi
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
+
+  local upgradable_output
+  upgradable_output="$(pkg_mngr_upgradable_check 2>/dev/null)"
+
   local number_upgradable
-  number_upgradable="$(${pkg_mngr_upgradable_check} 2>/dev/null| wc -l)"
-  ## First line is just reports.
-  number_upgradable="$((number_upgradable-1))"
+  ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
+  ## APT has things to do.
+  number_upgradable="$(echo "${upgradable_output}" | wc -l)" || true
 
   if test "${dry_run}" = "1"; then
     number_upgradable=0
@@ -1334,7 +1339,7 @@ check_upgrades_simulation() {
 
   die 1 "${underline}Package Upgrade Simulation:${nounderline} Package upgrades available.
 
-'${number_upgradable}' packages can be upgraded.
+Packages can be upgraded.
 
 Please upgrade your operating system first. Otherwise this installer cannot proceed.
 
@@ -2041,8 +2046,11 @@ install_package_fedora_common(){
   pkg_mngr_update="${pkg_mngr} --assumeyes update"
   pkg_mngr_check_installed="${pkg_mngr} list installed"
   pkg_mngr_upgrade_check="/bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'"
-  pkg_mngr_upgradable_check="/bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'"
   pkg_mngr_upgrade_install="${pkg_mngr} upgrade"
+
+  pkg_mngr_upgradable_check() {
+    /bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'
+  }
 
   update_sources
   #check_upgrades_simulation
@@ -2063,8 +2071,14 @@ install_package_debian_common(){
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
   pkg_mngr_check_installed="check_installed_debian"
   pkg_mngr_upgrade_check="${pkg_mngr} full-upgrade --simulate"
-  pkg_mngr_upgradable_check="apt list --upgradable"
   pkg_mngr_upgrade_install="${pkg_mngr} full-upgrade"
+
+  pkg_mngr_upgradable_check() {
+    ## Not using 'apt list --upgradable', because it is not the same as
+    ## 'sudo apt-get dist-upgrade --target-release=bookworm-fasttrack'.
+    ## It misses out on packages from "bookworm-fasttrack".
+    root_cmd ${pkg_mngr_upgrade_check} | grep -e '^Inst' -e '^Conf'
+  }
 
   ## 'dpkg --audit' does not return non-zero exit code on failure.
   dpkg_audit_output="$(dpkg --audit 2>&1)"
