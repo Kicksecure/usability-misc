@@ -5,6 +5,8 @@
 
 genmkfile_lintian_post_opts+=" --suppress-tags no-manual-page "
 
-make_deb-pkg-build_hook_pre() {
-  ./usr/share/usability-misc/check-dist-installer-cli
-}
+#make_deb-pkg-build_hook_pre() {
+## This complicates the build process. See
+## usr/share/usability-misc/build-dist-installer-cli for comments.
+#  ./usr/share/usability-misc/check-dist-installer-cli
+#}
