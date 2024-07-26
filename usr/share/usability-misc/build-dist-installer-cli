@@ -9,6 +9,11 @@ set -o nounset
 set -o errtrace
 set -o pipefail
 
+if [ "${dist_build_skip_installer_dist_standalone:-}" = "true" ]; then
+  echo "$0: INFO: Skipping to build dist-installer-cli because dist_build_skip_installer_dist_standalone=true, ok."
+  exit 0
+fi
+
 command -v git >/dev/null || exit 1
 
 toplevel="$(git rev-parse --show-toplevel)"
