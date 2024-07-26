@@ -4,6 +4,12 @@
 
 true "$0: START"
 
+MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$MYDIR"
+cd ..
+cd ..
+cd ..
+
 set -o errexit
 set -o nounset
 set -o errtrace

@@ -10,6 +10,12 @@ set -o errtrace
 
 true "$0: START"
 
+MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$MYDIR"
+cd ..
+cd ..
+cd ..
+
 command -v sha512sum >/dev/null
 
 hashsum_old=$(sha512sum ./usr/share/usability-misc/dist-installer-cli-standalone)
