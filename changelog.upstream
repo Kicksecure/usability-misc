@@ -1,3 +1,17 @@
+commit 0782a1ce4b51965ca0159dc445c3ca7308aef5fa
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 05:36:39 2024 -0400
+
+    Builds-Depends: helper-scripts
+    
+    because required to build dist-installer-cli-standalone
+
+commit 789d3bf2a1b99f62609a7e464c8e5c0c7248d1c5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Jul 13 20:32:14 2024 +0000
+
+    bumped changelog version
+
 commit 5066df6d2faf044930e61c2bb2186c27a30f6616
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Jul 13 16:31:53 2024 -0400
