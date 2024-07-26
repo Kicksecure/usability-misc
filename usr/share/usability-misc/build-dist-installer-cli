@@ -47,7 +47,11 @@ template="${toplevel}/usr/bin/dist-installer-cli"
 # fi
 
 ## Use source code version for now to avoid using different version depending on repository setting.
-helper_path="../helper-scripts/usr/libexec/helper-scripts/"
+## TODO: does not work
+#helper_path="../helper-scripts/usr/libexec/helper-scripts/"
+
+helper_path="/usr/libexec/helper-scripts/"
+
 if ! test -d "$helper_path" ; then
   echo "$0: ERROR: directory helper_path '$helper_path' does not exist!" >&2
 fi
