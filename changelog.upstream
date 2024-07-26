@@ -1,3 +1,99 @@
+commit 6e4a2e5d26c3ac9c4509d32e7a152d8eeebf02e7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 11:38:48 2024 -0400
+
+    build
+
+commit 0bc0c62f98de20be4e62e9249c262a0125e7e152
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 11:38:37 2024 -0400
+
+    revert
+
+commit 77f7dc9322523c65b4180a807283a52638c7f327
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 07:06:33 2024 -0400
+
+    build
+
+commit 77552446a0c52e20d5f4c3d57598011381fe7942
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 07:05:24 2024 -0400
+
+    add relative path support
+
+commit b8cf22bfd57647393fbe5112b759de8497252654
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 07:00:07 2024 -0400
+
+    Use source code version for now to avoid using different version depending on repository setting.
+
+commit 95724b0e1d6286b5aabae2ab0e62f0e20e4d1dcb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 06:56:34 2024 -0400
+
+    disable /usr/share/usability-misc/check-dist-installer-cli sanity test for now
+    
+    because it breaks the build process. Run from elsewhere instead.
+    
+    https://forums.whonix.org/t/derivative-maker-missing-usr-libexec-helper-scripts-get-colors-sh/20142
+
+commit 07d5835a124c985a5e7eb413d65635093f0480a5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 06:55:13 2024 -0400
+
+    comments
+
+commit 0557aa4df47d10c334fcf2fcd1e3c7c20fe13e43
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 06:36:25 2024 -0400
+
+    comment
+
+commit 9e57e38f72d25e29f85ee6acada942d55153fbbb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 06:35:20 2024 -0400
+
+    output
+
+commit 3595abafe3c2078c0f570395f1c998f8ebe34fd2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 06:34:31 2024 -0400
+
+    allow skipping to build dist-installer-cli
+    
+    by setting `dist_build_skip_installer_dist_standalone=true`
+
+commit a2747e630807814626449b990c9528da38245d5a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 05:57:21 2024 -0400
+
+    user helper-scripts from derivative-maker source folder,
+    
+    in case helper-scripts is not installed locally
+
+commit 050fa939eadcfdf6dbe95e7b2c88a410fb6ab1a9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 05:49:48 2024 -0400
+
+    comment
+
+commit 857bb835ff86c4ad849ea76be5d8248103fab266
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 05:47:48 2024 -0400
+
+    Revert "Builds-Depends: helper-scripts"
+    
+    Not easily possible because then the build chroot would also need helper-scripts being installed.
+    
+    This reverts commit 0782a1ce4b51965ca0159dc445c3ca7308aef5fa.
+
+commit 7c6fd0e7fa2bea160543dbefd9906c209e038af1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 09:41:36 2024 +0000
+
+    bumped changelog version
+
 commit 0782a1ce4b51965ca0159dc445c3ca7308aef5fa
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jul 26 05:36:39 2024 -0400
