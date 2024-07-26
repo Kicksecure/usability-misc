@@ -9,6 +9,9 @@ set -o nounset
 set -o errtrace
 set -o pipefail
 
+## For future use in case of issues.
+## Building dist-installer-cli is not crucial and a workaround to skip it might unbreak the build process.
+## https://forums.whonix.org/t/derivative-maker-missing-usr-libexec-helper-scripts-get-colors-sh/20142
 if [ "${dist_build_skip_installer_dist_standalone:-}" = "true" ]; then
   echo "$0: INFO: Skipping to build dist-installer-cli because dist_build_skip_installer_dist_standalone=true, ok."
   exit 0
