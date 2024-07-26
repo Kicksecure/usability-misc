@@ -5,8 +5,7 @@ Source: usability-misc
 Section: misc
 Priority: optional
 Maintainer: Patrick Schleizer <adrelanos@kicksecure.com>
-Build-Depends: debhelper (>= 13.11.6), debhelper-compat (= 13),
- helper-scripts
+Build-Depends: debhelper (>= 13.11.6), debhelper-compat (= 13)
 Homepage: https://github.com/Kicksecure/usability-misc
 Vcs-Browser: https://github.com/Kicksecure/usability-misc
 Vcs-Git: https://github.com/Kicksecure/usability-misc.git
