@@ -14,9 +14,20 @@ command -v git >/dev/null || exit 1
 toplevel="$(git rev-parse --show-toplevel)"
 target="${toplevel}/usr/share/usability-misc/dist-installer-cli-standalone"
 template="${toplevel}/usr/bin/dist-installer-cli"
+
 ## debian/control 'Builds-Depends: helper-scripts' is not easily possible,
 ## because then the build chroot would also need helper-scripts being installed.
-helper_path="/usr/libexec/helper-scripts/"
+if test -d /usr/libexec/helper-scripts/ ; then
+  helper_path="/usr/libexec/helper-scripts/"
+elif test -d "../helper-scripts/usr/libexec/helper-scripts/" ; then
+  helper_path="../helper-scripts/usr/libexec/helper-scripts/"
+else
+  echo "$0: ERROR: helper_path neither available in
+- /usr/libexec/helper-scripts/
+nor in
+../helper-scripts/usr/libexec/helper-scripts/" >&2
+  exit 1
+fi
 
 cp "${template}" "${target}"
 
