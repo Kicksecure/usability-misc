@@ -18,8 +18,6 @@ Depends: sudo, policyrcd-script-zg2, adduser, python3, damngpl,
  ${misc:Depends}
 Replaces: gpl-sources-download, scurl, grub-screen-resolution
 Description: Misc usability improvements
- Creates user "user" if it does not already exist.
- .
  Enables auto login for user `user` in `lightdm`.
  `/etc/lightdm/lightdm.conf.d/30_autologin.conf`
  https://www.kicksecure.com/wiki/Desktop#Disable_Autologin
