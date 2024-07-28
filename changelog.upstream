@@ -1,3 +1,21 @@
+commit 60fb0cf2f93dd4bb143d88486b842865235cf4ef
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 28 19:14:51 2024 -0400
+
+    description
+
+commit e0713068acd7a60b95842646aa643622d9c7581f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 28 18:28:01 2024 -0400
+
+    enable autologin for lightdm
+
+commit a7296cdaeb444f536f2e48d3cd0edf08e530e502
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jul 26 15:41:02 2024 +0000
+
+    bumped changelog version
+
 commit 6e4a2e5d26c3ac9c4509d32e7a152d8eeebf02e7
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jul 26 11:38:48 2024 -0400
