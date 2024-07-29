@@ -3276,7 +3276,6 @@ File name:
 
 ## Set default values for variables.
 set_default(){
-
   ## Options
   directory_prefix="${HOME}/dist-installer-cli-download"
   guest=whonix
