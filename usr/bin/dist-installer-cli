@@ -2570,7 +2570,7 @@ Additional details:
 get_version(){
   log notice "Version Detection: Detecting guest version..."
   if test -n "${guest_version:-}"; then
-    log notice "Version Detection: 'skipped' - Autodetection using API not required via '--dry-run' or '--dev' option."
+    log notice "Version Detection: 'skipped' - Autodetection using API not required via '--guest-version', '--dry-run' or '--dev' option."
     return 0
   fi
   log info "Version Detection: Acquiring guest version using API..."
