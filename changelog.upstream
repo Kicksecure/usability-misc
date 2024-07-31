@@ -1,3 +1,65 @@
+commit c033c15f9a25ca18f1d8b21c1f0e93de002fd1c2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 31 04:19:19 2024 -0400
+
+    build
+
+commit cd910de04657b0ca24892eec6656249137a1f364
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 31 04:14:30 2024 -0400
+
+    fix `kali_domain_debsource: unbound variable`
+    
+    https://forums.kicksecure.com/t/followed-wiki-but-get-error-for-whonix-install/454/4
+
+commit e5dc920edb19911194f8fab2c7ec2cde2a764a5a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 31 04:05:29 2024 -0400
+
+    comments
+
+commit 36b9b38bda80f9ba30417ac4a0fc5d98fb25030a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jul 31 04:01:57 2024 -0400
+
+    minor
+
+commit affb365ec8b8bcdbf790c5ca3dc049af8c1dcb3b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 29 08:50:38 2024 -0400
+
+    build
+
+commit 5ebec51db21a0295840dea661fd421194071803b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 29 08:50:00 2024 -0400
+
+    output
+
+commit c62a5a6c6ba9cf76a4ac586f8adf3341e006deea
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 29 08:48:51 2024 -0400
+
+    minor
+
+commit 92023301bf43149e827d86163cb10694a1bc14fc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 29 08:48:36 2024 -0400
+
+    output
+
+commit 4426b1443c7ac3f389b0b523a7811a7726287f18
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jul 29 08:45:10 2024 -0400
+
+    output
+
+commit a32586944e5b70e0583fa04f7880fc6254a7e833
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 28 23:21:36 2024 +0000
+
+    bumped changelog version
+
 commit 60fb0cf2f93dd4bb143d88486b842865235cf4ef
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Jul 28 19:14:51 2024 -0400
