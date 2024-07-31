@@ -1745,6 +1745,9 @@ install_repositories_for_virtualbox_on_debian(){
         fi
         protocol_prefix_debsource="https://"
       fi
+    else
+      kali_domain_debsource="${kali_clearnet}"
+      oracle_domain_debsource="${oracle_clearnet}"
     fi
     kicksecure_domain_debsource="${kicksecure_onion}"
     unstable_domain_debsource="${unstable_onion}"
