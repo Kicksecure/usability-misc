@@ -1589,7 +1589,7 @@ install_repositories_for_virtualbox_on_debian(){
 
   oracle_found=""
   oracle_clearnet="download.virtualbox.org"
-  #oracle_onion=""
+  #oracle_onion="" ## non-existing
   oracle_file_debsource="/etc/apt/sources.list.d/oracle.list"
   oracle_prefix_debsource="deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.asc] "
   ## Oracle does not have a Kali dist section, use Debian stable.
@@ -1633,6 +1633,7 @@ install_repositories_for_virtualbox_on_debian(){
 
   kali_found=""
   kali_clearnet="http.kali.org"
+  #kali_onion="" ## non-existing
   kali_file_debsource="/etc/apt/sources.list.d/kali.list"
   kali_prefix_debsource="deb "
   kali_suffix_debsource=" ${distro_codename_common_use} main contrib non-free non-free-firmware"
