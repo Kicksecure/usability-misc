@@ -1319,7 +1319,6 @@ check_upgrades_simulation() {
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
 
-  # shellcheck disable=SC2086
   if pkg_mngr_upgradable_check ${install_pkg_fasttrack_extra_args_maybe} ; then
     packages_upgradable=false
   else
@@ -2080,7 +2079,6 @@ install_package_debian_common(){
     ## Not using 'apt list --upgradable', because it is not the same as
     ## 'sudo apt-get dist-upgrade --target-release=bookworm-fasttrack'.
     ## It misses out on packages from "bookworm-fasttrack".
-    # shellcheck disable=SC2086
     upgrade_check_output="$(root_cmd ${pkg_mngr_upgrade_check} "$@" 2>&1)" || true
     local upgrade_check_grep_output
     ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
