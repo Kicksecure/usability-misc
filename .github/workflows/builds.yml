@@ -15,8 +15,8 @@ jobs:
             builds: ${{ steps.filter.outputs.builds }}
             installer: ${{ steps.filter.outputs.installer }}
         steps:
-            - uses: actions/checkout@v3
-            - uses: dorny/paths-filter@v2
+            - uses: actions/checkout@v4
+            - uses: dorny/paths-filter@v3
               id: filter
               with:
                 filters: |
@@ -55,7 +55,7 @@ jobs:
             image: ${{ matrix.image }}
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: System Basic Packages
               run: |
                   if command -v apt-get; then
