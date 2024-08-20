@@ -1,3 +1,71 @@
+commit cabb825464bec2529f4dc0149e00e82f3c1cc6c4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 20 05:44:49 2024 -0400
+
+    build
+
+commit c11791dc16513059ed3b33222c44f5040d945b5b
+Merge: 5b4e779 d277481
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 20 05:44:22 2024 -0400
+
+    Merge remote-tracking branch 'github-kicksecure/master'
+
+commit d27748101e58c148fca8b0fec27cab7d068a99a7
+Merge: 5b4e779 72a2fdb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 20 05:43:47 2024 -0400
+
+    Merge pull request #12 from nyxnor/ci-shellcheck-but-smart
+    
+    Fix shellcheck warnings
+
+commit 72a2fdbf14796a16fa64d4643b3d82c74d0bfd49
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Mon Aug 19 16:19:00 2024 +0000
+
+    Fix shellcheck warnings
+
+commit 5b4e77964ccc7f31fb5d357a5f19198d681123f4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 18 11:23:33 2024 -0400
+
+    build
+
+commit c40a30f321a079c6f6b6b0f22b65d7ab0bc3e5b0
+Merge: ea41722 b9caca5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 18 11:23:05 2024 -0400
+
+    Merge remote-tracking branch 'github-kicksecure/master'
+
+commit b9caca5cab0a6c754d952bdd53424a0c556d029a
+Merge: ea41722 027b61f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Aug 18 11:19:17 2024 -0400
+
+    Merge pull request #11 from nyxnor/ci-shellcheck
+    
+    Fix shellcheck and CI warnings
+
+commit 027b61f68375ddfa46795431e78d76e329ac88d8
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Aug 16 15:04:14 2024 +0000
+
+    Update actions major version
+
+commit 5cbffb5235fb6acfff456c5136cfc9207eddc719
+Author: nyxnor <nyxnor@protonmail.com>
+Date:   Fri Aug 16 15:00:53 2024 +0000
+
+    Fix shellcheck warnings
+
+commit ea4172265ae2b1492ac97f7d5bc637bc33733736
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 6 14:02:47 2024 +0000
+
+    bumped changelog version
+
 commit 7c7a9f4ab483076ecac7abdc7b240eb370f5aabc
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 6 07:17:18 2024 -0400
