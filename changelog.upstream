@@ -1,3 +1,17 @@
+commit e6ff0d2f5cb160104bc4c55fa7b5d2c45362801f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 9 14:20:22 2024 -0400
+
+    set `thunar` as default file manager for `xdg-mime`
+    
+    https://forums.whonix.org/t/is-catfish-the-new-default-in-the-qubes-domain-open-file-manager-quick-widget-for-whonix/20233
+
+commit ce867a7cbcdecb9fcaf2ee85d563c5f39a3b343e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 20 12:12:45 2024 +0000
+
+    bumped changelog version
+
 commit cabb825464bec2529f4dc0149e00e82f3c1cc6c4
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 20 05:44:49 2024 -0400
