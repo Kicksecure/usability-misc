@@ -1,3 +1,15 @@
+commit 18f11dba08f2c9c8fc1b5c3757a997292946ad69
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 11 06:01:59 2024 -0500
+
+    import /etc/dkms/framework.conf.d/30_usability-misc.conf from security-misc
+
+commit 0d3b9dc7e3e010aa3089d5993c6992c2b58ad0cc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 1 16:20:44 2024 +0000
+
+    bumped changelog version
+
 commit 13bdb88bcc3107e1b94b7f3d5fecd910f3a7efc2
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 1 12:16:38 2024 -0400
