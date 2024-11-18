@@ -15,7 +15,7 @@ Rules-Requires-Root: no
 Package: usability-misc
 Architecture: all
 Depends: sudo, policyrcd-script-zg2, adduser, python3, damngpl,
- ${misc:Depends}
+ helper-scripts, ${misc:Depends}
 Replaces: gpl-sources-download, scurl, grub-screen-resolution
 Description: Misc usability improvements
  Enables auto login for user `user` in `lightdm`.
