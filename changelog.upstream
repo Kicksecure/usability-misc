@@ -1,3 +1,57 @@
+commit e2b6c5478c55401772f5a5284c572a8373002b32
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:50:57 2024 -0500
+
+    check if folder /etc/sudoers.d/ is writeable
+
+commit 6f84ff23d15ddb58dc6d90ca699c60ea5997c0f7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:49:37 2024 -0500
+
+    check if folder /etc/sudoers.d/ exists
+
+commit 22736b0d3f6cc156e1855b2f01fb243500783667
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:47:44 2024 -0500
+
+    fix
+
+commit 1aef2655d8381f834e413ec13f2e3f3f8f0905f0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:46:46 2024 -0500
+
+    Depends: helper-scripts (because of append-once)
+
+commit c147414569d50a61a9d94667248b818b350ec535
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:46:24 2024 -0500
+
+    fix
+
+commit 335ddaa269bad9c0ffd20cf7b1c8a72bafc8b384
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:45:44 2024 -0500
+
+    typo
+
+commit 8715df67bb32272a2c7ef4c3166693c13d8c3b33
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:41:28 2024 -0500
+
+    comment
+
+commit d78e6fe96985c99b9c596a83cc3735b37d852fde
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 10:40:08 2024 -0500
+
+    add `/usr/bin/passwordless-root` a tool for root to easily set up passwordless `sudo` for user `user`
+
+commit fe6fa694c6143055523189f97c220f2d8772c7ad
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Nov 12 09:12:43 2024 +0000
+
+    bumped changelog version
+
 commit cc90e9def012f3019ddba035bee846b8984aad3f
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Nov 12 03:25:45 2024 -0500
