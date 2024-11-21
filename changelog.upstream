@@ -1,3 +1,15 @@
+commit 20db5675217b8ec31635ba692f829e5035318874
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 21 07:17:47 2024 -0500
+
+    fix passwordless-root: make sure that VISUAL and SUDO_EDITOR environment variables do not interfere with EDITOR=tee
+
+commit eb087e01d5915ddfa04f284abcc63cde06c0d094
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 18 15:52:28 2024 +0000
+
+    bumped changelog version
+
 commit e2b6c5478c55401772f5a5284c572a8373002b32
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Nov 18 10:50:57 2024 -0500
