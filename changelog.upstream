@@ -1,3 +1,33 @@
+commit b601a0fa783d9a810bb66222f0f87dc6eb48f4e1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 2 07:13:14 2024 -0500
+
+    build
+
+commit c7a5dd72312f0b05d440b21c2c55a2bf53346d4a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 2 07:12:43 2024 -0500
+
+    fix case where `dpkg --audit` exits non-zero
+
+commit bf4ef33ca6cab02401eee81cd01d6169438e437b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 2 07:09:50 2024 -0500
+
+    build
+
+commit dd113552b1808435d41a3fb6bd816b87de1df0e5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 2 07:08:41 2024 -0500
+
+    fix case where `dpkg --audit` exits non-zero
+
+commit acb574aa31cd9ba64ceb6a3759f1554edc3e7607
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Nov 21 12:18:57 2024 +0000
+
+    bumped changelog version
+
 commit 20db5675217b8ec31635ba692f829e5035318874
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Nov 21 07:17:47 2024 -0500
