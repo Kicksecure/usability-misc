@@ -1431,8 +1431,7 @@ install_package_debian_common(){
     return 0
   }
 
-  ## 'dpkg --audit' does not return non-zero exit code on failure.
-  dpkg_audit_output="$(dpkg --audit 2>&1)"
+  dpkg_audit_output="$(dpkg --audit 2>&1)" || true
   if test -n "${dpkg_audit_output}"; then
     die 1 "${underline}DPKG Audit Test Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor}
 - What happened in simple terms? This installer has performed a check to ensure it's sane to proceed, which has failed.
