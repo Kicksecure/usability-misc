@@ -2952,7 +2952,7 @@ get_download_links(){
       ## url directory to find files of the selected hypervisor
       url_domain="${url_download}/ova"
       ## image file extension
-      guest_file_ext="ova"
+      guest_file_ext="Intel_AMD64.ova"
       ## function to call when importing guest
       ;;
 
