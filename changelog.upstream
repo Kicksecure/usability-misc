@@ -1,3 +1,21 @@
+commit de5779db1f1ca580afe901b63fed6e2338c1135d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 4 08:21:28 2024 -0500
+
+    build
+
+commit ffd9917a61ed52d6724919df65a0ede031f6eb07
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 4 08:10:56 2024 -0500
+
+    ova -> Intel_AMD64.ova
+
+commit e8ef20e45c9d3683c1496528ba48223917e70798
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 2 13:21:57 2024 +0000
+
+    bumped changelog version
+
 commit b601a0fa783d9a810bb66222f0f87dc6eb48f4e1
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Dec 2 07:13:14 2024 -0500
