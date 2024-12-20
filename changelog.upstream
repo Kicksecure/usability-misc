@@ -1,3 +1,15 @@
+commit 42e03eb2f3aa39a769d427fd4cf9e5469a55f5ce
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 20 03:36:56 2024 -0500
+
+    improve output of `pwchange`
+
+commit 1c897bb6ce6287ece009f6efd94d3dbefecc96b3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 4 13:21:42 2024 +0000
+
+    bumped changelog version
+
 commit de5779db1f1ca580afe901b63fed6e2338c1135d
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Dec 4 08:21:28 2024 -0500
