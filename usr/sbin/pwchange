@@ -19,6 +19,7 @@ get_password() {
    ## licensed under cc by-sa 3.0 with attribution required.
 
    unset password
+   unset prompt
    while IFS= read -p "$prompt" -r -s -n 1 char
    do
       # Enter - accept password
@@ -41,6 +42,33 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+adduser_conf_file="$(cat /etc/adduser.conf)"
+
+first_uid="$(
+   grep 'FIRST_UID' <<< "${adduser_conf_file}" | grep -v '^\s*#' \
+      | cut -d'=' -f2 | sed 's/^[[:space:]]*//'
+)"
+last_uid="$(
+   grep 'LAST_UID' <<< "${adduser_conf_file}" | grep -v '^\s*#' \
+      | cut -d'=' -f2 | sed 's/^[[:space:]]*//'
+)"
+if [ -z "${first_uid}" ]; then
+  first_uid=1000
+fi
+if [ -z "${last_uid}" ]; then
+  last_uid=59999
+fi
+
+echo "Users present on the system:"
+while read -r user_entry; do
+   current_uid="$(cut -d':' -f3 <<< "${user_entry}")"
+   if [ "${current_uid}" -ge "${first_uid}" ] \
+      && [ "${current_uid}" -le "${last_uid}" ]; then
+      echo -n '   ';
+      cut -d':' -f1 <<< "${user_entry}"
+   fi
+done < /etc/passwd
+
 read -r -p "Enter the username whose password you want to change: " user
 
 if [ "$user" = "" ]; then
@@ -51,6 +79,16 @@ fi
 if ! id "$user" &>/dev/null ; then
    echo "ERROR: User '$user' does not exist. Please check the username and try again." >&2
    exit 1
+fi
+
+if [ "$user" = "sysmaint" ]; then
+   echo
+   echo "If you change the password for the sysmaint account, you will not be"
+   echo "automatically logged into the sysmaint session when booting in"
+   echo "'PERSISTENT mode SYSMAINT'. To log into the sysmaint session, type"
+   echo "'sysmaint' as the user account name, and provide the password you set"
+   echo "here."
+   echo
 fi
 
 echo -n "Enter the new password for user '$user': "
