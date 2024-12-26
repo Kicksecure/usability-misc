@@ -1,3 +1,22 @@
+commit ba1443e9d1dc2d0dbc9112cea64e187c185ba5cc
+Merge: e69b9ae ac34384
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 25 22:18:52 2024 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/sysmaint'
+
+commit ac34384d5b6a2ae59fa875218bdcb55b63f2c766
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Dec 24 21:23:32 2024 -0600
+
+    pwchange: add user listing and sysmaint documentation, fix password feedback bug
+
+commit e69b9aecdb0e1e766248d06dab83444f04d71719
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 20 08:38:18 2024 +0000
+
+    bumped changelog version
+
 commit 42e03eb2f3aa39a769d427fd4cf9e5469a55f5ce
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Dec 20 03:36:56 2024 -0500
