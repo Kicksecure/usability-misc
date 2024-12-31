@@ -2,7 +2,7 @@ virtualbox-send-sysrq(1) -- Send SysRq command to VirtualBox VMs.
 =============================================
 
 <!--
-# Copyright (C) 2019 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+# Copyright (C) 2019 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 
 # Not using angle brackets in copyright notice for e-mail address, because

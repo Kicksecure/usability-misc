@@ -1,6 +1,6 @@
 #!/bin/sh
 
-## Copyright (C) 2019 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## Copyright (C) 2019 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 ## Sets mousepad as the default editor for environment variable VISUAL

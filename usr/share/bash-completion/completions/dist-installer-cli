@@ -1,6 +1,6 @@
 # dist-installer-cli(8) completion                           -*- shell-script -*-
 
-## Copyright (C) 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+## Copyright (C) 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 _dist_installer_cli()

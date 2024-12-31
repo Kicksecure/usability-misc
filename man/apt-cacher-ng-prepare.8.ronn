@@ -2,7 +2,7 @@ apt-cacher-ng-prepare(8) -- modifies apt sources list for use with apt-cacher-ng
 =============================================
 
 <!--
-# Copyright (C) 2012 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+# Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 # See the file COPYING for copying conditions.
 -->
 

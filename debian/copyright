@@ -1,11 +1,11 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
-Copyright: 2012 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+Copyright: 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 License: AGPL-3+
 
 Files: usr/bin/dist-installer-cli
-Copyright: 2022-2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+Copyright: 2022-2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
            2022-2022 grass <grass@danwin.1210.de>
            2021-2022 nyxnor <nyxnor@protonmail.com>
            2016-2019 Dylan Araps
@@ -15,7 +15,7 @@ License: AGPL-3+
 Files: usr/share/bash-completion/completions/dist-installer-cli
  usr/share/zsh/vendor-completions/_dist-installer-cli
  man/dist-installer-cli.1.ronn
-Copyright: 2022-2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
+Copyright: 2022-2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
            2022-2022 grass <grass@danwin.1210.de>
 License: AGPL-3+
 
