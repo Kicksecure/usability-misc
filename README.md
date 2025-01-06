@@ -1,6 +1,8 @@
 # Misc usability improvements #
 
-Creates user "user" if it does not already exist.
+Enables auto login for user `user` in `lightdm`.
+`/etc/lightdm/lightdm.conf.d/30_autologin.conf`
+https://www.kicksecure.com/wiki/Desktop#Disable_Autologin
 
 Creates folders /home/user/Downloads and /home/user/Pictures.
 
