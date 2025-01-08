@@ -3398,45 +3398,45 @@ test_file() {
   ## realpath needs to be able to access the path it checks
   real_file="$(sudo realpath "${file}")"
   ## find needs to start execution in a directory it can access
-  pushd /
+  pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
     if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0 -follow -type f)" ]; then
-      popd
+      popd >/dev/null
       return 1
     else
-      popd
+      popd >/dev/null
       return 0
     fi
   elif [ "${mode}" = '-d' ]; then
     if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0 -follow -type d)" ];
     then
-      popd
+      popd >/dev/null
       return 1
     else
-      popd
+      popd >/dev/null
       return 0
     fi
   elif [ "${mode}" = '-w' ]; then
     ${user_switch_prefix}test -w "${file}"
     retcode="$?"
-    popd
+    popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-r' ]; then
     ${user_switch_prefix}test -r "${file}"
     retcode="$?"
-    popd
+    popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-e' ]; then
     if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0)" ];
     then
-      popd
+      popd >/dev/null
       return 1
     else
-      popd
+      popd >/dev/null
       return 0
     fi
   else
-    popd
+    popd >/dev/null
     return 1
   fi
 }
@@ -4090,7 +4090,7 @@ Developer options:
  -d, --dry-run       Simulate execution; log commands without executing.
  --virtualbox-only   Restrict actions to downloading and installing VirtualBox.
  -t, --getopt        Display parsed options and exit.
- --user              Specify the user to install the distribution VM under.
+ --user=username     Specify the user to install the distribution VM under.
 File name:
   The default file name is dist-installer-cli. Basic options can be set by using
   file name following the format 'guest-installer-interface'.
@@ -4258,7 +4258,7 @@ copy_thru_barrier() {
     dest_file="${dest_realpath}"
   fi
 
-  ${user_switch_prefix}tee "${dest_file}" > /dev/null < "${source}"
+  ${user_switch_prefix}tee "${dest_file}" >/dev/null < "${source}"
 }
 
 
@@ -4501,8 +4501,8 @@ log_term_and_file() {
   exec > >(${user_switch_prefix}tee -a "${log_file_user}") 2> >(${user_switch_prefix}tee -a "${log_file_debug}" >&2)
   ## Bash has built-in feature to redirect xtrace to the specified file.
   # shellcheck disable=SC2039
-  true "exec 9> >(${user_switch_prefix}tee -a \"${log_file_debug}\")"
-  exec 9> >(${user_switch_prefix}tee -a "${log_file_debug}")
+  true "exec 9> >(${user_switch_prefix}tee -a \"${log_file_debug}\" >/dev/null)"
+  exec 9> >(${user_switch_prefix}tee -a "${log_file_debug}" >/dev/null)
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
