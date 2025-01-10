@@ -3354,7 +3354,7 @@ main() {
   ## BEGIN VERIFICATION, IMPORT AND START ##
   ##########################################
   check_integrity
-  check_vm_running_general # TODO: !!! PICK UP HERE
+  check_vm_running_general
   check_vm_exists_general "(check before maybe deletion)"
   vm_delete_maybe
   check_vm_exists_general "(check before import)"
