@@ -1,8 +1,75 @@
+commit 3f4f69f6a8f0ef6b9dfb736d084380d22685cc41
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 10:33:33 2025 -0500
+
+    build
+
+commit f686a40223e96e41a3954d188c00f8550551e381
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 10:33:00 2025 -0500
+
+    do not hardcode paths
+
+commit be70aaa8070979a9b4f596a79babfdc0b61cf6bb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 09:49:46 2025 -0500
+
+    cleanup
+
+commit 7faad0f8d03c0bc30d788bc2b601c76106a634c7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 09:46:56 2025 -0500
+
+    build
+
+commit 29a5eeea82e79610126cbabe8283488e8ebdc555
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 09:46:33 2025 -0500
+
+    shellcheck
+
+commit e1e62c82619b93ecab37cf489224cc1aa249ad48
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 09:36:49 2025 -0500
+
+    fix path to signify-openbsd
+
+commit ebf68a0a6e5cdfeff79e27639ae21c754247eb2d
+Merge: 5fba1bf df6109f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 09:25:36 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/dist-installer-sysmaint'
+
+commit df6109ffbee5cc3925755c797814a5e64146e02d
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Jan 7 22:16:35 2025 -0600
+
+    Cosmetic fixes to dist-installer-cli
+
+commit abc35f6f1139c21e2f2f6b5189ee006e7dfb3ed2
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Jan 7 16:17:59 2025 -0600
+
+    Fix bugs in dist-installer-cli, rebuild dist-installer-cli-standalone
+
+commit 5fba1bf835279f7633556456e1d1b9707358b2bf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 6 13:14:37 2025 +0000
+
+    bumped changelog version
+
 commit bf92ed26f81180bea9c0b27afe12796bd47c6a4f
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Jan 6 08:11:02 2025 -0500
 
     readme
+
+commit e8e8f4c121603ba23185df6beabc0c82992db32b
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Jan 5 22:36:01 2025 -0600
+
+    Polish dist-installer-cli and make it compatible with sysmaint mode (untested)
 
 commit 10b3689ef9d32a4b0ce4a7dfa710e13bb8bc9cd9
 Author: Patrick Schleizer <adrelanos@whonix.org>
