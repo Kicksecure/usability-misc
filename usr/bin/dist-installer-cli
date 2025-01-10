@@ -7,7 +7,7 @@
 ## BEGIN DEFAULT VALUES ##
 ##########################
 
-if test "${BASH_SOURCE-}" != "${0}"; then
+if [ "${BASH_SOURCE-}" != "${0}" ]; then
   ## Script was sourced.
   ## This is useful for other programs / scripts to be able to `source` the
   ## functions of this script for code re-use. dist-installer-gui will do this.
@@ -22,6 +22,7 @@ fi
 
 
 set_globals() {
+  local all_args
   ## Version is commit based: https://github.com/Whonix/usability-misc
   version="commit-hash-replace-me"
   me="${0##*/}"
@@ -135,6 +136,7 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 -----END PGP PUBLIC KEY BLOCK-----"
 }
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 source /usr/libexec/helper-scripts/get_colors.sh
 
 ########################
@@ -144,11 +146,18 @@ source /usr/libexec/helper-scripts/get_colors.sh
 ################
 ## BEGIN MISC ##
 ################
+
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/has.sh
 source /usr/libexec/helper-scripts/has.sh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
 source /usr/libexec/helper-scripts/capitalize_first_char.sh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
 source /usr/libexec/helper-scripts/not_as_root.sh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/root_cmd.sh
 source /usr/libexec/helper-scripts/root_cmd.sh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 source /usr/libexec/helper-scripts/ip_syntax.sh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_os.sh
 source /usr/libexec/helper-scripts/get_os.sh
 
 get_installer_version() {
@@ -189,7 +198,7 @@ get_installer_package_version() {
 
 
 check_not_qubes_template() {
-  if ! test -f /run/qubes/this-is-templatevm; then
+  if [ ! -f /run/qubes/this-is-templatevm ]; then
     true "INFO: Not running inside a Qubes Template."
     return 0
   fi
@@ -199,7 +208,7 @@ check_not_qubes_template() {
   log warn "${underline}QubesOS Template Detection Test:${nounderline} 'Template detected'
 - The installer has detected being run inside a Qubes Template."
 
-  if test "${virtualbox_only}" = "1"; then
+  if [ "${virtualbox_only}" = "1" ]; then
     true "INFO: Running inside a Qubes Template. Continuing via '--virtualbox-only' option."
     return 0
   fi
@@ -218,6 +227,7 @@ check_not_qubes_template() {
 ## BEGIN OPTION PARSING ##
 ##########################
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/parse_opt.sh
 source /usr/libexec/helper-scripts/parse_opt.sh
 
 ########################
@@ -228,14 +238,15 @@ source /usr/libexec/helper-scripts/parse_opt.sh
 ## BEGIN LOGGING ##
 ###################
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 source /usr/libexec/helper-scripts/log_run_die.sh
 
 ## Wrapper to end the exit trap.
-end_exit(){
+end_exit() {
   ## Reset exit trap.
   trap - EXIT HUP INT QUIT ABRT ALRM TERM
   ## Kill tail PID.
-  if test -n "${tail_pid:-}"; then
+  if [ -n "${tail_pid:-}" ]; then
     ## Sleep less than a second so the file descriptors have enough time to
     ## output all the logs to the screen before the background job is killed.
     sleep 0.3
@@ -248,27 +259,28 @@ end_exit(){
 
 
 ## Handle exit trap with line it failed and its exit code.
-handle_exit(){
+handle_exit() {
+  local line_number line_above line_error line_below signal_code signal_caught
   true "BEGIN handle_exit() with args: $*"
   last_exit="${1}"
   line_number="${2:-0}"
   log_time
   ## Exit without errors.
-  test "${last_exit}" = "0" && end_exit
+  [ "${last_exit}" = "0" ] && end_exit
   ## Virtual Machine expected start issues.
-  test "${last_exit}" = "106" && end_exit
+  [ "${last_exit}" = "106" ] && end_exit
   ## Virtual Machine unexpected start issues.
-  test "${last_exit}" = "107" && end_exit
+  [ "${last_exit}" = "107" ] && end_exit
   ## Exit with errors.
   # shellcheck disable=SC3028
-  if test -n "${BASH_COMMAND:-}"; then
+  if [ -n "${BASH_COMMAND:-}" ]; then
     # shellcheck disable=SC2039,3028,3054
     log notice "Executed script, function, command executed: '${0}' '${FUNCNAME[1]}' '${BASH_COMMAND}'"
   else
     log notice "Executed script: '${0}'"
   fi
   ## some shells have a bug that displays line 1 as LINENO
-  if test "${line_number}" -gt 2; then
+  if [ "${line_number}" -gt 2 ]; then
     log error "Installer aborted due to an error."
     log error "No need to panic. Nothing is broken. Just some rare condition has been hit."
     log error "A solution likely exists for this issue."
@@ -312,7 +324,7 @@ handle_exit(){
 ## BEGIN SCRIPT SPECIFIC ##
 ###########################
 
-claim_unsupported_distro(){
+claim_unsupported_distro() {
   status="${1}"
   distro="${2}"
   log error "At this time, your Operating System is unsupported by the ${guest_pretty} Installer."
@@ -322,7 +334,7 @@ claim_unsupported_distro(){
 }
 
 ## Get necessary packages for your host system to be able to set the guest.
-get_host_pkgs(){
+get_host_pkgs() {
   log notice "Package Installation: installation of hypervisor-required packages... Please wait, as this could take a while..."
   if [ "$ubuntu_derivative_detected" = "1" ]; then
     install_package_debian_common
@@ -339,13 +351,18 @@ get_host_pkgs(){
 }
 
 
-get_independent_host_pkgs(){
+get_independent_host_pkgs() {
   ## Platform independent packages
   if has signify-openbsd; then
     ## fix Debian unconventional naming
-    signify(){
+    run_signify() {
       # shellcheck disable=SC2317
-      signify-openbsd "${@}"
+      ${user_switch_prefix}/usr/bin/signify-openbsd "${@}"
+    }
+  else
+    run_signify() {
+      # shellcheck disable=SC2317
+      ${user_switch_prefix}/usr/bin/signify "${@}"
     }
   fi
 
@@ -376,12 +393,12 @@ get_independent_host_pkgs(){
 
 nested_virtualization_test() {
   #nested_virtualization_detected=""
-  if test -z "${nested_virt_tool:-}"; then
+  if [ -z "${nested_virt_tool:-}" ]; then
     ## No hard fail, not a requirement, good to have only.
     user_warned_potential_startup_issue=true
     log warn "${underline}Nested Virtualization Test:${nounderline} Detection tool for nested virtualization is missing."
   else
-    if test "${dry_run}" = "1"; then
+    if [ "${dry_run}" = "1" ]; then
       log notice "Nested Virtualization Test: Skipping test due to dry_run mode."
     else
       ## Check if we are a guest of virtualization.
@@ -398,7 +415,7 @@ nested_virtualization_test() {
     fi
   fi
 
-  if test -f /usr/share/qubes/marker-vm; then
+  if [ -f /usr/share/qubes/marker-vm ]; then
     #nested_virtualization_detected=true
     user_warned_potential_startup_issue=true
     log warn "${underline}QubesOS Detection Test:${nounderline} 'Qubes detected'
@@ -532,7 +549,7 @@ kernel_modules_signed_only() {
 need_reboot_check_first() {
   ## Debian: /var/run/reboot-required
   ## Fedora: Does not have this.
-  if ! test -f /var/run/reboot-required ; then
+  if [ ! -f /var/run/reboot-required ]; then
     log info "Reboot Check Result: File /var/run/reboot-required does not exist, good."
     return 0
   fi
@@ -561,7 +578,7 @@ need_reboot_check_second() {
     return 0
   fi
 
-  if test "${ci}" = "1"; then
+  if [ "${ci}" = "1" ]; then
     true "INFO: Ignore need_reboot_check_second because running on CI."
     return 0
   fi
@@ -574,7 +591,9 @@ Debugging information: needs-restarting reported that a reboot is required."
 }
 
 
-update_sources(){
+update_sources() {
+  local update_output
+
   log notice "Updating package list..."
 
   ## global console_write_command
@@ -594,7 +613,7 @@ update_sources(){
   ## won't be updated.
 
   local simulate_only_maybe=""
-  if test "${noupdate}" = "1"; then
+  if [ "${noupdate}" = "1" ]; then
     ## Too slow to run over and over again during testing.
     simulate_only_maybe=true
     log warn "Package List Update: Simulate only, via '--noupdate' option."
@@ -638,7 +657,8 @@ ${package_manager_issue_extra_help_text}"
 
 
 check_upgrades_simulation() {
-  local upgrade_simulate_output
+  local upgrade_simulate_output packages_upgradable
+
   # shellcheck disable=SC2086
   if upgrade_simulate_output=$(root_cmd_loglevel=notice root_cmd ${pkg_mngr_upgrade_check} ${install_pkg_fasttrack_extra_args_maybe} 2>&1 | $console_write_command) ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
@@ -660,7 +680,7 @@ check_upgrades_simulation() {
     packages_upgradable=true
   fi
 
-  if test "${dry_run}" = "1"; then
+  if [ "${dry_run}" = "1" ]; then
     packages_upgradable=false
   fi
 
@@ -669,7 +689,7 @@ check_upgrades_simulation() {
     return 0
   fi
 
-  if test "${noupdate}" = "1"; then
+  if [ "${noupdate}" = "1" ]; then
     log warn "Package Upgrade Simulation: Package upgrades available but proceeding anyhow via '--noupdate' option."
     return 0
   fi
@@ -698,7 +718,9 @@ ${package_manager_issue_extra_help_text}"
 
 
 ## Install package only if not installed already.
-install_pkg(){
+install_pkg() {
+  local pkgs special_args
+
   pkgs="${*}"
   special_args=""
   pkg_not_installed=""
@@ -725,8 +747,8 @@ install_pkg(){
     esac
   done
 
-  if test -n "${pkg_not_installed}"; then
-    if test "${dry_run}" = "1"; then
+  if [ -n "${pkg_not_installed}" ]; then
+    if [ "${dry_run}" = "1" ]; then
       log notice "Skipping installation of the following packages via '--dry-run' option: '${pkg_not_installed}'"
       return 0
     fi
@@ -751,7 +773,9 @@ install_pkg(){
 ## Used to test for a 2nd time if packages exist or not, if not,
 ## install_pkg() failed above and best thing to do is abort because of missing
 ## dependencies.
-test_pkg(){
+test_pkg() {
+  local pkgs pkg
+
   pkgs="${*}"
   pkg_not_installed=""
   for pkg in ${pkgs}; do
@@ -762,8 +786,8 @@ test_pkg(){
     fi
   done
 
-  if test -n "${pkg_not_installed}"; then
-    if test "${dry_run}" = "1"; then
+  if [ -n "${pkg_not_installed}" ]; then
+    if [ "${dry_run}" = "1" ]; then
       log error "Failed to locate package(s) and ignoring via '--dry-run' option: '${pkg_not_installed}'"
     else
       log error "Failed to locate package(s): '${pkg_not_installed}'"
@@ -788,7 +812,9 @@ check_vm_running_general() {
 
 ## Abort if user wants to reimport a VM that is running.
 ## This function is called before attempting to reimport an image.
-check_vm_running_virtualbox(){
+check_vm_running_virtualbox() {
+  local vm
+
   vm="${1}"
   ## Paused state should be considered as running. Instead of grepping
   ## possible states, grep VM from list of running VMs.
@@ -804,7 +830,7 @@ check_vm_running_virtualbox(){
 
 
 ## Check if VM exists on VirtualBox
-check_vm_registered_virtualbox(){
+check_vm_registered_virtualbox() {
   local extra_message
   extra_message="$1"
 
@@ -824,18 +850,18 @@ check_vm_registered_virtualbox(){
         log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_workstation}' exists."
       fi
       ## Find discrepancies.
-      if test "${workstation_exists}" = "0" && test "${gateway_exists}" = "1" ; then
+      if [ "${workstation_exists}" = "0" ] && [ "${gateway_exists}" = "1" ]; then
         log info "Existing VM Check Result $extra_message: Gateway exists but Workstation doesn't."
       fi
-      if test "${workstation_exists}" = "1" && test "${gateway_exists}" = "0" ; then
+      if [ "${workstation_exists}" = "1" ] && [ "${gateway_exists}" = "0" ]; then
         log info "Existing VM Check Result $extra_message: Workstation exists but Gateway doesn't."
       fi
       vm_or_vms_already_existing_test_result=false
-      if test "${workstation_exists}" = "1" || test "${gateway_exists}" = "1" ; then
+      if [ "${workstation_exists}" = "1" ] || [ "${gateway_exists}" = "1" ]; then
         ## If either one of the guests exists, proceed.
         vm_or_vms_already_existing_test_result=true
       fi
-      if test "${vm_or_vms_already_existing_test_result}" = "false" ; then
+      if [ "${vm_or_vms_already_existing_test_result}" = "false" ]; then
         ## Both guests are still non-existing. Therefore return from this function.
         log info "Existing VM Check Result $extra_message: None existing yet, ok."
         return 0
@@ -857,8 +883,8 @@ check_vm_registered_virtualbox(){
 
 
 ## Check if VM exists using hypervisor tools.
-check_vm_exists_general(){
-  if test "${virtualbox_only}" = "1"; then
+check_vm_exists_general() {
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
 
@@ -875,39 +901,39 @@ check_vm_file_exists_virtualbox_general() {
   ## '/home/user/VirtualBox VMs/Whonix-Gateway-Xfce/Whonix-Gateway-Xfce.vbox'
   ## '/home/user/VirtualBox VMs/Whonix-Workstation-Xfce/Whonix-Workstation-Xfce.vbox'
 
-  if [ -z "${HOME+x}" ]; then
-    log warn "VM Import Check: Skip testing if there is an extraneous '.vbox' file because environment variable HOME is unset."
+  if [ -z "${user_home_dir+x}" ]; then
+    log warn "VM Import Check: Skip testing if there is an extraneous '.vbox' file because environment variable user_home_dir is unset."
     return 0
   fi
 
   local file_name_list=()
   case "${guest}" in
     whonix)
-      if test "${import_only}" = "gateway" ; then
-        file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_gateway}/${guest_full_vm_name_gateway}.vbox")
-      elif test "${import_only}" = "workstation" ; then
-        file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_workstation}/${guest_full_vm_name_workstation}.vbox")
+      if [ "${import_only}" = "gateway" ]; then
+        file_name_list+=("${user_home_dir}/VirtualBox VMs/${guest_full_vm_name_gateway}/${guest_full_vm_name_gateway}.vbox")
+      elif [ "${import_only}" = "workstation" ]; then
+        file_name_list+=("${user_home_dir}/VirtualBox VMs/${guest_full_vm_name_workstation}/${guest_full_vm_name_workstation}.vbox")
       else
-        file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_gateway}/${guest_full_vm_name_gateway}.vbox")
-        file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_workstation}/${guest_full_vm_name_workstation}.vbox")
+        file_name_list+=("${user_home_dir}/VirtualBox VMs/${guest_full_vm_name_gateway}/${guest_full_vm_name_gateway}.vbox")
+        file_name_list+=("${user_home_dir}/VirtualBox VMs/${guest_full_vm_name_workstation}/${guest_full_vm_name_workstation}.vbox")
       fi
     ;;
     kicksecure)
-      file_name_list+=("$HOME/VirtualBox VMs/${guest_full_vm_name_kicksecure}/${guest_full_vm_name_kicksecure}.vbox")
+      file_name_list+=("${user_home_dir}/VirtualBox VMs/${guest_full_vm_name_kicksecure}/${guest_full_vm_name_kicksecure}.vbox")
     ;;
   esac
 
   local file_name_item
   for file_name_item in "${file_name_list[@]}" ; do
-    if test -e "$file_name_item" ; then
+    if test_file -e "$file_name_item" ; then
       log warn "VM Import Check: Inconsistent state.
 This might have happened by previously using VirtualBox GUI 'Remove...' with 'Remove only' instead of 'Delete all files'.
 File '$file_name_item' exists but there is no associated VM registered in VirtualBox."
-      if test -z "${import_only}"; then
+      if [ -z "${import_only}" ]; then
         die 1 "VM Import Check: Aborting because of inconsistent state and missing '--import-only' option."
       fi
-      if test "${destroy_existing_guest}" != "1"; then
-        die 1 "VM Import Check: Aborting because ofinconsistent state and missing '--destroy-existing-guest' option."
+      if [ "${destroy_existing_guest}" != "1" ]; then
+        die 1 "VM Import Check: Aborting because of inconsistent state and missing '--destroy-existing-guest' option."
       fi
       log warn "VM superfluous '.vbox' File Deletion: Removing file '$file_name_item' via '--import-only=${import_only}' and '--destroy-existing-guest' option."
       log_run warn rm -f -- "${file_name_item}"
@@ -917,8 +943,8 @@ File '$file_name_item' exists but there is no associated VM registered in Virtua
 
 
 vm_delete_kicksecure() {
-  if test "${vm_or_vms_already_existing_test_result}" = "true"; then
-    log_run notice vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
+  if [ "${vm_or_vms_already_existing_test_result}" = "true" ]; then
+    log_run notice ${user_switch_prefix}vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
   else
     log notice "VM Deletion: Kicksecure VM does not exist, no need to delete, ok."
   fi
@@ -926,8 +952,8 @@ vm_delete_kicksecure() {
 
 
 vm_delete_gateway() {
-  if test "${gateway_exists}" = "1"; then
-    log_run notice vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
+  if [ "${gateway_exists}" = "1" ]; then
+    log_run notice ${user_switch_prefix}vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
   else
     log notice "VM Deletion: Gateway VM does not exist, no need to delete, ok."
   fi
@@ -935,8 +961,8 @@ vm_delete_gateway() {
 
 
 vm_delete_workstation() {
-  if test "${workstation_exists}" = "1"; then
-    log_run notice vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
+  if [ "${workstation_exists}" = "1" ]; then
+    log_run notice ${user_switch_prefix}vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
   else
     log notice "VM Deletion: Workstation VM does not exist, no need to delete, ok."
   fi
@@ -946,37 +972,38 @@ vm_delete_workstation() {
 vm_delete_maybe() {
   case "${guest}" in
     whonix)
-      if test "${destroy_existing_guest}" = "1"; then
+      if [ "${destroy_existing_guest}" = "1" ]; then
         ## '--destroy-existing-guest' option is set.
-        if test "${import_only}" = "gateway" ; then
+        if [ "${import_only}" = "gateway" ]; then
           log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--import-only=gateway' option... (If it exists.)"
           vm_delete_gateway
-        elif test "${import_only}" = "workstation" ; then
+        elif [ "${import_only}" = "workstation" ]; then
           log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--import-only=workstation' option... (If it exists.)"
           vm_delete_workstation
-        elif test "${import_only}" = "both" ; then
+        elif [ "${import_only}" = "both" ]; then
           log warn "VM Deletion: 'yes' - Deleting previously imported gateway via '--import-only=both' option... (If it exists.)"
           vm_delete_gateway
           log warn "VM Deletion: 'yes' - Deleting previously imported workstation via '--import-only=both' option... (If it exists.)"
           vm_delete_workstation
         else
-          die 1 "VM Deletion: 'no' - Not deleting previously any imported VMs because '--import-only' option is not set..."
+          die 1 "VM Deletion: 'no' - Not deleting any previously imported VMs because '--import-only' option is not set..."
         fi
       else
         ## '--destroy-existing-guest' option not yet.
-        if test -n "${import_only}" ; then
-          if test "${gateway_exists}" = "1" && test "${import_only}" = "gateway" ; then
+        if [ -n "${import_only}" ]; then
+          if [ "${gateway_exists}" = "1" ] && [ "${import_only}" = "gateway" ]; then
             die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'gateway', but it already exists and '--destroy-existing-guest' option was not set."
-          elif test "${workstation_exists}" = "1" && test "${import_only}" = "workstation" ; then
+          elif [ "${workstation_exists}" = "1" ] && [ "${import_only}" = "workstation" ] ; then
             die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
           fi
+        ## FIXME: Shouldn't import_only=both be handled here?
         else
           log info "Existing VM Check: Neither '--destroy-existing-guest' nor '--import-only' option was set, ok."
         fi
       fi
       ;;
     kicksecure)
-      if test "${destroy_existing_guest}" = "1"; then
+      if [ "${destroy_existing_guest}" = "1" ]; then
         ## If VMs exists and '--destroy-existing-guest' is set, remove VMs as they are gonna
         ## be imported later by main.
         log warn "VM Deletion: 'yes' - Deleting previously imported Virtual Machine(s) via '--destroy-existing-guest' option. (If it exists.)"
@@ -990,8 +1017,8 @@ vm_delete_maybe() {
 
 
 ## Check if guest should start or not
-check_guest_boot(){
-  if test "${virtualbox_only}" = "1"; then
+check_guest_boot() {
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
   if [ "${hypervisor}" = "kvm" ]; then
@@ -1003,10 +1030,10 @@ check_guest_boot(){
 
   case "${guest}" in
     whonix)
-      if test "${gateway_exists}" = "1" ; then
+      if [ "${gateway_exists}" = "1" ]; then
         log notice "Available guest: '${guest_full_vm_name_gateway}'"
       fi
-      if test "${workstation_exists}" = "1" ; then
+      if [ "${workstation_exists}" = "1" ]; then
         log notice "Available guest: '${guest_full_vm_name_workstation}'"
       fi
       ;;
@@ -1030,7 +1057,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel modules have not been load yet.
   - Kernel modules can be load in theory, should be loaded by now, but are not.
   - This is a VirtualBox installation issue."
-      if ! test "${ci}" = "1"; then
+      if [ "${ci}" != "1" ]; then
         virtualbox_start_failed
       fi
     else
@@ -1038,7 +1065,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
   - The system administrator might have disabled module loading.
   - Module loading might have been disabled by Kicksecure package security-misc.
   - You can re-run this installer again after reboot."
-      if ! test "${ci}" = "1"; then
+      if [ "${ci}" != "1" ]; then
         virtualbox_start_failed
       fi
     fi
@@ -1048,7 +1075,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 
   log info "VM Start: Checking if user wants to start Virtual Machine(s) now..."
 
-  if test "${qubes_template_detected}" = "true"; then
+  if [ "${qubes_template_detected}" = "true" ]; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} Not starting VirtualBox because running inside a Qubes Template."
     ## Avoid needlessly starting VirtualBox inside a Qubes Template.
     ## That would not be useful, would create unnecessary files inside the Template's home folder and might be confusing.
@@ -1056,19 +1083,23 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     ## of using a Qubes App Qube for building VirtualBox VM images.
     ## Run end_installer here, because no VMs were downloaded anyhow if a Qubes Template was detected.
     end_installer
-  elif test "${no_boot}" = "1"; then
+  elif [ -n "${user_switch_prefix}" ]; then
+    log notice "${underline}VirtualBox Startup Check:${nounderline} Not starting VirtualBox because user is installing VMs as another user."
+    ## Starting VMs installed under a different user account is difficult and could cause serious problems.
+    end_installer
+  elif [ "${no_boot}" = "1" ]; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} User declined to start VirtualBox via '--no-boot' option."
     log notice "VirtualBox can be started manually."
     ## Not running end_installer here, because that happens below and we want the following output messages.
     #end_installer
-  elif test "${non_interactive}" = "1"; then
+  elif [ "${non_interactive}" = "1" ]; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} Starting VirtualBox automatically via '--non-interactive' option."
-    if test "${virtualbox_only}" = "1"; then
+    if [ "${virtualbox_only}" = "1" ]; then
       start_virtualbox_gui
       end_installer
     fi
   else
-    if test "${virtualbox_only}" = "1"; then
+    if [ "${virtualbox_only}" = "1" ]; then
       log notice "${bold}Question:${nobold} Do you want to start VirtualBox now? [y/n] (default: yes): "
     else
       log notice "${bold}Question:${nobold} Do you want to start VirtualBox and the ${guest_pretty} Virtual Machine(s) now? [y/n] (default: yes): "
@@ -1080,7 +1111,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     case ${response} in
       ""|[Yy]|[Yy][Ee][Ss])
         log notice "${underline}VirtualBox Startup Check:${nounderline} User accepted to start VirtualBox."
-        if test "${virtualbox_only}" = "1"; then
+        if [ "${virtualbox_only}" = "1" ]; then
           start_virtualbox_gui
           end_installer
         fi
@@ -1093,21 +1124,21 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
   fi
 
   log info "Virtual Machine(s) already exist."
-  if test "${redownload}" != "1"; then
+  if [ "${redownload}" != "1" ]; then
     log notice "Hint: If you would like to redownload the image, read about '--redownload' option (safe)."
   fi
-  if test "${destroy_existing_guest}" != "1"; then
+  if [ "${destroy_existing_guest}" != "1" ]; then
     log notice "Hint: If you would like to delete a VM and re-import, read about '--destroy-existing-guest' option (danger)."
   fi
 
-  if test "${no_boot}" = "1"; then
+  if [ "${no_boot}" = "1" ]; then
     ## Skip guest boot
     log notice "${underline}VM Startup Check:${nounderline} User declined to start Virtual Machine(s) via '--no-boot' option."
     log notice "Virtual Machine(s) can be started manually."
     end_installer
   fi
 
-  if test "${non_interactive}" = "1"; then
+  if [ "${non_interactive}" = "1" ]; then
     ## start guest without interaction
     log notice "${underline}VM Startup Check:${nounderline} VM start agreed by the user via '--non-interactive' setting."
     ## Try to start VMs before trying to start VirtualBox Manager,
@@ -1132,12 +1163,12 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
 }
 
 
-import_guest(){
-  if test "${virtualbox_only}" = "1"; then
+import_guest() {
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
 
-  if test "${no_import}" = "1"; then
+  if [ "${no_import}" = "1" ]; then
     log notice "VM Import: Not importing guest via '--import-only' option."
     end_installer
   fi
@@ -1168,9 +1199,12 @@ extract_vm_name_from_virtualbox_ova() {
 
 
 ## Import VirtualBox images
-import_virtualbox(){
+import_virtualbox() {
+  local vbox_arg_normal vbox_arg_general vm_purge vbox_arg_importonly \
+    vsys_0_actual vsys_1_actual
+
   ## Check how many systems to import.
-  ## vsys 0: gateway
+  ## vsys 0: gateway or Kicksecure
   ## vsys 1: workstation
 
   case "${guest}" in
@@ -1200,8 +1234,8 @@ import_virtualbox(){
   esac
 
   local do_continue
-  if test "${vm_or_vms_already_existing_test_result}" = "true" ; then
-    if test -n "${import_only}"; then
+  if [ "${vm_or_vms_already_existing_test_result}" = "true" ]; then
+    if [ -n "${import_only}" ]; then
       do_continue=yes
       log info "VM Import Check Result: Continue via '--import-only' option."
     else
@@ -1256,7 +1290,7 @@ import_virtualbox(){
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
-  if test -n "${import_only}" && test "${import_only}" != "both"; then
+  if [ -n "${import_only}" ] && [ "${import_only}" != "both" ]; then
     # shellcheck disable=SC2086
     log_run notice ${vboxmanage_locale_english} unregistervm "${vm_purge}" --delete ||
       die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous VM '${vm_purge}'."
@@ -1268,15 +1302,15 @@ import_virtualbox(){
 
 
 ## Import KVM images
-import_kvm(){
+import_kvm() {
   ## placeholder
   log notice "KVM import feature does not exist. Ending run."
   exit 0
 }
 
 
-start_guest(){
-  if test "${virtualbox_only}" = "1"; then
+start_guest() {
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
   case "${hypervisor}" in
@@ -1297,10 +1331,10 @@ start_virtualbox_vm() {
   ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
   case "${guest}" in
     whonix)
-      if test "${gateway_exists}" = "1" ; then
+      if [ "${gateway_exists}" = "1" ]; then
         log_run notice vboxmanage startvm "${guest_full_vm_name_gateway}" || virtualbox_start_failed
       fi
-      if test "${workstation_exists}" = "1" ; then
+      if [ "${workstation_exists}" = "1" ]; then
         log_run notice vboxmanage startvm "${guest_full_vm_name_workstation}" || virtualbox_start_failed
       fi
       ;;
@@ -1320,7 +1354,7 @@ start_virtualbox_gui() {
 
   run_background=1
   log_run notice virtualbox
-  if ! test "${dry_run}" = "1"; then
+  if [ "${dry_run}" != "1" ]; then
     log notice "VirtualBox Manager Startup Result: Launched VirtualBox GUI into the background. (pid: '$background_pid')"
   fi
   run_background=""
@@ -1345,13 +1379,15 @@ virtualbox_start_failed() {
 
 
 ## Detect if repository is configured in the sources list.
-get_pattern_sources_debian(){
+get_pattern_sources_debian() {
+  local pattern
+
   file="${1}"
   pattern="${2}"
   grep -v "#" "${file}" | grep -q -E "${pattern}" || return 1
 }
 
-write_sources_debian(){
+write_sources_debian() {
   url="${1}"
   file="${2}"
   echo "${url}" | root_cmd tee "${file}" ||
@@ -1361,16 +1397,17 @@ write_sources_debian(){
 
 ## https://stackoverflow.com/a/54239534
 ## "apt list --installed $pkg" does not fail if package is not installed.
-check_installed_debian(){
+check_installed_debian() {
   status="$(dpkg-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
-  if test "$?" != 0 || test "$status" != "installed"; then
+  # shellcheck disable=SC2181
+  if [ "$?" != 0 ] || [ "$status" != "installed" ]; then
     return 1
   fi
   return 0
 }
 
 
-install_package_fedora_common(){
+install_package_fedora_common() {
   pkg_mngr="dnf"
   pkg_mngr_install="${pkg_mngr} install --assumeyes --setopt=install_weak_deps=False"
   ## Fedora lacks an equivalent to Debian's '--error-on=any'.
@@ -1391,7 +1428,7 @@ install_package_fedora_common(){
   update_sources
   #check_upgrades_simulation
 
-  if test "${virtualbox_only}" = "1"; then
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
 
@@ -1401,7 +1438,9 @@ install_package_fedora_common(){
 }
 
 
-install_package_debian_common(){
+install_package_debian_common() {
+  local dpkg_audit_output
+
   pkg_mngr="apt-get"
   pkg_mngr_install="${pkg_mngr} install --yes --no-install-recommends"
   pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
@@ -1432,7 +1471,7 @@ install_package_debian_common(){
   }
 
   dpkg_audit_output="$(dpkg --audit 2>&1)" || true
-  if test -n "${dpkg_audit_output}"; then
+  if [ -n "${dpkg_audit_output}" ]; then
     die 1 "${underline}DPKG Audit Test Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor}
 - What happened in simple terms? This installer has performed a check to ensure it's sane to proceed, which has failed.
 - What exactly happened? The command 'dpkg --audit' generated output, signaling a system issue.
@@ -1454,7 +1493,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
 
   ## Dumping all sources.list files could have privacy implications.
   ## Hence only doing it for '--dev'.
-  if test "${dev}" = "1"; then
+  if [ "${dev}" = "1" ]; then
     if [ -f /etc/apt/sources.list ]; then
       cat /etc/apt/sources.list
     fi
@@ -1470,7 +1509,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
 
   install_pkg lsb-release
 
-  if test "${virtualbox_only}" = "1"; then
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
 
@@ -1478,7 +1517,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
   true "kali_derivative_detected: $kali_derivative_detected"
 
   ## https://bugs.debian.org/1066313
-  if test "${debian_testing_or_unstable_detected}" != "1" && test "${kali_derivative_detected}" != "1"; then
+  if [ "${debian_testing_or_unstable_detected}" != "1" ] && [ "${kali_derivative_detected}" != "1" ]; then
     true "INFO: either debian_testing_or_unstable_detected or kali_derivative_detected = 1"
     install_pkg torsocks
   fi
@@ -1486,14 +1525,16 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
 }
 
 
-add_user_to_vbox_group(){
+add_user_to_vbox_group() {
+  local id_of_user
+
   id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
   if id -nG "${id_of_user}" | grep -qw "${virtualbox_linux_user_group}\$"; then
     log info "Linux Group Configuration: Account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
 
-  if test "${debian_derivative_detected}" = "1"; then
+  if [ "${debian_derivative_detected}" = "1" ]; then
     root_cmd adduser "${id_of_user}" "${virtualbox_linux_user_group}" || \
       die 1 "${underline}Linux Group Configuration: adduser to Linux user group virtualbox:${nounderline} Failed to add user '$id_of_user' to group '${virtualbox_linux_user_group}'."
   else
@@ -1504,9 +1545,9 @@ add_user_to_vbox_group(){
 
 
 ## End installation of VirtualBox on Fedora and derived systems.
-install_virtualbox_fedora_common_end(){
+install_virtualbox_fedora_common_end() {
   if ! has vboxmanage ; then
-    if test "${dry_run}" = "1"; then
+    if [ "${dry_run}" = "1" ]; then
       log error "Failed to locate 'vboxmanage' program. Ignoring via '--dry-run' option."
     else
       die 1 "${underline}vboxmanage test:${nounderline} Failed to locate 'vboxmanage' program."
@@ -1518,9 +1559,9 @@ install_virtualbox_fedora_common_end(){
 
 
 ## End installation of VirtualBox on Debian and derived systems.
-install_virtualbox_debian_common_end(){
+install_virtualbox_debian_common_end() {
   if ! has vboxmanage ; then
-    if test "${dry_run}" = "1"; then
+    if [ "${dry_run}" = "1" ]; then
       log error "Failed to locate 'vboxmanage' program. - Ignoring via '--dry-run' option."
     else
       die 1 "${underline}vboxmanage test:${nounderline} Failed to locate 'vboxmanage' program."
@@ -1536,7 +1577,7 @@ kernel_modules_check() {
     return 0
   fi
 
-  if ! test -e /dev/vboxdrv ; then
+  if [ ! -e /dev/vboxdrv ]; then
     kernel_module_has_been_load=false
     user_warned_potential_startup_issue=true
     log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file /dev/vboxdrv does not exist. This probably means that the vboxdrv kernel module has not been load yet."
@@ -1566,11 +1607,24 @@ kernel_modules_check() {
 }
 
 
-install_repositories_for_virtualbox_on_debian(){
+install_repositories_for_virtualbox_on_debian() {
+  local distro_codename_real distro_codename_debian \
+    distro_codename_kicksecure_use oracle_clearnet oracle_prefix_debsource \
+    oracle_suffix_debsource unstable_clearnet unstable_onion \
+    unstable_prefix_debsource unstable_suffix_debsource backports_clearnet \
+    backports_onion backports_prefix_debsource backports_suffix_debsource \
+    fasttrack_clearnet fasttrack_onion fasttrack_prefix_debsource \
+    fasttrack_suffix_debsource kicksecure_clearnet kicksecure_onion \
+    kicksecure_prefix_debsource kicksecure_suffix_debsource kali_clearnet \
+    kali_prefix_debsource kali_suffix_debsource apt_torified apt_onion \
+    protocol_prefix_debsource kali_domain_debsource oracle_domain_debsource \
+    kicksecure_domain_debsource unstable_domain_debsource \
+    fasttrack_domain_debsource backports_domain_debsource
+
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="${distro_codename_real}"
   ## Oracle does not have a Kali dist section, use Debian stable.
-  if test "${kali_derivative_detected}" = "1"; then
+  if [ "${kali_derivative_detected}" = "1" ]; then
     distro_codename_debian="bookworm"
   fi
 
@@ -1582,7 +1636,7 @@ install_repositories_for_virtualbox_on_debian(){
 #   fi
 #   log info "VirtualBox Package Availability Test Result: Not yet Available. Enabling additional repository..."
 
-  if test "${dev}" = "1"; then
+  if [ "${dev}" = "1" ]; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
   else
     distro_codename_kicksecure_use="${distro_codename_common_use}"
@@ -1594,7 +1648,7 @@ install_repositories_for_virtualbox_on_debian(){
   oracle_file_debsource="/etc/apt/sources.list.d/oracle.list"
   oracle_prefix_debsource="deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.asc] "
   ## Oracle does not have a Kali dist section, use Debian stable.
-  if test "${kali_derivative_detected}" = "1"; then
+  if [ "${kali_derivative_detected}" = "1" ]; then
     oracle_suffix_debsource="/virtualbox/debian ${distro_codename_debian} contrib"
   else
     oracle_suffix_debsource="/virtualbox/debian ${distro_codename_common_use} contrib"
@@ -1651,7 +1705,7 @@ install_repositories_for_virtualbox_on_debian(){
   log warn "APT Repository List: Deb822-style Format is unsupported"
 
   for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
-    test -f "${file}" || continue
+    [ -f "${file}" ] || continue
 
     if get_pattern_sources_debian "${file}" "${oracle_clearnet}"
     then
@@ -1705,7 +1759,7 @@ install_repositories_for_virtualbox_on_debian(){
     fi
   done
 
-  if test "${apt_torified}" = "1"; then
+  if [ "${apt_torified}" = "1" ]; then
     ## If apt-transport-tor is not installed, we shouldn't, because we got
     ## a false positive that updates should be torified. This can happen if
     ## user configured the sources list to be torified but hasn't installed
@@ -1717,31 +1771,31 @@ install_repositories_for_virtualbox_on_debian(){
   fi
 
   ## If user has onion repositories configured, prefer it.
-  if test "${apt_onion}"; then
+  if [ "${apt_onion}" = '1' ]; then
     protocol_prefix_debsource="tor+http://"
     connection_type_debsource="onion"
-    if test "${oracle_repo}" = "1" || test "${kali_derivative_detected}" = "1"; then
-      if test "${oracle_repo}" = "1"; then
+    if [ "${oracle_repo}" = "1" ] || [ "${kali_derivative_detected}" = "1" ]; then
+      if [ "${oracle_repo}" = "1" ]; then
         log warn "Oracle doesn't provide onion repositories."
       fi
-      if test "${kali_derivative_detected}" = "1"; then
+      if [ "${kali_derivative_detected}" = "1" ]; then
         log warn "Kali doesn't provide onion repositories."
       fi
       kali_domain_debsource="${kali_clearnet}"
       oracle_domain_debsource="${oracle_clearnet}"
-      if test "${apt_torified}"; then
-        if test "${oracle_repo}" = "1"; then
+      if [ "${apt_torified}" = '1' ]; then
+        if [ "${oracle_repo}" = "1" ]; then
           log warn "Fallback Oracle repository to torified clearnet"
         fi
-        if test "${kali_derivative_detected}" = "1"; then
+        if [ "${kali_derivative_detected}" = "1" ]; then
           log warn "Fallback Kali repository to torified clearnet"
         fi
         protocol_prefix_debsource="tor+https://"
       else
-        if test "${oracle_repo}" = "1"; then
+        if [ "${oracle_repo}" = "1" ]; then
           log warn "Fallback Oracle repository to clearnet"
         fi
-        if test "${kali_derivative_detected}" = "1"; then
+        if [ "${kali_derivative_detected}" = "1" ]; then
           log warn "Fallback Kali repository to clearnet"
         fi
         protocol_prefix_debsource="https://"
@@ -1755,7 +1809,7 @@ install_repositories_for_virtualbox_on_debian(){
     fasttrack_domain_debsource="${fasttrack_onion}"
     backports_domain_debsource="${backports_onion}"
   ## If user has torified repositories configured, prefer it.
-  elif test "${apt_torified}"; then
+  elif [ "${apt_torified}" = '1' ]; then
     protocol_prefix_debsource="tor+https://"
     connection_type_debsource="torified clearnet"
     oracle_domain_debsource="${oracle_clearnet}"
@@ -1782,7 +1836,7 @@ install_repositories_for_virtualbox_on_debian(){
   backports_url="${backports_prefix_debsource} ${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
   kali_url="${kali_prefix_debsource} ${protocol_prefix_debsource}${kali_domain_debsource}${kali_suffix_debsource}"
 
-  if test "${oracle_repo}" = "1"; then
+  if [ "${oracle_repo}" = "1" ]; then
     oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
     install_oracle_repository_debian
     return 0
@@ -1814,7 +1868,7 @@ install_repositories_for_virtualbox_on_debian(){
 }
 
 
-install_oracle_repository_fedora(){
+install_oracle_repository_fedora() {
   oracle_found=""
   if dnf repolist --all virtualbox | grep -q "."; then
     oracle_found="1"
@@ -1822,15 +1876,15 @@ install_oracle_repository_fedora(){
   if dnf repolist --disabled virtualbox | grep -q "."; then
     dnf config-manager --set-enabled virtualbox
   fi
-  if test "${oracle_found}" = "1"; then
+  if [ "${oracle_found}" = "1" ]; then
     log info "Oracle Repository: Skipped adding Oracle repository because it was already found."
   else
     log notice "Oracle Repository: Adding Oracle's clearnet repository to /etc/yum.repos.d/oracle.repo"
-    if test -f /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle; then
+    if [ -f /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle ]; then
       log info "Oracle Repository: Key /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle already exists."
     else
       echo "${oracle_pgp}" | \
-        tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
+        ${user_switch_prefix}tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
       echo "${oracle_pgp}" | \
         root_cmd tee /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle >/dev/null
       ## Optional: the key will be imported when trying to use the repository
@@ -1859,16 +1913,16 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
 }
 
 
-install_oracle_repository_debian(){
-  if test "${oracle_found}" = "1"; then
+install_oracle_repository_debian() {
+  if [ "${oracle_found}" = "1" ]; then
     log info "Oracle Repository: Skipped adding Oracle repository because it was already found."
   else
     log notice "Oracle Repository: Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_debsource}"
-    if test -f /usr/share/keyrings/oracle.asc ; then
+    if [ -f /usr/share/keyrings/oracle.asc ]; then
       log info "Oracle Repository: Key /usr/share/keyrings/oracle.asc already exists."
     else
       echo "${oracle_pgp}" | \
-        tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
+        ${user_switch_prefix}tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
       echo "${oracle_pgp}" | \
         root_cmd tee /usr/share/keyrings/oracle-virtualbox-2016.asc >/dev/null
     fi
@@ -1886,14 +1940,14 @@ install_kicksecure_repository_debian() {
   ## Not using extrepo directly because it does not support torified and/or onion repositories:
   ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037254
 
-  if test -f /usr/share/keyrings/derivative.asc ; then
+  if [ -f /usr/share/keyrings/derivative.asc ]; then
     log info "Kicksecure Repository: Key /usr/share/keyrings/derivative.asc already exists."
     log info "Kicksecure Repository: Not copying /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc to /usr/share/keyrings/derivative.asc."
   else
     root_cmd cp --verbose /usr/share/extrepo/offline-data/debian/bullseye/whonix.asc /usr/share/keyrings/derivative.asc
   fi
 
-  if test "${kicksecure_found}" = "1"; then
+  if [ "${kicksecure_found}" = "1" ]; then
     log info "Kicksecure Repository: Skipped adding Kicksecure repository because it was already found."
   else
     log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
@@ -1903,7 +1957,7 @@ install_kicksecure_repository_debian() {
 
 
 install_kali_repository_debian() {
-  if test "${kali_found}" = "1" && test "${kali_found_with_contrib}" = "1"; then
+  if [ "${kali_found}" = "1" ] && [ "${kali_found_with_contrib}" = "1" ]; then
     log info "APT Repository Configuration: Skipped adding additional APT repositories because 'kali' (with 'contrib') were already found."
     return 0
   fi
@@ -1914,7 +1968,7 @@ install_kali_repository_debian() {
 
 
 install_unstable_repository_debian() {
-  if test "${unstable_found}" = "1" && test "${unstable_found_with_contrib}" = "1"; then
+  if [ "${unstable_found}" = "1" ] && [ "${unstable_found_with_contrib}" = "1" ]; then
     log info "APT Repository Configuration: Skipped adding additional APT repositories because 'unstable' (with 'contrib') were already found."
     return 0
   fi
@@ -1941,14 +1995,14 @@ Pin-Priority: 650
 
 
 install_backports_and_fasttrack_repository_debian() {
-  if test "${backports_found}" = "1"; then
+  if [ "${backports_found}" = "1" ]; then
     log info "APT Repository Configuration: Skipped adding 'backports' repository because it was already found."
   else
     log notice "APT Repository Configuration: Adding 'backports' ${connection_type_debsource} repository to ${backports_file_debsource}"
     write_sources_debian "${backports_url}" "${backports_file_debsource}"
   fi
 
-  if test "${fasttrack_found}" = "1"; then
+  if [ "${fasttrack_found}" = "1" ]; then
     log info "APT Repository Configuration: Skipped adding 'fasttrack' repository because it was already found."
   else
     log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
@@ -1965,9 +2019,12 @@ install_backports_and_fasttrack_repository_debian() {
 
 
 virtualbox_installation_failure_debug() {
+  local virtualbox_dkms_main_folder latest_folder \
+  virtualbox_dkms_latest_folder make_log
+
   virtualbox_dkms_main_folder=/var/lib/dkms/virtualbox
 
-  if ! test -d "$virtualbox_dkms_main_folder" ; then
+  if [ ! -d "$virtualbox_dkms_main_folder" ]; then
     log notice "VirtualBox Installation Debug: folder '$virtualbox_dkms_main_folder' does not exist."
     return 0
   fi
@@ -1987,7 +2044,7 @@ virtualbox_installation_failure_debug() {
 
   virtualbox_dkms_latest_folder="${virtualbox_dkms_main_folder}/${latest_folder}"
 
-  if ! test -d "$virtualbox_dkms_latest_folder" ; then
+  if [ ! -d "$virtualbox_dkms_latest_folder" ]; then
     log notice "VirtualBox Installation Debug: virtualbox_dkms_latest_folder '$virtualbox_dkms_latest_folder' is not a directory."
     log_run notice ls -la "$virtualbox_dkms_latest_folder" || true
     return 0
@@ -1995,13 +2052,13 @@ virtualbox_installation_failure_debug() {
 
   make_log="${virtualbox_dkms_latest_folder}/build/make.log"
 
-  if ! test -f "$make_log" ; then
+  if [ ! -f "$make_log" ]; then
     log notice "VirtualBox Installation Debug: make_log '$make_log' does not exist."
     log_run notice ls -la "$virtualbox_dkms_latest_folder" || true
     return 0
   fi
 
-  if ! test -r "$make_log" ; then
+  if [ ! -r "$make_log" ]; then
     log notice "VirtualBox Installation Debug: make_log '$make_log' not readable."
     log_run notice ls -la "$virtualbox_dkms_latest_folder" || true
     log_run notice ls -la "$make_log" || true
@@ -2013,10 +2070,12 @@ virtualbox_installation_failure_debug() {
 
 
 ## Install VirtualBox on Fedora
-install_virtualbox_fedora(){
+install_virtualbox_fedora() {
+  local has_virtualbox_qt
+
   install_pkg kernel-headers kernel-devel dkms
 
-  get_virtualbox_version_fedora(){
+  get_virtualbox_version_fedora() {
     ## Too many issues with auto detection. Therefore hardcoded.
     virtualbox_qt_package_name="VirtualBox-7.0"
     return 0
@@ -2045,7 +2104,7 @@ install_virtualbox_fedora(){
   fi
 
   ## Guard against adding extraneous repositories.
-  if test "${has_virtualbox_qt}" != "1"; then
+  if [ "${has_virtualbox_qt}" != "1" ]; then
     log notice "VirtualBox Installation: Preparing to install VirtualBox..."
     install_oracle_repository_fedora
     ## Does not work.
@@ -2065,8 +2124,10 @@ ${underline}VirtualBox Package Version Detection:${nounderline} 'FAIL'"
 
 
 ## Discover the VirtualBox version to install in Debian and derivatives.
-get_virtualbox_version_debian(){
-  if test "${oracle_repo}" = "1"; then
+get_virtualbox_version_debian() {
+  local virtualbox_version
+
+  if [ "${oracle_repo}" = "1" ]; then
     virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
     virtualbox_version=$(echo "$virtualbox_version" | tail -1)
     virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
@@ -2074,7 +2135,7 @@ get_virtualbox_version_debian(){
     virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
     ## Package virtualbox-guest-additions-iso is unavailable from Oracle repository.
     virtualbox_guest_additions_iso_package_name=""
-    if test -z "$virtualbox_version"; then
+    if [ -z "$virtualbox_version" ]; then
       ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
       return 1
     fi
@@ -2092,8 +2153,10 @@ get_virtualbox_version_debian(){
 
 ## Install VirtualBox on Debian
 ## See also comments for install_virtualbox_fedora.
-install_virtualbox_debian(){
-  if test "${oracle_repo}" = "1"; then
+install_virtualbox_debian() {
+  local linux_image linux_headers
+
+  if [ "${oracle_repo}" = "1" ]; then
     ## Workaround for undeclared dependencies bug by virtualbox.org (Oracle) repository.
     ##
     ## udev:
@@ -2124,14 +2187,16 @@ install_virtualbox_debian(){
 
 
 ## Install VirtualBox on Ubuntu
-install_virtualbox_ubuntu(){
+install_virtualbox_ubuntu() {
   install_pkg virtualbox-qt virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
   install_virtualbox_debian_common_end
 }
 
 
 ## Helper to install signify on different systems.
-install_signify(){
+install_signify() {
+  local pkg_name
+
   pkg_name="${1:-signify}"
   has "${pkg_name}" && return 0
   install_pkg "${pkg_name}"
@@ -2139,7 +2204,9 @@ install_signify(){
 
 
 ## Test if user accepts the license, if not, abort.
-check_license(){
+check_license() {
+  local license_agreement
+
   if [ "${non_interactive}" = "1" ]; then
     log notice "License Check: 'success' - User agreement confirmed via '--non-interactive' option."
     return 0
@@ -2148,7 +2215,7 @@ check_license(){
   log notice "The license will be shown in 5 seconds."
   log notice "(Use '-n' or '--non-interactive' for non-interactive mode.)"
 
-  test "${dry_run}" != "1" && sleep 5
+  [ "${dry_run}" != "1" ] && sleep 5
 
   local dialog_box
   dialog_box=""
@@ -2205,8 +2272,8 @@ check_license(){
 }
 
 
-get_checkhash_cmd(){
-  if test "${virtualbox_only}" = "1"; then
+get_checkhash_cmd() {
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
   while true; do
@@ -2217,20 +2284,22 @@ get_checkhash_cmd(){
     #has digest && checkhash="digest -a sha512 -c" && break
     ## TODO: How to make openssl check the file without workarounds?
     #has openssl && checkhash="openssl dgst -sha512 -r" && break
-    test -z "${checkhash}" && {
+    [ -z "${checkhash}" ] && {
       die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
     }
   done
 }
 
-get_transfer_cmd(){
+get_transfer_cmd() {
+  local transfer_io_timeout transfer_connect_timeout
+
   ## curl|rsync
 
   ## rsync is always better to retry failed downloads, but some distributions
   ## might not have torsocks installed, which is necessary for rsync as it
   ## doesn't support SOCKS5.
   ## https://pkg.kali.org/news/583693/torsocks-240-1-removed-from-kali-rolling/
-  if test "${debian_testing_or_unstable_detected}" = "1" || test "${kali_derivative_detected}" = "1"; then
+  if [ "${debian_testing_or_unstable_detected}" = "1" ] || [ "${kali_derivative_detected}" = "1" ]; then
     transfer_utility=curl
   else
     transfer_utility=rsync
@@ -2303,7 +2372,9 @@ get_transfer_cmd(){
 
 
 ## Set default traps
-set_trap(){
+set_trap() {
+  local shebang
+
   log info "Current PATH: '${PATH}'"
   ## Sometimes ps is not available, default to sh.
   curr_shell="$(cat /proc/$$/comm)"
@@ -2324,7 +2395,7 @@ set_trap(){
   case "${curr_shell}" in
     *bash|*ksh|*zsh)
       # shellcheck disable=SC2039
-      if test "${curr_shell}" = "bash"; then
+      if [ "${curr_shell}" = "bash" ]; then
         # shellcheck disable=SC2039,3040
         set -o errtrace
         set -o pipefail
@@ -2338,7 +2409,10 @@ set_trap(){
 
 
 ## Check if system status is supported
-get_system_stat(){
+get_system_stat() {
+  local min_ram_mb total_mem_kB total_mem df_output free_space_available \
+    free_space_required
+
   if [ "${arch}" != "x86_64" ]; then
     die 101 "${underline}Architecture Check:${nounderline} Only supported architecture is 'x86_64', yours is: '${arch}'."
   fi
@@ -2356,7 +2430,7 @@ get_system_stat(){
       min_ram_mb="1024"
       ;;
   esac
-  if test "${virtualbox_only}" = "1"; then
+  if [ "${virtualbox_only}" = "1" ]; then
     # shellcheck disable=SC2034
     min_ram_mb="1024"
   fi
@@ -2371,13 +2445,13 @@ get_system_stat(){
   if [ "${total_mem}" -lt "4200" ]; then
     user_warned_potential_startup_issue=true
     log warn "${underline}Minimum RAM Check:${nounderline} Your systems has a low amount of total RAM: '${total_mem} MB'"
-    if test "${virtualbox_only}" != "1"; then
+    if [ "${virtualbox_only}" != "1" ]; then
       log warn "  - For more information, refer to:"
       log warn "  ${url_version_domain}/wiki/RAM"
     fi
   fi
 
-  df_output="$(df --output=avail -BG "${directory_prefix}")"
+  df_output="$(${user_switch_prefix}df --output=avail -BG "${directory_prefix}")"
   free_space_available="$(echo "$df_output" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
 
@@ -2407,11 +2481,11 @@ get_system_stat(){
       ;;
   esac
 
-  if test "${virtualbox_only}" = "1"; then
+  if [ "${virtualbox_only}" = "1" ]; then
     free_space_required="1"
   fi
 
-  if test "${dev}" = "1"; then
+  if [ "${dev}" = "1" ]; then
     free_space_required="1"
   fi
 
@@ -2432,9 +2506,11 @@ $df_output"
 
 
 ## Generate SOCKS credentials for stream isolation
-get_proxy_cred(){
-  test "${transfer_utility}" != "curl" && return 0
-  test -z "${transfer_proxy_suffix:-}" && return 0
+get_proxy_cred() {
+  local proxy_user proxy_pass
+
+  [ "${transfer_utility}" != "curl" ] && return 0
+  [ -z "${transfer_proxy_suffix:-}" ] && return 0
   proxy_user="anonym"
   proxy_pass="${1:?}"
   printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
@@ -2442,7 +2518,10 @@ get_proxy_cred(){
 
 
 ## Test if can connect to SOCKS proxy and expect the correct Tor reply.
-check_tor_proxy(){
+check_tor_proxy() {
+  local expected_response_header cmd_check_proxy actual_response_header \
+    parsed_response_header
+
   log notice "Testing SOCKS proxy: '${proxy}'"
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
   log info "Expected response header:"
@@ -2488,7 +2567,9 @@ Debugging information:
 
 ## Set transference proxy depending on transfer utility.
 ## usage: set_transfer_proxy ${proxy}
-set_transfer_proxy(){
+set_transfer_proxy() {
+  local proxy_port proxy_addr
+
   proxy_port="${1##*:}"
   proxy_addr="${1%%:*}"
   ## Used for transfers that only curl can do.
@@ -2509,11 +2590,11 @@ set_transfer_proxy(){
 
 ## Useful to test if it is a SOCKS proxy before attempting to make requests.
 ## If connection to proxy fails, abort to avoid leaks.
-torify_conn_maybe(){
+torify_conn_maybe() {
   ## onion=1 -- Always torify onion connections.
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
   if [ ! "${onion}" = "1" ]; then
-    if ! test -n "${socks_proxy:-}"; then
+    if [ -z "${socks_proxy:-}" ]; then
       ## TODO: lower log level
       log notice "Not torifying connection, because socks_proxy envrionment variable is unset nor using '--onion'."
       return 0
@@ -2523,7 +2604,7 @@ torify_conn_maybe(){
   if ! has tor; then
     log warn "System tor binary (little-t-tor) was not found on the system."
     log warn "Unless your SOCKS connection is made available by the Tor Browser"
-    log warn "  or by your uplink network, the proxy check mail fail."
+    log warn "  or by your uplink network, the proxy check may fail."
     log warn "The installer with torified connections depends on a working SOCKS proxy,"
     log warn "  it won't configure the proxy, only establish the connection."
     log warn "If the proxy connection fails, try installation of the 'tor' package on your system."
@@ -2531,10 +2612,10 @@ torify_conn_maybe(){
   ## curl and many other viable applications do not support SOCKS proxy to
   ## connect with Unix Domain Socket:
   ##   https://curl.se/mail/archive-2021-03/0013.html
-  if test -n "${socks_proxy:-}"; then
+  if [ -n "${socks_proxy:-}" ]; then
     proxy="${socks_proxy}"
     set_transfer_proxy "${proxy}"
-  elif test -n "${TOR_SOCKS_PORT:-}"; then
+  elif [ -n "${TOR_SOCKS_PORT:-}" ]; then
     proxy="${TOR_SOCKS_HOST:-127.0.0.1}:${TOR_SOCKS_PORT}"
     set_transfer_proxy "${proxy}"
   else
@@ -2571,9 +2652,11 @@ Additional details:
 
 
 ## Set version by user input or by querying the API
-get_version(){
+get_version() {
+  local cmd_raw_version raw_version
+
   log notice "Version Detection: Detecting guest version..."
-  if test -n "${guest_version:-}"; then
+  if [ -n "${guest_version:-}" ]; then
     log notice "Version Detection: 'skipped' - Autodetection using API not required via '--guest-version', '--dry-run' or '--dev' option."
     return 0
   fi
@@ -2586,7 +2669,7 @@ get_version(){
       --url ${1}"
   ## this is necessary because we log will not be printed as the command is
   ## assigned to a variable at 'raw_version=$()'.
-  if test "${dry_run}" = "1"; then
+  if [ "${dry_run}" = "1" ]; then
     # shellcheck disable=SC2086
     log_run notice ${cmd_raw_version}
     return 0
@@ -2612,11 +2695,13 @@ get_version(){
 
 ## Helper for download_files() to make it less repetitive.
 ## usage: get_file small|large $url
-get_file(){
+get_file() {
+  local size download_opt_prefix download_opt download_opt_full round
+
   size="${1}"
   url="${2}"
   ## Round is only used to get a different password every time.
-  test -z "${round:-}" && round=10
+  [ -z "${round:-}" ] && round=10
   round=$((round+1))
 
   case "${size}" in
@@ -2633,23 +2718,74 @@ get_file(){
       ;;
   esac
   # shellcheck disable=SC2046,SC2086
-  download_opt_full="${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+  download_opt_full="${user_switch_prefix}${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
 
   # shellcheck disable=SC2086
   log_run notice ${download_opt_full} || return 1
 }
 
 
+test_file() {
+  local mode file real_file retcode
+  mode="${1}"
+  file="${2}"
+  ## realpath needs to be able to access the path it checks
+  real_file="$(sudo realpath "${file}")"
+  ## find needs to start execution in a directory it can access
+  pushd / >/dev/null
+  if [ "${mode}" = '-f' ]; then
+    if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0 -follow -type f)" ]; then
+      popd >/dev/null
+      return 1
+    else
+      popd >/dev/null
+      return 0
+    fi
+  elif [ "${mode}" = '-d' ]; then
+    if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0 -follow -type d)" ];
+    then
+      popd >/dev/null
+      return 1
+    else
+      popd >/dev/null
+      return 0
+    fi
+  elif [ "${mode}" = '-w' ]; then
+    ${user_switch_prefix}test -w "${file}"
+    retcode="$?"
+    popd >/dev/null
+    return "${retcode}"
+  elif [ "${mode}" = '-r' ]; then
+    ${user_switch_prefix}test -r "${file}"
+    retcode="$?"
+    popd >/dev/null
+    return "${retcode}"
+  elif [ "${mode}" = '-e' ]; then
+    if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0)" ];
+    then
+      popd >/dev/null
+      return 1
+    else
+      popd >/dev/null
+      return 0
+    fi
+  else
+    popd >/dev/null
+    return 1
+  fi
+}
+
+
 files_already_downloaded_check() {
-  test -f "${directory_prefix}/${guest_file}.${guest_file_ext}"
-  test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig"
-  test -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"
+  test_file -f "${directory_prefix}/${guest_file}.${guest_file_ext}"
+  test_file -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig"
+  test_file -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"
 }
 
 
 ## Check if files were already downloaded, if not, try to download everything
 ## and only if succeeds, set download flag.
-download_files(){
+download_files() {
   log_time
 
   log notice "Download: Files will be stored in the directory: '${directory_prefix}'"
@@ -2668,8 +2804,8 @@ download_files(){
 
 
 ## https://en.wikipedia.org/wiki/X86_virtualization
-get_virtualization(){
-  local virt_flag brand
+get_virtualization() {
+  local virt_flag brand virt_detection_success virt msr virt_disabled virt_bit
 
   ## Check if virtualization is enabled.
   ## Check CPU flags for capability
@@ -2720,7 +2856,7 @@ get_virtualization(){
   fi
 
   ## msr is blocked by security-misc. If no other solution is found,
-  ## remove the rest of of this function.
+  ## remove the rest of this function.
   ## $ modprobe msr
   ## /bin/disabled-msr-by-security-misc: ERROR: This CPU MSR kernel module is disabled by package security-misc by default. See the configuration file /etc/modprobe.d/30_security-misc.conf | args:
   ## modprobe: ERROR: ../libkmod/libkmod-module.c:990 command_do() Error running install command '/bin/disabled-msr-by-security-misc' for module msr: retcode 1
@@ -2777,7 +2913,7 @@ get_virtualization(){
   ## Check CPU flags for capability
   virt=$(root_cmd grep -m1 -w '^flags[[:blank:]]*:' /proc/cpuinfo |
          grep -wo -E '(vmx|svm)') || true
-  if test -z "${virt}"; then
+  if [ -z "${virt}" ]; then
     log error "Your CPU does not support Virtualization."
     verdict 1
   fi
@@ -2785,7 +2921,7 @@ get_virtualization(){
   [ "${virt}" = "svm" ] && brand="amd"
 
   ## Now, check that the device exists
-  if test -e /dev/kvm; then
+  if [ -e /dev/kvm ]; then
     log notice "Device /dev/kvm exists"
     verdict 0
   else
@@ -2796,11 +2932,11 @@ get_virtualization(){
 
   ## Prepare MSR access
   msr="/dev/cpu/0/msr"
-  if root_cmd test ! -r "${msr}"; then
+  if root_cmd [ ! -r "${msr}" ]; then
     root_cmd modprobe msr ||
       die 1 "${underline}modprobe:${nounderline} Could not add module 'msr' to the kernel."
   fi
-  if root_cmd test ! -r "${msr}"; then
+  if root_cmd [ ! -r "${msr}" ]; then
     log error "Cannot read: '${msr}'"
     return 1
   fi
@@ -2842,7 +2978,13 @@ get_virtualization(){
 ################
 ## BEGIN MAIN ##
 ################
-get_download_links(){
+get_download_links() {
+  local site_clearnet_whonix site_onion_whonix site_clearnet_kicksecure \
+    site_onion_kicksecure site_clearnet site_onion site_download_clearnet \
+    site_download_onion protocol_prefix_clearnet protocol_prefix_onion \
+    url_download_clearnet url_download_onion url_download url_version_template \
+    url_version_prefix url_version_suffix
+
   ## Set upstream links as base, especially for API.
   ## clearnet project domain
   site_clearnet_whonix="whonix.org"
@@ -2869,7 +3011,7 @@ get_download_links(){
       ;;
   esac
 
-  if test -z "${mirror}"; then
+  if [ -z "${mirror}" ]; then
     ## No mirror chosen, use default values.
     mirror=0
   fi
@@ -2918,7 +3060,7 @@ get_download_links(){
       ## Used to test internet connection.
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
       ## URL to download files from.
-      test -n "${site_download_onion}" ||
+      [ -n "${site_download_onion}" ] ||
         die 1 "${underline}Mirror Selection:${nounderline} Mirror ${mirror} doesn't provide an onion service."
       url_download="${url_download_onion}"
       ## Used to query version number.
@@ -2927,7 +3069,7 @@ get_download_links(){
 
     *)
       log info "Clearnet preferred."
-      test "${transfer_utility}" = "rsync" && transfer_utility="rsync-ssl"
+      [ "${transfer_utility}" = "rsync" ] && transfer_utility="rsync-ssl"
       curl_opt_ssl="--tlsv1.3 --proto =https"
       ## Used to test internet connection.
       url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
@@ -2941,7 +3083,7 @@ get_download_links(){
 
   case "${hypervisor}" in
     virtualbox)
-      if test "${testers}" = "1"; then
+      if [ "${testers}" = "1" ]; then
         url_version_template="VersionTesters"
       else
         url_version_template="VersionNew"
@@ -2957,7 +3099,7 @@ get_download_links(){
       ;;
 
     kvm)
-      if test "${testers}" = "1"; then
+      if [ "${testers}" = "1" ]; then
         die 1 "${underline}Version Selection:${nounderline} KVM does not have testers version."
         #url_version_template=""
       else
@@ -2982,26 +3124,29 @@ get_download_links(){
 
 
 ## Test if files should be downloaded
-should_download(){
-  if test "${virtualbox_only}" = "1"; then
+should_download() {
+  local download_msg_done
+
+  if [ "${virtualbox_only}" = "1" ]; then
     ## 'return 1' so the result of should_download is "no".
     return 1
   fi
-  if test "${dry_run}" = "1"; then
+  if [ "${dry_run}" = "1" ]; then
     log notice "Download: Creating download flag via '--dry-run' option."
-    log_run notice touch "${download_flag}"
+    log_run notice ${user_switch_prefix}touch "${download_flag}"
     return 0
   fi
 
-  if test "${redownload}" = "1"; then
+  if [ "${redownload}" = "1" ]; then
     ## Do not print further messages as it was already printed before.
     ## Occurs if the should_download() function was called more than once.
-    test "${download_msg_done:-}" = "1" && return 0
+    [ "${download_msg_done:-}" = "1" ] && return 0
+    # shellcheck disable=SC2034
     download_msg_done=1
     ## Download if redownload option is set.
     log notice "Download: Re-downloading files via '--redownload' option."
     return 0
-  elif test -f "${download_flag:-}"; then
+  elif test_file -f "${download_flag:-}"; then
     ## Do not download if flag exists.
     log notice "Download: Skipping download because download and integrity check previously succeeded."
     return 1
@@ -3012,14 +3157,16 @@ should_download(){
 
 
 ## Check signature of signed checksum.
-check_signature(){
+check_signature() {
+  local signify_checksum_file signify_pub_file
+
   signify_checksum_file="${1}"
   log info "Signify key:\n${signify_key}"
   log info "Verifying file: '${signify_checksum_file}'"
   signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
-  echo "${signify_key}" | tee "${signify_pub_file}" >/dev/null
+  echo "${signify_key}" | ${user_switch_prefix}tee "${signify_pub_file}" >/dev/null
 
-  log_run info signify -V -p "${signify_pub_file}" \
+  log_run info run_signify -V -p "${signify_pub_file}" \
     -m "${signify_checksum_file}" || return 1
 
   log info "Signify Signature Verification: 'success'"
@@ -3027,55 +3174,62 @@ check_signature(){
 
 
 ## Check hash sum.
-check_hash(){
+check_hash() {
+  local shafile dir
+
   shafile="${1}"
   dir="$(dirname "${shafile}")"
   log info "Checking SHA512 checksum: '${shafile}"
   ## $checkhash needs to be executed on the same folder as the compared file.
   log info "Changing to directory: '${dir}'"
-  cd "${dir}"
-  # shellcheck disable=SC2086
-  log_run info ${checkhash} "${shafile}" || return 1
+  if [ -n "${user_switch_prefix}" ]; then
+    ## user_switch_prefix="sudo -u user " (including space at end of string)
+    ${user_switch_prefix}-D "${dir}" ${checkhash} "${shafile}" || return 1
+  else
+    cd "${dir}"
+    # shellcheck disable=SC2086
+    log_run info ${user_switch_prefix}${checkhash} "${shafile}" || return 1
+  fi
   log info "SHA512 Hash Verification: 'success'"
 }
 
 
-check_signature_test(){
+check_signature_test() {
   log info "Unit testing signature, expecting non-zero exit code."
-  rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  echo "" | tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  ${user_switch_prefix}cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  echo "" | ${user_switch_prefix}tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
   if ! check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
-    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
 
 
-check_hash_test(){
+check_hash_test() {
   log info "Unit testing checksum, expecting non-zero exit code."
-  rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  echo "" | tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  ${user_switch_prefix}cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  echo "" | ${user_switch_prefix}tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
   if ! check_hash "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
-    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
 
 ## Check integrity of files
-check_integrity(){
-  if test "${virtualbox_only}" = "1"; then
+check_integrity() {
+  if [ "${virtualbox_only}" = "1" ]; then
     return 0
   fi
 
-  if test "${dry_run}" = "1"; then
+  if [ "${dry_run}" = "1" ]; then
     log notice "Integrity Check: Skipping integrity checks via '--dry-run' option."
     return 0
   fi
@@ -3087,19 +3241,21 @@ check_integrity(){
   check_signature_test
   check_hash_test
 
-  log_run info touch "${download_flag}"
+  log_run info ${user_switch_prefix}touch "${download_flag}"
 
   log notice "Integrity Check Result: 'success'"
 }
 
 
 ## Self explanatory name, make everything after option parsing.
-main(){
+main() {
+  local hypervisor_pretty item cmd_check_internet
+
   ###############
   ## BEGIN PRE ##
   ###############
   log notice "Saving user log to: '${log_file_user}'"
-  if test -f "${log_file_debug}"; then
+  if test_file -f "${log_file_debug}"; then
     log notice "Saving debug log to: '${log_file_debug}'"
   fi
   log info "Starting main function."
@@ -3133,12 +3289,12 @@ main(){
     log info "  ${item}"
   done
 
-  if test "${virtualbox_only}" = "1"; then
+  if [ "${virtualbox_only}" = "1" ]; then
     log notice "${underline}Installer:${nounderline} ${bold}'VirtualBox Installer'${nobold}"
   else
     log notice "${underline}Installer:${nounderline} ${bold}'${guest_pretty} ${interface_name} for ${hypervisor_pretty} Installer'${nobold}"
   fi
-  if test "${non_interactive}" != "1"; then
+  if [ "${non_interactive}" != "1" ]; then
     log notice "If you wish to cancel installation, press Ctrl+C."
   fi
   ## The license function sleeps for some seconds to give time to abort
@@ -3156,14 +3312,14 @@ main(){
   ## Skip making internet requests if flag already exists and user
   ## specified the desired version.
   ## If version is set, use it now to set the download flag path.
-  if test -n "${guest_version}"; then
+  if [ -n "${guest_version}" ]; then
     guest_file="${guest_pretty}-${interface_name}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
 
   if should_download; then
-    if test "${dry_run}" != "1"; then
+    if [ "${dry_run}" != "1" ]; then
       log notice "Connectivity Test: Testing internet connection to '${url_origin}'..."
       cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
       log info "Executing: $ ${cmd_check_internet}"
@@ -3183,7 +3339,7 @@ main(){
       download_files || die 103 "${underline}Download:${nounderline} Failed to download files."
     fi
   else
-    if test "${virtualbox_only}" = "1"; then
+    if [ "${virtualbox_only}" = "1" ]; then
       true "INFO: Skip showing version via '--virtualbox-only' option."
     else
       log notice "Version Detection Result: '${guest_version}'"
@@ -3197,7 +3353,7 @@ main(){
   ## BEGIN VERIFICATION, IMPORT AND START ##
   ##########################################
   check_integrity
-  check_vm_running_general
+  check_vm_running_general # TODO: !!! PICK UP HERE
   check_vm_exists_general "(check before maybe deletion)"
   vm_delete_maybe
   check_vm_exists_general "(check before import)"
@@ -3211,7 +3367,7 @@ main(){
 
 ## Print usage message and exit with set exit code, depending if usage was
 ## called by [-h|--help] or because user tried and invalid option.
-usage(){
+usage() {
   printf %s"Usage: ${me} [options...]
 
 User Options:
@@ -3268,6 +3424,7 @@ Developer options:
  -d, --dry-run       Simulate execution; log commands without executing.
  --virtualbox-only   Restrict actions to downloading and installing VirtualBox.
  -t, --getopt        Display parsed options and exit.
+ --user=username     Specify the user to install the distribution VM under.
 File name:
   The default file name is dist-installer-cli. Basic options can be set by using
   file name following the format 'guest-installer-interface'.
@@ -3279,8 +3436,9 @@ File name:
 
 
 ## Set default values for variables.
-set_default(){
+set_default() {
   ## Options
+  user_home_dir="${HOME}"
   directory_prefix="${HOME}/dist-installer-cli-download"
   guest=whonix
   hypervisor=virtualbox
@@ -3306,6 +3464,7 @@ set_default(){
   allow_errors=""
   mirror=""
   virtualbox_only=""
+  user_switch_prefix=""
 
   ## Runtime variables.
   last_exit=0
@@ -3329,8 +3488,39 @@ set_default(){
 }
 
 
+set_target_user_account() {
+  local user
+  user="${1:-}"
+  user_switch_prefix="sudo -u ${user} "
+  ## getent may fail if the user doesn't exist, however we ignore it for now.
+  ## The reason is because if this is run as a user account `sysmaint` on a
+  ## system with no user `user`, this will fail, but the user may have passed
+  ## their own --user and --directory-prefix flags which will fix it.
+  user_home_dir="$(getent passwd "${user}" | cut -d':' -f6)" || true
+  vboxmanage_locale_english="${user_switch_prefix}${vboxmanage_locale_english}"
+}
+
+
+adjust_default_for_sysmaint_maybe() {
+  if getent passwd sysmaint >/dev/null; then
+    log info 'Sysmaint user present, checking current user name...'
+
+    if [ "$(id -un)" = 'sysmaint' ]; then
+      log info "Running as sysmaint, adjusting behavior."
+
+      set_target_user_account 'user'
+      directory_prefix="${user_home_dir}/dist-installer-cli-download"
+    else
+      log info 'Not running as sysmaint user, ok.'
+    fi
+  else
+    log info 'Sysmaint user not present, ok.'
+  fi
+}
+
+
 ## Print parsed options
-print_getopt(){
+print_getopt() {
   echo "directory_prefix=${directory_prefix}
   guest=${guest}
   hypervisor=${hypervisor}
@@ -3359,10 +3549,10 @@ print_getopt(){
 }
 
 ## Parse script name.
-parse_name(){
+parse_name() {
   ## if using default file name, ignore the rest
-  test "${me}" = "dist-installer-cli" && return 0
-  test "${me}" = "dist-installer-cli-standalone" && return 0
+  [ "${me}" = "dist-installer-cli" ] && return 0
+  [ "${me}" = "dist-installer-cli-standalone" ] && return 0
   ## check if file name is valid
   case "${me}" in
     whonix-xfce-installer-cli | whonix-cli-installer-cli | \
@@ -3389,9 +3579,28 @@ parse_name(){
 }
 
 
+copy_thru_barrier() {
+  local source dest source_basename dest_realpath dest_file
+
+  source="${1}"
+  dest="${2}"
+  source_basename="$(basename "${source}")"
+  dest_realpath="$(sudo realpath "${dest}")"
+  if test_file -d "${dest_realpath}"; then
+    dest_file="${dest_realpath}/${source_basename}"
+  else
+    dest_file="${dest_realpath}"
+  fi
+
+  ${user_switch_prefix}tee "${dest_file}" >/dev/null < "${source}"
+}
+
+
 ## Parse command-line options.
-parse_opt(){
-  #test -z "${1:-}" && usage 2
+parse_opt() {
+  local directory_prefix_parent last_run_integer cur_run_integer log_dir_main
+
+  #[ -z "${1:-}" ] && usage 2
   while true; do
     begin_optparse "${1:-}" "${2:-}" || break
     # shellcheck disable=SC2034
@@ -3479,6 +3688,10 @@ parse_opt(){
         hypervisor=virtualbox
         guest=none
         ;;
+      user)
+        get_arg
+        set_target_user_account "${arg}"
+        ;;
       V|version)
         getversion=1
         ;;
@@ -3516,18 +3729,18 @@ parse_opt(){
       ;;
   esac
 
-  if test "${guest}" != "whonix"; then
+  if [ "${guest}" != "whonix" ]; then
     ## Guest is not 'whonix'. I.e. is 'kicksecure'
-    if test -n "${import_only}"; then
+    if [ -n "${import_only}" ]; then
       die 1 "The option '--import-only' option can only be set when the guest is 'whonix'."
     fi
   fi
 
-  test -n "${mirror}" && range_arg mirror "${mirror}" 0 1 2
+  [ -n "${mirror}" ] && range_arg mirror "${mirror}" 0 1 2
 
-  test -n "${socks_proxy}" && is_addr_port "${socks_proxy}"
+  [ -n "${socks_proxy}" ] && is_addr_port "${socks_proxy}"
 
-  if test -n "${directory_prefix}"; then
+  if [ -n "${directory_prefix}" ]; then
     ## Remove trailing slash from directory.
     directory_prefix="${directory_prefix%*/}"
     ## Only accept an absolute path.
@@ -3538,25 +3751,25 @@ parse_opt(){
 
     ## Test if parent directory exists.
     directory_prefix_parent="$(dirname "${directory_prefix}")"
-    if ! test -d "${directory_prefix_parent}"; then
+    if ! test_file -d "${directory_prefix_parent}"; then
       die 1 "Directory doesn't exist: '${directory_prefix_parent}'"
     fi
     ## Not possible to check if parent dir is writable because if the prefix
     ## is set to '~/', the parent '/home' is not writable.
 
     log info "Creating directory: '${directory_prefix}'"
-    mkdir -p "${directory_prefix}" ||
+    ${user_switch_prefix}mkdir -p "${directory_prefix}" ||
       die 1 "Failed to created directory: '${directory_prefix}'"
-    test -w "${directory_prefix}" ||
+    test_file -w "${directory_prefix}" ||
       die 1 "Directory isn't writable: '${directory_prefix}'"
-    test -r "${directory_prefix}" ||
+    test_file -r "${directory_prefix}" ||
       die 1 "Directory isn't readable: '${directory_prefix}'"
 
     log_dir_main="${directory_prefix}/logs"
 
     ## Log to incrementing integer to avoid leaking other information such
     ## as PID or date (even if UTC).
-    if ! test -d "${log_dir_main}/1"; then
+    if ! test_file -d "${log_dir_main}/1"; then
       log_dir_cur="${log_dir_main}/1"
     else
       last_run_integer="$(echo "${log_dir_main}"/* | awk '{print NF}')"
@@ -3568,37 +3781,37 @@ parse_opt(){
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
-    mkdir -p "${log_dir_cur}"
-    cp "${0}" "${log_dir_cur}"
-    touch "${log_file_user}"
+    ${user_switch_prefix}mkdir -p "${log_dir_cur}"
+    copy_thru_barrier "${0}" "${log_dir_cur}";
+    ${user_switch_prefix}touch "${log_file_user}"
   fi
 
   # shellcheck disable=SC2194
-  if test "${getopt}" = "1"; then
-    print_geotpt
+  if [ "${getopt}" = "1" ]; then
+    print_getopt
     exit 0
   fi
-  if test "${getversion}" = "1"; then
+  if [ "${getversion}" = "1" ]; then
     printf '%s\n' "${me} ${version}"
     exit 0
   fi
-  if test "${dev}" = "1"; then
-    if test -z "${guest_version}"; then
+  if [ "${dev}" = "1" ]; then
+    if [ -z "${guest_version}" ]; then
       log notice "Version Detection: Setting development testing empty software version via '--dev' option."
       guest_version="17.0.3.4"
     fi
   fi
-  if test "${dry_run}" = "1"; then
-    if test -z "${guest_version}"; then
+  if [ "${dry_run}" = "1" ]; then
+    if [ -z "${guest_version}" ]; then
       log notice "Simulation: commands will be printed but not executed via '--dry-run' option."
       log notice "Version Detection: Using simulated software version via '--dry-run' option."
       guest_version="17.0.3.4"
     fi
   fi
-  if test "${allow_errors}" = "1"; then
+  if [ "${allow_errors}" = "1" ]; then
     set +o errexit
     # shellcheck disable=SC2039,3040
-    test "${curr_shell}" = "bash" && set +o errtrace
+    [ "${curr_shell}" = "bash" ] && set +o errtrace
   fi
 
   log info "Option Parsing: 'success'"
@@ -3608,22 +3821,22 @@ parse_opt(){
 ## Logging mechanism.
 ## Bash supports process substitution and saving xtrace to a file, which is a
 ## simpler way to log to file and console.
-log_term_and_file(){
+log_term_and_file() {
   ## Discover if terminal is attached to stdout
-  if ! test -t 1; then
+  if [ ! -t 1 ]; then
     log warn "Terminal: Output is not being sent to the terminal because terminal is not connected to stdout."
     return 0
   fi
 
-  touch "${log_file_user}"
-  touch "${log_file_debug}"
+  ${user_switch_prefix}touch "${log_file_user}"
+  ${user_switch_prefix}touch "${log_file_debug}"
   ## By appending '&' at the end, log_file_user would remain empty.
-  true "exec > >(tee -a \"${log_file_user}\") 2> >(tee -a \"${log_file_debug}\" >&2)"
-  exec > >(tee -a "${log_file_user}") 2> >(tee -a "${log_file_debug}" >&2)
+  true "exec > >(${user_switch_prefix}tee -a \"${log_file_user}\") 2> >(${user_switch_prefix}tee -a \"${log_file_debug}\" >&2)"
+  exec > >(${user_switch_prefix}tee -a "${log_file_user}") 2> >(${user_switch_prefix}tee -a "${log_file_debug}" >&2)
   ## Bash has built-in feature to redirect xtrace to the specified file.
   # shellcheck disable=SC2039
-  true "exec 9>>${log_file_debug}"
-  exec 9>>"${log_file_debug}"
+  true "exec 9> >(${user_switch_prefix}tee -a \"${log_file_debug}\" >/dev/null)"
+  exec 9> >(${user_switch_prefix}tee -a "${log_file_debug}" >/dev/null)
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
@@ -3637,7 +3850,7 @@ end_installer() {
 
 
 ## Wrapper to call all necessary functions in one.
-run_installer(){
+run_installer() {
   set_globals "${@}"
   ## Set default values.
   set_default
@@ -3646,6 +3859,9 @@ run_installer(){
   set_trap
   ## Parse script name for wanted values.
   parse_name
+  ## If sysmaint is in use and the user hasn't configured their own directory
+  ## prefix and target user, default to target account 'user'.
+  adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
   parse_opt "${@}"
   ## Logging mechanism.
