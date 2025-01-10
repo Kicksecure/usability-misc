@@ -358,12 +358,12 @@ get_independent_host_pkgs() {
     run_signify() {
       ## Debian places in signify-openbsd in folder '/bin' and not '/usr/bin'.
       # shellcheck disable=SC2317
-      ${user_switch_prefix}/bin/signify-openbsd "${@}"
+      ${user_switch_prefix}signify-openbsd "${@}"
     }
   else
     run_signify() {
       # shellcheck disable=SC2317
-      ${user_switch_prefix}/usr/bin/signify "${@}"
+      ${user_switch_prefix}signify "${@}"
     }
   fi
 
