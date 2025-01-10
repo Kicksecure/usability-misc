@@ -356,8 +356,9 @@ get_independent_host_pkgs() {
   if has signify-openbsd; then
     ## fix Debian unconventional naming
     run_signify() {
+      ## Debian places in signify-openbsd in folder '/bin' and not '/usr/bin'.
       # shellcheck disable=SC2317
-      ${user_switch_prefix}/usr/bin/signify-openbsd "${@}"
+      ${user_switch_prefix}/bin/signify-openbsd "${@}"
     }
   else
     run_signify() {
