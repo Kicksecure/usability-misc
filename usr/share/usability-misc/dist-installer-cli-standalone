@@ -231,6 +231,8 @@ ${underline}Non-Root Check:${nounderline} Running as root detected.
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
+  local cmdarr
+
   test -z "${1:-}" && die 1 "${underline}root_cmd function:${nounderline} Failed to pass arguments to root_cmd."
   if test -z "${sucmd:-}"; then
     get_su_cmd
@@ -245,7 +247,15 @@ root_cmd(){
       log_run "$root_cmd_loglevel" su root -s "${cmd}" -- "${@}"
       ;;
     sudo)
-      log_run "$root_cmd_loglevel" sudo -- "${@}"
+      cmdarr=( 'log_run' "$root_cmd_loglevel" 'sudo' )
+      if [ -n "$ROOT_CMD_TARGET_USER" ]; then
+        cmdarr+=( '-u' "$ROOT_CMD_TARGET_USER" );
+      fi
+      if [ -n "$ROOT_CMD_TARGET_DIR" ]; then
+        cmdarr+=( '-D' "$ROOT_CMD_TARGET_DIR" );
+      fi
+      cmdarr+=( '--' "${@}" )
+      "${cmdarr[@]}"
       ;;
     doas)
       log_run "$root_cmd_loglevel" doas -u root -- "${@}"
@@ -1024,12 +1034,12 @@ get_independent_host_pkgs() {
     run_signify() {
       ## Debian places in signify-openbsd in folder '/bin' and not '/usr/bin'.
       # shellcheck disable=SC2317
-      ${user_switch_prefix}signify-openbsd "${@}"
+      run_as_target_user signify-openbsd "${@}"
     }
   else
     run_signify() {
       # shellcheck disable=SC2317
-      ${user_switch_prefix}signify "${@}"
+      run_as_target_user signify "${@}"
     }
   fi
 
@@ -1486,8 +1496,7 @@ check_vm_running_virtualbox() {
   ## Paused state should be considered as running. Instead of grepping
   ## possible states, grep VM from list of running VMs.
   # vboxmanage list runningvms | grep -q "^\"${vm}\" "
-  # shellcheck disable=SC2086
-  if ${vboxmanage_locale_english} showvminfo "${vm}" 2>&1 | \
+  if "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${vm}" 2>&1 | \
     grep -qE "^State:[[:space:]]+(running|paused)"
   then
     log error "Cannot proceed. You have the following VM running: ${vm}"
@@ -1506,13 +1515,11 @@ check_vm_registered_virtualbox() {
       ## Test if machine exists.
       workstation_exists=0
       gateway_exists=0
-      # shellcheck disable=SC2086
-      if ${vboxmanage_locale_english} showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
+      if "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
         gateway_exists=1
         log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_gateway}' exists."
       fi
-      # shellcheck disable=SC2086
-      if ${vboxmanage_locale_english} showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
+      if "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
         workstation_exists=1
         log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_workstation}' exists."
       fi
@@ -1537,8 +1544,7 @@ check_vm_registered_virtualbox() {
       ;;
     kicksecure)
       vm_or_vms_already_existing_test_result=false
-      # shellcheck disable=SC2086
-      if ! ${vboxmanage_locale_english} showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
+      if ! "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
         log info "Existing VM Check Result $extra_message: None existing yet, ok."
         return 0
       fi
@@ -1611,7 +1617,7 @@ File '$file_name_item' exists but there is no associated VM registered in Virtua
 
 vm_delete_kicksecure() {
   if [ "${vm_or_vms_already_existing_test_result}" = "true" ]; then
-    log_run notice ${user_switch_prefix}vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
+    log_run notice run_as_target_user vboxmanage unregistervm "${guest_full_vm_name_kicksecure}" --delete
   else
     log notice "VM Deletion: Kicksecure VM does not exist, no need to delete, ok."
   fi
@@ -1620,7 +1626,7 @@ vm_delete_kicksecure() {
 
 vm_delete_gateway() {
   if [ "${gateway_exists}" = "1" ]; then
-    log_run notice ${user_switch_prefix}vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
+    log_run notice run_as_target_user vboxmanage unregistervm "${guest_full_vm_name_gateway}" --delete
   else
     log notice "VM Deletion: Gateway VM does not exist, no need to delete, ok."
   fi
@@ -1629,7 +1635,7 @@ vm_delete_gateway() {
 
 vm_delete_workstation() {
   if [ "${workstation_exists}" = "1" ]; then
-    log_run notice ${user_switch_prefix}vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
+    log_run notice run_as_target_user vboxmanage unregistervm "${guest_full_vm_name_workstation}" --delete
   else
     log notice "VM Deletion: Workstation VM does not exist, no need to delete, ok."
   fi
@@ -1750,7 +1756,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     ## of using a Qubes App Qube for building VirtualBox VM images.
     ## Run end_installer here, because no VMs were downloaded anyhow if a Qubes Template was detected.
     end_installer
-  elif [ -n "${user_switch_prefix}" ]; then
+  elif [ -n "${user_switch_cmdarr[0]}" ]; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} Not starting VirtualBox because user is installing VMs as another user."
     ## Starting VMs installed under a different user account is difficult and could cause serious problems.
     end_installer
@@ -1922,7 +1928,7 @@ import_virtualbox() {
 
   local output
   # shellcheck disable=SC2086
-  output=$(log_run notice ${vboxmanage_locale_english} import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
+  output=$(log_run notice "${vboxmanage_locale_english_cmdarr[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   case "${guest}" in
@@ -1951,15 +1957,14 @@ import_virtualbox() {
 
   ## import VirtualBox image
   # shellcheck disable=SC2086
-  log_run notice ${vboxmanage_locale_english} import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_general} || \
+  log_run notice "${vboxmanage_locale_english_cmdarr[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_general} || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if [ -n "${import_only}" ] && [ "${import_only}" != "both" ]; then
-    # shellcheck disable=SC2086
-    log_run notice ${vboxmanage_locale_english} unregistervm "${vm_purge}" --delete ||
+    log_run notice "${vboxmanage_locale_english_cmdarr[@]}" unregistervm "${vm_purge}" --delete ||
       die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous VM '${vm_purge}'."
   fi
 
@@ -2551,7 +2556,7 @@ install_oracle_repository_fedora() {
       log info "Oracle Repository: Key /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle already exists."
     else
       echo "${oracle_pgp}" | \
-        ${user_switch_prefix}tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
+        run_as_target_user tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
       echo "${oracle_pgp}" | \
         root_cmd tee /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle >/dev/null
       ## Optional: the key will be imported when trying to use the repository
@@ -2589,7 +2594,7 @@ install_oracle_repository_debian() {
       log info "Oracle Repository: Key /usr/share/keyrings/oracle.asc already exists."
     else
       echo "${oracle_pgp}" | \
-        ${user_switch_prefix}tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
+        run_as_target_user tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
       echo "${oracle_pgp}" | \
         root_cmd tee /usr/share/keyrings/oracle-virtualbox-2016.asc >/dev/null
     fi
@@ -2944,14 +2949,14 @@ get_checkhash_cmd() {
     return 0
   fi
   while true; do
-    has sha512sum && checkhash="sha512sum --check --strict --warn" && break
-    has shasum && checkhash="shasum --algorithm 512 --check --strict --warn" && break
+    has sha512sum && checkhash=( 'sha512sum' '--check' '--strict' '--warn' ) && break
+    has shasum && checkhash=( 'shasum' '--algorithm' '512' '--check' '--strict' '--warn' ) && break
     ## TODO: Does it have an equivalent to --check? Compatible file format?
-    #has sha512 && checkhash="sha512 -c" && break
-    #has digest && checkhash="digest -a sha512 -c" && break
+    #has sha512 && checkhash=( 'sha512' '-c' ) && break
+    #has digest && checkhash=( 'digest' '-a' 'sha512' '-c' ) && break
     ## TODO: How to make openssl check the file without workarounds?
-    #has openssl && checkhash="openssl dgst -sha512 -r" && break
-    [ -z "${checkhash}" ] && {
+    #has openssl && checkhash=( 'openssl' 'dgst' '-sha512' '-r' ) && break
+    [ -z "${checkhash[0]}" ] && {
       die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
     }
   done
@@ -3118,7 +3123,7 @@ get_system_stat() {
     fi
   fi
 
-  df_output="$(${user_switch_prefix}df --output=avail -BG "${directory_prefix}")"
+  df_output="$(run_as_target_user df --output=avail -BG "${directory_prefix}")"
   free_space_available="$(echo "$df_output" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
 
@@ -3385,10 +3390,9 @@ get_file() {
       ;;
   esac
   # shellcheck disable=SC2046,SC2086
-  download_opt_full="${user_switch_prefix}${download_opt_prefix} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_verbosity_opt} ${transfer_proxy_suffix:-} $(get_proxy_cred ${round}) ${transfer_connect_timeout_opt:-} ${transfer_io_timeout_opt:-} ${download_opt} ${transfer_output_file_opt} ${url} ${transfer_output_dir_opt} ${directory_prefix}"
+  download_opt_full=( "${download_opt_prefix}" "${transfer_proxy_prefix:-}" "${transfer_utility}" "${transfer_verbosity_opt}" "${transfer_proxy_suffix:-}" "$(get_proxy_cred ${round})" "${transfer_connect_timeout_opt:-}" "${transfer_io_timeout_opt:-}" "${download_opt}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
 
-  # shellcheck disable=SC2086
-  log_run notice ${download_opt_full} || return 1
+  log_run notice run_as_target_user "${download_opt_full[@]}" || return 1
 }
 
 
@@ -3401,7 +3405,7 @@ test_file() {
   ## find needs to start execution in a directory it can access
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0 -follow -type f)" ]; then
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f)" ]; then
       popd >/dev/null
       return 1
     else
@@ -3409,7 +3413,7 @@ test_file() {
       return 0
     fi
   elif [ "${mode}" = '-d' ]; then
-    if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0 -follow -type d)" ];
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d)" ];
     then
       popd >/dev/null
       return 1
@@ -3418,17 +3422,17 @@ test_file() {
       return 0
     fi
   elif [ "${mode}" = '-w' ]; then
-    ${user_switch_prefix}test -w "${file}"
+    run_as_target_user test -w "${real_file}"
     retcode="$?"
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-r' ]; then
-    ${user_switch_prefix}test -r "${file}"
+    run_as_target_user test -r "${real_file}"
     retcode="$?"
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-e' ]; then
-    if [ -z "$(${user_switch_prefix}find "${file}" -maxdepth 0)" ];
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0)" ];
     then
       popd >/dev/null
       return 1
@@ -3800,7 +3804,7 @@ should_download() {
   fi
   if [ "${dry_run}" = "1" ]; then
     log notice "Download: Creating download flag via '--dry-run' option."
-    log_run notice ${user_switch_prefix}touch "${download_flag}"
+    log_run notice run_as_target_user touch "${download_flag}"
     return 0
   fi
 
@@ -3831,7 +3835,7 @@ check_signature() {
   log info "Signify key:\n${signify_key}"
   log info "Verifying file: '${signify_checksum_file}'"
   signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
-  echo "${signify_key}" | ${user_switch_prefix}tee "${signify_pub_file}" >/dev/null
+  echo "${signify_key}" | run_as_target_user tee "${signify_pub_file}" >/dev/null
 
   log_run info run_signify -V -p "${signify_pub_file}" \
     -m "${signify_checksum_file}" || return 1
@@ -3849,13 +3853,11 @@ check_hash() {
   log info "Checking SHA512 checksum: '${shafile}"
   ## $checkhash needs to be executed on the same folder as the compared file.
   log info "Changing to directory: '${dir}'"
-  if [ -n "${user_switch_prefix}" ]; then
-    ## user_switch_prefix="sudo -u user " (including space at end of string)
-    ${user_switch_prefix}-D "${dir}" ${checkhash} "${shafile}" || return 1
+  if [ -n "${user_switch_cmdarr[0]}" ]; then
+    run_as_target_user_and_dir "${dir}" "${checkhash[@]}" "${shafile}" || return 1
   else
     cd "${dir}"
-    # shellcheck disable=SC2086
-    log_run info ${user_switch_prefix}${checkhash} "${shafile}" || return 1
+    log_run info run_as_target_user "${checkhash[@]}" "${shafile}" || return 1
   fi
   log info "SHA512 Hash Verification: 'success'"
 }
@@ -3863,14 +3865,14 @@ check_hash() {
 
 check_signature_test() {
   log info "Unit testing signature, expecting non-zero exit code."
-  ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  ${user_switch_prefix}cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  echo "" | ${user_switch_prefix}tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  run_as_target_user cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  echo "" | run_as_target_user tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
   if ! check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
-    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
@@ -3878,14 +3880,14 @@ check_signature_test() {
 
 check_hash_test() {
   log info "Unit testing checksum, expecting non-zero exit code."
-  ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  ${user_switch_prefix}cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  echo "" | ${user_switch_prefix}tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  run_as_target_user cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  echo "" | run_as_target_user tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
   if ! check_hash "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
-    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    ${user_switch_prefix}rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
@@ -3908,7 +3910,7 @@ check_integrity() {
   check_signature_test
   check_hash_test
 
-  log_run info ${user_switch_prefix}touch "${download_flag}"
+  log_run info run_as_target_user touch "${download_flag}"
 
   log notice "Integrity Check Result: 'success'"
 }
@@ -4131,7 +4133,7 @@ set_default() {
   allow_errors=""
   mirror=""
   virtualbox_only=""
-  user_switch_prefix=""
+  target_user=""
 
   ## Runtime variables.
   last_exit=0
@@ -4151,20 +4153,41 @@ set_default() {
   install_pkg_fasttrack_extra_args_maybe=""
   user_warned_potential_startup_issue=""
   ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
-  vboxmanage_locale_english="env LC_ALL=C.UTF-8 LANG=C.UTF-8 LANGUAGE=C vboxmanage"
+  vboxmanage_locale_english_cmdarr=( 'env' 'LC_ALL=C.UTF-8' 'LANG=C.UTF-8' 'LANGUAGE=C' 'vboxmanage' )
 }
 
 
 set_target_user_account() {
-  local user
-  user="${1:-}"
-  user_switch_prefix="sudo -u ${user} "
+  target_user="${1:-}"
+
+  if [ "${sucmd}" != 'sudo' ]; then
+    die 1 'Cannot use a root elevation utility other than sudo when installing to an alternate user account or running under the sysmaint account.'
+  fi
+
   ## getent may fail if the user doesn't exist, however we ignore it for now.
   ## The reason is because if this is run as a user account `sysmaint` on a
   ## system with no user `user`, this will fail, but the user may have passed
   ## their own --user and --directory-prefix flags which will fix it.
-  user_home_dir="$(getent passwd "${user}" | cut -d':' -f6)" || true
-  vboxmanage_locale_english="${user_switch_prefix}${vboxmanage_locale_english}"
+  user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)" || true
+}
+
+
+run_as_target_user() {
+  if [ -z "${target_user}" ]; then
+    "${@}"
+  else
+    ROOT_CMD_TARGET_USER="${target_user}" root_cmd "${@}"
+  fi
+}
+
+
+run_as_target_user_and_dir() {
+  local target_dir
+  target_dir="${1:-}"
+  [ -z "${target_dir}" ] && die 1 'Failed to provide directory name to run_as_target-user_and_dir!'
+  [ -z "${user_switch_cmdarr[0]}" ] && die 1 'Cannot use run_as_target_user_and_dir if set_target_user_account is not used first!'
+  shift
+  ROOT_CMD_TARGET_USER="${target_user}" ROOT_CMD_TARGET_DIR="${target_dir}" root_cmd "${@}"
 }
 
 
@@ -4259,7 +4282,7 @@ copy_thru_barrier() {
     dest_file="${dest_realpath}"
   fi
 
-  ${user_switch_prefix}tee "${dest_file}" >/dev/null < "${source}"
+  run_as_target_user tee "${dest_file}" >/dev/null < "${source}"
 }
 
 
@@ -4426,7 +4449,7 @@ parse_opt() {
     ## is set to '~/', the parent '/home' is not writable.
 
     log info "Creating directory: '${directory_prefix}'"
-    ${user_switch_prefix}mkdir -p "${directory_prefix}" ||
+    run_as_target_user mkdir -p "${directory_prefix}" ||
       die 1 "Failed to created directory: '${directory_prefix}'"
     test_file -w "${directory_prefix}" ||
       die 1 "Directory isn't writable: '${directory_prefix}'"
@@ -4449,9 +4472,9 @@ parse_opt() {
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
-    ${user_switch_prefix}mkdir -p "${log_dir_cur}"
+    run_as_target_user mkdir -p "${log_dir_cur}"
     copy_thru_barrier "${0}" "${log_dir_cur}";
-    ${user_switch_prefix}touch "${log_file_user}"
+    run_as_target_user touch "${log_file_user}"
   fi
 
   # shellcheck disable=SC2194
@@ -4496,15 +4519,15 @@ log_term_and_file() {
     return 0
   fi
 
-  ${user_switch_prefix}touch "${log_file_user}"
-  ${user_switch_prefix}touch "${log_file_debug}"
+  run_as_target_user touch "${log_file_user}"
+  run_as_target_user touch "${log_file_debug}"
   ## By appending '&' at the end, log_file_user would remain empty.
-  true "exec > >(${user_switch_prefix}tee -a \"${log_file_user}\") 2> >(${user_switch_prefix}tee -a \"${log_file_debug}\" >&2)"
-  exec > >(${user_switch_prefix}tee -a "${log_file_user}") 2> >(${user_switch_prefix}tee -a "${log_file_debug}" >&2)
+  true "exec > >(run_as_target_user tee -a \"${log_file_user}\") 2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
+  exec > >(run_as_target_user tee -a "${log_file_user}") 2> >(run_as_target_uer tee -a "${log_file_debug}" >&2)
   ## Bash has built-in feature to redirect xtrace to the specified file.
   # shellcheck disable=SC2039
-  true "exec 9> >(${user_switch_prefix}tee -a \"${log_file_debug}\" >/dev/null)"
-  exec 9> >(${user_switch_prefix}tee -a "${log_file_debug}" >/dev/null)
+  true "exec 9> >(run_as_target_user tee -a \"${log_file_debug}\" >/dev/null)"
+  exec 9> >(run_as_target_user tee -a "${log_file_debug}" >/dev/null)
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
