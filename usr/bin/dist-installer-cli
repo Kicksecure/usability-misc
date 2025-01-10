@@ -3604,7 +3604,8 @@ parse_opt() {
   #[ -z "${1:-}" ] && usage 2
   while true; do
     begin_optparse "${1:-}" "${2:-}" || break
-    # shellcheck disable=SC2034
+    ## SC2154: Variable ${opt} gets set in file: /usr/libexec/helper-scripts/parse_opt.sh
+    # shellcheck disable=SC2034,SC2154
     case "${opt}" in
       P|directory-prefix)
         get_arg
