@@ -1024,12 +1024,12 @@ get_independent_host_pkgs() {
     run_signify() {
       ## Debian places in signify-openbsd in folder '/bin' and not '/usr/bin'.
       # shellcheck disable=SC2317
-      ${user_switch_prefix}/bin/signify-openbsd "${@}"
+      ${user_switch_prefix}signify-openbsd "${@}"
     }
   else
     run_signify() {
       # shellcheck disable=SC2317
-      ${user_switch_prefix}/usr/bin/signify "${@}"
+      ${user_switch_prefix}signify "${@}"
     }
   fi
 
@@ -4020,7 +4020,7 @@ main() {
   ## BEGIN VERIFICATION, IMPORT AND START ##
   ##########################################
   check_integrity
-  check_vm_running_general # TODO: !!! PICK UP HERE
+  check_vm_running_general
   check_vm_exists_general "(check before maybe deletion)"
   vm_delete_maybe
   check_vm_exists_general "(check before import)"
