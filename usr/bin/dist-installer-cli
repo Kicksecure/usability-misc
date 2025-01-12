@@ -15,7 +15,6 @@ if [ "${BASH_SOURCE-}" != "${0}" ]; then
 else
   ## Script was executed.
   dist_installer_cli_was_sourced="false"
-  # shellcheck disable=SC2317
   set -o errexit
   set -o nounset
 fi
@@ -272,9 +271,7 @@ handle_exit() {
   ## Virtual Machine unexpected start issues.
   [ "${last_exit}" = "107" ] && end_exit
   ## Exit with errors.
-  # shellcheck disable=SC3028
   if [ -n "${BASH_COMMAND:-}" ]; then
-    # shellcheck disable=SC2039,3028,3054
     log notice "Executed script, function, command executed: '${0}' '${FUNCNAME[1]}' '${BASH_COMMAND}'"
   else
     log notice "Executed script: '${0}'"
@@ -357,12 +354,10 @@ get_independent_host_pkgs() {
     ## fix Debian unconventional naming
     run_signify() {
       ## Debian places in signify-openbsd in folder '/bin' and not '/usr/bin'.
-      # shellcheck disable=SC2317
       run_as_target_user signify-openbsd "${@}"
     }
   else
     run_signify() {
-      # shellcheck disable=SC2317
       run_as_target_user signify "${@}"
     }
   fi
@@ -593,35 +588,35 @@ Debugging information: needs-restarting reported that a reboot is required."
 
 
 update_sources() {
-  local update_output
+  local update_output update_cmd
 
   log notice "Updating package list..."
 
   ## global console_write_command
   if tty >/dev/null >&1 ; then
-    console_write_command="tee /dev/tty"
+    console_write_command=( 'tee' '/dev/tty' )
   else
     ## github actions CI issue:
     ## tee: /dev/tty: No such device or address
     ## https://github.com/actions/runner/issues/241
-    console_write_command="cat"
+    console_write_command=( 'cat' )
   fi
 
-  #root_cmd ${pkg_mngr_update} 2>&1 || true
+  #root_cmd "${pkg_mngr_update[@]}" 2>&1 || true
   #update_sources_error
   ## result: OK: command_without_extrarenous_spaces="sudo -- apt-get update --yes --error-on=any"
   ## But if root_cmd is run in a subshell using $(root_cmd ...) then command_without_extrarenous_spaces
   ## won't be updated.
 
-  local simulate_only_maybe=""
   if [ "${noupdate}" = "1" ]; then
     ## Too slow to run over and over again during testing.
-    simulate_only_maybe=true
+    update_cmd=( 'true' "${pkg_mngr_update[@]}" )
     log warn "Package List Update: Simulate only, via '--noupdate' option."
+  else
+    update_cmd=( "${pkg_mngr_update[@]}" )
   fi
 
-  # shellcheck disable=SC2086
-  if update_output=$(root_cmd_loglevel=notice root_cmd ${simulate_only_maybe} ${pkg_mngr_update} 2>&1 | $console_write_command) ; then
+  if update_output=$(root_cmd_loglevel=notice root_cmd "${update_cmd[@]}" 2>&1 | "${console_write_command[@]}") ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if echo "$update_output" | grep --quiet --ignore-case "Error:" ; then
       log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
@@ -651,17 +646,20 @@ update_sources_error() {
 
 This is the command which the installer has just run that failed:
 
-${sucmd} ${pkg_mngr_update}
+${sucmd} ${pkg_mngr_update[*]}
 
 ${package_manager_issue_extra_help_text}"
 }
 
 
 check_upgrades_simulation() {
-  local upgrade_simulate_output packages_upgradable
+  local upgrade_simulate_output packages_upgradable upgrade_simulate_cmd \
+    pkg_mngr_upgradable_check_retcode
 
-  # shellcheck disable=SC2086
-  if upgrade_simulate_output=$(root_cmd_loglevel=notice root_cmd ${pkg_mngr_upgrade_check} ${install_pkg_fasttrack_extra_args_maybe} 2>&1 | $console_write_command) ; then
+  upgrade_simulate_cmd=( "${pkg_mngr_upgrade_check[@]}" )
+  [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" != '0' ] \
+    && upgrade_simulate_cmd+=( "${#install_pkg_fasttrack_extra_args_maybe[@]}" )
+  if upgrade_simulate_output=$(root_cmd_loglevel=notice root_cmd "${upgrade_simulate_cmd[@]}" 2>&1 | "${console_write_command[@]}") ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if echo "$upgrade_simulate_output" | grep --quiet --ignore-case "Error:" ; then
       log error "${underline}Package Upgrade Simulation:${nounderline} Exit code was 0 but 'Error:' found in output."
@@ -673,9 +671,12 @@ check_upgrades_simulation() {
   fi
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
-
-  # shellcheck disable=SC2086
-  if pkg_mngr_upgradable_check ${install_pkg_fasttrack_extra_args_maybe} ; then
+  if [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" = '0' ]; then
+    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check >/dev/null; echo "$?")"
+  else
+    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check "${install_pkg_fasttrack_extra_args_maybe[@]}" >/dev/null; echo "$?")"
+  fi
+  if [ "${pkg_mngr_upgradable_check_retcode}" = '0' ]; then
     packages_upgradable=false
   else
     packages_upgradable=true
@@ -699,7 +700,7 @@ check_upgrades_simulation() {
 
 Please upgrade your operating system first. Otherwise this installer cannot proceed.
 
-${sucmd} ${pkg_mngr_upgrade_install} ${install_pkg_fasttrack_extra_args_maybe}
+${sucmd} ${pkg_mngr_upgrade_install[*]} ${install_pkg_fasttrack_extra_args_maybe[*]}
 
 ${package_manager_issue_extra_help_text}"
 
@@ -712,7 +713,7 @@ upgrade_simulate_sources_error() {
 
 This is the command which the installer has just run that failed:
 
-${sucmd} ${pkg_mngr_upgrade_check} ${install_pkg_fasttrack_extra_args_maybe}
+${sucmd} ${pkg_mngr_upgrade_check[*]} ${install_pkg_fasttrack_extra_args_maybe[*]}
 
 ${package_manager_issue_extra_help_text}"
 }
@@ -720,21 +721,20 @@ ${package_manager_issue_extra_help_text}"
 
 ## Install package only if not installed already.
 install_pkg() {
-  local pkgs special_args
+  local pkgs special_args pkg_not_installed
 
   pkgs="${*}"
-  special_args=""
-  pkg_not_installed=""
+  special_args=()
+  pkg_not_installed=()
 
   for arg in ${pkgs}; do
     case "${arg}" in
       --target-release=*)
-        special_args="${special_args} ${arg}"
+        special_args+=( "${arg}" )
         ;;
       *)
         ## Test if package exists as a binary or a library, using different tools.
-        # shellcheck disable=SC2086
-        if ${pkg_mngr_check_installed} "${arg}" >/dev/null 2>&1; then
+        if "${pkg_mngr_check_installed[@]}" "${arg}" >/dev/null 2>&1; then
           log info "Package already installed: '${arg}'"
           continue
         fi
@@ -743,30 +743,29 @@ install_pkg() {
           continue
         fi
 
-        pkg_not_installed="${pkg_not_installed} ${arg}"
+        pkg_not_installed+=( "${arg}" )
         ;;
     esac
   done
 
-  if [ -n "${pkg_not_installed}" ]; then
+  if [ "${#pkg_not_installed[@]}" != '0' ]; then
     if [ "${dry_run}" = "1" ]; then
-      log notice "Skipping installation of the following packages via '--dry-run' option: '${pkg_not_installed}'"
+      log notice "Skipping installation of the following packages via '--dry-run' option: '${pkg_not_installed[*]}'"
       return 0
     fi
 
-    log notice "Installing package(s): '${pkg_not_installed}'"
-    log info "special_args: '${special_args}'"
+    log notice "Installing package(s): '${pkg_not_installed[*]}'"
+    log info "special_args: '${special_args[*]}'"
 
-    # shellcheck disable=SC2086
-    if ! root_cmd ${pkg_mngr_install} ${special_args} ${pkg_not_installed} ; then
-      if echo "${pkg_not_installed}" | grep --quiet --ignore-case virtualbox ; then
+    if ! root_cmd "${pkg_mngr_install[@]}" "${special_args[@]}" "${pkg_not_installed[@]}"; then
+      if echo "${pkg_not_installed[*]}" | grep --quiet --ignore-case virtualbox ; then
         virtualbox_installation_failure_debug
       fi
-      die 1 "${underline}Package Installation:${nounderline} Failed to install package: '${pkg_not_installed}'"
+      die 1 "${underline}Package Installation:${nounderline} Failed to install package: '${pkg_not_installed[*]}'"
     fi
 
     ## Test if installation succeeded.
-    test_pkg "${pkg_not_installed}"
+    test_pkg "${pkg_not_installed[@]}"
   fi
 }
 
@@ -775,23 +774,23 @@ install_pkg() {
 ## install_pkg() failed above and best thing to do is abort because of missing
 ## dependencies.
 test_pkg() {
-  local pkgs pkg
+  local pkgs pkg pkg_not_installed
 
-  pkgs="${*}"
-  pkg_not_installed=""
-  for pkg in ${pkgs}; do
+  pkgs=( "$@" )
+  pkg_not_installed=()
+  for pkg in "${pkgs[@]}"; do
     if ! has "${pkg}" &&
-      ! ${pkg_mngr_check_installed} "${pkg}" >/dev/null 2>&1
+      ! "${pkg_mngr_check_installed[@]}" "${pkg}" >/dev/null 2>&1
     then
-      pkg_not_installed="${pkg_not_installed} ${pkg}"
+      pkg_not_installed+=( "${pkg}" )
     fi
   done
 
-  if [ -n "${pkg_not_installed}" ]; then
+  if [ "${#pkg_not_installed[@]}" != '0' ]; then
     if [ "${dry_run}" = "1" ]; then
-      log error "Failed to locate package(s) and ignoring via '--dry-run' option: '${pkg_not_installed}'"
+      log error "Failed to locate package(s) and ignoring via '--dry-run' option: '${pkg_not_installed[*]}'"
     else
-      log error "Failed to locate package(s): '${pkg_not_installed}'"
+      log error "Failed to locate package(s): '${pkg_not_installed[*]}'"
       return 1
     fi
   fi
@@ -820,7 +819,7 @@ check_vm_running_virtualbox() {
   ## Paused state should be considered as running. Instead of grepping
   ## possible states, grep VM from list of running VMs.
   # vboxmanage list runningvms | grep -q "^\"${vm}\" "
-  if "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${vm}" 2>&1 | \
+  if run_as_target_user "${vboxmanage_locale_english[@]}" showvminfo "${vm}" 2>&1 | \
     grep -qE "^State:[[:space:]]+(running|paused)"
   then
     log error "Cannot proceed. You have the following VM running: ${vm}"
@@ -839,11 +838,11 @@ check_vm_registered_virtualbox() {
       ## Test if machine exists.
       workstation_exists=0
       gateway_exists=0
-      if "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
+      if run_as_target_user "${vboxmanage_locale_english[@]}" showvminfo "${guest_full_vm_name_gateway}" >/dev/null 2>&1 ; then
         gateway_exists=1
         log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_gateway}' exists."
       fi
-      if "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
+      if run_as_target_user "${vboxmanage_locale_english[@]}" showvminfo "${guest_full_vm_name_workstation}" >/dev/null 2>&1 ; then
         workstation_exists=1
         log info "Existing VM Check Result $extra_message: guest '${guest_full_vm_name_workstation}' exists."
       fi
@@ -868,7 +867,7 @@ check_vm_registered_virtualbox() {
       ;;
     kicksecure)
       vm_or_vms_already_existing_test_result=false
-      if ! "${vboxmanage_locale_english_cmdarr[@]}" showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
+      if ! run_as_target_user "${vboxmanage_locale_english[@]}" showvminfo "${guest_full_vm_name_kicksecure}" >/dev/null 2>&1 ; then
         log info "Existing VM Check Result $extra_message: None existing yet, ok."
         return 0
       fi
@@ -1080,7 +1079,7 @@ kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprob
     ## of using a Qubes App Qube for building VirtualBox VM images.
     ## Run end_installer here, because no VMs were downloaded anyhow if a Qubes Template was detected.
     end_installer
-  elif [ -n "${user_switch_cmdarr[0]}" ]; then
+  elif [ -n "${target_user}" ]; then
     log notice "${underline}VirtualBox Startup Check:${nounderline} Not starting VirtualBox because user is installing VMs as another user."
     ## Starting VMs installed under a different user account is difficult and could cause serious problems.
     end_installer
@@ -1207,24 +1206,24 @@ import_virtualbox() {
   case "${guest}" in
     whonix)
       ## if importing whonix, import 2 virtual systems
-      vbox_arg_normal="--vsys 0 --eula accept --vsys 1 --eula accept"
+      vbox_arg_normal=( '--vsys' '0' '--eula' 'accept' '--vsys' '1' '--eula' 'accept' )
     ;;
     kicksecure)
-      vbox_arg_normal="--vsys 0 --eula accept"
+      vbox_arg_normal=( '--vsys' '0' '--eula' 'accept' )
     ;;
   esac
 
-  vbox_arg_general="${vbox_arg_normal}"
+  vbox_arg_general=( "${vbox_arg_normal[@]}" )
   vm_purge="purgeme"
 
   case "${import_only}" in
     workstation)
-      vbox_arg_importonly="--vsys 0 --eula accept --vmname ${vm_purge} --vsys 1 --eula accept"
-      vbox_arg_general="${vbox_arg_importonly}"
+      vbox_arg_importonly=( '--vsys' '0' '--eula' 'accept' '--vmname' "${vm_purge}" '--vsys' '1' '--eula' 'accept' )
+      vbox_arg_general=( "${vbox_arg_importonly[@]}" )
       ;;
     gateway)
-      vbox_arg_importonly="--vsys 0 --eula accept --vsys 1 --eula accept --vmname ${vm_purge}"
-      vbox_arg_general="${vbox_arg_importonly}"
+      vbox_arg_importonly=( '--vsys' '0' '--eula' 'accept' '--vsys' '1' '--eula' 'accept' '--vmname' "${vm_purge}" )
+      vbox_arg_general=( "${vbox_arg_importonly[@]}" )
       ;;
     "")
       ;;
@@ -1251,8 +1250,7 @@ import_virtualbox() {
   check_vm_file_exists_virtualbox_general
 
   local output
-  # shellcheck disable=SC2086
-  output=$(log_run notice "${vboxmanage_locale_english_cmdarr[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_normal} --dry-run) || \
+  output=$(log_run notice run_as_target_user "${vboxmanage_locale_english[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" "${vbox_arg_normal[@]}" --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   case "${guest}" in
@@ -1280,15 +1278,14 @@ import_virtualbox() {
   log notice "VM Import: Importing Virtual Machine(s)..."
 
   ## import VirtualBox image
-  # shellcheck disable=SC2086
-  log_run notice "${vboxmanage_locale_english_cmdarr[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" ${vbox_arg_general} || \
+  log_run notice run_as_target_user "${vboxmanage_locale_english[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" "${vbox_arg_general[@]}" || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
   ## VirtualBox does not accept any command to import a single virtual system
   ## out from an ova with multiple ones.
   ## https://forums.virtualbox.org/viewtopic.php?f=1&t=107965
   if [ -n "${import_only}" ] && [ "${import_only}" != "both" ]; then
-    log_run notice "${vboxmanage_locale_english_cmdarr[@]}" unregistervm "${vm_purge}" --delete ||
+    log_run notice run_as_target_user "${vboxmanage_locale_english[@]}" unregistervm "${vm_purge}" --delete ||
       die 1 "${underline}VM Import:${nounderline} Failed to remove extraneous VM '${vm_purge}'."
   fi
 
@@ -1405,16 +1402,16 @@ check_installed_debian() {
 
 install_package_fedora_common() {
   pkg_mngr="dnf"
-  pkg_mngr_install="${pkg_mngr} install --assumeyes --setopt=install_weak_deps=False"
+  pkg_mngr_install=( "${pkg_mngr}" 'install' '--assumeyes' '--setopt=install_weak_deps=False' )
   ## Fedora lacks an equivalent to Debian's '--error-on=any'.
-  #pkg_mngr_update="${pkg_mngr} update --assumeyes"
+  #pkg_mngr_update=( "${pkg_mngr}" 'update' '--assumeyes' )
   ## 'dnf makecache' does exit non-zero if a repository is unavailable.
   ## --assumeyes good or bad idea? For now not needed. So not using.
-  #pkg_mngr_update="${pkg_mngr} makecache"
-  pkg_mngr_update="${pkg_mngr} --assumeyes update"
-  pkg_mngr_check_installed="${pkg_mngr} list installed"
-  pkg_mngr_upgrade_check="/bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'"
-  pkg_mngr_upgrade_install="${pkg_mngr} upgrade"
+  #pkg_mngr_update( "${pkg_mngr}" 'makecache' )
+  pkg_mngr_update=( "${pkg_mngr}" '--assumeyes' 'update' )
+  pkg_mngr_check_installed=( "${pkg_mngr}" 'list' 'installed' )
+  pkg_mngr_upgrade_check=( '/bin/true' 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.' )
+  pkg_mngr_upgrade_install=( "${pkg_mngr}" 'upgrade' )
 
   pkg_mngr_upgradable_check() {
     /bin/true 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.'
@@ -1438,19 +1435,18 @@ install_package_debian_common() {
   local dpkg_audit_output
 
   pkg_mngr="apt-get"
-  pkg_mngr_install="${pkg_mngr} install --yes --no-install-recommends"
-  pkg_mngr_update="${pkg_mngr} update --yes --error-on=any"
-  pkg_mngr_check_installed="check_installed_debian"
-  pkg_mngr_upgrade_check="${pkg_mngr} full-upgrade --simulate"
-  pkg_mngr_upgrade_install="${pkg_mngr} full-upgrade"
+  pkg_mngr_install=( "${pkg_mngr}" 'install' '--yes' '--no-install-recommends' )
+  pkg_mngr_update=( "${pkg_mngr}" 'update' '--yes' '--error-on=any' )
+  pkg_mngr_check_installed=( "check_installed_debian" )
+  pkg_mngr_upgrade_check=( "${pkg_mngr}" 'full-upgrade' '--simulate' )
+  pkg_mngr_upgrade_install=( "${pkg_mngr}" 'full-upgrade' )
 
   pkg_mngr_upgradable_check() {
     local upgrade_check_output
     ## Not using 'apt list --upgradable', because it is not the same as
     ## 'sudo apt-get dist-upgrade --target-release=bookworm-fasttrack'.
     ## It misses out on packages from "bookworm-fasttrack".
-    # shellcheck disable=SC2086
-    upgrade_check_output="$(root_cmd ${pkg_mngr_upgrade_check} "$@" 2>&1)" || true
+    upgrade_check_output="$(root_cmd "${pkg_mngr_upgrade_check[@]}" "$@" 2>&1)" || true
     local upgrade_check_grep_output
     ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
     ## APT has things to do.
@@ -1625,7 +1621,7 @@ install_repositories_for_virtualbox_on_debian() {
   fi
 
 #   log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
-#   if ${pkg_mngr_install} --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
+#   if "${pkg_mngr_install[@]}" --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
 #     ## Package 'virtualbox' is installable on Debian unstable ("sid").
 #     log notice "VirtualBox Package Availability Test Result: 'success' - Package 'virtualbox-qt' is already installable from an already enabled repository. No need to add any extra repositories."
 #     return 0
@@ -2010,7 +2006,7 @@ install_backports_and_fasttrack_repository_debian() {
   ## If not using APT with option '--target-release=bookworm-fasttrack' then
   ## APT would download an outdated version from Debian stable instead the
   ## newer version from Debian fasttrack.
-  install_pkg_fasttrack_extra_args_maybe="--target-release=${distro_codename_common_use}-fasttrack"
+  install_pkg_fasttrack_extra_args_maybe=( "--target-release=${distro_codename_common_use}-fasttrack" )
 }
 
 
@@ -2026,7 +2022,6 @@ virtualbox_installation_failure_debug() {
   fi
 
   ## TODO: review
-  # shellcheck disable=SC2012
   log_run notice ls --format=single-column --sort=time "$virtualbox_dkms_main_folder"
   # shellcheck disable=SC2012
   latest_folder=$(ls --format=single-column --sort=time "$virtualbox_dkms_main_folder" | head --lines=1)
@@ -2150,7 +2145,7 @@ get_virtualbox_version_debian() {
 ## Install VirtualBox on Debian
 ## See also comments for install_virtualbox_fedora.
 install_virtualbox_debian() {
-  local linux_image linux_headers
+  local linux_image linux_headers install_virtualbox_args
 
   if [ "${oracle_repo}" = "1" ]; then
     ## Workaround for undeclared dependencies bug by virtualbox.org (Oracle) repository.
@@ -2175,9 +2170,14 @@ install_virtualbox_debian() {
   check_upgrades_simulation
   get_virtualbox_version_debian || die 2 "${underline}VirtualBox Package Version Detection:${nounderline} 'FAIL'"
 
-  ## Cannot quote $virtualbox_guest_additions_iso_package_name because is unset in case of using oracle_repo.
-  # shellcheck disable=SC2086
-  install_pkg $install_pkg_fasttrack_extra_args_maybe "$virtualbox_qt_package_name" $virtualbox_guest_additions_iso_package_name
+  install_virtualbox_args=()
+  [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" != '0' ] \
+    && install_virtualbox_args+=( "${install_pkg_fasttrack_extra_args_maybe[@]}" )
+  install_virtualbox_args+=( "${virtualbox_qt_package_name}" )
+  [ -n "${virtualbox_guest_additions_iso_package_name}" ] \
+    && install_virtualbox_args+=( "${virtualbox_guest_additions_iso_package_name}" )
+
+  install_pkg "${install_virtualbox_args[@]}"
   install_virtualbox_debian_common_end
 }
 
@@ -2327,11 +2327,11 @@ get_transfer_cmd() {
       ## utility from coreutils.
       #transfer_max_time_opt="--max-time"
       ## Curl does not have I/O timeout.
-      transfer_io_timeout_opt=""
+      transfer_io_timeout_opt=()
       ## Maximum time in seconds that we allow curl's connection to take.
       ## This only limits the connection phase, so if curl's connect in the
       ## given period, it will continue.
-      transfer_connect_timeout_opt="--connect-timeout ${transfer_connect_timeout}"
+      transfer_connect_timeout_opt=( '--connect-timeout' "${transfer_connect_timeout}" )
       ## curl max-filesize is not a definitive barrier:
       ## The file size is not always known prior to download, and for
       ## such files this option has no effect even if the file transfer ends
@@ -2340,8 +2340,8 @@ get_transfer_cmd() {
       transfer_dryrun_opt=""
       transfer_output_dir_opt="--output-dir"
       transfer_output_file_opt="--remote-name"
-      transfer_verbosity_opt=""
-      transfer_speed_optimization_opt=""
+      transfer_verbosity_opt=()
+      transfer_speed_optimization_opt=()
       ;;
     rsync*)
       ## Rsync does not have an option to set maximum time for of operation.
@@ -2349,19 +2349,20 @@ get_transfer_cmd() {
       ## utility from coreutils.
       #transfer_max_time_opt=""
       ## If no data is transferred in the specified time, rsync will exit.
-      transfer_io_timeout_opt="--timeout ${transfer_io_timeout}"
+      transfer_io_timeout_opt=( '--timeout' "${transfer_io_timeout}" )
       ## Amount of time the client will wait for its connection to a server
       ## to succeed.
       ## Error when using this option:
       ##   The --contimeout option may only be used when connecting to an
       ##   rsync daemon.
-      #transfer_connect_timeout_opt="--contimeout ${transfer_connect_timeout}"
+      #transfer_connect_timeout_opt=( '--contimeout' "${transfer_connect_timeout}" )
+      transfer_connect_timeout_opt=()
       transfer_size_opt="--max-size"
       transfer_dryrun_opt="--dry-run"
       transfer_output_dir_opt=""
       transfer_output_file_opt=""
-      transfer_verbosity_opt="--no-motd --progress --verbose --verbose"
-      transfer_speed_optimization_opt="--compress --partial"
+      transfer_verbosity_opt=( '--no-motd' '--progress' '--verbose' '--verbose' )
+      transfer_speed_optimization_opt=( '--compress' '--partial' )
       ;;
   esac
 }
@@ -2390,13 +2391,10 @@ set_trap() {
   log info "Current shell: '${curr_shell}'"
   case "${curr_shell}" in
     *bash|*ksh|*zsh)
-      # shellcheck disable=SC2039
       if [ "${curr_shell}" = "bash" ]; then
-        # shellcheck disable=SC2039,3040
         set -o errtrace
         set -o pipefail
       fi
-      # shellcheck disable=SC2039,3047
       trap 'handle_exit $? ${LINENO:-}' ERR
       ;;
   esac
@@ -2522,11 +2520,10 @@ check_tor_proxy() {
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
   log info "Expected response header:"
   log info "'$expected_response_header'"
-  cmd_check_proxy="env UTW_DEV_PASSTHROUGH=1 curl --silent --show-error --max-time 3 --head http://${proxy}"
+  cmd_check_proxy=( 'env' 'UTW_DEV_PASSTHROUGH=1' 'curl' '--silent' '--show-error' '--max-time' '3' '--head' "http://${proxy}" )
   log info "Command used to check if proxy is functional:"
-  log info "$cmd_check_proxy"
-  # shellcheck disable=SC2086
-  actual_response_header="$(${cmd_check_proxy} 2>&1)"
+  log info "${cmd_check_proxy[*]}"
+  actual_response_header="$("${cmd_check_proxy[@]}" 2>&1)"
   parsed_response_header=$(echo "${actual_response_header}" | head -1)
   parsed_response_header=$(echo "${parsed_response_header}" | tr -d "\r")
   ## Globs are necessary to match patterns in the event the header has more
@@ -2546,7 +2543,7 @@ Unexpected proxy response, maybe not a Tor proxy?
 
 Debugging information:
 - Command used to check if proxy is functional:
-'$cmd_check_proxy'
+'${cmd_check_proxy[*]}'
 
 - Expected response header:
 '$expected_response_header'
@@ -2573,12 +2570,12 @@ set_transfer_proxy() {
   ## Set transfer proxy per utility.
   case "${transfer_utility}" in
     curl)
-      transfer_proxy_prefix=""
-      transfer_proxy_suffix="--proxy socks5h://${1}"
+      transfer_proxy_prefix=()
+      transfer_proxy_suffix=( '--proxy' "socks5h://${1}" )
       ;;
     rsync*)
-      transfer_proxy_suffix=""
-      transfer_proxy_prefix="torsocks --isolate --address ${proxy_addr} --port ${proxy_port}"
+      transfer_proxy_suffix=()
+      transfer_proxy_prefix=( 'torsocks' '--isolate' '--address' "${proxy_addr}" '--port' "${proxy_port}" )
       ;;
   esac
 }
@@ -2649,7 +2646,7 @@ Additional details:
 
 ## Set version by user input or by querying the API
 get_version() {
-  local cmd_raw_version raw_version
+  local cmd_raw_version raw_version cmd_raw_version_len cmd_raw_version_idx
 
   log notice "Version Detection: Detecting guest version..."
   if [ -n "${guest_version:-}" ]; then
@@ -2658,23 +2655,28 @@ get_version() {
   fi
   log info "Version Detection: Acquiring guest version using API..."
   log info "Version Detection: API host: ${1}"
-  cmd_raw_version="curl ${curl_transfer_proxy:-} $(get_proxy_cred version) \
-      ${curl_opt_ssl:-} \
-      --max-time ${transfer_max_time_small_file} \
-      --max-filesize ${transfer_size_small_file} \
-      --url ${1}"
+  cmd_raw_version=(
+    'curl' "${curl_transfer_proxy:-}"
+    "$(get_proxy_cred version)" "${curl_opt_ssl[@]}"
+    '--max-time' "${transfer_max_time_small_file}"
+    '--max-filesize' "${transfer_size_small_file}"
+    '--url' "${1}"
+  )
+  cmd_raw_version_len="${#cmd_raw_version[@]}"
+  for (( cmd_raw_version_idx=0; cmd_raw_version_idx < cmd_raw_version_len; cmd_raw_version_idx++ )); do
+    if [ -z "${cmd_raw_version[cmd_raw_version_idx]}" ]; then
+      unset "cmd_raw_version[${cmd_raw_version_idx}]"
+    fi
+  done
   ## this is necessary because we log will not be printed as the command is
   ## assigned to a variable at 'raw_version=$()'.
   if [ "${dry_run}" = "1" ]; then
-    # shellcheck disable=SC2086
-    log_run notice ${cmd_raw_version}
+    log_run notice "${cmd_raw_version[@]}"
     return 0
   fi
-  # shellcheck disable=SC2086
-  raw_version="$(${cmd_raw_version})"
+  raw_version="$("${cmd_raw_version[@]}")"
   ## First line only.
   guest_version="$(echo "$raw_version" | head -n 1)"
-  # shellcheck disable=SC2046,SC2086
   guest_version="$(printf '%s\n' "${guest_version}" | sed "s/<.*//")"
   ## Distrust the API version
   ## Block anything that is not made purely out of numbers and dots
@@ -2692,7 +2694,8 @@ get_version() {
 ## Helper for download_files() to make it less repetitive.
 ## usage: get_file small|large $url
 get_file() {
-  local size download_opt_prefix download_opt download_opt_full round
+  local size download_opt_prefix download_opt download_opt_full round \
+    download_opt_full_len download_opt_full_idx
 
   size="${1}"
   url="${2}"
@@ -2700,21 +2703,30 @@ get_file() {
   [ -z "${round:-}" ] && round=10
   round=$((round+1))
 
+  download_opt=()
+
   case "${size}" in
     small)
-      download_opt_prefix="timeout --foreground ${transfer_max_time_small_file}"
-      download_opt="${transfer_size_opt} ${transfer_size_small_file}"
+      download_opt_prefix=( 'timeout' '--foreground' "${transfer_max_time_small_file}" )
+      download_opt+=( "${transfer_size_opt}" "${transfer_size_small_file}" )
       ;;
     large)
-      download_opt_prefix="timeout --foreground ${transfer_max_time_large_file}"
-      download_opt="${transfer_speed_optimization_opt} ${transfer_size_opt} ${transfer_size_large_file}"
+      download_opt_prefix=( 'timeout' '--foreground' "${transfer_max_time_large_file}" )
+      [ "${#transfer_speed_optimization_opt[@]}" != '0' ] && download_opt+=( "${transfer_speed_optimization_opt[@]}" )
+      download_opt+=( "${transfer_size_opt}" "${transfer_size_large_file}" )
       ;;
     *)
       log bug "Missing size option for get_file()."
       ;;
   esac
-  # shellcheck disable=SC2046,SC2086
-  download_opt_full=( "${download_opt_prefix}" "${transfer_proxy_prefix:-}" "${transfer_utility}" "${transfer_verbosity_opt}" "${transfer_proxy_suffix:-}" "$(get_proxy_cred ${round})" "${transfer_connect_timeout_opt:-}" "${transfer_io_timeout_opt:-}" "${download_opt}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
+  download_opt_full=( "${download_opt_prefix[@]}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_verbosity_opt[@]}" "${transfer_proxy_suffix[@]}" "$(get_proxy_cred ${round})" "${transfer_connect_timeout_opt[@]}" "${transfer_io_timeout_opt[@]}" "${download_opt[@]}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
+  download_opt_full_len="${#download_opt_full[@]}"
+  for (( download_opt_full_idx=0; download_opt_full_idx < download_opt_full_len; download_opt_full_idx++ )); do
+    if [ -z "${download_opt_full[download_opt_full_idx]}" ]; then
+      unset "download_opt_full[${download_opt_full_idx}]"
+    fi
+  done
+  download_opt_full=( "${download_opt_full[@]}" )
 
   log_run notice run_as_target_user "${download_opt_full[@]}" || return 1
 }
@@ -3051,7 +3063,7 @@ get_download_links() {
   case "${onion}" in
     1)
       log info "Onion preferred."
-      curl_opt_ssl=""
+      curl_opt_ssl=()
       ## Used to test internet connection.
       url_origin="${protocol_prefix_onion}://www.${site_onion}"
       ## URL to download files from.
@@ -3065,7 +3077,7 @@ get_download_links() {
     *)
       log info "Clearnet preferred."
       [ "${transfer_utility}" = "rsync" ] && transfer_utility="rsync-ssl"
-      curl_opt_ssl="--tlsv1.3 --proto =https"
+      curl_opt_ssl=( '--tlsv1.3' '--proto' '=https' )
       ## Used to test internet connection.
       url_origin="${protocol_prefix_clearnet}://www.${site_clearnet}"
       ## URL to download files from.
@@ -3177,7 +3189,7 @@ check_hash() {
   log info "Checking SHA512 checksum: '${shafile}"
   ## $checkhash needs to be executed on the same folder as the compared file.
   log info "Changing to directory: '${dir}'"
-  if [ -n "${user_switch_cmdarr[0]}" ]; then
+  if [ -n "${target_user}" ]; then
     run_as_target_user_and_dir "${dir}" "${checkhash[@]}" "${shafile}" || return 1
   else
     cd "${dir}"
@@ -3314,9 +3326,16 @@ main() {
   if should_download; then
     if [ "${dry_run}" != "1" ]; then
       log notice "Connectivity Test: Testing internet connection to '${url_origin}'..."
-      cmd_check_internet="timeout --foreground ${transfer_max_time_small_file} ${transfer_proxy_prefix:-} ${transfer_utility} ${transfer_proxy_suffix:-} ${transfer_dryrun_opt} ${transfer_size_opt} ${transfer_size_test_connection} ${url_origin}"
-      log info "Executing: $ ${cmd_check_internet}"
-      ${cmd_check_internet} >/dev/null ||
+      cmd_check_internet=( 'timeout' '--foreground' "${transfer_max_time_small_file}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_proxy_suffix[@]}" "${transfer_dryrun_opt}" "${transfer_size_opt}" "${transfer_size_test_connection}" "${url_origin}" )
+      local cmd_check_internet_idx cmd_check_internet_len
+      cmd_check_internet_len="${#cmd_check_internet[@]}"
+      for (( cmd_check_internet_idx=0; cmd_check_internet_idx < cmd_check_internet_len; cmd_check_internet_idx++ )); do
+        if [ -z "${cmd_check_internet[cmd_check_internet_idx]}" ]; then
+          unset "cmd_check_internet[${cmd_check_internet_idx}]"
+        fi
+      done
+      log info "Executing: $ ${cmd_check_internet[*]}"
+      "${cmd_check_internet[@]}" >/dev/null ||
         die $? "${underline}Connectivity Test Result:${nounderline} 'FAIL' - Cannot connect, perhaps no internet?"
       log notice "Connectivity Test Result: 'success'"
     fi
@@ -3474,10 +3493,10 @@ set_default() {
   # shellcheck disable=SC2034
   credential_caching_status=""
   qubes_template_detected=""
-  install_pkg_fasttrack_extra_args_maybe=""
+  install_pkg_fasttrack_extra_args_maybe=()
   user_warned_potential_startup_issue=""
   ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
-  vboxmanage_locale_english_cmdarr=( 'env' 'LC_ALL=C.UTF-8' 'LANG=C.UTF-8' 'LANGUAGE=C' 'vboxmanage' )
+  vboxmanage_locale_english=( 'env' 'LC_ALL=C.UTF-8' 'LANG=C.UTF-8' 'LANGUAGE=C' 'vboxmanage' )
 }
 
 
@@ -3509,7 +3528,7 @@ run_as_target_user_and_dir() {
   local target_dir
   target_dir="${1:-}"
   [ -z "${target_dir}" ] && die 1 'Failed to provide directory name to run_as_target-user_and_dir!'
-  [ -z "${user_switch_cmdarr[0]}" ] && die 1 'Cannot use run_as_target_user_and_dir if set_target_user_account is not used first!'
+  [ -z "${target_user}" ] && die 1 'Cannot use run_as_target_user_and_dir if set_target_user_account is not used first!'
   shift
   ROOT_CMD_TARGET_USER="${target_user}" ROOT_CMD_TARGET_DIR="${target_dir}" root_cmd "${@}"
 }
@@ -3618,7 +3637,6 @@ parse_opt() {
   while true; do
     begin_optparse "${1:-}" "${2:-}" || break
     ## SC2154: Variable ${opt} gets set in file: /usr/libexec/helper-scripts/parse_opt.sh
-    # shellcheck disable=SC2034,SC2154
     case "${opt}" in
       P|directory-prefix)
         get_arg
@@ -3801,7 +3819,6 @@ parse_opt() {
     run_as_target_user touch "${log_file_user}"
   fi
 
-  # shellcheck disable=SC2194
   if [ "${getopt}" = "1" ]; then
     print_getopt
     exit 0
@@ -3825,7 +3842,6 @@ parse_opt() {
   fi
   if [ "${allow_errors}" = "1" ]; then
     set +o errexit
-    # shellcheck disable=SC2039,3040
     [ "${curr_shell}" = "bash" ] && set +o errtrace
   fi
 
@@ -3847,9 +3863,8 @@ log_term_and_file() {
   run_as_target_user touch "${log_file_debug}"
   ## By appending '&' at the end, log_file_user would remain empty.
   true "exec > >(run_as_target_user tee -a \"${log_file_user}\") 2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
-  exec > >(run_as_target_user tee -a "${log_file_user}") 2> >(run_as_target_uer tee -a "${log_file_debug}" >&2)
+  exec > >(run_as_target_user tee -a "${log_file_user}") 2> >(run_as_target_user tee -a "${log_file_debug}" >&2)
   ## Bash has built-in feature to redirect xtrace to the specified file.
-  # shellcheck disable=SC2039
   true "exec 9> >(run_as_target_user tee -a \"${log_file_debug}\" >/dev/null)"
   exec 9> >(run_as_target_user tee -a "${log_file_debug}" >/dev/null)
   export BASH_XTRACEFD=9
@@ -3869,6 +3884,7 @@ run_installer() {
   set_globals "${@}"
   ## Set default values.
   set_default
+  get_su_cmd
   not_as_root
   ## Set trap for common signals.
   set_trap
@@ -3888,7 +3904,6 @@ run_installer() {
   check_not_qubes_template
   get_system_stat
   need_reboot_check_first
-  get_su_cmd
   get_host_pkgs
   need_reboot_check_second
   get_independent_host_pkgs
