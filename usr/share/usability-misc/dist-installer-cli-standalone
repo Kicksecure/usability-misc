@@ -4214,18 +4214,18 @@ run_as_target_user_and_dir() {
 
 adjust_default_for_sysmaint_maybe() {
   if getent passwd sysmaint >/dev/null; then
-    log info 'Sysmaint user present, checking current user name...'
+    log info "Linux user account 'sysmaint' present, checking current user account name..."
 
     if [ "$(id -un)" = 'sysmaint' ]; then
-      log info "Running as sysmaint, adjusting behavior."
+      log info "Running under account 'sysmaint', adjusting behavior."
 
       set_target_user_account 'user'
       directory_prefix="${user_home_dir}/dist-installer-cli-download"
     else
-      log info 'Not running as sysmaint user, ok.'
+      log info "Not running under account 'sysmaint', ok."
     fi
   else
-    log info 'Sysmaint user not present, ok.'
+    log info "Account 'sysmaint' user not present, ok."
   fi
 }
 
@@ -4568,7 +4568,7 @@ run_installer() {
   set_trap
   ## Parse script name for wanted values.
   parse_name
-  ## If sysmaint is in use and the user hasn't configured their own directory
+  ## If account sysmaint is in use and the user hasn't configured their own directory
   ## prefix and target user, default to target account 'user'.
   adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
