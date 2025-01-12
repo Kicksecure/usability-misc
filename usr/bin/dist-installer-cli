@@ -2566,7 +2566,7 @@ set_transfer_proxy() {
   proxy_port="${1##*:}"
   proxy_addr="${1%%:*}"
   ## Used for transfers that only curl can do.
-  curl_transfer_proxy="--proxy socks5h://${1}"
+  curl_transfer_proxy=( '--proxy' "socks5h://${1}" )
   ## Set transfer proxy per utility.
   case "${transfer_utility}" in
     curl)
@@ -2656,7 +2656,7 @@ get_version() {
   log info "Version Detection: Acquiring guest version using API..."
   log info "Version Detection: API host: ${1}"
   cmd_raw_version=(
-    'curl' "${curl_transfer_proxy:-}"
+    'curl' "${curl_transfer_proxy[@]}"
     "$(get_proxy_cred version)" "${curl_opt_ssl[@]}"
     '--max-time' "${transfer_max_time_small_file}"
     '--max-filesize' "${transfer_size_small_file}"
