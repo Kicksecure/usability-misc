@@ -1,3 +1,64 @@
+commit 8746dfecd56b259ed1b590058cfb45f075da232c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 12 09:42:58 2025 -0500
+
+    output
+
+commit 90183e20e7d43af8dde0cab855bd99475f0f4f2f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 12 09:41:00 2025 -0500
+
+    output
+
+commit f31da72d17b03cd08fb12f4f314799f82fc526a6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 12 09:29:06 2025 -0500
+
+    build
+
+commit 063951e3c1c5c93a0471023e73b992d5eed1f797
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 12 09:28:23 2025 -0500
+
+    output
+
+commit d8a433bcf0bb081feddb2af5a23f44cab7129f0f
+Merge: 6134e21 cfe25a0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 12 09:24:18 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/dist-installer-sysmaint-polish'
+
+commit 6134e218b9597c98011de92eabd4ae44456c4036
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 12 08:52:44 2025 -0500
+
+    build
+
+commit cfe25a06219f275386e5a308dd7a0c50a04c7713
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sat Jan 11 22:19:52 2025 -0600
+
+    Fix install failure when using --onion
+
+commit bdb4bff9759fb56458b19265945c7f0449d37895
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sat Jan 11 21:40:59 2025 -0600
+
+    dist-installer-cli bugfixes, cleanup shellcheck overrides, improve robustness
+
+commit 8675175e9bbbae9ef854149ae8e192e40b847ac3
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Fri Jan 10 16:57:35 2025 -0600
+
+    More polish on dist-installer-cli logic (untested)
+
+commit a5f1631e61539c4027029bd0ee20c2107876d675
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 10 15:34:50 2025 +0000
+
+    bumped changelog version
+
 commit 3f4f69f6a8f0ef6b9dfb736d084380d22685cc41
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jan 10 10:33:33 2025 -0500
