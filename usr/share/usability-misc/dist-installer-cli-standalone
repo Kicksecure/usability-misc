@@ -446,7 +446,7 @@ get_os(){
         die 101 "${underline}Distribution Test Result:${nounderline} Oracle doesn't provide a Debian testing or unstable repository."
       fi
     fi
-    log info "Not attempting to use '--oracle-repo' on Debian testing, good."
+    log info "Not attempting to use '--oracle-repo' on Debian 'testing' or 'unstable', good."
     ## In Debian testing distro_version was previously observed as 'n/a' or empty, because
     ## Debian testing /etc/os-release does not contain VERSION_ID.
     return 0
