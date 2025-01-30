@@ -2557,7 +2557,7 @@ install_oracle_repository_fedora() {
       printf '%s\n' "${oracle_pgp}" | \
         run_as_target_user tee -- "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
       printf '%s\n' "${oracle_pgp}" | \
-        root_cmd tee /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle >/dev/null
+        root_cmd tee -- /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle >/dev/null
       ## Optional: the key will be imported when trying to use the repository
       root_cmd rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
     fi
@@ -2565,14 +2565,14 @@ install_oracle_repository_fedora() {
     ## Based on:
     ## https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
     # shellcheck disable=SC2016
-    printf '%s' '[virtualbox]
+    printf '%s\n' '[virtualbox]
 name=Fedora $releasever - $basearch - VirtualBox
 baseurl=https://download.virtualbox.org/virtualbox/rpm/fedora/$releasever/$basearch
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
-' | root_cmd tee /etc/yum.repos.d/oracle.repo
+' | root_cmd tee -- /etc/yum.repos.d/oracle.repo
 
     ## dnf does not have a command to accept add the key to its database.
     ## https://bugzilla.redhat.com/show_bug.cgi?id=1768206
@@ -2595,7 +2595,7 @@ install_oracle_repository_debian() {
       printf '%s\n' "${oracle_pgp}" | \
         run_as_target_user tee -- "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
       printf '%s\n' "${oracle_pgp}" | \
-        root_cmd tee /usr/share/keyrings/oracle-virtualbox-2016.asc >/dev/null
+        root_cmd tee -- /usr/share/keyrings/oracle-virtualbox-2016.asc >/dev/null
     fi
     write_sources_debian "${oracle_url}" "${oracle_file_debsource}"
   fi
