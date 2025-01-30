@@ -70,7 +70,7 @@ awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
     next
   }
   1
-' "${template}" | tee "${target}" >/dev/null
+' "${template}" | tee -- "${target}" >/dev/null
 
 sed -i \
   -e "\,^\s*source /usr/libexec/helper-scripts/,d" \
