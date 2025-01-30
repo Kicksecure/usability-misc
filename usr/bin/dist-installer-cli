@@ -1834,9 +1834,6 @@ install_repositories_for_virtualbox_on_debian() {
     return 0
   fi
 
-  log info "Installing packages required for 'backports' and 'fasttrack' repository..."
-  install_pkg ca-certificates fasttrack-archive-keyring
-
   case "${distro_codename_real}" in
     bullseye)
       install_backports_and_fasttrack_repository_debian
@@ -1987,6 +1984,9 @@ Pin-Priority: 650
 
 
 install_backports_and_fasttrack_repository_debian() {
+  log info "Installing packages required for 'backports' and 'fasttrack' repository..."
+  install_pkg ca-certificates fasttrack-archive-keyring
+
   if [ "${backports_found}" = "1" ]; then
     log info "APT Repository Configuration: Skipped adding 'backports' repository because it was already found."
   else
