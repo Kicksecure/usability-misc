@@ -1,3 +1,31 @@
+commit ada4b9159de4d20806ce97e0c558f5da233ad993
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 11:43:09 2025 -0500
+
+    build
+
+commit 0eb98fcf3a3e146c6a9428e0e886650b0a1e837c
+Merge: 75b6eaf 15ce5c1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 11:39:10 2025 -0500
+
+    Merge remote-tracking branch 'github-kicksecure/master'
+
+commit 15ce5c12a9ea86f128e0d2df5b57dd4828482ab2
+Merge: 75b6eaf 32a82ee
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 11:29:32 2025 -0500
+
+    Merge pull request #14 from ben-grande/stprint
+    
+    Use printf instead of echo for the Linux installer
+
+commit 75b6eaf4e144aba7339fa725b40bd95ccb3bd27e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 12:59:52 2025 +0000
+
+    bumped changelog version
+
 commit 4f3cd728c05abb7ad848a811bcbfe1b426f42a3e
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jan 30 07:45:27 2025 -0500
@@ -15,6 +43,12 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Jan 29 08:12:22 2025 -0500
 
     build
+
+commit 32a82eed05b5da82867b1687147406f9b2b39451
+Author: Ben Grande <ben.grande.b@gmail.com>
+Date:   Fri Jan 24 21:33:39 2025 +0100
+
+    Use printf instead of echo for the Linux installer
 
 commit 49c3eb311837d92e5acb5b5a67cd1df6df3fd2ef
 Author: Patrick Schleizer <adrelanos@whonix.org>
