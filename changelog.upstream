@@ -1,3 +1,23 @@
+commit 37e757261a69e8c90c780e581cbfa13b6dc03e6e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 12:26:38 2025 -0500
+
+    build
+
+commit ec8b8f0f044cd168a5743f673a4660642ec9f99e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 12:25:48 2025 -0500
+
+    install fasttrack keyring only if needed
+    
+    because it fails on testing and unstable, where the package is unavailable
+
+commit 45d73609ca7748a0259a0303ca71bdec7f123d52
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 17:10:40 2025 +0000
+
+    bumped changelog version
+
 commit 43f5953855cf9d443c487368a37efab10f41f7c9
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jan 30 12:10:23 2025 -0500
