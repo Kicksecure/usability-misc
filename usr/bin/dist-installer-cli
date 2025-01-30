@@ -175,15 +175,15 @@ get_installer_package_version() {
     return 0
   fi
   ## Do not use commit-hash replace-me as search string to avoid replacement script replacing this.
-  if ! echo "${version}" | grep --quiet --fixed-strings "replace-me" ; then
+  if ! printf '%s' "${version}" | grep --quiet --fixed-strings "replace-me" ; then
     true "INFO: version variable does not match replace-me string."
     return 0
   fi
-  if ! echo "${0}" | grep --quiet '^/usr/bin' ; then
+  if ! printf '%s' "${0}" | grep --quiet '^/usr/bin' ; then
     true "INFO: variable 0 does not match ^/usr/bin string. This means not for example /usr/bin/dist-installer-cli. So not packages dist-installer-cli version."
     return 0
   fi
-  if ! echo "${me}" | grep --quiet --fixed-strings "installer-cli" ; then
+  if ! printf '%s' "${me}" | grep --quiet --fixed-strings "installer-cli" ; then
     true "INFO: program name variable does not match installer-cli string."
     return 0
   fi
@@ -284,7 +284,7 @@ handle_exit() {
     log error "If the issue does not recur on retry, it can be safely ignored as transient."
     log error "Consult ${guest_pretty} News and the User Help Forum for assistance."
     log error "Please report this bug if it has not been already."
-    echo ""
+    printf '\n'
     log error "An error occurred at line: '${line_number}'"
     ## ideas from https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
     ## Simple version that doesn't indicate the error line.
@@ -296,10 +296,10 @@ handle_exit() {
     printf '%s\n*%s\n%s\n' "${line_above}" "${line_error}" "${line_below}"
     ## Too complex.
     # awk 'NR>L-4 && NR<L+4 { printf " %-5d%3s %s\n",NR,(NR==L?">>>":""),$0 }' L="${line_number}" "${0}" >&2
-    echo ""
+    printf '\n'
     log error "Please include the user log and the debug log in your bug report."
     log error "(For file locations where to find these logs, see above.)"
-    echo ""
+    printf '\n'
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
@@ -426,7 +426,7 @@ secure_boot_test() {
   local mokutil_output_sb_state
   secure_boot_dkms_key_enrolled=""
   if mokutil_output_sb_state=$(root_cmd mokutil --sb-state 2>&1) ; then
-    if echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
+    if print '%s' "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
       secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
       secure_boot_status_short=true
       ## sudo mokutil --test-key /var/lib/dkms/mok.pub
@@ -436,10 +436,10 @@ secure_boot_test() {
       ## Redirection '2>&1' not necessary yet but that could be considered a minor bug in mokutil to write to stdout instead
       ## of writing to stderr.
       secure_boot_mokutil_dkms_test_key="$(root_cmd mokutil --test-key "/var/lib/dkms/mok.pub" 2>&1)" || true
-      if echo "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings "already enrolled" ; then
+      if printf '%s' "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings "already enrolled" ; then
         secure_boot_dkms_key_enrolled=true
       fi
-    elif echo "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings disabled ; then
+    elif printf '%s' "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings disabled ; then
       secure_boot_status_short=false
       secure_boot_status_pretty="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     else
@@ -618,7 +618,7 @@ update_sources() {
 
   if update_output=$(root_cmd_loglevel=notice root_cmd "${update_cmd[@]}" 2>&1 | "${console_write_command[@]}") ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
-    if echo "$update_output" | grep --quiet --ignore-case "Error:" ; then
+    if printf '%s' "$update_output" | grep --quiet --ignore-case "Error:" ; then
       log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
       update_sources_error
     else
@@ -661,7 +661,7 @@ check_upgrades_simulation() {
     && upgrade_simulate_cmd+=( "${#install_pkg_fasttrack_extra_args_maybe[@]}" )
   if upgrade_simulate_output=$(root_cmd_loglevel=notice root_cmd "${upgrade_simulate_cmd[@]}" 2>&1 | "${console_write_command[@]}") ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
-    if echo "$upgrade_simulate_output" | grep --quiet --ignore-case "Error:" ; then
+    if printf '%s' "$upgrade_simulate_output" | grep --quiet --ignore-case "Error:" ; then
       log error "${underline}Package Upgrade Simulation:${nounderline} Exit code was 0 but 'Error:' found in output."
       upgrade_simulate_sources_error
     fi
@@ -672,9 +672,9 @@ check_upgrades_simulation() {
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
   if [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" = '0' ]; then
-    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check >/dev/null; echo "$?")"
+    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check >/dev/null; printf '%s' "$?")"
   else
-    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check "${install_pkg_fasttrack_extra_args_maybe[@]}" >/dev/null; echo "$?")"
+    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check "${install_pkg_fasttrack_extra_args_maybe[@]}" >/dev/null; printf '%s' "$?")"
   fi
   if [ "${pkg_mngr_upgradable_check_retcode}" = '0' ]; then
     packages_upgradable=false
@@ -758,7 +758,7 @@ install_pkg() {
     log info "special_args: '${special_args[*]}'"
 
     if ! root_cmd "${pkg_mngr_install[@]}" "${special_args[@]}" "${pkg_not_installed[@]}"; then
-      if echo "${pkg_not_installed[*]}" | grep --quiet --ignore-case virtualbox ; then
+      if printf '%s' "${pkg_not_installed[*]}" | grep --quiet --ignore-case virtualbox ; then
         virtualbox_installation_failure_debug
       fi
       die 1 "${underline}Package Installation:${nounderline} Failed to install package: '${pkg_not_installed[*]}'"
@@ -1184,13 +1184,13 @@ extract_vm_name_from_virtualbox_ova() {
   local output="$1"
   local system_number="$2"
   local a b c d
-  a=$(echo "$output" | grep --max-count=1 --after-context=4 "Virtual system $system_number:")
-  b=$(echo "$a" | grep "Suggested VM name")
-  c=$(echo "$b" | grep -oP '"\K[^"]+')
+  a=$(printf '%s' "$output" | grep --max-count=1 --after-context=4 "Virtual system $system_number:")
+  b=$(printf '%s' "$a" | grep "Suggested VM name")
+  c=$(printf '%s' "$b" | grep -oP '"\K[^"]+')
   ## Take first word only because VirtualBox would suggest name "Whonix-Gateway-Xfce 1" in case,
   ## a VM "Whonix-Gateway-Xfce" is already registered in VirtualBox.
-  d=$(echo "$c" | awk '{print $1}')
-  echo "$d"
+  d=$(printf '%s' "$c" | awk '{print $1}')
+  printf '%s' "$d"
 }
 
 
@@ -1377,13 +1377,13 @@ get_pattern_sources_debian() {
 
   file="${1}"
   pattern="${2}"
-  grep -v "#" "${file}" | grep -q -E "${pattern}" || return 1
+  grep -v "#" -- "${file}" | grep -q -E "${pattern}" || return 1
 }
 
 write_sources_debian() {
   url="${1}"
   file="${2}"
-  echo "${url}" | root_cmd tee "${file}" ||
+  printf '%s' "${url}" | root_cmd tee -- "${file}" ||
     die 1 "${underline}Sources List Writer:${nounderline} Failed to write to file: '${file}'"
 }
 
@@ -1450,11 +1450,11 @@ install_package_debian_common() {
     local upgrade_check_grep_output
     ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
     ## APT has things to do.
-    upgrade_check_grep_output="$(echo "${upgrade_check_output}" | grep -e '^Inst' -e '^Conf')" || true
+    upgrade_check_grep_output="$(printf '%s' "${upgrade_check_output}" | grep -e '^Inst' -e '^Conf')" || true
     local number_upgradable
     number_upgradable=0
     if [ -n "$upgrade_check_grep_output" ]; then
-      number_upgradable="$(echo "${upgrade_check_grep_output}" | wc -l)"
+      number_upgradable="$(printf '%s' "${upgrade_check_grep_output}" | wc -l)"
     fi
     if [ "$number_upgradable" -gt "0" ]; then
       return 1
@@ -1491,7 +1491,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
     fi
     for file in /etc/apt/sources.list.d/*; do
       if [ -f "$file" ]; then
-        cat "$file"
+        cat -- "$file"
       fi
     done
   fi
@@ -1875,9 +1875,9 @@ install_oracle_repository_fedora() {
     if [ -f /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle ]; then
       log info "Oracle Repository: Key /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle already exists."
     else
-      echo "${oracle_pgp}" | \
-        run_as_target_user tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
-      echo "${oracle_pgp}" | \
+      printf '%s' "${oracle_pgp}" | \
+        run_as_target_user tee -- "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
+      printf '%s' "${oracle_pgp}" | \
         root_cmd tee /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle >/dev/null
       ## Optional: the key will be imported when trying to use the repository
       root_cmd rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
@@ -1886,7 +1886,7 @@ install_oracle_repository_fedora() {
     ## Based on:
     ## https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
     # shellcheck disable=SC2016
-    echo '[virtualbox]
+    print '%s' '[virtualbox]
 name=Fedora $releasever - $basearch - VirtualBox
 baseurl=https://download.virtualbox.org/virtualbox/rpm/fedora/$releasever/$basearch
 enabled=1
@@ -1913,9 +1913,9 @@ install_oracle_repository_debian() {
     if [ -f /usr/share/keyrings/oracle.asc ]; then
       log info "Oracle Repository: Key /usr/share/keyrings/oracle.asc already exists."
     else
-      echo "${oracle_pgp}" | \
-        run_as_target_user tee "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
-      echo "${oracle_pgp}" | \
+      printf '%s' "${oracle_pgp}" | \
+        run_as_target_user tee -- "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
+      printf '%s' "${oracle_pgp}" | \
         root_cmd tee /usr/share/keyrings/oracle-virtualbox-2016.asc >/dev/null
     fi
     write_sources_debian "${oracle_url}" "${oracle_file_debsource}"
@@ -1967,7 +1967,7 @@ install_unstable_repository_debian() {
 
   log notice "APT Preferences Configuration Writer: Adding APT pinning configuration to prefer testing over unstable."
   file="/etc/apt/preferences.d/40-installer-dist-pinning"
-  echo "\
+  printf '%s' "\
 ## This file was created by: $0
 ## It can be safely deleted if you know what you are doing.
 
@@ -1978,7 +1978,7 @@ Pin-Priority: 700
 Package: *
 Pin: release a=unstable
 Pin-Priority: 650
-" | root_cmd tee "$file" ||
+" | root_cmd tee -- "$file" ||
     die 1 "${underline}APT Preferences Configuration Writer:${nounderline} Failed to write to file: '$file'"
 
   log notice "APT Repository Configuration: Adding 'unstable' ${connection_type_debsource} repository to ${unstable_file_debsource}"
@@ -2056,7 +2056,7 @@ virtualbox_installation_failure_debug() {
     return 0
   fi
 
-  log_run notice cat "$make_log" || true
+  log_run notice cat -- "$make_log" || true
 }
 
 
@@ -2075,11 +2075,11 @@ install_virtualbox_fedora() {
 #     ## --cacheonly does not work.
 #     ## Maybe dnf would need to be run with root_cmd.
 #     virtualbox_version=$(dnf search "VirtualBox-*")
-#     virtualbox_version=$(echo "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\.")
-#     virtualbox_version=$(echo "$virtualbox_version" | tail -1)
-#     virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
-#     virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
-#     virtualbox_version=$(echo "$virtualbox_version" | cut -d "." -f1)
+#     virtualbox_version=$(printf '%s' "$virtualbox_version" | grep "^VirtualBox-[[:digit:]]\{1,2\}\.[[:digit:]]\{1,2\}\.")
+#     virtualbox_version=$(printf '%s' "$virtualbox_version" | tail -1)
+#     virtualbox_version=$(printf '%s' "$virtualbox_version" | cut -d " " -f1)
+#     virtualbox_version=$(printf '%s' "$virtualbox_version" | cut -d "-" -f2-)
+#     virtualbox_version=$(printf '%s' "$virtualbox_version" | cut -d "." -f1)
 #     virtualbox_qt_package_name=VirtualBox-"${virtualbox_version}"
 #     if test -z "$virtualbox_version"; then
 #       ## return non-zero late to avoid unbound variable virtualbox_qt_package_name.
@@ -2120,9 +2120,9 @@ get_virtualbox_version_debian() {
 
   if [ "${oracle_repo}" = "1" ]; then
     virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
-    virtualbox_version=$(echo "$virtualbox_version" | tail -1)
-    virtualbox_version=$(echo "$virtualbox_version" | cut -d " " -f1)
-    virtualbox_version=$(echo "$virtualbox_version" | cut -d "-" -f2-)
+    virtualbox_version=$(printf '%s' "$virtualbox_version" | tail -1)
+    virtualbox_version=$(printf '%s' "$virtualbox_version" | cut -d " " -f1)
+    virtualbox_version=$(printf '%s' "$virtualbox_version" | cut -d "-" -f2-)
     virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
     ## Package virtualbox-guest-additions-iso is unavailable from Oracle repository.
     virtualbox_guest_additions_iso_package_name=""
@@ -2446,7 +2446,7 @@ get_system_stat() {
   fi
 
   df_output="$(run_as_target_user df --output=avail -BG "${directory_prefix}")"
-  free_space_available="$(echo "$df_output" |
+  free_space_available="$(printf '%s' "$df_output" |
                 awk '/G$/{print substr($1, 1, length($1)-1)}')"
 
   ## TODO: do not hardcode 10 GB - Kicksecure vs Whonix
@@ -2524,8 +2524,8 @@ check_tor_proxy() {
   log info "Command used to check if proxy is functional:"
   log info "${cmd_check_proxy[*]}"
   actual_response_header="$("${cmd_check_proxy[@]}" 2>&1)"
-  parsed_response_header=$(echo "${actual_response_header}" | head -1)
-  parsed_response_header=$(echo "${parsed_response_header}" | tr -d "\r")
+  parsed_response_header=$(printf '%s' "${actual_response_header}" | head -1)
+  parsed_response_header=$(printf '%s' "${parsed_response_header}" | tr -d "\r")
   ## Globs are necessary to match patterns in the event the header has more
   ## characters them expected but still has the expected string.
   ## Rsync header response example:
@@ -2676,8 +2676,8 @@ get_version() {
   fi
   raw_version="$("${cmd_raw_version[@]}")"
   ## First line only.
-  guest_version="$(echo "$raw_version" | head -n 1)"
-  guest_version="$(printf '%s\n' "${guest_version}" | sed "s/<.*//")"
+  guest_version="$(printf '%s' "$raw_version" | head -n 1)"
+  guest_version="$(printf '%s' "${guest_version}" | sed "s/<.*//")"
   ## Distrust the API version
   ## Block anything that is not made purely out of numbers and dots
   ## Not printing queried version to avoid it showing a very long version
@@ -3171,7 +3171,7 @@ check_signature() {
   log info "Signify key:\n${signify_key}"
   log info "Verifying file: '${signify_checksum_file}'"
   signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
-  echo "${signify_key}" | run_as_target_user tee "${signify_pub_file}" >/dev/null
+  printf '%s' "${signify_key}" | run_as_target_user tee -- "${signify_pub_file}" >/dev/null
 
   log_run info run_signify -V -p "${signify_pub_file}" \
     -m "${signify_checksum_file}" || return 1
@@ -3201,14 +3201,14 @@ check_hash() {
 
 check_signature_test() {
   log info "Unit testing signature, expecting non-zero exit code."
-  run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  run_as_target_user cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  echo "" | run_as_target_user tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  run_as_target_user rm -f -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  run_as_target_user cp -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  printf '\n' | run_as_target_user tee -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
   if ! check_signature "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
-    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
@@ -3216,14 +3216,14 @@ check_signature_test() {
 
 check_hash_test() {
   log info "Unit testing checksum, expecting non-zero exit code."
-  run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  run_as_target_user cp "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
-  echo "" | run_as_target_user tee "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
+  run_as_target_user rm -f -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  run_as_target_user cp -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums" "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+  printf '\n' | run_as_target_user tee -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" >/dev/null
   if ! check_hash "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test" 2>/dev/null; then
-    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     log info "Received expected non-zero exit code from unit test."
   else
-    run_as_target_user rm -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
+    run_as_target_user rm -f -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.test"
     die 104 "${underline}SHA512 Hash Verification (unit test):${nounderline} 'FAIL' - received a zero as exit code, expected non-zero."
   fi
 }
@@ -3554,7 +3554,7 @@ adjust_default_for_sysmaint_maybe() {
 
 ## Print parsed options
 print_getopt() {
-  echo "directory_prefix=${directory_prefix}
+  printf '%s\n' "directory_prefix=${directory_prefix}
   guest=${guest}
   hypervisor=${hypervisor}
   interface=${interface}
@@ -3605,8 +3605,8 @@ parse_name() {
       return 2
   esac
   ## assign values according to script name
-  guest="$(echo "${me}" | cut -d "-" -f1)"
-  interface="$(echo "${me}" | cut -d "-" -f2)"
+  guest="$(printf '%s' "${me}" | cut -d "-" -f1)"
+  interface="$(printf '%s' "${me}" | cut -d "-" -f2)"
   log info "Assigned guest and interface according to script name: '${me}'"
   return 0
 }
@@ -3625,7 +3625,7 @@ copy_thru_barrier() {
     dest_file="${dest_realpath}"
   fi
 
-  run_as_target_user tee "${dest_file}" >/dev/null < "${source}"
+  run_as_target_user tee -- "${dest_file}" >/dev/null < "${source}"
 }
 
 
@@ -3805,7 +3805,7 @@ parse_opt() {
     if ! test_file -d "${log_dir_main}/1"; then
       log_dir_cur="${log_dir_main}/1"
     else
-      last_run_integer="$(echo "${log_dir_main}"/* | awk '{print NF}')"
+      last_run_integer="$(printf '%s ' "${log_dir_main}"/* | awk '{print NF}')"
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"
     fi
@@ -3862,11 +3862,11 @@ log_term_and_file() {
   run_as_target_user touch "${log_file_user}"
   run_as_target_user touch "${log_file_debug}"
   ## By appending '&' at the end, log_file_user would remain empty.
-  true "exec > >(run_as_target_user tee -a \"${log_file_user}\") 2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
-  exec > >(run_as_target_user tee -a "${log_file_user}") 2> >(run_as_target_user tee -a "${log_file_debug}" >&2)
+  true "exec > >(run_as_target_user tee -a -- \"${log_file_user}\") 2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
+  exec > >(run_as_target_user tee -a -- "${log_file_user}") 2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
   ## Bash has built-in feature to redirect xtrace to the specified file.
-  true "exec 9> >(run_as_target_user tee -a \"${log_file_debug}\" >/dev/null)"
-  exec 9> >(run_as_target_user tee -a "${log_file_debug}" >/dev/null)
+  true "exec 9> >(run_as_target_user tee -a -- \"${log_file_debug}\" >/dev/null)"
+  exec 9> >(run_as_target_user tee -a -- "${log_file_debug}" >/dev/null)
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
