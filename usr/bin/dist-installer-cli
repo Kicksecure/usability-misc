@@ -426,7 +426,7 @@ secure_boot_test() {
   local mokutil_output_sb_state
   secure_boot_dkms_key_enrolled=""
   if mokutil_output_sb_state=$(root_cmd mokutil --sb-state 2>&1) ; then
-    if print '%s' "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
+    if printf '%s' "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings enabled ; then
       secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
       secure_boot_status_short=true
       ## sudo mokutil --test-key /var/lib/dkms/mok.pub
@@ -1886,7 +1886,7 @@ install_oracle_repository_fedora() {
     ## Based on:
     ## https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
     # shellcheck disable=SC2016
-    print '%s' '[virtualbox]
+    printf '%s' '[virtualbox]
 name=Fedora $releasever - $basearch - VirtualBox
 baseurl=https://download.virtualbox.org/virtualbox/rpm/fedora/$releasever/$basearch
 enabled=1
