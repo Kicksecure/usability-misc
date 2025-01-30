@@ -2062,7 +2062,7 @@ get_pattern_sources_debian() {
 write_sources_debian() {
   url="${1}"
   file="${2}"
-  printf '%s' "${url}" | root_cmd tee -- "${file}" ||
+  printf '%s\n' "${url}" | root_cmd tee -- "${file}" ||
     die 1 "${underline}Sources List Writer:${nounderline} Failed to write to file: '${file}'"
 }
 
@@ -2554,9 +2554,9 @@ install_oracle_repository_fedora() {
     if [ -f /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle ]; then
       log info "Oracle Repository: Key /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle already exists."
     else
-      printf '%s' "${oracle_pgp}" | \
+      printf '%s\n' "${oracle_pgp}" | \
         run_as_target_user tee -- "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
-      printf '%s' "${oracle_pgp}" | \
+      printf '%s\n' "${oracle_pgp}" | \
         root_cmd tee /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle >/dev/null
       ## Optional: the key will be imported when trying to use the repository
       root_cmd rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
@@ -2592,9 +2592,9 @@ install_oracle_repository_debian() {
     if [ -f /usr/share/keyrings/oracle.asc ]; then
       log info "Oracle Repository: Key /usr/share/keyrings/oracle.asc already exists."
     else
-      printf '%s' "${oracle_pgp}" | \
+      printf '%s\n' "${oracle_pgp}" | \
         run_as_target_user tee -- "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
-      printf '%s' "${oracle_pgp}" | \
+      printf '%s\n' "${oracle_pgp}" | \
         root_cmd tee /usr/share/keyrings/oracle-virtualbox-2016.asc >/dev/null
     fi
     write_sources_debian "${oracle_url}" "${oracle_file_debsource}"
@@ -2646,7 +2646,7 @@ install_unstable_repository_debian() {
 
   log notice "APT Preferences Configuration Writer: Adding APT pinning configuration to prefer testing over unstable."
   file="/etc/apt/preferences.d/40-installer-dist-pinning"
-  printf '%s' "\
+  printf '%s\n' "\
 ## This file was created by: $0
 ## It can be safely deleted if you know what you are doing.
 
@@ -3850,7 +3850,9 @@ check_signature() {
   log info "Signify key:\n${signify_key}"
   log info "Verifying file: '${signify_checksum_file}'"
   signify_pub_file="${log_dir_cur}/${signify_signer}.pub"
-  printf '%s' "${signify_key}" | run_as_target_user tee -- "${signify_pub_file}" >/dev/null
+  ## Newline '\n' at the end needed. Otherwise error:
+  #signify-openbsd: missing new line after base64 in /home/user/dist-installer-cli-download/logs/1/adrelanos.pub
+  printf '%s\n' "${signify_key}" | run_as_target_user tee -- "${signify_pub_file}" >/dev/null
 
   log_run info run_signify -V -p "${signify_pub_file}" \
     -m "${signify_checksum_file}" || return 1
