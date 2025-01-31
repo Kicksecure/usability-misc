@@ -1,3 +1,27 @@
+commit 94846f8c848c54812bca046418a39e5b14f7cfe7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 31 13:39:11 2025 -0500
+
+    output
+
+commit dd9728f8c649e85c67d83c587fdf25b8ace56ce0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 31 13:38:18 2025 -0500
+
+    use end-of-options
+
+commit bcd4158a3bbf15137e5198f19b37e67d7a3c8d7a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 31 13:35:20 2025 -0500
+
+    refactoring; output
+
+commit 9c7ee78f14bfbee4e401fd1c88d0021c7b68313e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 30 17:26:53 2025 +0000
+
+    bumped changelog version
+
 commit 37e757261a69e8c90c780e581cbfa13b6dc03e6e
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jan 30 12:26:38 2025 -0500
