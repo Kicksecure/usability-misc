@@ -8,7 +8,7 @@
 
 ## Dependency of derivative-maker.
 
-true "START: $0"
+echo "START: $0"
 set -e
 set -o pipefail
 set -o nounset
