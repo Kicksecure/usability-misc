@@ -1247,11 +1247,11 @@ Whapos8dv40=
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
 
-cp --verbose "$apt_source_key_derivative" "$apt_target_key_derivative"
+cp --verbose -- "$apt_source_key_derivative" "$apt_target_key_derivative"
 
 true "sources_list_target_build_remote_derivative: $sources_list_target_build_remote_derivative"
 
-cat <<EOF | tee "$sources_list_target_build_remote_derivative" >/dev/null
+cat <<EOF | tee -- "$sources_list_target_build_remote_derivative" >/dev/null
 $sources_list_build_remote_derivative
 EOF
 
