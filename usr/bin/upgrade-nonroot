@@ -5,4 +5,11 @@
 
 set -e
 
-sudo /usr/bin/apt-get-update-plus dist-upgrade
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/use_leaprun.sh
+source /usr/libexec/helper-scripts/use_leaprun.sh
+
+if [ "${use_leaprun}" = 'yes' ]; then
+  "${leaprun_exe}" apt-get-update-plus-dist-upgrade
+else
+  sudo /usr/bin/apt-get-update-plus dist-upgrade
+fi
