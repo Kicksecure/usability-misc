@@ -19,5 +19,5 @@ if [ -n "${leaprun_exe}" ] \
   "${leaprun_exe}" apt-get-update-plus-dist-upgrade
 else
   as_root
-  /usr/bin/apt-get-update-plus dist-upgrade
+  exec /usr/bin/apt-get-update-plus dist-upgrade
 fi
