@@ -9,7 +9,8 @@ set -e
 source /usr/libexec/helper-scripts/use_leaprun.sh
 
 if [ "${use_leaprun}" = 'yes' ]; then
-  "${leaprun_exe}" apt-get-update-plus-dist-upgrade
-else
-  sudo /usr/bin/apt-get-update-plus dist-upgrade
+  exec "${leaprun_exe}" upgrade-nonroot-wrapper
 fi
+
+## This is never reached if running 'exec' above.
+exec sudo /usr/bin/apt-get-update-plus dist-upgrade
