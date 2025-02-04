@@ -1,3 +1,34 @@
+commit a09d247f44726813af0543ed4c53ca90768f6622
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Feb 4 03:55:08 2025 -0500
+
+    refactoring
+
+commit 684c8c0fe49357eb188b2d42b3a7b6435563b855
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Feb 3 06:25:51 2025 -0500
+
+    refactoring
+
+commit 8c50d0913285835adb8eb34a5a5dc3c2d291bb1a
+Merge: 00a1014 29c3804
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Feb 3 06:24:59 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/privleap'
+
+commit 29c380432845b5594099d2f559badc4e0c9f02c0
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Fri Jan 31 16:41:08 2025 -0600
+
+    Port upgrade-nonroot to privleap, don't allow conffile prompts in apt-get-update-plus
+
+commit 00a1014c4399631c52e83a11a8c7914e0bf05c86
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jan 31 18:41:47 2025 +0000
+
+    bumped changelog version
+
 commit 94846f8c848c54812bca046418a39e5b14f7cfe7
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jan 31 13:39:11 2025 -0500
