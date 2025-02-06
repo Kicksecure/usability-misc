@@ -30,11 +30,15 @@ fi
 # shellcheck source=../../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
 source /usr/libexec/helper-scripts/package_installed_check.bsh
 if pkg_installed user-sysmaint-split ; then
-  kernel_cmdline="$(cat /proc/cmdline)"
-  if ! [[ "${kernel_cmdline}" =~ 'boot-role=sysmaint' ]]; then
-    1>&2 echo "$0: Cannot run \"apt-get-update-plus dist-upgrade\". Please reboot into \"PERSISTENT mode SYSMAINT\" to do this."
-    exit 1
+  if command -v qubesdb-read >/dev/null 2>&1 ; then
+      1>&2 echo "$0: Cannot run \"apt-get-update-plus dist-upgrade\". Please open a Qubes root console. See: https://www.kicksecure.com/wiki/sysmaint"
+  else
+    kernel_cmdline="$(cat /proc/cmdline)"
+    if ! [[ "${kernel_cmdline}" =~ 'boot-role=sysmaint' ]]; then
+      1>&2 echo "$0: Cannot run \"apt-get-update-plus dist-upgrade\". Please reboot into \"PERSISTENT mode SYSMAINT\" to do this. See: https://www.kicksecure.com/wiki/sysmaint"
+    fi
   fi
+  exit 1
 fi
 
 ## This is never reached if running 'exec' above.
