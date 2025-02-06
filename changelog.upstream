@@ -1,3 +1,27 @@
+commit 0d6a9b560af662e3f7aeae60caab4d026a1347ec
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 11:50:33 2025 -0500
+
+    `upgrade-nonroot` / `apt-get-update-plus`: use `apt-get-noninteractive`
+
+commit f8db1d910627d3a2d81f151e91471a5608e0a439
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 11:40:10 2025 -0500
+
+    exec
+
+commit bbfd3411384acc49b170cc55fbefe8813739141b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 11:39:54 2025 -0500
+
+    fix
+
+commit edcd28a264b3d739b5f2d44becfe29421342cc54
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 16:35:28 2025 +0000
+
+    bumped changelog version
+
 commit 3ed50a9ab072de900d5441bc4d36e74aed00883b
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Feb 6 11:35:13 2025 -0500
