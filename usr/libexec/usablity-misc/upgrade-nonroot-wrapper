@@ -8,6 +8,11 @@ set -o nounset
 set -o errtrace
 set -o pipefail
 
+if [ "$(id -u)" = "0" ]; then
+  exec /usr/bin/apt-get-update-plus dist-upgrade
+fi
+## This is never reached if running 'exec' above.
+
 # shellcheck source=../../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
 source /usr/libexec/helper-scripts/package_installed_check.bsh
 
@@ -18,4 +23,5 @@ if pkg_installed user-sysmaint-split ; then
     exit 1
   fi
 fi
+
 /usr/bin/apt-get-update-plus dist-upgrade
