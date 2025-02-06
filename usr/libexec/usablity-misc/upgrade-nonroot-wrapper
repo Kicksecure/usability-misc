@@ -1,0 +1,21 @@
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+set -o errexit
+set -o nounset
+set -o errtrace
+set -o pipefail
+
+# shellcheck source=../../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
+source /usr/libexec/helper-scripts/package_installed_check.bsh
+
+if pkg_installed user-sysmaint-split ; then
+  kernel_cmdline="$(cat /proc/cmdline)"
+  if ! [[ "${kernel_cmdline}" =~ 'boot-role=sysmaint' ]]; then
+    1>&2 echo "$0: Cannot run \"apt-get-update-plus dist-upgrade\". Please reboot into \"PERSISTENT mode SYSMAINT\" to do this."
+    exit 1
+  fi
+fi
+/usr/bin/apt-get-update-plus dist-upgrade

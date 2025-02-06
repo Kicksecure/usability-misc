@@ -5,32 +5,12 @@
 
 set -e
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/as_root.sh
-source /usr/libexec/helper-scripts/as-root.sh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/use_leaprun.sh
+source /usr/libexec/helper-scripts/use_leaprun.sh
 
-## If privleap is installed and usable by the current user, use that, otherwise
-## try to run the script directly. This allows upgrade-nonroot to work even if
-## privleapd isn't running or the root user has no privleap socket.
-
-if ! command -v leaprun >/dev/null ; then
-  as_root
-  exec /usr/bin/apt-get-update-plus dist-upgrade
+if [ "${use_leaprun}" = 'yes' ]; then
+  exec "${leaprun_exe}" upgrade-nonroot-wrapper
 fi
+
 ## This is never reached if running 'exec' above.
-
-if ! [ -f "/etc/privleapd/pid" ] ; then
-  echo "$0: ERROR: code 1: TODO"
-  exit 1
-fi
-
-if ! [ -d "/proc/$(cat /etc/privleapd/pid)" ] ; then
-  echo "$0: ERROR: code 2: TODO"
-  exit 1
-fi
-
-if ! [ -e "/etc/privleapd/comm/$(id -nu)" ]; then
-  echo "$0: ERROR: code 3: TODO"
-  exit 1
-fi
-
-exec leaprun apt-get-update-plus-dist-upgrade
+exec sudo /usr/bin/apt-get-update-plus dist-upgrade

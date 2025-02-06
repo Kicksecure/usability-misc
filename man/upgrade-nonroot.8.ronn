@@ -10,10 +10,15 @@ upgrade-nonroot(8) -- run /usr/bin/apt-get-update-plus dist-upgrade
 `upgrade-nonroot`
 
 ## Description
-Runs 'sudo /usr/bin/apt-get-update-plus dist-upgrade'.
+Runs '/usr/bin/apt-get-update-plus dist-upgrade' as root.
 
-This works passwordless for any user who is a member of group sudo, because of
-the sudo /etc/sudoers.d/upgrade-passwordless configuration snippet.
+If 'user-sysmaint-split' is not installed, this works passwordless for any
+user who is a member of group sudo, because of the
+/etc/privleap/conf.d/usability-misc.conf and
+/etc/sudoers.d/upgrade-passwordless configuration snippets.
+
+If 'user-sysmaint-split' is installed, this works passwordless only if
+the system is booted in 'sysmaint' mode.
 
 ## Examples
 upgrade-nonroot
