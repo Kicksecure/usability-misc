@@ -1,3 +1,21 @@
+commit 7e1395c0e44bb85358c0e14ff6f0108761c15537
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 12:55:22 2025 -0500
+
+    upgrade-nonroot: improve Qubes user-sysmaint-split support
+
+commit edc5b48bd0570986ab70f83de1893590467f939a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 12:50:34 2025 -0500
+
+    comment
+
+commit 6ed71d707a011d752d7c711c8187d95f0062a3cb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 17:42:19 2025 +0000
+
+    bumped changelog version
+
 commit 89b910b33cc51d63f4bb3c1b1cc12ba909678a53
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Feb 6 12:26:58 2025 -0500
