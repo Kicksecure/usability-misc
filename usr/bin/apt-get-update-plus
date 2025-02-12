@@ -5,8 +5,8 @@
 
 set -e
 
-[ -n "$apt_get_update_wrapper" ] || apt_get_update_wrapper="apt-get-noninteractive update"
-[ -n "$apt_bin" ] || apt_bin=apt-get-noninteractive
+[ -n "$apt_get_update_wrapper" ] || apt_get_update_wrapper="apt-get update"
+[ -n "$apt_bin" ] || apt_bin=apt-get
 
 $apt_get_wrapper_pre $apt_get_update_wrapper $apt_get_wrapper_post
 

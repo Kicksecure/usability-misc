@@ -3,44 +3,6 @@
 ## Copyright (C) 2019 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-set -o errexit
-set -o nounset
-set -o errtrace
-set -o pipefail
+set -e
 
-if [ "$(id -u)" = "0" ]; then
-  ## Administrative ("root") rights already available.
-  ## No need to use a privilege escalation tool such as 'privleap' or 'sudo'.
-  exec /usr/bin/apt-get-update-plus dist-upgrade
-fi
-
-## This is never reached if running 'exec' above.
-
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/use_leaprun.sh
-source /usr/libexec/helper-scripts/use_leaprun.sh
-if [ "${use_leaprun}" = 'yes' ]; then
-  exec "${leaprun_exe}" upgrade-nonroot-wrapper
-fi
-
-## In practice, this should "rarely" be reached.
-## Only in case after upgrade, when privleap has not been started yet.
-## In a future version, privleap might auto start after installation.
-## Then this should "never" be reached.
-
-# shellcheck source=../../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
-source /usr/libexec/helper-scripts/package_installed_check.bsh
-if pkg_installed user-sysmaint-split ; then
-  if command -v qubesdb-read >/dev/null 2>&1 ; then
-      1>&2 echo "$0: Cannot run \"apt-get-update-plus dist-upgrade\". Please open a Qubes root console. See: https://www.kicksecure.com/wiki/sysmaint"
-  else
-    kernel_cmdline="$(cat /proc/cmdline)"
-    if ! [[ "${kernel_cmdline}" =~ 'boot-role=sysmaint' ]]; then
-      1>&2 echo "$0: Cannot run \"apt-get-update-plus dist-upgrade\". Please reboot into \"PERSISTENT mode SYSMAINT\" to do this. See: https://www.kicksecure.com/wiki/sysmaint"
-    fi
-  fi
-  exit 1
-fi
-
-## This is never reached if running 'exec' above.
-
-exec sudo /usr/bin/apt-get-update-plus dist-upgrade
+sudo /usr/bin/apt-get-update-plus dist-upgrade
