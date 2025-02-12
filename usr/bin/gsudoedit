@@ -29,4 +29,4 @@ set -e
 # export askpass_title
 # export askpass_message
 
-SUDO_ASKPASS=/usr/libexec/usablity-misc/sudo-askpass-gui sudoedit --askpass -- "$@"
+SUDO_ASKPASS=/usr/libexec/usability-misc/sudo-askpass-gui sudoedit --askpass -- "$@"
