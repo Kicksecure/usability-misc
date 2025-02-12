@@ -5,4 +5,16 @@
 
 set -e
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
+source /usr/libexec/helper-scripts/package_installed_check.bsh
+
+if pkg_installed user-sysmaint-split; then
+  if [ "$(id -un)" != 'sysmaint' ]; then
+    1>&2 echo "ERROR: upgrade-nonroot cannot be used by accounts other than"
+    1>&2 echo "'sysmaint' on this system. For more information, see"
+    1>&2 echo "https://www.kicksecure.com/wiki/Sysmaint"
+    exit 1
+  fi
+fi
+
 sudo /usr/bin/apt-get-update-plus dist-upgrade
