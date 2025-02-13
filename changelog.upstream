@@ -1,3 +1,21 @@
+commit 2f669176139d717802d5cfa8adfac3a721c506d3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 18:21:11 2025 -0500
+
+    comment
+
+commit f5854c0c3f8b32cf6b002e73113be84f3c9b3d6b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 18:19:53 2025 -0500
+
+    allow root running upgrade-nonroot (even if user-sysmaint-split is installed)
+
+commit 35e10c9b779ded2a3b4b5e97385d00ebd34b4b1b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 23:16:53 2025 +0000
+
+    bumped changelog version
+
 commit 42759f717689a9aafa9f0f01bb0ca53f891bb437
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Feb 13 18:16:19 2025 -0500
