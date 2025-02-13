@@ -1,3 +1,15 @@
+commit ead109283bd620594e61b2c13faa6c5b9c2f4693
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 18:28:07 2025 -0500
+
+    avoid using `sudo` if already using account `root`
+
+commit d5608ecf83054346ccf190fc696cbc4676d08f19
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 23:21:31 2025 +0000
+
+    bumped changelog version
+
 commit 2f669176139d717802d5cfa8adfac3a721c506d3
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Feb 13 18:21:11 2025 -0500
