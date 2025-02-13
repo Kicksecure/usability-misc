@@ -1,3 +1,40 @@
+commit 7142c96945a97b2afaffd05c1ac6bd74c7dae44d
+Merge: 3ff857e 04ddda9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 17:16:34 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/misc-fixes'
+
+commit 04ddda9eba821380d7b217546e302902592de005
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Wed Feb 12 01:03:01 2025 -0600
+
+    Add error message when trying to run upgrade-nonroot as a normal user when user-sysmaint-split is installed
+
+commit 432b573e804e7f23418a821fe8891b4c5504d123
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Wed Feb 12 00:43:42 2025 -0600
+
+    Revert sudoless port of upgrade-nonroot, not needed
+
+commit a773a6c565ab5eb5b96cfb0365a551e1dd2e3d1a
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Feb 11 22:55:06 2025 -0600
+
+    Don't prompt the user for confirmation when installing things with apt-get-noninteractive
+
+commit 0daa049ff52b3816907e4a6fe05493d117bc512e
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Feb 11 22:45:42 2025 -0600
+
+    Fix typo in directory name
+
+commit 3ff857e7616eb002c367d5c0a9dd87a7ffb73d4e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 6 17:55:51 2025 +0000
+
+    bumped changelog version
+
 commit 7e1395c0e44bb85358c0e14ff6f0108761c15537
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Feb 6 12:55:22 2025 -0500
