@@ -9,6 +9,9 @@ set -e
 source /usr/libexec/helper-scripts/package_installed_check.bsh
 
 if pkg_installed user-sysmaint-split; then
+  ## Example use cases for using account 'root' with user-sysmaint-split installed:
+  ## - root login
+  ## - Qubes root console.
   if [ "$(id -un)" != 'sysmaint' ] && [ "$(id -un)" != 'root' ]; then
     1>&2 echo "ERROR: upgrade-nonroot cannot be used by accounts other than"
     1>&2 echo "'sysmaint' (or 'root') on this system. For more information, see"
