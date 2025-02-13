@@ -1,3 +1,15 @@
+commit 42759f717689a9aafa9f0f01bb0ca53f891bb437
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 18:16:19 2025 -0500
+
+    revert `--yes` from `apt-get-noninteractive`
+
+commit 00d9283abc8c043db1fe5ccdf191c1d9a345c5d9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Feb 13 23:04:33 2025 +0000
+
+    bumped changelog version
+
 commit 7142c96945a97b2afaffd05c1ac6bd74c7dae44d
 Merge: 3ff857e 04ddda9
 Author: Patrick Schleizer <adrelanos@whonix.org>
