@@ -28,11 +28,13 @@ set_default_variable() {
   var_content="$2"
 
   if [ -z "${!var_name:-}" ]; then
-    echo "INFO: Variable '$var_name' is already set? No. - Setting: $var_name='$var_content'"
+    echo "INFO: Variable '$var_name' is already set? No. - Setting:
+                $var_name='$var_content'"
     eval "$var_name='$var_content'"
     return 0
   fi
-  echo "INFO: Variable '$var_name' is already set? Yes. - Already: $var_name='${!var_name}'"
+  echo "INFO: Variable '$var_name' is already set? Yes. - Already:
+              $var_name='${!var_name}'"
 }
 
 root_check
