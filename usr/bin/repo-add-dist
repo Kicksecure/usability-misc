@@ -1256,6 +1256,7 @@ true "INFO: cp --verbose -- apt_source_key_derivative apt_target_key_derivative"
 cp --verbose -- "$apt_source_key_derivative" "$apt_target_key_derivative"
 
 ## Debugging.
+true "INFO: cat -- $apt_target_key_derivative + counting lines using wc -l"
 cat -- "$apt_target_key_derivative" | wc -l || true
 
 true "sources_list_target_build_remote_derivative: $sources_list_target_build_remote_derivative"
