@@ -48,10 +48,10 @@ set_default_variable sources_list_target_build_remote_derivative "/etc/apt/sourc
 set_default_variable codename "bookworm"
 set_default_variable sources_list_build_remote_derivative "deb [signed-by=$apt_target_key_derivative] https://deb.kicksecure.com $codename main contrib non-free"
 
-mkdir --parents "$sources_list_target_folder_build_remote_derivative"
-mkdir --parents "$apt_source_key_temp_folder_derivative"
+mkdir --parents -- "$sources_list_target_folder_build_remote_derivative"
+mkdir --parents -- "$apt_source_key_temp_folder_derivative"
 
-cat <<EOF | tee "$apt_source_key_derivative" >/dev/null
+cat <<EOF | tee -- "$apt_source_key_derivative" >/dev/null
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQINBFLYY+gBEACb5AqqsBuxzGlqSQZoua/CI/kr9YOagD9G8I+aBXoTUqyTSafy
