@@ -1251,8 +1251,8 @@ EOF
 
 true "INFO: apt_source_key_derivative: $apt_source_key_derivative"
 true "INFO: apt_target_key_derivative: $apt_target_key_derivative"
-true "INFO: cp --verbose -- apt_source_key_derivative apt_target_key_derivative"
 
+true "INFO: cp --verbose -- apt_source_key_derivative apt_target_key_derivative"
 cp --verbose -- "$apt_source_key_derivative" "$apt_target_key_derivative"
 
 ## Debugging.
