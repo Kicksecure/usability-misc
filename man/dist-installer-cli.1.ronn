@@ -191,6 +191,10 @@ Exit codes for <curl> and <rsync> are reserved to avoid conflicts and simplify d
 
     107     Failed to start virtual machines due to unforeseen issues.
 
+    108     Oracle VirtualBox package found but option `--oracle-repo` was not provided.
+
+    109     Oracle VirtualBox installed from tarball/source, but messing with packages installed from source can have unexpected results.
+
 ## AUTHOR
 
 This man page was authored by grass (grass@danwin1210.de).

@@ -33,22 +33,19 @@ jobs:
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         strategy:
             fail-fast: false
             matrix:
                 include:
-                    - image: fedora:38
-                    ## https://download.virtualbox.org/virtualbox/rpm/fedora/ no longer has fedora39.
-                    ## Fedora 39 not in VirtualBox Fedora Repository
-                    ## https://www.virtualbox.org//ticket/21929
-                    #- image: fedora:latest
+                    - image: fedora:latest
+                    - image: fedora:rawhide
                     - image: debian:oldstable
                     - image: debian:stable
                     - image: debian:testing
                     - image: debian:unstable
                     - image: ubuntu:latest
-                    - image: linuxmintd/mint21.3-amd64:latest
+                    - image: linuxmintd/mint22.1-amd64:latest
                     - image: kalilinux/kali-rolling
 
         container:
@@ -62,12 +59,12 @@ jobs:
                     apt-get update --error-on=any
                     ## Installer aborts if package upgrades are pending.
                     apt-get dist-upgrade --yes
-                    apt-get install --yes shellcheck sudo adduser tor locales
+                    apt-get install --yes shellcheck sudo adduser tor locales curl
                   elif command -v dnf; then
                     dnf upgrade --assumeyes
-                    dnf install --assumeyes ShellCheck sudo tor systemd
+                    dnf install --assumeyes ShellCheck sudo tor systemd curl
                     ## Debugging.
-                    dnf whatprovides needs-restarting
+                    dnf provides needs-restarting
                   else
                     exit 1
                   fi
@@ -84,6 +81,9 @@ jobs:
                   locale
                   #cat /etc/sudoers
                   #ls /etc/sudoers.d
+            - name: Test Curl
+              run: |
+                  timeout --foreground 20 curl -vvvv --max-filesize 200K https://www.whonix.org
             - name: Enable Services
               run: |
                   if command -v apt-get; then
@@ -148,12 +148,21 @@ jobs:
                   fi
 
             - name: Run VirtualBox Installer - back to default repository
-              run: sudo -u user -- usr/share/usability-misc/dist-installer-cli-standalone --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
+              run: |
+                  sudo -u user -- usr/share/usability-misc/dist-installer-cli-standalone --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only || {
+                    ec="$?"
+                    if grep -iq -e "debian" -e "buntu" -e "mint" /etc/os-release && test "$ec" = "108"; then
+                      printf '%s\n' "Expected error as --oracle-repo is not specified"
+                      apt-get remove -y 'virtualbox*'
+                      sudo -u user -- usr/share/usability-misc/dist-installer-cli-standalone --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only
+                    else
+                      exit $?
+                    fi
+                  }
             - name: Run VirtualBox Installer - back to default repository - Clearnet
               run: sudo -u user -- usr/share/usability-misc/dist-installer-cli-standalone --non-interactive --log-level=debug --no-boot --dev --ci --virtualbox-only --onion
             - name: Run with non-English locale - Clearnet
               run: sudo -u user -- env LC_ALL=ru_RU.UTF-8 LANG=ru_RU.UTF-8 LANGUAGE=ru_RU usr/share/usability-misc/dist-installer-cli-standalone --non-interactive --log-level=debug --no-boot --dev --ci --import-only=both --destroy-existing-guest
-
             ## When `source`d the script should exit in less than a second because it should not perform actual work.
             ## If it was running longer that would mean that it can no longer be `source`d without actually running.
             - name: Run Bash to test 'source'ing the script
