@@ -2107,8 +2107,17 @@ install_package_fedora_common() {
     return 0
   fi
 
-  ## TODO: remove dnf-utils when removing Fedora 38 support from CI.
-  install_pkg torsocks redhat-lsb-core dnf-plugins-core dnf-utils procps-ng
+  install_pkg torsocks dnf-plugins-core procps-ng
+
+  ## Conflicting packages requires '--allowerasing'.
+  if "${pkg_mngr_check_installed[@]}" lsb_release >/dev/null 2>&1 ||
+    "${pkg_mngr_check_installed[@]}" redhat-lsb-core >/dev/null 2>&1
+  then
+    true
+  else
+    install_pkg lsb_release >/dev/null 2>&1
+  fi
+
   install_signify signify
 }
 

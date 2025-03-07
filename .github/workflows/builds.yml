@@ -59,10 +59,10 @@ jobs:
                     apt-get update --error-on=any
                     ## Installer aborts if package upgrades are pending.
                     apt-get dist-upgrade --yes
-                    apt-get install --yes shellcheck sudo adduser tor locales curl
+                    apt-get install --yes shellcheck sudo adduser tor locales
                   elif command -v dnf; then
                     dnf upgrade --assumeyes
-                    dnf install --assumeyes ShellCheck sudo tor systemd curl
+                    dnf install --assumeyes ShellCheck sudo tor systemd
                     ## Debugging.
                     dnf provides needs-restarting
                   else
@@ -75,15 +75,36 @@ jobs:
             - name: System information
               run: |
                   cat /etc/os-release
+                  sep="--------------------"
+                  printf '%s\n' "${sep}"
                   uname -a
+                  printf '%s\n' "${sep}"
                   echo "${PATH}"
+                  printf '%s\n' "${sep}"
                   localedef --list-archive
+                  printf '%s\n' "${sep}"
                   locale
+                  printf '%s\n' "${sep}"
+                  if command -v apt-get >/dev/null; then
+                    for f in \
+                      /etc/apt/sources.list \
+                      /etc/apt/sources.list.d/*.list \
+                      /etc/apt/sources.list.d/*.sources
+                    do
+                      test -f "${f}" || continue
+                      printf '%s\n%s\n%s\n' "### ${f} ###" "$(cat "$f")" "${sep}"
+                    done
+                  elif command -v dnf >/dev/null; then
+                    for f in \
+                      /etc/yum.repos.d/*.repo
+                    do
+                      test -f "${f}" || continue
+                      printf '%s\n%s\n%s\n' "### ${f} ###" "$(cat "$f")" "${sep}"
+                    done
+                  fi
+                  printf '%s\n' "${sep}"
                   #cat /etc/sudoers
                   #ls /etc/sudoers.d
-            - name: Test Curl
-              run: |
-                  timeout --foreground 20 curl -vvvv --max-filesize 200K https://www.whonix.org
             - name: Enable Services
               run: |
                   if command -v apt-get; then
