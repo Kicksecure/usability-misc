@@ -1,3 +1,73 @@
+commit b5d0c9e1471ee3dca7918903b65a9da8509a76da
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:45:53 2025 -0500
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit b8fec549e0fab872f155ac03d563a3c95662da76
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:34:38 2025 -0500
+
+    build
+
+commit 9e47c2467b23fd691965c0f46aee81432500c9d7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:34:04 2025 -0500
+
+    output
+
+commit c283c85bd9cd063edb4f70a3b8f807e52fafdc46
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:23:08 2025 -0500
+
+    typo
+
+commit 5fe4faef512ed64790673e4e38b349abd263f87c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:21:49 2025 -0500
+
+    disable Fedora rawhide on CI because VirtualBox is unavailable from Oracle at time of writing
+
+commit dd8a1f3de441995a1ce56f956e7de022c5bc1c38
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:20:53 2025 -0500
+
+    use end-of-options
+
+commit 323e4c126318d87509867d18aee9258a05c2622a
+Merge: ee99241 5e1b2a9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:10:52 2025 -0500
+
+    Merge remote-tracking branch 'github-kicksecure/master'
+
+commit 5e1b2a9fa992628667cced580d39819894288392
+Merge: ee99241 a2159ad
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 8 09:03:28 2025 -0500
+
+    Merge pull request #15 from ben-grande/oracle-tar
+    
+    Fix VirtualBox downgrade
+
+commit a2159ade19465a8900c23397ebdc7fac50ae4101
+Author: Ben Grande <ben.grande.b@gmail.com>
+Date:   Fri Mar 7 09:47:14 2025 +0100
+
+    Fix Fedora 42 package installation
+
+commit c1303aee88a919894ea29730dd9e612652c01e39
+Author: Ben Grande <ben.grande.b@gmail.com>
+Date:   Wed Mar 5 09:02:44 2025 +0100
+
+    Fix VirtualBox downgrade
+
+commit ee99241dee03171a93a4ff1a32f9e089770cfd14
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Feb 22 08:48:41 2025 +0000
+
+    bumped changelog version
+
 commit ce22ee1b63c2722d57bceed927a65a0928f6af37
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Feb 22 03:39:44 2025 -0500
