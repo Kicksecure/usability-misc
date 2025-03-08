@@ -366,7 +366,6 @@ get_independent_host_pkgs() {
   has curl || install_pkg curl
   has rsync || install_pkg rsync
   has mokutil || install_pkg mokutil
-  has pgrep || install_pkg procps
 
   ## Install openssl and ca-certificates.
   ## openssl is required:
@@ -620,6 +619,10 @@ update_sources() {
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if printf '%s' "$update_output" | grep --quiet --ignore-case "Error:" ; then
       log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
+      if printf '%s' "$update_output" | grep --quiet --ignore-case "GPG signature verification error: Signing key not"; then
+        log warn "${underline}Package List Update:${nounderline} Signing key not found. Skipping due to 'rpm --import' failing to import keys but '--assumeyes' being used will import keys"
+        return 0
+      fi
       update_sources_error
     else
       true "INFO: No error found in update output, ok."
@@ -1377,7 +1380,7 @@ get_pattern_sources_debian() {
 
   file="${1}"
   pattern="${2}"
-  grep -v "#" -- "${file}" | grep -q -E "${pattern}" || return 1
+  grep -v "^\s*#" -- "${file}" | grep -q -E "${pattern}" || return 1
 }
 
 write_sources_debian() {
@@ -1409,7 +1412,7 @@ install_package_fedora_common() {
   ## --assumeyes good or bad idea? For now not needed. So not using.
   #pkg_mngr_update( "${pkg_mngr}" 'makecache' )
   pkg_mngr_update=( "${pkg_mngr}" '--assumeyes' 'update' )
-  pkg_mngr_check_installed=( "${pkg_mngr}" 'list' 'installed' )
+  pkg_mngr_check_installed=( "${pkg_mngr}" 'list' '--installed' )
   pkg_mngr_upgrade_check=( '/bin/true' 'dnf does not seem to support an alternative to apt-get full-upgrade --simulate, skipping.' )
   pkg_mngr_upgrade_install=( "${pkg_mngr}" 'upgrade' )
 
@@ -1425,8 +1428,17 @@ install_package_fedora_common() {
     return 0
   fi
 
-  ## TODO: remove dnf-utils when removing Fedora 38 support from CI.
-  install_pkg torsocks redhat-lsb-core dnf-plugins-core dnf-utils
+  install_pkg torsocks dnf-plugins-core procps-ng
+
+  ## Conflicting packages requires '--allowerasing'.
+  if "${pkg_mngr_check_installed[@]}" lsb_release >/dev/null 2>&1 ||
+    "${pkg_mngr_check_installed[@]}" redhat-lsb-core >/dev/null 2>&1
+  then
+    true
+  else
+    install_pkg lsb_release >/dev/null 2>&1
+  fi
+
   install_signify signify
 }
 
@@ -1499,7 +1511,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
   update_sources
   check_upgrades_simulation
 
-  install_pkg lsb-release
+  install_pkg lsb-release procps
 
   if [ "${virtualbox_only}" = "1" ]; then
     return 0
@@ -1600,33 +1612,42 @@ kernel_modules_check() {
 
 
 install_repositories_for_virtualbox_on_debian() {
-  local distro_codename_real distro_codename_debian \
-    distro_codename_kicksecure_use oracle_clearnet oracle_prefix_debsource \
-    oracle_suffix_debsource unstable_clearnet unstable_onion \
-    unstable_prefix_debsource unstable_suffix_debsource backports_clearnet \
-    backports_onion backports_prefix_debsource backports_suffix_debsource \
-    fasttrack_clearnet fasttrack_onion fasttrack_prefix_debsource \
-    fasttrack_suffix_debsource kicksecure_clearnet kicksecure_onion \
-    kicksecure_prefix_debsource kicksecure_suffix_debsource kali_clearnet \
-    kali_prefix_debsource kali_suffix_debsource apt_torified apt_onion \
-    protocol_prefix_debsource kali_domain_debsource oracle_domain_debsource \
-    kicksecure_domain_debsource unstable_domain_debsource \
-    fasttrack_domain_debsource backports_domain_debsource
+  local distro_codename_real distro_codename_debian distro_codename_ubuntu \
+    distro_codename_kicksecure_use \
+    oracle_clearnet oracle_prefix_debsource oracle_suffix_debsource \
+    oracle_domain_debsource \
+    unstable_clearnet unstable_onion unstable_prefix_debsource \
+    unstable_suffix_debsource unstable_domain_debsource \
+    backports_clearnet backports_onion backports_prefix_debsource \
+    backports_suffix_debsource backports_domain_debsource \
+    fasttrack_clearnet fasttrack_onion fasttrack_dir_regex \
+    fasttrack_prefix_debsource fasttrack_suffix_components \
+    fasttrack_suffix_components_regex fasttrack_suffix_debsource \
+    fasttrack_suffix_debsource_regex \
+    fasttrack_backports_staging_suffix_debsource \
+    fasttrack_backports_staging_suffix_debsource_regex \
+    fasttrack_domain_debsource \
+    kicksecure_clearnet kicksecure_onion kicksecure_prefix_debsource \
+    kicksecure_suffix_debsource kicksecure_domain_debsource  \
+    kali_clearnet kali_prefix_debsource kali_suffix_debsource \
+    kali_domain_debsource  \
+    apt_torified apt_onion protocol_prefix_debsource
 
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="${distro_codename_real}"
-  ## Oracle does not have a Kali dist section, use Debian stable.
-  if [ "${kali_derivative_detected}" = "1" ]; then
-    distro_codename_debian="bookworm"
+  if [ "${ubuntu_derivative_detected}" = "1" ]; then
+    if grep -q "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
+      distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
+    else
+      distro_codename_ubuntu="noble"
+    fi
+  elif [ "${debian_derivative_detected}" = "1" ]; then
+    if [ "${kali_derivative_detected}" = "1" ]; then
+      distro_codename_debian="bookworm"
+    else
+      distro_codename_debian="${distro_codename_common_use}"
+    fi
   fi
-
-#   log info "VirtualBox Package Availability Test: Checking if package 'virtualbox-qt' is already installable from an already enabled repository..."
-#   if "${pkg_mngr_install[@]}" --simulate install virtualbox-qt 1>/dev/null 2>/dev/null ; then
-#     ## Package 'virtualbox' is installable on Debian unstable ("sid").
-#     log notice "VirtualBox Package Availability Test Result: 'success' - Package 'virtualbox-qt' is already installable from an already enabled repository. No need to add any extra repositories."
-#     return 0
-#   fi
-#   log info "VirtualBox Package Availability Test Result: Not yet Available. Enabling additional repository..."
 
   if [ "${dev}" = "1" ]; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
@@ -1640,7 +1661,9 @@ install_repositories_for_virtualbox_on_debian() {
   oracle_file_debsource="/etc/apt/sources.list.d/oracle.list"
   oracle_prefix_debsource="deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.asc] "
   ## Oracle does not have a Kali dist section, use Debian stable.
-  if [ "${kali_derivative_detected}" = "1" ]; then
+  if [ "${ubuntu_derivative_detected}" = "1" ]; then
+    oracle_suffix_debsource="/virtualbox/debian ${distro_codename_ubuntu} contrib"
+  elif [ "${debian_derivative_detected}" = "1" ]; then
     oracle_suffix_debsource="/virtualbox/debian ${distro_codename_debian} contrib"
   else
     oracle_suffix_debsource="/virtualbox/debian ${distro_codename_common_use} contrib"
@@ -1665,11 +1688,21 @@ install_repositories_for_virtualbox_on_debian() {
   backports_suffix_debsource="/debian/ ${distro_codename_common_use}-backports main contrib non-free"
 
   fasttrack_found=""
+  fasttrack_backports_staging_found=""
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
+  fasttrack_backports_staging_file_debsource="/etc/apt/sources.list.d/fasttrack-backports-staging.list"
   fasttrack_prefix_debsource="deb "
-  fasttrack_suffix_debsource="/debian/ ${distro_codename_common_use}-fasttrack main contrib non-free"
+  fasttrack_dir_regex="/debian(-fasttrack)?/?\s"
+  fasttrack_suffix_components="main contrib non-free"
+  fasttrack_suffix_components_regex="main\s+contrib\s+non-free"
+  fasttrack_suite="${distro_codename_common_use}-fasttrack"
+  fasttrack_suffix_debsource="/debian-fasttrack/ ${fasttrack_suite} ${fasttrack_suffix_components}"
+  fasttrack_suffix_debsource_regex="${fasttrack_dir_regex}\s*${fasttrack_suite}\s+${fasttrack_suffix_components_regex}"
+  fasttrack_backports_staging_suite="${distro_codename_common_use}-backports-staging"
+  fasttrack_backports_staging_suffix_debsource="/debian-fasttrack/ ${fasttrack_backports_staging_suite} ${fasttrack_suffix_components}"
+  fasttrack_backports_staging_suffix_debsource_regex="${fasttrack_dir_regex}\s*${fasttrack_backports_staging_suite}\s+${fasttrack_suffix_components_regex}"
 
   kicksecure_found=""
   kicksecure_clearnet="deb.kicksecure.com"
@@ -1726,9 +1759,14 @@ install_repositories_for_virtualbox_on_debian() {
       backports_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "${fasttrack_clearnet}|${fasttrack_onion}"
+    if get_pattern_sources_debian "${file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_suffix_debsource_regex}"
     then
       fasttrack_found=1
+    fi
+
+    if get_pattern_sources_debian "${file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_backports_staging_suffix_debsource_regex}"
+    then
+      fasttrack_backports_staging_found=1
     fi
 
     if get_pattern_sources_debian "${file}" "${kali_clearnet}"
@@ -1795,10 +1833,11 @@ install_repositories_for_virtualbox_on_debian() {
     else
       kali_domain_debsource="${kali_clearnet}"
       oracle_domain_debsource="${oracle_clearnet}"
+      log warn "Fallback Fasttrack repository to clearnet"
+      fasttrack_domain_debsource="${fasttrack_clearnet}"
     fi
     kicksecure_domain_debsource="${kicksecure_onion}"
     unstable_domain_debsource="${unstable_onion}"
-    fasttrack_domain_debsource="${fasttrack_onion}"
     backports_domain_debsource="${backports_onion}"
   ## If user has torified repositories configured, prefer it.
   elif [ "${apt_torified}" = '1' ]; then
@@ -1822,11 +1861,12 @@ install_repositories_for_virtualbox_on_debian() {
     kali_domain_debsource="${kali_clearnet}"
   fi
 
-  kicksecure_url="${kicksecure_prefix_debsource} ${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
-  unstable_url="${unstable_prefix_debsource} ${protocol_prefix_debsource}${unstable_domain_debsource}${unstable_suffix_debsource}"
-  fasttrack_url="${fasttrack_prefix_debsource} ${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
-  backports_url="${backports_prefix_debsource} ${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
-  kali_url="${kali_prefix_debsource} ${protocol_prefix_debsource}${kali_domain_debsource}${kali_suffix_debsource}"
+  kicksecure_url="${kicksecure_prefix_debsource}${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
+  unstable_url="${unstable_prefix_debsource}${protocol_prefix_debsource}${unstable_domain_debsource}${unstable_suffix_debsource}"
+  fasttrack_url="${fasttrack_prefix_debsource}${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
+  fasttrack_backports_staging_url="${fasttrack_prefix_debsource}${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_backports_staging_suffix_debsource}"
+  backports_url="${backports_prefix_debsource}${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
+  kali_url="${kali_prefix_debsource}${protocol_prefix_debsource}${kali_domain_debsource}${kali_suffix_debsource}"
 
   if [ "${oracle_repo}" = "1" ]; then
     oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
@@ -1835,11 +1875,7 @@ install_repositories_for_virtualbox_on_debian() {
   fi
 
   case "${distro_codename_real}" in
-    bullseye)
-      install_backports_and_fasttrack_repository_debian
-      return 0
-      ;;
-    bookworm)
+    bullseye|bookworm)
       install_backports_and_fasttrack_repository_debian
       return 0
       ;;
@@ -1852,6 +1888,11 @@ install_repositories_for_virtualbox_on_debian() {
       return 0
       ;;
   esac
+  if test "${ubuntu_derivative_detected}" = "1"; then
+    ## Doesn't require extra repository, but this function is used to get
+    ## Oracle repository information and protocol (onion, https, tor+http etc)
+    return 0
+  fi
 
   die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename_real}'!"
 }
@@ -1876,7 +1917,6 @@ install_oracle_repository_fedora() {
         run_as_target_user tee -- "${log_dir_cur}/oracle-virtualbox-2016.asc" >/dev/null
       printf '%s\n' "${oracle_pgp}" | \
         root_cmd tee -- /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle >/dev/null
-      ## Optional: the key will be imported when trying to use the repository
       root_cmd rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
     fi
 
@@ -2001,6 +2041,14 @@ install_backports_and_fasttrack_repository_debian() {
     write_sources_debian "${fasttrack_url}" "${fasttrack_file_debsource}"
   fi
 
+  if [ "${fasttrack_backports_staging_found}" = "1" ]; then
+    log info "APT Repository Configuration: Skipped adding 'fasttrack' with suite '${fasttrack_backports_staging_suite}' repository because it was already found."
+  else
+    log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository with suite '${fasttrack_backports_staging_suite}' to ${fasttrack_file_debsource}"
+    write_sources_debian "${fasttrack_backports_staging_url}" "${fasttrack_backports_staging_file_debsource}"
+  fi
+
+
   ## virtualbox-guest-additions-iso is available from Debian stable and fasttrack.
   ## Debian stable version however is outdated.
   ## If not using APT with option '--target-release=bookworm-fasttrack' then
@@ -2068,7 +2116,7 @@ install_virtualbox_fedora() {
 
   get_virtualbox_version_fedora() {
     ## Too many issues with auto detection. Therefore hardcoded.
-    virtualbox_qt_package_name="VirtualBox-7.0"
+    virtualbox_qt_package_name="VirtualBox-7.1"
     return 0
 
 #     log info "VirtualBox Version Detection: Running 'dnf search VirtualBox-*'. This can take a while..."
@@ -2119,10 +2167,9 @@ get_virtualbox_version_debian() {
   local virtualbox_version
 
   if [ "${oracle_repo}" = "1" ]; then
-    virtualbox_version=$(apt-cache search --names-only --quiet "^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$")
-    virtualbox_version=$(printf '%s' "$virtualbox_version" | tail -1)
-    virtualbox_version=$(printf '%s' "$virtualbox_version" | cut -d " " -f1)
-    virtualbox_version=$(printf '%s' "$virtualbox_version" | cut -d "-" -f2-)
+    virtualbox_version=$("${virtualbox_cache_version_cmd[@]}" | tail -1)
+    virtualbox_version=${virtualbox_version#virtualbox-}
+    virtualbox_version=${virtualbox_version%% *}
     virtualbox_qt_package_name=virtualbox-"${virtualbox_version}"
     ## Package virtualbox-guest-additions-iso is unavailable from Oracle repository.
     virtualbox_guest_additions_iso_package_name=""
@@ -2141,12 +2188,9 @@ get_virtualbox_version_debian() {
 }
 
 
-
-## Install VirtualBox on Debian
-## See also comments for install_virtualbox_fedora.
-install_virtualbox_debian() {
-  local linux_image linux_headers install_virtualbox_args
-
+## Begin installation of VirtualBox on Debian and derived systems.
+install_virtualbox_debian_common_begin() {
+  log notice "VirtualBox Installation: Preparing to install VirtualBox..."
   if [ "${oracle_repo}" = "1" ]; then
     ## Workaround for undeclared dependencies bug by virtualbox.org (Oracle) repository.
     ##
@@ -2159,16 +2203,41 @@ install_virtualbox_debian() {
     install_pkg gcc udev
   fi
 
+  virtualbox_cache_version_cmd=('apt-cache' 'search' '--names-only' '--quiet' '^virtualbox-[[:digit:]]{1,2}\.[[:digit:]]{1,2}$')
+  ## Dealing with installation from tarball is not possible, we can identify
+  ## if 'vboxmanage' is in the PATH while no related package was found, but
+  ## then there is not a way to clearly explain to the user that they should
+  ## remove TODO
+  if [ "${oracle_repo}" != '1' ]; then
+    for pkg in $("${virtualbox_cache_version_cmd[@]}" | cut -d " " -f1); do
+      if "${pkg_mngr_check_installed[@]}" "${pkg}" >/dev/null 2>&1; then
+        die 108 "Found Oracle VirtualBox package but option '--oracle-repo' was not set! Run with the option '--oracle-repo' or uninstall the package '$pkg' and then rerun this script."
+      fi
+    done
+  fi
+  if has vboxmanage && ! dpkg --search "$(command -v vboxmanage)"; then
+    die 109 "Found Oracle VirtualBox installed from tarball/source, using a package manager can conflict with yourinstalled program. Uninstall VirtualBox first and then rerun this script. Use the option '--oracle-repo' if you want to keep close to upstream releases."
+  fi
+
+  install_repositories_for_virtualbox_on_debian
+  update_sources
+  check_upgrades_simulation
+  get_virtualbox_version_debian || die 2 "${underline}VirtualBox Package Version Detection:${nounderline} 'FAIL'"
+
+}
+
+
+## Install VirtualBox on Debian
+## See also comments for install_virtualbox_fedora.
+install_virtualbox_debian() {
+  local linux_image linux_headers install_virtualbox_args
+
   linux_image="linux-image-$(dpkg --print-architecture)"
   linux_headers="linux-headers-$(dpkg --print-architecture)"
   ## Doing here and now below because we $install_pkg_fasttrack_extra_args_maybe should not be used here.
   install_pkg "${linux_image}" "${linux_headers}"
 
-  log notice "VirtualBox Installation: Preparing to install VirtualBox..."
-  install_repositories_for_virtualbox_on_debian
-  update_sources
-  check_upgrades_simulation
-  get_virtualbox_version_debian || die 2 "${underline}VirtualBox Package Version Detection:${nounderline} 'FAIL'"
+  install_virtualbox_debian_common_begin
 
   install_virtualbox_args=()
   [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" != '0' ] \
@@ -2184,7 +2253,14 @@ install_virtualbox_debian() {
 
 ## Install VirtualBox on Ubuntu
 install_virtualbox_ubuntu() {
-  install_pkg virtualbox-qt virtualbox-guest-additions-iso linux-image-generic linux-headers-generic
+  install_virtualbox_debian_common_begin
+  install_virtualbox_args=()
+  [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" != '0' ] \
+    && install_virtualbox_args+=( "${install_pkg_fasttrack_extra_args_maybe[@]}" )
+  install_virtualbox_args+=( "${virtualbox_qt_package_name}" )
+  [ -n "${virtualbox_guest_additions_iso_package_name}" ] \
+    && install_virtualbox_args+=( "${virtualbox_guest_additions_iso_package_name}" )
+  install_pkg "${install_virtualbox_args[@]}" linux-image-generic linux-headers-generic
   install_virtualbox_debian_common_end
 }
 
