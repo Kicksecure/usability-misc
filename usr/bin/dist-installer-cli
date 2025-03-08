@@ -620,7 +620,7 @@ update_sources() {
     if printf '%s' "$update_output" | grep --quiet --ignore-case -- "Error:" ; then
       log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
       if printf '%s' "$update_output" | grep --quiet --ignore-case -- "GPG signature verification error: Signing key not"; then
-        log warn "${underline}Package List Update:${nounderline} Signing key not found. Skipping due to 'rpm --import' failing to import keys but '--assumeyes' being used will import keys"
+        log warn "${underline}Package List Update:${nounderline} Signing key not found. Skipping due to 'rpm --import' failing to import keys, but '--assumeyes' being used will import keys."
         return 0
       fi
       update_sources_error
@@ -1833,7 +1833,7 @@ install_repositories_for_virtualbox_on_debian() {
     else
       kali_domain_debsource="${kali_clearnet}"
       oracle_domain_debsource="${oracle_clearnet}"
-      log warn "Fallback Fasttrack repository to clearnet"
+      log warn "Fallback FastTrack repository to clearnet."
       fasttrack_domain_debsource="${fasttrack_clearnet}"
     fi
     kicksecure_domain_debsource="${kicksecure_onion}"
@@ -2216,7 +2216,7 @@ install_virtualbox_debian_common_begin() {
     done
   fi
   if has vboxmanage && ! dpkg --search "$(command -v vboxmanage)"; then
-    die 109 "Found Oracle VirtualBox installed from tarball/source, using a package manager can conflict with your installed program. Uninstall VirtualBox first and then rerun this script. Use the option '--oracle-repo' if you want to keep close to upstream releases."
+    die 109 "Found Oracle VirtualBox installed from tarball/source. Using a package manager can conflict with your already manually installed VirtualBox. Uninstall VirtualBox first and then rerun this script. Use the option '--oracle-repo' if you want to install from the Oracle repository."
   fi
 
   install_repositories_for_virtualbox_on_debian
