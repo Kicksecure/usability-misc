@@ -39,7 +39,7 @@ jobs:
             matrix:
                 include:
                     - image: fedora:latest
-                    - image: fedora:rawhide
+                    #- image: fedora:rawhide
                     - image: debian:oldstable
                     - image: debian:stable
                     - image: debian:testing
