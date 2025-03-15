@@ -1,3 +1,22 @@
+commit 8d1b2da55edcc8bee2b1afed5580ee7d451ff485
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 15 06:50:30 2025 -0400
+
+    build
+
+commit ba350fb482ea3b16bd698a41a4158e8c9a020476
+Merge: 69ef639 6af03a9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 15 06:27:24 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/autologin'
+
+commit 69ef639d4890d28b9a2fadefc6652c8341567927
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Mar 14 08:29:50 2025 +0000
+
+    bumped changelog version
+
 commit e2d18122c454f5914ac45f582518324d5f5c3307
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Mar 14 04:25:53 2025 -0400
@@ -73,6 +92,12 @@ Author: Ben Grande <ben.grande.b@gmail.com>
 Date:   Fri Mar 7 09:47:14 2025 +0100
 
     Fix Fedora 42 package installation
+
+commit 6af03a9cf5505711a21f4571fe0e945c06c85119
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Mar 6 21:34:35 2025 -0600
+
+    Remove pwchange script and autologin configuration file
 
 commit c1303aee88a919894ea29730dd9e612652c01e39
 Author: Ben Grande <ben.grande.b@gmail.com>
