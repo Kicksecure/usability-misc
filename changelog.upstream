@@ -1,3 +1,15 @@
+commit 41065692da5e0ac3e2e8bf2f7020bb2dddad43d5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Mar 31 10:28:27 2025 -0400
+
+    Check if 'sudo' is executable and use it, if so.
+
+commit 89fb589125225abd87dfee442148efbc9334c5e7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Mar 27 12:39:59 2025 +0000
+
+    bumped changelog version
+
 commit 111fa614a939a99c75d5cbbc2d5d0ab543217ddb
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Mar 27 07:43:22 2025 -0400
