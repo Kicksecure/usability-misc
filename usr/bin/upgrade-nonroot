@@ -20,8 +20,14 @@ fi
 ## Check if 'sudo' is executable and use it, if so, irrespective of package
 ## 'user-sysmaint-split' installation status. This could be the case if one
 ## has run 'sudo chmod o+x /usr/bin/sudo' in sysmaint mode for debugging.
-if command -v sudo &>/dev/null ; then
-  exec sudo /usr/bin/apt-get-update-plus dist-upgrade
+##
+## 'command -v' cannot be used.
+#if command -v sudo &>/dev/null ; then
+## note:
+## zsh: exits non-zero if found but not exectuable.
+## bash: exits 0 if found but not executable
+if test -x /usr/bin/sudo ; then
+  exec /usr/bin/sudo /usr/bin/apt-get-update-plus dist-upgrade
 fi
 
 ## This is never reached if using 'exec' above.
