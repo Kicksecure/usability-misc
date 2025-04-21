@@ -2127,17 +2127,17 @@ install_package_debian_common() {
   local dpkg_audit_output
 
   if [[ -z "${APTGETOPT_SERIALIZED:-}" ]]; then
-    log info "Environment variable APTGETOPT_SERIALIZED not set or empty."
-  else
-    log info "Setting environment variable APTGETOPT based on APTGETOPT_SERIALIZED."
-    mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
-    ## With '@' the formatting looks nicer.
-    # shellcheck disable=SC2016
-    #log info "APTGETOPT: ${APTGETOPT[@]}"
+    APTGETOPT_SERIALIZED=()
   fi
 
+  # shellcheck disable=SC2128
+  mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
+  ## With '@' the formatting looks nicer.
+  # shellcheck disable=SC2145
+  log info "APTGETOPT: ${APTGETOPT[@]}"
+
   pkg_mngr="apt-get"
-  pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' ${APTGETOPT[@]} 'install' )
+  pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' "${APTGETOPT[@]}" 'install' )
   pkg_mngr_update=( "${pkg_mngr}" '--yes' '--error-on=any' "${APTGETOPT[@]}" 'update' )
   pkg_mngr_check_installed=( "check_installed_debian" )
   pkg_mngr_upgrade_check=( "${pkg_mngr}" '--simulate' "${APTGETOPT[@]}" 'full-upgrade' )
