@@ -1446,12 +1446,15 @@ install_package_fedora_common() {
 install_package_debian_common() {
   local dpkg_audit_output
 
+  ## derivative-maker sets this for apt-cacher-ng support.
+  [[ ${#APTGETOPT[@]} -eq 0 ]] && APTGETOPT=()
+
   pkg_mngr="apt-get"
-  pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' 'install' )
-  pkg_mngr_update=( "${pkg_mngr}" '--yes' '--error-on=any' 'update' )
+  pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' "${APTGETOPT[@]}" 'install' )
+  pkg_mngr_update=( "${pkg_mngr}" '--yes' '--error-on=any' "${APTGETOPT[@]}" 'update' )
   pkg_mngr_check_installed=( "check_installed_debian" )
-  pkg_mngr_upgrade_check=( "${pkg_mngr}" '--simulate' 'full-upgrade' )
-  pkg_mngr_upgrade_install=( "${pkg_mngr}" 'full-upgrade' )
+  pkg_mngr_upgrade_check=( "${pkg_mngr}" '--simulate' "${APTGETOPT[@]}" 'full-upgrade' )
+  pkg_mngr_upgrade_install=( "${pkg_mngr}" "${APTGETOPT[@]}" 'full-upgrade' )
 
   pkg_mngr_upgradable_check() {
     local upgrade_check_output
