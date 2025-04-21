@@ -18,18 +18,18 @@ error_handler() {
 
 trap "error_handler" ERR
 
-mkdir --parents ~/sources
+mkdir --parents -- ~/sources
 
-cd ~/sources
+cd -- ~/sources
 
 apt-get \
-   ${APTGETOPT[@]} \
+   "${APTGETOPT[@]}" \
    $apt_unattended_opts \
    update
 
 for i in $(damngpl --source /var/lib/dpkg/status); do
    apt-get \
-      ${APTGETOPT[@]} \
+      "${APTGETOPT[@]}" \
       $apt_unattended_opts \
       --download-only \
       source "$i"
