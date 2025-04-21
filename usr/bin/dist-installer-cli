@@ -1448,16 +1448,10 @@ install_package_debian_common() {
 
   if [[ -z "${APTGETOPT_SERIALIZED:-}" ]]; then
     log info "Environment variable APTGETOPT_SERIALIZED not set or empty."
-  fi
-
-  ## derivative-maker sets this for apt-cacher-ng support.
-  if [[ -n "$APTGETOPT_SERIALIZED" ]]; then
+  else
     log info "Setting environment variable APTGETOPT based on APTGETOPT_SERIALIZED."
     mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
     printf "%s\n" "APTGETOPT: ${APTGETOPT[@]}"
-  else
-    log info "Not setting environment variable APTGETOPT because APTGETOPT_SERIALIZED does not exist."
-    [[ ${#APTGETOPT[@]} -eq 0 ]] && APTGETOPT=()
   fi
 
   pkg_mngr="apt-get"
