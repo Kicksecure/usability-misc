@@ -2126,12 +2126,26 @@ install_package_fedora_common() {
 install_package_debian_common() {
   local dpkg_audit_output
 
+  if [[ -z "${APTGETOPT_SERIALIZED:-}" ]]; then
+    log info "Environment variable APTGETOPT_SERIALIZED not set or empty."
+  fi
+
+  ## derivative-maker sets this for apt-cacher-ng support.
+  if [[ -n "$APTGETOPT_SERIALIZED" ]]; then
+    log info "Setting environment variable APTGETOPT based on APTGETOPT_SERIALIZED."
+    mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
+    printf "%s\n" "APTGETOPT: ${APTGETOPT[@]}"
+  else
+    log info "Not setting environment variable APTGETOPT because APTGETOPT_SERIALIZED does not exist."
+    [[ ${#APTGETOPT[@]} -eq 0 ]] && APTGETOPT=()
+  fi
+
   pkg_mngr="apt-get"
-  pkg_mngr_install=( "${pkg_mngr}" 'install' '--yes' '--no-install-recommends' )
-  pkg_mngr_update=( "${pkg_mngr}" 'update' '--yes' '--error-on=any' )
+  pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' ${APTGETOPT[@]} 'install' )
+  pkg_mngr_update=( "${pkg_mngr}" '--yes' '--error-on=any' "${APTGETOPT[@]}" 'update' )
   pkg_mngr_check_installed=( "check_installed_debian" )
-  pkg_mngr_upgrade_check=( "${pkg_mngr}" 'full-upgrade' '--simulate' )
-  pkg_mngr_upgrade_install=( "${pkg_mngr}" 'full-upgrade' )
+  pkg_mngr_upgrade_check=( "${pkg_mngr}" '--simulate' "${APTGETOPT[@]}" 'full-upgrade' )
+  pkg_mngr_upgrade_install=( "${pkg_mngr}" "${APTGETOPT[@]}" 'full-upgrade' )
 
   pkg_mngr_upgradable_check() {
     local upgrade_check_output
