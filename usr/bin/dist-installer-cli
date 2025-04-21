@@ -1451,7 +1451,9 @@ install_package_debian_common() {
   else
     log info "Setting environment variable APTGETOPT based on APTGETOPT_SERIALIZED."
     mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
-    printf "%s\n" "APTGETOPT: ${APTGETOPT[@]}"
+    ## With '@' the formatting looks nicer.
+    # shellcheck disable=SC2016
+    #log info "APTGETOPT: ${APTGETOPT[@]}"
   fi
 
   pkg_mngr="apt-get"
