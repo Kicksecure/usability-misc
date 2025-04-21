@@ -791,9 +791,9 @@ test_pkg() {
 
   if [ "${#pkg_not_installed[@]}" != '0' ]; then
     if [ "${dry_run}" = "1" ]; then
-      log error "Failed to locate package(s) and ignoring via '--dry-run' option: '${pkg_not_installed[*]}'"
+      log info "Failed to locate package(s) and ignoring via '--dry-run' option: '${pkg_not_installed[*]}'"
     else
-      log error "Failed to locate package(s): '${pkg_not_installed[*]}'"
+      log info "Failed to locate package(s): '${pkg_not_installed[*]}'"
       return 1
     fi
   fi
