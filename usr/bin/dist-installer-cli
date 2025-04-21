@@ -1447,7 +1447,12 @@ install_package_debian_common() {
   local dpkg_audit_output
 
   ## derivative-maker sets this for apt-cacher-ng support.
-  [[ ${#APTGETOPT[@]} -eq 0 ]] && APTGETOPT=()
+  if [[ -n "$APTGETOPT_SERIALIZED" ]]; then
+    mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
+    printf "%s\n" "APTGETOPT: ${APTGETOPT[@]}"
+  else
+    [[ ${#APTGETOPT[@]} -eq 0 ]] && APTGETOPT=()
+  fi
 
   pkg_mngr="apt-get"
   pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' "${APTGETOPT[@]}" 'install' )
