@@ -38,7 +38,9 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - image: fedora:latest
+                    - image: fedora:41
+                    ## Fedora 42 not yet supported by VirtualBox at time of writing.
+                    #- image: fedora:latest
                     #- image: fedora:rawhide
                     - image: debian:oldstable
                     - image: debian:stable
