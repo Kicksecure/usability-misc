@@ -1,3 +1,15 @@
+commit 1506b7125c0336b46e74ebd8fa8f4e0eee77d5c8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 02:53:34 2025 -0400
+
+    Fedora CI
+
+commit 66dccf7925046fcc6ee7d41e915381077d5b143e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 06:42:41 2025 +0000
+
+    bumped changelog version
+
 commit 34dbfb89569820e7decc44b5946c720ddc2e8884
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Apr 24 02:42:28 2025 -0400
