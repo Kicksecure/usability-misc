@@ -1446,9 +1446,7 @@ install_package_fedora_common() {
 install_package_debian_common() {
   local dpkg_audit_output
 
-  if [[ -z "${APTGETOPT_SERIALIZED:-}" ]]; then
-    APTGETOPT_SERIALIZED=()
-  fi
+  [[ -v APTGETOPT_SERIALIZED ]] || APTGETOPT_SERIALIZED=""
 
   # shellcheck disable=SC2128
   mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
