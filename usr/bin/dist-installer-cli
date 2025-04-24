@@ -1189,6 +1189,7 @@ import_guest() {
 
 
 extract_vm_name_from_virtualbox_ova() {
+  test_pkg gawk || die 1 "${underline}extract_vm_name_from_virtualbox_ova:${nounderline} Package 'gawk' is missing. Please install."
   local output="$1"
   local system_number="$2"
   local a b c d
@@ -2531,6 +2532,7 @@ get_system_stat() {
     min_ram_mb="1024"
   fi
 
+  test_pkg gawk || die 1 "${underline}Architecture Check:${nounderline} Package 'gawk' is missing. Please install."
   ## 4GB RAM machine reports 3844Mi and 4031MB
   ## /proc/meminfo replies in kB
   ## https://ux.stackexchange.com/a/13850
@@ -3916,6 +3918,7 @@ parse_opt() {
     if ! test_file -d "${log_dir_main}/1"; then
       log_dir_cur="${log_dir_main}/1"
     else
+      test_pkg gawk || die 1 "${underline}Parse options:${nounderline} Package 'gawk' is missing. Please install."
       last_run_integer="$(printf '%s ' "${log_dir_main}"/* | awk '{print NF}')"
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"

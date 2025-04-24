@@ -62,7 +62,7 @@ jobs:
                     apt-get install --yes shellcheck sudo adduser tor locales
                   elif command -v dnf; then
                     dnf upgrade --assumeyes
-                    dnf install --assumeyes ShellCheck sudo tor systemd
+                    dnf install --assumeyes ShellCheck sudo tor systemd gawk
                     ## Debugging.
                     dnf provides needs-restarting
                   else
