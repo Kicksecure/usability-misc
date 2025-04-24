@@ -2880,6 +2880,13 @@ test_file() {
 
 
 files_already_downloaded_check() {
+  if [ "${dry_run}" = "1" ]; then
+    log notice "files_already_downloaded_check: Creating image file '${directory_prefix}/${guest_file}.${guest_file_ext}' (sha512sums.sig and sha512sums) via '--dry-run' option."
+    touch -- "${directory_prefix}/${guest_file}.${guest_file_ext}"
+    touch -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig"
+    touch -- "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"
+  fi
+
   test_file -f "${directory_prefix}/${guest_file}.${guest_file_ext}"
   test_file -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums.sig"
   test_file -f "${directory_prefix}/${guest_file}.${guest_file_ext}.sha512sums"
@@ -3236,7 +3243,7 @@ should_download() {
   fi
   if [ "${dry_run}" = "1" ]; then
     log notice "Download: Creating download flag via '--dry-run' option."
-    log_run notice run_as_target_user touch -- "${download_flag}"
+    dry_run=0 log_run notice run_as_target_user touch -- "${download_flag}"
     return 0
   fi
 
