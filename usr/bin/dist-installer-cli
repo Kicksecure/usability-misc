@@ -1259,27 +1259,31 @@ import_virtualbox() {
   output=$(log_run notice run_as_target_user "${vboxmanage_locale_english[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" "${vbox_arg_normal[@]}" --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
-  case "${guest}" in
-    whonix)
-      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0) || true
-      vsys_1_actual=$(extract_vm_name_from_virtualbox_ova "$output" 1) || true
-      if [ ! "${guest_full_vm_name_gateway}" = "${vsys_0_actual}" ]; then
-        die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_gateway}'."
-      fi
-      if [ ! "${guest_full_vm_name_workstation}" = "$vsys_1_actual" ]; then
-        die 105 "${underline}VM Import:${nounderline} BUG: vsys1 is actually '${vsys_1_actual}', not '${guest_full_vm_name_workstation}'."
-      fi
-      log info "vsys_0_actual: ${vsys_0_actual}"
-      log info "vsys_1_actual: ${vsys_1_actual}"
-    ;;
-    kicksecure)
-      vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0) || true
-      if [ ! "${guest_full_vm_name_kicksecure}" = "${vsys_0_actual}" ]; then
-        die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_kicksecure}'."
-      fi
-      log info "vsys_0_actual: ${vsys_0_actual}"
-    ;;
-  esac
+  if [ "${dry_run}" = "1" ]; then
+    log info "VM import: Skip vsys test via '--dry-run'."
+  else
+    case "${guest}" in
+      whonix)
+        vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0) || true
+        vsys_1_actual=$(extract_vm_name_from_virtualbox_ova "$output" 1) || true
+        if [ ! "${guest_full_vm_name_gateway}" = "${vsys_0_actual}" ]; then
+          die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_gateway}'."
+        fi
+        if [ ! "${guest_full_vm_name_workstation}" = "$vsys_1_actual" ]; then
+          die 105 "${underline}VM Import:${nounderline} BUG: vsys1 is actually '${vsys_1_actual}', not '${guest_full_vm_name_workstation}'."
+        fi
+        log info "vsys_0_actual: ${vsys_0_actual}"
+        log info "vsys_1_actual: ${vsys_1_actual}"
+      ;;
+      kicksecure)
+        vsys_0_actual=$(extract_vm_name_from_virtualbox_ova "$output" 0) || true
+        if [ ! "${guest_full_vm_name_kicksecure}" = "${vsys_0_actual}" ]; then
+          die 105 "${underline}VM Import:${nounderline} BUG: vsys0 is actually '${vsys_0_actual}', not '${guest_full_vm_name_kicksecure}'."
+        fi
+        log info "vsys_0_actual: ${vsys_0_actual}"
+      ;;
+    esac
+  fi
 
   log notice "VM Import: Importing Virtual Machine(s)..."
 
