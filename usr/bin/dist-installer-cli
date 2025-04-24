@@ -525,7 +525,7 @@ kernel_modules_load() {
 kernel_modules_signed_only() {
   local sig_enforce
   ## Does usually not require root but might on some hardened systems.
-  if ! sig_enforce=$(root_cmd_loglevel=null root_cmd cat /sys/module/module/parameters/sig_enforce) ; then
+  if ! sig_enforce=$(root_cmd_loglevel="echo" root_cmd cat /sys/module/module/parameters/sig_enforce) ; then
     modules_signed_only=maybe
     user_warned_potential_startup_issue=true
     log warn "${underline}Kernel Module Signature Enforcement Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
@@ -603,8 +603,8 @@ update_sources() {
 
   #root_cmd "${pkg_mngr_update[@]}" 2>&1 || true
   #update_sources_error
-  ## result: OK: command_without_extrarenous_spaces="sudo -- apt-get update --yes --error-on=any"
-  ## But if root_cmd is run in a subshell using $(root_cmd ...) then command_without_extrarenous_spaces
+  ## result: OK: command_without_extraneous_spaces="sudo -- apt-get update --yes --error-on=any"
+  ## But if root_cmd is run in a subshell using $(root_cmd ...) then command_without_extraneous_spaces
   ## won't be updated.
 
   if [ "${noupdate}" = "1" ]; then
@@ -1609,7 +1609,7 @@ kernel_modules_check() {
 
   ## Debugging.
   log info "Command executing: $ $sucmd -- modinfo --field signer vboxdrv"
-  if kernel_module_signer=$(root_cmd_loglevel=null root_cmd modinfo --field signer vboxdrv 2>&1) ; then
+  if kernel_module_signer=$(root_cmd_loglevel="echo" root_cmd modinfo --field signer vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module Signer: '$kernel_module_signer'"
   else
     user_warned_potential_startup_issue=true
@@ -1619,7 +1619,7 @@ kernel_modules_check() {
   ## Debugging.
   ## modprobe should be automatic but if it fails, figure out why.
   log notice "Command executing: $ $sucmd -- modprobe vboxdrv"
-  if kernel_module_modprobe_output=$(root_cmd_loglevel=null root_cmd modprobe vboxdrv 2>&1) ; then
+  if kernel_module_modprobe_output=$(root_cmd_loglevel="echo" root_cmd modprobe vboxdrv 2>&1) ; then
     log info "VirtualBox Kernel Module modprobe output: '$kernel_module_modprobe_output'"
   else
     user_warned_potential_startup_issue=true
@@ -2830,7 +2830,7 @@ test_file() {
   mode="${1}"
   file="${2}"
   ## realpath needs to be able to access the path it checks
-  real_file="$(root_cmd realpath -- "${file}")"
+  real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
   ## find needs to start execution in a directory it can access
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
@@ -3599,7 +3599,7 @@ set_target_user_account() {
   target_user="${1:-}"
 
   if [ "${sucmd}" != 'sudo' ]; then
-    die 1 'Cannot use a root elevation utility other than sudo when installing to an alternate user account or running under the sysmaint account.'
+    log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under the sysmaint account is untested."
   fi
 
   ## getent may fail if the user doesn't exist, however we ignore it for now.
@@ -3713,7 +3713,7 @@ copy_thru_barrier() {
   source="${1}"
   dest="${2}"
   source_basename="$(basename -- "${source}")"
-  dest_realpath="$(root_cmd realpath -- "${dest}")"
+  dest_realpath="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${dest}")"
   if test_file -d "${dest_realpath}"; then
     dest_file="${dest_realpath}/${source_basename}"
   else
