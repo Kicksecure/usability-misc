@@ -1604,10 +1604,10 @@ kernel_modules_check() {
   if [ ! -e /dev/vboxdrv ]; then
     kernel_module_has_been_load=false
     user_warned_potential_startup_issue=true
-    log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file /dev/vboxdrv does not exist. This probably means that the vboxdrv kernel module has not been load yet."
+    log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file '/dev/vboxdrv' does not exist. This probably means that the 'vboxdrv' kernel module has not been load yet."
   else
     kernel_module_has_been_load=true
-    log info "VirtualBox Kernel Module Loaded Test Result: 'yes' - file /dev/vboxdrv exists."
+    log info "VirtualBox Kernel Module Loaded Test Result: 'yes' - file '/dev/vboxdrv' exists."
   fi
 
   ## Debugging.
