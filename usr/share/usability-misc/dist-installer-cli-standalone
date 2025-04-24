@@ -994,6 +994,9 @@ handle_exit() {
       log error "Signal received: '${signal_caught}'"
     fi
   fi
+  ## xtrace
+  printf "%s\n" "log_file_user: '${log_file_user}'" >/dev/null
+  printf "%s\n" "log_file_debug: '${log_file_debug}'" >/dev/null
   ## Print exit code.
   log error "Installer exited with code: '${last_exit}'"
   end_exit
@@ -4643,12 +4646,29 @@ log_term_and_file() {
 
   run_as_target_user touch "${log_file_user}"
   run_as_target_user touch "${log_file_debug}"
+
   ## By appending '&' at the end, log_file_user would remain empty.
-  true "exec > >(run_as_target_user tee -a -- \"${log_file_user}\") 2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
-  exec > >(run_as_target_user tee -a -- "${log_file_user}") 2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
-  ## Bash has built-in feature to redirect xtrace to the specified file.
-  true "exec 9> >(run_as_target_user tee -a -- \"${log_file_debug}\" >/dev/null)"
-  exec 9> >(run_as_target_user tee -a -- "${log_file_debug}" >/dev/null)
+  true "\
+  exec > >(run_as_target_user tee -a -- \"${log_file_user}\") \
+      2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
+  exec > >(run_as_target_user tee -a -- "${log_file_user}") \
+      2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
+
+  temp_folder="$(mktemp --directory)"
+  xtrace_fifo="/${temp_folder}/xtrace_fifo"
+  mkfifo -- "$xtrace_fifo"
+
+  if [ "${log_level}" = "debug" ] || test -o xtrace; then
+    ## log_level is debug or xtrace is already enabled.
+    ## Therefore keep send xtrace to both console and debug file.
+    run_as_target_user tee -a -- "${log_file_debug}" < "$xtrace_fifo" >&2 &
+  else
+    run_as_target_user tee -a -- "${log_file_debug}" < "$xtrace_fifo" > /dev/null &
+  fi
+
+  xtrace_pid="$!"
+
+  exec 9> "$xtrace_fifo"
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
