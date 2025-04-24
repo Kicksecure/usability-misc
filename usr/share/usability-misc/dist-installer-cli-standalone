@@ -287,7 +287,7 @@ get_su_cmd(){
   done
 
   log info "Testing root_cmd function..."
-  root_cmd printf '%s\n' "test" ||
+  root_cmd printf '%s\n' "test" >/dev/null ||
     die 1 "${underline}get_su_cmd:${nounderline} Failed to run test command as root."
 
   if test "${ci:-}" = "1"; then
@@ -3924,7 +3924,7 @@ should_download() {
   fi
   if [ "${dry_run}" = "1" ]; then
     log notice "Download: Creating download flag via '--dry-run' option."
-    log_run notice run_as_target_user touch "${download_flag}"
+    log_run notice run_as_target_user touch -- "${download_flag}"
     return 0
   fi
 
@@ -4032,7 +4032,7 @@ check_integrity() {
   check_signature_test
   check_hash_test
 
-  log_run info run_as_target_user touch "${download_flag}"
+  log_run info run_as_target_user touch -- "${download_flag}"
 
   log notice "Integrity Check Result: 'success'"
 }
@@ -4577,7 +4577,7 @@ parse_opt() {
     ## is set to '~/', the parent '/home' is not writable.
 
     log info "Creating directory: '${directory_prefix}'"
-    run_as_target_user mkdir -p "${directory_prefix}" ||
+    run_as_target_user mkdir -p -- "${directory_prefix}" ||
       die 1 "Failed to created directory: '${directory_prefix}'"
     test_file -w "${directory_prefix}" ||
       die 1 "Directory isn't writable: '${directory_prefix}'"
@@ -4600,9 +4600,9 @@ parse_opt() {
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
-    run_as_target_user mkdir -p "${log_dir_cur}"
+    run_as_target_user mkdir -p -- "${log_dir_cur}"
     copy_thru_barrier "${0}" "${log_dir_cur}";
-    run_as_target_user touch "${log_file_user}"
+    run_as_target_user touch -- "${log_file_user}"
   fi
 
   if [ "${getopt}" = "1" ]; then
@@ -4645,8 +4645,8 @@ log_term_and_file() {
     return 0
   fi
 
-  run_as_target_user touch "${log_file_user}"
-  run_as_target_user touch "${log_file_debug}"
+  run_as_target_user touch -- "${log_file_user}"
+  run_as_target_user touch -- "${log_file_debug}"
 
   ## By appending '&' at the end, log_file_user would remain empty.
   true "\
