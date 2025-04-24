@@ -3979,7 +3979,8 @@ log_term_and_file() {
     run_as_target_user tee -a -- "${log_file_debug}" < "$xtrace_fifo" > /dev/null &
   fi
 
-  xtrace_pid="$!"
+  ## Automatically exists at the end of this script.
+  #xtrace_pid="$!"
 
   exec 9> "$xtrace_fifo"
   export BASH_XTRACEFD=9

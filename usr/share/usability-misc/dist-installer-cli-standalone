@@ -893,7 +893,8 @@ log_run(){
   ## Extra spaces appearing when breaking log_run on multiple lines.
   ## bug: removes all spaces
   #command_without_extraneous_spaces="$(printf '%s' "${@}" | tr -s " ")"
-  printf -v command_without_extraneous_spaces '%q ' "${@}"
+  printf -v command_without_extraneous_spaces_temp '%q ' "${@}"
+  command_without_extraneous_spaces="$(printf "%s\n" "${command_without_extraneous_spaces_temp}")"
   if test "${dry_run:-}" = "1"; then
     log "${level}" "Skipping command (dry-run): $ ${command_without_extraneous_spaces}"
     return 0
@@ -4666,7 +4667,8 @@ log_term_and_file() {
     run_as_target_user tee -a -- "${log_file_debug}" < "$xtrace_fifo" > /dev/null &
   fi
 
-  xtrace_pid="$!"
+  ## Automatically exists at the end of this script.
+  #xtrace_pid="$!"
 
   exec 9> "$xtrace_fifo"
   export BASH_XTRACEFD=9
