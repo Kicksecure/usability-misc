@@ -2821,7 +2821,7 @@ test_file() {
   mode="${1}"
   file="${2}"
   ## realpath needs to be able to access the path it checks
-  real_file="$(sudo realpath "${file}")"
+  real_file="$(sudo -- realpath -- "${file}")"
   ## find needs to start execution in a directory it can access
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
@@ -3703,8 +3703,8 @@ copy_thru_barrier() {
 
   source="${1}"
   dest="${2}"
-  source_basename="$(basename "${source}")"
-  dest_realpath="$(sudo realpath "${dest}")"
+  source_basename="$(basename -- "${source}")"
+  dest_realpath="$(sudo -- realpath -- "${dest}")"
   if test_file -d "${dest_realpath}"; then
     dest_file="${dest_realpath}/${source_basename}"
   else
