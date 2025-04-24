@@ -659,8 +659,7 @@ ${package_manager_issue_extra_help_text}"
 
 
 check_upgrades_simulation() {
-  local upgrade_simulate_output packages_upgradable upgrade_simulate_cmd \
-    pkg_mngr_upgradable_check_retcode
+  local upgrade_simulate_output packages_upgradable upgrade_simulate_cmd
 
   upgrade_simulate_cmd=( "${pkg_mngr_upgrade_check[@]}" )
   [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" != '0' ] \
@@ -678,14 +677,17 @@ check_upgrades_simulation() {
 
   true "INFO: No error found in upgrade_simulate_output output, ok."
   if [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" = '0' ]; then
-    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check >/dev/null; printf '%s' "$?")"
+    if pkg_mngr_upgradable_check >/dev/null ; then
+      packages_upgradable=false
+    else
+      packages_upgradable=true
+    fi
   else
-    pkg_mngr_upgradable_check_retcode="$(pkg_mngr_upgradable_check "${install_pkg_fasttrack_extra_args_maybe[@]}" >/dev/null; printf '%s' "$?")"
-  fi
-  if [ "${pkg_mngr_upgradable_check_retcode}" = '0' ]; then
-    packages_upgradable=false
-  else
-    packages_upgradable=true
+    if pkg_mngr_upgradable_check "${install_pkg_fasttrack_extra_args_maybe[@]}" >/dev/null ; then
+      packages_upgradable=false
+    else
+      packages_upgradable=true
+    fi
   fi
 
   if [ "${dry_run}" = "1" ]; then
