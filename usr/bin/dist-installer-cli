@@ -1446,13 +1446,19 @@ install_package_fedora_common() {
 install_package_debian_common() {
   local dpkg_audit_output
 
-  [[ -v APTGETOPT_SERIALIZED ]] || APTGETOPT_SERIALIZED=""
-
-  # shellcheck disable=SC2128
-  mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
-  ## With '@' the formatting looks nicer.
+  if [[ -v APTGETOPT_SERIALIZED ]]; then
+    # shellcheck disable=SC2128
+    mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
+  else
+    APTGETOPT_SERIALIZED=()
+    if [[ -v APTGETOPT ]]; then
+      APTGETOPT=()
+    fi
+  fi
   # shellcheck disable=SC2145
-  log info "APTGETOPT: ${APTGETOPT[@]}"
+  log info "APTGETOPT_SERIALIZED: '${APTGETOPT_SERIALIZED[@]}'"
+  # shellcheck disable=SC2145
+  log info "APTGETOPT: '${APTGETOPT[@]}'"
 
   pkg_mngr="apt-get"
   pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' "${APTGETOPT[@]}" 'install' )
@@ -1460,6 +1466,9 @@ install_package_debian_common() {
   pkg_mngr_check_installed=( "check_installed_debian" )
   pkg_mngr_upgrade_check=( "${pkg_mngr}" '--simulate' "${APTGETOPT[@]}" 'full-upgrade' )
   pkg_mngr_upgrade_install=( "${pkg_mngr}" "${APTGETOPT[@]}" 'full-upgrade' )
+
+  # shellcheck disable=SC2145
+  log info "pkg_mngr_update: '${pkg_mngr_update[@]}'"
 
   pkg_mngr_upgradable_check() {
     local upgrade_check_output
@@ -2821,7 +2830,7 @@ test_file() {
   mode="${1}"
   file="${2}"
   ## realpath needs to be able to access the path it checks
-  real_file="$(sudo -- realpath -- "${file}")"
+  real_file="$(root_cmd realpath -- "${file}")"
   ## find needs to start execution in a directory it can access
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
@@ -3704,7 +3713,7 @@ copy_thru_barrier() {
   source="${1}"
   dest="${2}"
   source_basename="$(basename -- "${source}")"
-  dest_realpath="$(sudo -- realpath -- "${dest}")"
+  dest_realpath="$(root_cmd realpath -- "${dest}")"
   if test_file -d "${dest_realpath}"; then
     dest_file="${dest_realpath}/${source_basename}"
   else
