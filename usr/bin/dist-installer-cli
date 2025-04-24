@@ -3956,12 +3956,18 @@ log_term_and_file() {
 
   run_as_target_user touch "${log_file_user}"
   run_as_target_user touch "${log_file_debug}"
+
   ## By appending '&' at the end, log_file_user would remain empty.
-  true "exec > >(run_as_target_user tee -a -- \"${log_file_user}\") 2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
-  exec > >(run_as_target_user tee -a -- "${log_file_user}") 2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
+  true "\
+  exec > >(run_as_target_user tee -a -- \"${log_file_user}\") \
+      2> >(run_as_target_user tee -a \"${log_file_debug}\" >&2)"
+  exec > >(run_as_target_user tee -a -- "${log_file_user}") \
+      2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
+
   ## Bash has built-in feature to redirect xtrace to the specified file.
   true "exec 9> >(run_as_target_user tee -a -- \"${log_file_debug}\" >/dev/null)"
   exec 9> >(run_as_target_user tee -a -- "${log_file_debug}" >/dev/null)
+
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
