@@ -1,3 +1,77 @@
+commit 6986094b61cf0b7dad4150680344a45051c47a0f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 02:12:13 2025 -0400
+
+    fix
+
+commit 14cdd717dc05e3f8b944531f7ab96d43c7e9c490
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 02:02:55 2025 -0400
+
+    improve --dry-run
+
+commit f1ea51a95e7c1777eba4e1e71791a315c87c08a7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 01:56:40 2025 -0400
+
+    improve --dry-run
+
+commit 2c21fc5bb7d32f27867f76072a12ad0d8ef03ac5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 01:42:10 2025 -0400
+
+    output
+
+commit 6976fb345efc8ef7690137b3a1d6d5b5eb64da62
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 01:33:47 2025 -0400
+
+    end-of-options
+
+commit 11661b51946563d16cee63c4dac27152471c0fa4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 01:27:52 2025 -0400
+
+    cleanup
+
+commit f9eedbea6f2988025ae3801c8379d0d150a4b7f5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 01:19:05 2025 -0400
+
+    dist-installer-cli: do not hide xtrace when started with bash -x (xtrace)
+    
+    It is therefore no longer required to get xtrace from debug file.
+
+commit f58d6c6bdf7b5b4537d5396a2d2cf43937a8af62
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 00:41:21 2025 -0400
+
+    refactoring
+
+commit 26502f753b2571f02b0184fd5444f3cfcecfff20
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 00:21:37 2025 -0400
+
+    no longer hardcode sudo
+
+commit d247c580d083f26f8a28369193b452b010fc590c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Apr 23 23:47:22 2025 -0400
+
+    fix
+
+commit 5e10c3415201019b71c06f58d73c29ea88b95beb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Apr 23 23:30:11 2025 -0400
+
+    end-of-options
+
+commit 86116f598d109fee4767760427c3aa1cfd6c2151
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 24 03:22:27 2025 +0000
+
+    bumped changelog version
+
 commit a606eb46a5dd3d8c04a294963ae28344b61bf9a5
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Apr 23 23:22:10 2025 -0400
