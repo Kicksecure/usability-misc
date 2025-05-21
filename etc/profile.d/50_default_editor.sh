@@ -15,7 +15,7 @@
 #### meta end
 
 if [ -x /usr/libexec/default-editor/default_editor.sh ]; then
-   . /usr/libexec/default-editor/default_editor.sh >/dev/null 2>/dev/null
+   . /usr/libexec/default-editor/default_editor.sh || true >/dev/null 2>/dev/null
 fi
 
 if [ -z "$XDG_DATA_DIRS" ]; then
