@@ -135,6 +135,9 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 -----END PGP PUBLIC KEY BLOCK-----"
 }
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
+source /usr/libexec/helper-scripts/wc-test.sh
+
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 source /usr/libexec/helper-scripts/get_colors.sh
 
