@@ -1,3 +1,27 @@
+commit f064502d09893a380ab5592e7af12aa181c3d075
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 21 09:01:22 2025 -0400
+
+    improve /etc/profile.d scripts error handling
+
+commit 565e5ed135112393bcccc63d46e3ba53197c7cfb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 21 08:52:25 2025 -0400
+
+    improve /etc/profile.d scripts error handling
+
+commit 81da518ccbcae10a9ae7518534cb2087378beba9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 21 08:41:35 2025 -0400
+
+    fix
+
+commit 6cc4957d02a2fddb2900459a5eb44808e59054ad
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 21 11:24:07 2025 +0000
+
+    bumped changelog version
+
 commit 0e252d63e6593b40c2a8b0d8b62da0784bf59710
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed May 21 07:22:55 2025 -0400
