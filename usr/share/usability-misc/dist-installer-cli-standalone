@@ -136,6 +136,24 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 -----END PGP PUBLIC KEY BLOCK-----"
 }
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/wc-test.sh
+#!/bin/bash
+
+## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+if ! printf '%s\n' | wc -l >/dev/null ; then
+  printf "\
+$0: ERROR: command 'wc' test failed! Do not ignore this!
+
+'wc' can core dump. Example:
+zsh: illegal hardware instruction (core dumped) wc -l
+https://github.com/rspamd/rspamd/issues/5137" >&2
+  exit 1
+fi
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/wc-test.sh
+
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
