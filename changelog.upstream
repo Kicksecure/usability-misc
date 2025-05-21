@@ -1,3 +1,23 @@
+commit 0e252d63e6593b40c2a8b0d8b62da0784bf59710
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 21 07:22:55 2025 -0400
+
+    build
+
+commit 8e836ab7b79d2d945c234c63efd63637ea69c8ad
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 21 07:22:00 2025 -0400
+
+    test that `wc` is functional
+    
+    https://github.com/Kicksecure/security-misc/pull/305#issuecomment-2892378246
+
+commit d612f508fe44834e0dd9596e824fe029018f1fec
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 7 06:43:55 2025 +0000
+
+    bumped changelog version
+
 commit fc3df7e412a67b2cdb1570516d7e929778b4fcba
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed May 7 02:37:32 2025 -0400
