@@ -15,12 +15,12 @@
 #### meta end
 
 if [ -x /usr/libexec/default-editor/default_editor.sh ]; then
-   . /usr/libexec/default-editor/default_editor.sh
+   . /usr/libexec/default-editor/default_editor.sh >/dev/null 2>/dev/null
 fi
 
 if [ -z "$XDG_DATA_DIRS" ]; then
-   XDG_DATA_DIRS=/usr/local/share/:/usr/share/
+   XDG_DATA_DIRS="/usr/local/share/:/usr/share/"
 fi
-if ! printf '%s\n' "$XDG_DATA_DIRS" | grep /usr/share/usability-misc/xdg-override/ >/dev/null 2>/dev/null ; then
+if ! printf '%s\n' "$XDG_DATA_DIRS" | grep -- "/usr/share/usability-misc/xdg-override/" >/dev/null 2>/dev/null ; then
    export XDG_DATA_DIRS="/usr/share/usability-misc/xdg-override/:$XDG_DATA_DIRS"
 fi
