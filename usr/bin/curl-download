@@ -18,7 +18,7 @@ for res in "$@"; do
     continue
   fi
   # exclude options that require arguments
-  if echo "${list}" | tr " " "\n" | grep -q "^${res}$"; then
+  if printf '%s\n' "${list}" | tr " " "\n" | grep -- "^${res}$" >/dev/null 2>/dev/null; then
     skip_next=1
     if [ "$res" = "--url" ]; then
       opt="$opt $def_opt $res"

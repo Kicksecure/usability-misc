@@ -21,6 +21,6 @@ fi
 if [ -z "$XDG_DATA_DIRS" ]; then
    XDG_DATA_DIRS=/usr/local/share/:/usr/share/
 fi
-if ! echo "$XDG_DATA_DIRS" | grep --quiet /usr/share/usability-misc/xdg-override/ ; then
-   export XDG_DATA_DIRS=/usr/share/usability-misc/xdg-override/:$XDG_DATA_DIRS
+if ! printf '%s\n' "$XDG_DATA_DIRS" | grep /usr/share/usability-misc/xdg-override/ >/dev/null 2>/dev/null ; then
+   export XDG_DATA_DIRS="/usr/share/usability-misc/xdg-override/:$XDG_DATA_DIRS"
 fi
