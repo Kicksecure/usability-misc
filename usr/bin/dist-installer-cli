@@ -4025,7 +4025,7 @@ run_installer() {
   set_trap
   ## Parse script name for wanted values.
   parse_name
-  ## If sysmaint is in use and the user hasn't configured their own directory
+  ## If account 'sysmaint' is in use and the user hasn't configured their own directory
   ## prefix and target user, default to target account 'user'.
   adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
