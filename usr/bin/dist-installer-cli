@@ -7,7 +7,7 @@
 ## BEGIN DEFAULT VALUES ##
 ##########################
 
-if [ "${BASH_SOURCE-}" != "${0}" ]; then
+if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
   ## This is useful for other programs / scripts to be able to `source` the
   ## functions of this script for code re-use. dist-installer-gui will do this.
