@@ -3640,18 +3640,18 @@ run_as_target_user_and_dir() {
 
 adjust_default_for_sysmaint_maybe() {
   if getent passwd sysmaint >/dev/null; then
-    log info "Account 'sysmaint' present, checking current user name..."
+    log info "Account 'sysmaint' exists: 'Yes'"
 
     if [ "$(id -un)" = 'sysmaint' ]; then
-      log info "Running as account 'sysmaint', adjusting behavior."
+      log info "Running under account 'sysmaint': 'Yes', adjusting behavior."
 
       set_target_user_account 'user'
       directory_prefix="${user_home_dir}/dist-installer-cli-download"
     else
-      log info "Not running as account 'sysmaint', ok."
+      log info "Running under account 'sysmaint': 'No'"
     fi
   else
-    log info "Account 'sysmaint' not present, ok."
+    log info "Account 'sysmaint' exists: 'No'"
   fi
 }
 
