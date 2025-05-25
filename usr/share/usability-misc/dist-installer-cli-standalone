@@ -458,7 +458,7 @@ get_os(){
   esac
 
   ## Debian 'testing' /etc/os-release does not contain VERSION_ID.
-  if printf '%s' "${distro}" | grep --quiet "/sid" ; then
+  if printf '%s' "${distro}" | grep "/sid" &>/dev/null ; then
     debian_testing_or_unstable_detected=1
   fi
 
@@ -812,7 +812,7 @@ range_arg(){
 
 
 if ! command -v stecho &>/dev/null ; then
-  ## Fallback to printf in case stecho is unavailable.
+  ## Fallback to 'printf' in case 'stecho' is unavailable.
   stecho() {
     printf "%s\n" "$@"
   }
@@ -890,7 +890,7 @@ log(){
   all_log_levels="warn notice info debug echo null"
   # shellcheck disable=SC2154
   if printf '%s' " ${all_log_levels} " | grep -o ".* ${log_level} " \
-    | grep -q " ${log_type}"
+    | grep " ${log_type}" &>/dev/null
   then
     case "${log_type}" in
       null)
@@ -902,7 +902,7 @@ log(){
     esac
   fi
 
-  sleep 0.1
+  #sleep 0.1
 
   if test "${xtrace:-}" = "1"; then
     set -o xtrace
