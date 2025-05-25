@@ -338,7 +338,7 @@ claim_unsupported_distro() {
 
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs() {
-  log notice "Package Installation: installing required system virtualization packages... Please wait, this may take a few minutes..."
+  log notice "$hypervisor_pretty Installation: Required system virtualization packages are being installed... Please wait, this process may take a few minutes..."
   if [ "$ubuntu_derivative_detected" = "1" ]; then
     install_package_debian_common
     install_virtualbox_ubuntu
@@ -3370,7 +3370,7 @@ check_integrity() {
 
 ## Self explanatory name, make everything after option parsing.
 main() {
-  local hypervisor_pretty item cmd_check_internet
+  local item cmd_check_internet
 
   ###############
   ## BEGIN PRE ##
@@ -3390,18 +3390,6 @@ main() {
       ;;
     kicksecure)
       guest_full_vm_name_kicksecure="${guest_pretty}-${interface_name}"
-      ;;
-  esac
-
-  case "${hypervisor}" in
-    virtualbox)
-      hypervisor_pretty="VirtualBox"
-      ;;
-    kvm)
-      hypervisor_pretty="KVM"
-      ;;
-    *)
-      hypervisor_pretty="${hypervisor}"
       ;;
   esac
 
@@ -3961,6 +3949,18 @@ parse_opt() {
     set +o errexit
     [ "${curr_shell}" = "bash" ] && set +o errtrace
   fi
+
+  case "${hypervisor}" in
+    virtualbox)
+      hypervisor_pretty="VirtualBox"
+      ;;
+    kvm)
+      hypervisor_pretty="KVM"
+      ;;
+    *)
+      hypervisor_pretty="${hypervisor}"
+      ;;
+  esac
 
   log info "Option Parsing: 'success'"
 }
