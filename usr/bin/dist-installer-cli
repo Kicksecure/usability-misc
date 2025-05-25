@@ -3496,7 +3496,7 @@ main() {
 ## Print usage message and exit with set exit code, depending if usage was
 ## called by [-h|--help] or because user tried and invalid option.
 usage() {
-  printf %s"Usage: ${me} [options...]
+  printf '%s' "Usage: ${me} [options...]
 
 User Options:
  -g, --guest=<guest> Specify the guest. Options: kicksecure, whonix (default)
