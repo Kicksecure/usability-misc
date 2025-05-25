@@ -2721,7 +2721,7 @@ torify_conn_maybe() {
   else
     ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
-    log warn "Trying Tor defaults: system Tor (little-t-tor) (port: 9050) and TBB (Tor Browser Bundle) (port: 9150)."
+    log warn "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050') and TBB (Tor Browser Bundle) (port: '9150')."
     proxy="127.0.0.1:9050"
     set_transfer_proxy ${proxy}
     if ! check_tor_proxy; then
@@ -2741,7 +2741,7 @@ Unable to connect to Tor SOCKS proxy.
 
 Please note that in order to torify connections, an already functional Tor connection is needed:
 
-  - A) A pre-installed and running system Tor (little-t-tor), or,
+  - A) A pre-installed and running system Tor ('little-t-tor'), or,
   - B) A pre-installed and running TBB (Tor Browser Bundle).
 
 Additional details:
@@ -3512,7 +3512,7 @@ User Options:
                      Set TCP SOCKS proxy for onion client connections.
                        (Defaults to TOR_SOCKS_HOST:TOR_SOCKS_PORT; if unset,
                        attempts to use TBB (Tor Browser Bundle) proxy at port 9150,
-                       or system Tor (little-t-tor) proxy at port 9050.)
+                       or system Tor ('little-t-tor') proxy at port 9050.)
  -l, --log-level=<level>
                      Choose log verbosity. Options: debug, info,
                        notice (default), warn, error.
