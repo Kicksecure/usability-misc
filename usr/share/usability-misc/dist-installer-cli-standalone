@@ -8,7 +8,7 @@
 ## BEGIN DEFAULT VALUES ##
 ##########################
 
-if [ "${BASH_SOURCE-}" != "${0}" ]; then
+if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
   ## This is useful for other programs / scripts to be able to `source` the
   ## functions of this script for code re-use. dist-installer-gui will do this.
@@ -158,6 +158,9 @@ fi
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 ## colors
 # shellcheck disable=SC2034
 get_colors(){
@@ -209,6 +212,9 @@ fi
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 ## This is just a simple wrapper around 'command -v' to avoid
 ## spamming '>/dev/null' throughout this function. This also guards
 ## against aliases and functions.
@@ -222,6 +228,9 @@ has(){
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/capitalize_first_char.sh
 #!/bin/bash
 
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 ## Capitalize only the first char of a string.
 capitalize_first_char(){
   printf '%s' "${1:-}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1'
@@ -230,6 +239,9 @@ capitalize_first_char(){
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/not_as_root.sh
 #!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
 
 
 ## Block running as root.
@@ -246,12 +258,15 @@ ${underline}Non-Root Check:${nounderline} Running as root.
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/root_cmd.sh
 #!/bin/bash
 
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
   local cmdarr
 
-  test -z "${1:-}" && die 1 "${underline}root_cmd function:${nounderline} Failed to pass arguments to root_cmd."
+  test -z "${1:-}" && die 1 "${underline}root_cmd function:${nounderline} Failed to pass arguments to function 'root_cmd'."
   if test -z "${sucmd:-}"; then
     get_su_cmd
   fi
@@ -279,7 +294,7 @@ root_cmd(){
       log_run "$root_cmd_loglevel" doas -u root -- "${@}"
       ;;
     *)
-      die 1 "${underline}root_cmd function:${nounderline} root_cmd does not support sucmd: '${sucmd}'"
+      die 1 "${underline}root_cmd function:${nounderline} 'root_cmd' does not support sucmd: '${sucmd}'"
       ;;
   esac
 }
@@ -292,27 +307,28 @@ get_su_cmd(){
     has sudo && sucmd=sudo && break
     has doas && sucmd=doas && break
     has su && sucmd=su && break
+    [ -z "${sucmd:-}" ] && sucmd=''
     test -z "${sucmd}" && {
-      die 1 "${underline}get_su_cmd:${nounderline} Failed to find program to run commands with administrative (\"root\") privileges. This installer requires either one of the following programs to be installed:
+      die 1 "${underline}get_su_cmd:${nounderline} Failed to find program to run commands with administrative ('root') privileges. This program requires either one of the following programs to be installed:
 - sudo (recommended)
 - doas
 - su"
     }
     case "${sucmd}" in
       sudo) :;;
-      *) log warn "Using sucmd '$sucmd'. Consider installation of sudo instead to cache your passwords instead of typing them every time.";;
+      *) log warn "Using sucmd '$sucmd'. Consider installation of 'sudo' instead to cache your passwords instead of typing them every time.";;
     esac
   done
 
-  log info "Testing root_cmd function..."
+  log info "Testing 'root_cmd' function..."
   root_cmd printf '%s\n' "test" >/dev/null ||
-    die 1 "${underline}get_su_cmd:${nounderline} Failed to run test command as root."
+    die 1 "${underline}get_su_cmd:${nounderline} Failed to run test command as 'root'."
 
   if test "${ci:-}" = "1"; then
     root_output="$(timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
-      log error "sudo output: '${root_output}'"
-      die 1 "${underline}get_su_cmd:${nounderline} Unexpected non-empty output for sudo test in CI mode."
+      log error "'sudo' output: '${root_output}'"
+      die 1 "${underline}get_su_cmd:${nounderline} Unexpected non-empty output for 'sudo' test in CI mode."
     fi
     return 0
   fi
@@ -320,7 +336,7 @@ get_su_cmd(){
   ## Other su cmds do not have an option that does the same.
   if test "${sucmd}" = "sudo"; then
     if ! timeout --kill-after 5 5 sudo --non-interactive -- test -d /usr; then
-      log warn "Credential Caching Status: 'No' - Without credential caching, this installer will prompt for sudo authorization multiple times. Consider configuring sudo credential caching to streamline the installation process."
+      log warn "Credential Caching Status: 'No' - Without credential caching, this program will prompt for 'sudo' authorization multiple times. Consider configuring 'sudo' credential caching to streamline the installation process."
       return 0
     fi
     ## Used by dist-installer-gui.
@@ -329,8 +345,8 @@ get_su_cmd(){
     log info "Credential Caching Status: 'Yes'"
     root_output="$(timeout --kill-after 5 5 sudo -- test -d /usr 2>&1)"
     if test -n "${root_output}"; then
-      log error "sudo output: '${root_output}'"
-      die 1 "${underline}get_su_cmd:${nounderline} Unexpected non-empty output for sudo test in normal mode."
+      log error "'sudo' output: '${root_output}'"
+      die 1 "${underline}get_su_cmd:${nounderline} Unexpected non-empty output for 'sudo' test in normal mode."
     fi
   fi
 }
@@ -338,6 +354,9 @@ get_su_cmd(){
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/ip_syntax.sh
 #!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
 
 
 ## Check if variable is integer
@@ -386,6 +405,9 @@ is_addr_port(){
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_os.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_os.sh
 #!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
 
 ## TODO: how to handle installer specific code?
 
@@ -628,6 +650,9 @@ check_not_qubes_template() {
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/parse_opt.sh
 #!/bin/bash
 
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 
 ## ------------------- ##
 ## Usage of parse_opt.sh
@@ -782,6 +807,9 @@ range_arg(){
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
 
 if ! command -v stecho &>/dev/null ; then
   ## Fallback to printf in case stecho is unavailable.
@@ -873,6 +901,8 @@ log(){
         ;;
     esac
   fi
+
+  sleep 0.1
 
   if test "${xtrace:-}" = "1"; then
     set -o xtrace
@@ -1033,15 +1063,15 @@ handle_exit() {
 claim_unsupported_distro() {
   status="${1}"
   distro="${2}"
-  log error "At this time, your Operating System is unsupported by the ${guest_pretty} Installer."
+  log error "At this time, your Operating System is unsupported by the '${guest_pretty}' Installer."
   log error "Visit the following URL to check support for manual installation:"
   log error "    ${url_version_domain}/wiki/Virtualbox"
-  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status} '${distro}') system."
+  die 101 "${underline}Distribution Check:${nounderline} Unsupported ('${status}' '${distro}') system."
 }
 
 ## Get necessary packages for your host system to be able to set the guest.
 get_host_pkgs() {
-  log notice "Package Installation: installation of hypervisor-required packages... Please wait, as this could take a while..."
+  log notice "$hypervisor_pretty Installation: Required system virtualization packages are being installed... Please wait, this process may take a few minutes..."
   if [ "$ubuntu_derivative_detected" = "1" ]; then
     install_package_debian_common
     install_virtualbox_ubuntu
@@ -1052,7 +1082,7 @@ get_host_pkgs() {
     install_package_fedora_common
     install_virtualbox_fedora
   else
-    die 1 "Operating system not found in get_host_pkgs. Please report this bug. Debug log required."
+    die 1 "Operating system not found in 'get_host_pkgs'. Please report this bug. The debug log is required."
   fi
 }
 
@@ -1761,7 +1791,7 @@ Kernel module has been load: '$kernel_module_has_been_load'
 Kernel module can be load: '$kernel_modules_can_be_load' (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
 Only signed kernel modules can be load: '$modules_signed_only'
 Kernel module vboxdrv signer: '$kernel_module_signer'
-kernel_module_modprobe_output ($sucmd modprobe vboxdrv): '$kernel_module_modprobe_output'"
+kernel_module_modprobe_output ('$sucmd modprobe vboxdrv'): '$kernel_module_modprobe_output'"
 
     if [ "$kernel_modules_can_be_load" = "true" ]; then
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel modules have not been load yet.
@@ -2086,7 +2116,7 @@ virtualbox_start_failed() {
   - The root cause for this issue is likely not the installer.
   - This issue would likely also happen if the user tried to manually start the VMs.
   - Resolving these issues (as per documentation hyperlinks above) would likely resolve this issue.
-  ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
+  https://www.kicksecure.com/wiki/VirtualBox/Troubleshooting"
 }
 
 
@@ -3399,13 +3429,13 @@ torify_conn_maybe() {
   if [ ! "${onion}" = "1" ]; then
     if [ -z "${socks_proxy:-}" ]; then
       ## TODO: lower log level
-      log notice "Not torifying connection, because socks_proxy envrionment variable is unset nor using '--onion'."
+      log notice "Not torifying connection, because the 'socks_proxy' environment variable is unset nor using '--onion'."
       return 0
     fi
   fi
 
   if ! has tor; then
-    log warn "System tor binary (little-t-tor) was not found on the system."
+    log warn "System 'tor' binary ('little-t-tor') was not found on the system."
     log warn "Unless your SOCKS connection is made available by the Tor Browser"
     log warn "  or by your uplink network, the proxy check may fail."
     log warn "The installer with torified connections depends on a working SOCKS proxy,"
@@ -3424,7 +3454,7 @@ torify_conn_maybe() {
   else
     ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
-    log warn "Trying Tor defaults: system Tor (little-t-tor) (port: 9050) and TBB (Tor Browser Bundle) (port: 9150)."
+    log warn "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050') and TBB (Tor Browser Bundle) (port: '9150')."
     proxy="127.0.0.1:9050"
     set_transfer_proxy ${proxy}
     if ! check_tor_proxy; then
@@ -3444,7 +3474,7 @@ Unable to connect to Tor SOCKS proxy.
 
 Please note that in order to torify connections, an already functional Tor connection is needed:
 
-  - A) A pre-installed and running system Tor (little-t-tor), or,
+  - A) A pre-installed and running system Tor ('little-t-tor'), or,
   - B) A pre-installed and running TBB (Tor Browser Bundle).
 
 Additional details:
@@ -3672,7 +3702,7 @@ get_virtualization() {
     log warn "  - The virtualization detection feature of this installer may not be flawless and could potentially fail to detect virtualization support (this is known as a 'false negative')."
     if [ "${hypervisor}" = "virtualbox" ]; then
       log warn "  - Refer to user documentation on how to enable virtualization:"
-      log warn "  ${url_version_domain}/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
+      log warn "  https://www.kicksecure.com/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
     fi
     return 0
     ## Let's not hard fail here, let the user do it later.
@@ -4073,7 +4103,7 @@ check_integrity() {
 
 ## Self explanatory name, make everything after option parsing.
 main() {
-  local hypervisor_pretty item cmd_check_internet
+  local item cmd_check_internet
 
   ###############
   ## BEGIN PRE ##
@@ -4093,18 +4123,6 @@ main() {
       ;;
     kicksecure)
       guest_full_vm_name_kicksecure="${guest_pretty}-${interface_name}"
-      ;;
-  esac
-
-  case "${hypervisor}" in
-    virtualbox)
-      hypervisor_pretty="VirtualBox"
-      ;;
-    kvm)
-      hypervisor_pretty="KVM"
-      ;;
-    *)
-      hypervisor_pretty="${hypervisor}"
       ;;
   esac
 
@@ -4199,7 +4217,7 @@ main() {
 ## Print usage message and exit with set exit code, depending if usage was
 ## called by [-h|--help] or because user tried and invalid option.
 usage() {
-  printf %s"Usage: ${me} [options...]
+  printf '%s' "Usage: ${me} [options...]
 
 User Options:
  -g, --guest=<guest> Specify the guest. Options: kicksecure, whonix (default)
@@ -4214,8 +4232,8 @@ User Options:
  -s, --socks-proxy=<proxy>
                      Set TCP SOCKS proxy for onion client connections.
                        (Defaults to TOR_SOCKS_HOST:TOR_SOCKS_PORT; if unset,
-                       attempts to use TBB (Tor Browser Bundle) proxy at port 9150,
-                       or system Tor (little-t-tor) proxy at port 9050.)
+                       attempts to use TBB (Tor Browser Bundle) proxy at port '9150',
+                       or system Tor ('little-t-tor') proxy at port '9050'.)
  -l, --log-level=<level>
                      Choose log verbosity. Options: debug, info,
                        notice (default), warn, error.
@@ -4323,12 +4341,12 @@ set_target_user_account() {
   target_user="${1:-}"
 
   if [ "${sucmd}" != 'sudo' ]; then
-    log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under the sysmaint account is untested."
+    log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under account 'sysmaint' is untested."
   fi
 
-  ## getent may fail if the user doesn't exist, however we ignore it for now.
+  ## 'getent' may fail if the account doesn't exist, however we ignore it for now.
   ## The reason is because if this is run as a user account `sysmaint` on a
-  ## system with no user `user`, this will fail, but the user may have passed
+  ## system with no account 'user', this will fail, but the account may have passed
   ## their own --user and --directory-prefix flags which will fix it.
   user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)" || true
 }
@@ -4346,8 +4364,8 @@ run_as_target_user() {
 run_as_target_user_and_dir() {
   local target_dir
   target_dir="${1:-}"
-  [ -z "${target_dir}" ] && die 1 'Failed to provide directory name to run_as_target-user_and_dir!'
-  [ -z "${target_user}" ] && die 1 'Cannot use run_as_target_user_and_dir if set_target_user_account is not used first!'
+  [ -z "${target_dir}" ] && die 1 "Failed to provide directory name to 'run_as_target_user_and_dir'!"
+  [ -z "${target_user}" ] && die 1 "Cannot use 'run_as_target_user_and_dir' if 'set_target_user_account' is not used first!"
   shift
   ROOT_CMD_TARGET_USER="${target_user}" ROOT_CMD_TARGET_DIR="${target_dir}" root_cmd "${@}"
 }
@@ -4355,18 +4373,18 @@ run_as_target_user_and_dir() {
 
 adjust_default_for_sysmaint_maybe() {
   if getent passwd sysmaint >/dev/null; then
-    log info 'Sysmaint user present, checking current user name...'
+    log info "Account 'sysmaint' exists: 'Yes'"
 
     if [ "$(id -un)" = 'sysmaint' ]; then
-      log info "Running as sysmaint, adjusting behavior."
+      log info "Running under account 'sysmaint': 'Yes', adjusting behavior."
 
       set_target_user_account 'user'
       directory_prefix="${user_home_dir}/dist-installer-cli-download"
     else
-      log info 'Not running as sysmaint user, ok.'
+      log info "Running under account 'sysmaint': 'No'"
     fi
   else
-    log info 'Sysmaint user not present, ok.'
+    log info "Account 'sysmaint' exists: 'No'"
   fi
 }
 
@@ -4665,6 +4683,18 @@ parse_opt() {
     [ "${curr_shell}" = "bash" ] && set +o errtrace
   fi
 
+  case "${hypervisor}" in
+    virtualbox)
+      hypervisor_pretty="VirtualBox"
+      ;;
+    kvm)
+      hypervisor_pretty="KVM"
+      ;;
+    *)
+      hypervisor_pretty="${hypervisor}"
+      ;;
+  esac
+
   log info "Option Parsing: 'success'"
 }
 
@@ -4728,7 +4758,7 @@ run_installer() {
   set_trap
   ## Parse script name for wanted values.
   parse_name
-  ## If sysmaint is in use and the user hasn't configured their own directory
+  ## If account 'sysmaint' is in use and the user hasn't configured their own directory
   ## prefix and target user, default to target account 'user'.
   adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
