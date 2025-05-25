@@ -3511,8 +3511,8 @@ User Options:
  -s, --socks-proxy=<proxy>
                      Set TCP SOCKS proxy for onion client connections.
                        (Defaults to TOR_SOCKS_HOST:TOR_SOCKS_PORT; if unset,
-                       attempts to use TBB (Tor Browser Bundle) proxy at port 9150,
-                       or system Tor ('little-t-tor') proxy at port 9050.)
+                       attempts to use TBB (Tor Browser Bundle) proxy at port '9150',
+                       or system Tor ('little-t-tor') proxy at port '9050'.)
  -l, --log-level=<level>
                      Choose log verbosity. Options: debug, info,
                        notice (default), warn, error.
