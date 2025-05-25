@@ -3611,9 +3611,9 @@ set_target_user_account() {
     log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under account 'sysmaint' is untested."
   fi
 
-  ## getent may fail if the user doesn't exist, however we ignore it for now.
+  ## 'getent' may fail if the account doesn't exist, however we ignore it for now.
   ## The reason is because if this is run as a user account `sysmaint` on a
-  ## system with no user `user`, this will fail, but the user may have passed
+  ## system with no account 'user', this will fail, but the account may have passed
   ## their own --user and --directory-prefix flags which will fix it.
   user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)" || true
 }
