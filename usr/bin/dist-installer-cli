@@ -3608,7 +3608,7 @@ set_target_user_account() {
   target_user="${1:-}"
 
   if [ "${sucmd}" != 'sudo' ]; then
-    log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under the sysmaint account is untested."
+    log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under account 'sysmaint' is untested."
   fi
 
   ## getent may fail if the user doesn't exist, however we ignore it for now.
