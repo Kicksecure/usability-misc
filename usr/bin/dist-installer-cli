@@ -2702,7 +2702,7 @@ torify_conn_maybe() {
   fi
 
   if ! has tor; then
-    log warn "System tor binary (little-t-tor) was not found on the system."
+    log warn "System 'tor' binary ('little-t-tor') was not found on the system."
     log warn "Unless your SOCKS connection is made available by the Tor Browser"
     log warn "  or by your uplink network, the proxy check may fail."
     log warn "The installer with torified connections depends on a working SOCKS proxy,"
