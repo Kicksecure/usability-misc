@@ -2696,7 +2696,7 @@ torify_conn_maybe() {
   if [ ! "${onion}" = "1" ]; then
     if [ -z "${socks_proxy:-}" ]; then
       ## TODO: lower log level
-      log notice "Not torifying connection, because socks_proxy envrionment variable is unset nor using '--onion'."
+      log notice "Not torifying connection, because the 'socks_proxy' environment variable is unset nor using '--onion'."
       return 0
     fi
   fi
