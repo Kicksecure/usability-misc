@@ -330,10 +330,10 @@ handle_exit() {
 claim_unsupported_distro() {
   status="${1}"
   distro="${2}"
-  log error "At this time, your Operating System is unsupported by the ${guest_pretty} Installer."
+  log error "At this time, your Operating System is unsupported by the '${guest_pretty}' Installer."
   log error "Visit the following URL to check support for manual installation:"
   log error "    ${url_version_domain}/wiki/Virtualbox"
-  die 101 "${underline}Distribution Check:${nounderline} Unsupported (${status} '${distro}') system."
+  die 101 "${underline}Distribution Check:${nounderline} Unsupported ('${status}' '${distro}') system."
 }
 
 ## Get necessary packages for your host system to be able to set the guest.
@@ -1383,7 +1383,7 @@ virtualbox_start_failed() {
   - The root cause for this issue is likely not the installer.
   - This issue would likely also happen if the user tried to manually start the VMs.
   - Resolving these issues (as per documentation hyperlinks above) would likely resolve this issue.
-  ${url_version_domain}/wiki/VirtualBox/Troubleshooting"
+  https://www.kicksecure.com/wiki/VirtualBox/Troubleshooting"
 }
 
 
@@ -2969,7 +2969,7 @@ get_virtualization() {
     log warn "  - The virtualization detection feature of this installer may not be flawless and could potentially fail to detect virtualization support (this is known as a 'false negative')."
     if [ "${hypervisor}" = "virtualbox" ]; then
       log warn "  - Refer to user documentation on how to enable virtualization:"
-      log warn "  ${url_version_domain}/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
+      log warn "  https://www.kicksecure.com/wiki/VirtualBox/Troubleshooting#Enable_VT-x_in_BIOS"
     fi
     return 0
     ## Let's not hard fail here, let the user do it later.
