@@ -829,9 +829,9 @@ check_vm_running_virtualbox() {
   vm="${1}"
   ## Paused state should be considered as running. Instead of grepping
   ## possible states, grep VM from list of running VMs.
-  # vboxmanage list runningvms | grep -q -- "^\"${vm}\" "
+  # vboxmanage list runningvms | grep -- "^\"${vm}\" " >/dev/null
   if run_as_target_user "${vboxmanage_locale_english[@]}" showvminfo "${vm}" 2>&1 | \
-    grep -qE -- "^State:[[:space:]]+(running|paused)"
+    grep -E -- "^State:[[:space:]]+(running|paused)" >/dev/null
   then
     log error "Cannot proceed. You have the following VM running: ${vm}"
     die 1 "${underline}VM Running Check:${nounderline} Please turn it off before re-running this installer."
@@ -1393,7 +1393,7 @@ get_pattern_sources_debian() {
 
   file="${1}"
   pattern="${2}"
-  grep -v "^\s*#" -- "${file}" | grep -q -E -- "${pattern}" || return 1
+  grep -v "^\s*#" -- "${file}" | grep -E -- "${pattern}" >/dev/null || return 1
 }
 
 write_sources_debian() {
@@ -1563,7 +1563,7 @@ add_user_to_vbox_group() {
   local id_of_user
 
   id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
-  if id -nG "${id_of_user}" | grep -qw -- "${virtualbox_linux_user_group}\$"; then
+  if id -nG "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
     log info "Linux Group Configuration: Account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
@@ -1666,7 +1666,7 @@ install_repositories_for_virtualbox_on_debian() {
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="${distro_codename_real}"
   if [ "${ubuntu_derivative_detected}" = "1" ]; then
-    if grep -q -- "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
+    if grep --quiet -- "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
       distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
     else
       distro_codename_ubuntu="noble"
@@ -1930,10 +1930,10 @@ install_repositories_for_virtualbox_on_debian() {
 
 install_oracle_repository_fedora() {
   oracle_found=""
-  if dnf repolist --all virtualbox | grep -q -- "."; then
+  if dnf repolist --all virtualbox | grep -- "." >/dev/null; then
     oracle_found="1"
   fi
-  if dnf repolist --disabled virtualbox | grep -q -- "."; then
+  if dnf repolist --disabled virtualbox | grep -- "." >/dev/null; then
     dnf config-manager --set-enabled virtualbox
   fi
   if [ "${oracle_found}" = "1" ]; then
