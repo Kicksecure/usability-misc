@@ -178,15 +178,15 @@ get_installer_package_version() {
     return 0
   fi
   ## Do not use commit-hash replace-me as search string to avoid replacement script replacing this.
-  if ! printf '%s' "${version}" | grep --quiet --fixed-strings -- "replace-me" ; then
+  if ! printf '%s' "${version}" | grep --fixed-strings -- "replace-me" >/dev/null ; then
     true "INFO: version variable does not match replace-me string."
     return 0
   fi
-  if ! printf '%s' "${0}" | grep --quiet -- '^/usr/bin' ; then
+  if ! printf '%s' "${0}" | grep -- '^/usr/bin' >/dev/null ; then
     true "INFO: variable 0 does not match ^/usr/bin string. This means not for example /usr/bin/dist-installer-cli. So not packages dist-installer-cli version."
     return 0
   fi
-  if ! printf '%s' "${me}" | grep --quiet --fixed-strings -- "installer-cli" ; then
+  if ! printf '%s' "${me}" | grep --fixed-strings -- "installer-cli" >/dev/null ; then
     true "INFO: program name variable does not match installer-cli string."
     return 0
   fi
@@ -431,7 +431,7 @@ secure_boot_test() {
   local mokutil_output_sb_state
   secure_boot_dkms_key_enrolled=""
   if mokutil_output_sb_state=$(root_cmd mokutil --sb-state 2>&1) ; then
-    if printf '%s' "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings -- "enabled" ; then
+    if printf '%s' "$mokutil_output_sb_state" | grep --ignore-case --fixed-strings -- "enabled" >/dev/null; then
       secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
       secure_boot_status_short=true
       ## sudo mokutil --test-key /var/lib/dkms/mok.pub
@@ -441,10 +441,10 @@ secure_boot_test() {
       ## Redirection '2>&1' not necessary yet but that could be considered a minor bug in mokutil to write to stdout instead
       ## of writing to stderr.
       secure_boot_mokutil_dkms_test_key="$(root_cmd mokutil --test-key "/var/lib/dkms/mok.pub" 2>&1)" || true
-      if printf '%s' "$secure_boot_mokutil_dkms_test_key" | grep --quiet --ignore-case --fixed-strings -- "already enrolled" ; then
+      if printf '%s' "$secure_boot_mokutil_dkms_test_key" | grep --ignore-case --fixed-strings -- "already enrolled" >/dev/null ; then
         secure_boot_dkms_key_enrolled=true
       fi
-    elif printf '%s' "$mokutil_output_sb_state" | grep --quiet --ignore-case --fixed-strings -- "disabled" ; then
+    elif printf '%s' "$mokutil_output_sb_state" | grep --ignore-case --fixed-strings -- "disabled" >/dev/null ; then
       secure_boot_status_short=false
       secure_boot_status_pretty="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     else
@@ -623,9 +623,9 @@ update_sources() {
 
   if update_output=$(root_cmd_loglevel=notice root_cmd "${update_cmd[@]}" 2>&1 | "${console_write_command[@]}") ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
-    if printf '%s' "$update_output" | grep --quiet --ignore-case -- "Error:" ; then
+    if printf '%s' "$update_output" | grep --ignore-case -- "Error:" >/dev/null ; then
       log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
-      if printf '%s' "$update_output" | grep --quiet --ignore-case -- "GPG signature verification error: Signing key not"; then
+      if printf '%s' "$update_output" | grep --ignore-case -- "GPG signature verification error: Signing key not" >/dev/null; then
         log warn "${underline}Package List Update:${nounderline} Signing key not found. Skipping due to 'rpm --import' failing to import keys, but '--assumeyes' being used will import keys."
         return 0
       fi
@@ -669,7 +669,7 @@ check_upgrades_simulation() {
     && upgrade_simulate_cmd+=( "${install_pkg_fasttrack_extra_args_maybe[@]}" )
   if upgrade_simulate_output=$(root_cmd_loglevel=notice root_cmd "${upgrade_simulate_cmd[@]}" 2>&1 | "${console_write_command[@]}") ; then
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
-    if printf '%s' "$upgrade_simulate_output" | grep --quiet --ignore-case -- "Error:" ; then
+    if printf '%s' "$upgrade_simulate_output" | grep --ignore-case -- "Error:" >/dev/null ; then
       log error "${underline}Package Upgrade Simulation:${nounderline} Exit code was 0 but 'Error:' found in output."
       upgrade_simulate_sources_error
     fi
@@ -769,7 +769,7 @@ install_pkg() {
     log info "special_args: '${special_args[*]}'"
 
     if ! root_cmd "${pkg_mngr_install[@]}" "${special_args[@]}" "${pkg_not_installed[@]}"; then
-      if printf '%s' "${pkg_not_installed[*]}" | grep --quiet --ignore-case -- "virtualbox" ; then
+      if printf '%s' "${pkg_not_installed[*]}" | grep --ignore-case -- "virtualbox" >/dev/null; then
         virtualbox_installation_failure_debug
       fi
       die 1 "${underline}Package Installation:${nounderline} Failed to install package: '${pkg_not_installed[*]}'"
