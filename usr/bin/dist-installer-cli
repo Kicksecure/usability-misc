@@ -3916,7 +3916,7 @@ parse_opt() {
   fi
   if [ "${allow_errors}" = "1" ]; then
     set +o errexit
-    [ "${curr_shell}" = "bash" ] && set +o errtrace
+    set +o errtrace
   fi
 
   case "${hypervisor}" in
