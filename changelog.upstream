@@ -1,3 +1,63 @@
+commit 278381394267eef5898b49a9f0c85d778d2b089e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 11:40:26 2025 -0400
+
+    build
+
+commit 6b98130039c035466a96de8469429519d2ada757
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 11:28:22 2025 -0400
+
+    build
+
+commit 25d9a96c354d610a4e83a143dd8648824728d595
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 11:13:11 2025 -0400
+
+    refactoring
+
+commit e32f604d5ec3c1a0cff2d58df0f25aa2585ebc9c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 09:19:57 2025 -0400
+
+    output
+
+commit 1f627c3c41ce37628ffec7d7bf5c58be00537c96
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 07:29:04 2025 -0400
+
+    refactoring
+
+commit b8183f9da335b6aa044c72be29b8cdd2ff39fa98
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 07:21:31 2025 -0400
+
+    output
+
+commit 8021e94d72bc78d18a8b9f86e44099e5f9720300
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 26 08:59:35 2025 -0400
+
+    build
+
+commit 6a5cad5a8ded75244e7447a6b79ddc0881277f7d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 26 08:59:11 2025 -0400
+
+    protect against grep broken pipe
+
+commit 7dc2c0131c3d6b94d3cb67351b680cf195e31813
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 26 08:56:56 2025 -0400
+
+    protect against grep broken pipe
+
+commit 9f51bbb0ff606a5919c01548cca38da8b6689afd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 25 19:32:43 2025 +0000
+
+    bumped changelog version
+
 commit 39ee529173e5a6e9a23e4cd4ecd5ed712b6d57f1
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun May 25 15:21:16 2025 -0400
