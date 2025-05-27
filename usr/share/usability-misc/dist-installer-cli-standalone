@@ -17,7 +17,9 @@ else
   ## Script was executed.
   dist_installer_cli_was_sourced="false"
   set -o errexit
+  set -o errtrace
   set -o nounset
+  set -o pipefail
 fi
 
 
@@ -828,6 +830,14 @@ if ! command -v stecho &>/dev/null ; then
   }
 fi
 
+
+
+re_enable_xtrace_maybe() {
+  if test "${xtrace:-}" = "1"; then
+    set -o xtrace
+  fi
+}
+
 ## Logging mechanism with easy customization of message format as well as
 ## standardization on how the messages are delivered.
 ## usage: log [info|notice|warn|error] "X occurred."
@@ -876,6 +886,7 @@ log(){
       ;;
     *)
       log bug "Unsupported log type specified: '${log_type}'"
+      re_enable_xtrace_maybe
       die 1 "Please report this bug."
   esac
   ## uniform log format
@@ -890,6 +901,7 @@ log(){
   case "${log_type}" in
     bug|error)
       stecho "${log_full}" >&2
+      re_enable_xtrace_maybe
       return 0
       ;;
     null)
@@ -914,9 +926,7 @@ log(){
 
   #sleep 0.1
 
-  if test "${xtrace:-}" = "1"; then
-    set -o xtrace
-  fi
+  re_enable_xtrace_maybe
 }
 
 
@@ -996,8 +1006,13 @@ end_exit() {
     ## output all the logs to the screen before the background job is killed.
     sleep 0.3
     # shellcheck disable=SC2086
-    kill -9 ${tail_pid}
+    kill -9 -- "${tail_pid}"
   fi
+
+  true "INFO: Show log file locations at end of xtrace."
+  test -n "${log_file_user:-}" || true
+  test -n "${log_file_debug:-}" || true
+
   ## Exit with desired exit code.
   exit "${last_exit}"
 }
@@ -1049,13 +1064,11 @@ handle_exit() {
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
-      signal_caught="$(kill -l "${signal_code}")"
+      ## 'kill --list' does not support end-of-options.
+      signal_caught="$(kill --list "${signal_code}")"
       log error "Signal received: '${signal_caught}'"
     fi
   fi
-  ## xtrace
-  printf "%s\n" "log_file_user: '${log_file_user}'" >/dev/null
-  printf "%s\n" "log_file_debug: '${log_file_debug}'" >/dev/null
   ## Print exit code.
   log error "Installer exited with code: '${last_exit}'"
   end_exit
@@ -3221,35 +3234,7 @@ get_transfer_cmd() {
 
 ## Set default traps
 set_trap() {
-  local shebang
-
-  log info "Current PATH: '${PATH}'"
-  ## Sometimes ps is not available, default to sh.
-  curr_shell="$(cat -- "/proc/$$/comm")"
-  ## Get current shell from current process
-  ## If the process if the file name, get its shell from shebang
-  ## sometimes the process name is the base name of the script with some
-  ## missing letters.
-  case "${0##*/}" in
-    ${curr_shell}*)
-      ## necessary glob because /bin/sh makes the file name
-      ## appear with one letter less
-      shebang="$(head -1 "${0}")"
-      curr_shell="${shebang##*/}"
-      ;;
-  esac
-  ## TODO: This is not shown on CI.
-  log info "Current shell: '${curr_shell}'"
-  case "${curr_shell}" in
-    *bash|*ksh|*zsh)
-      if [ "${curr_shell}" = "bash" ]; then
-        set -o errtrace
-        set -o pipefail
-      fi
-      trap 'handle_exit $? ${LINENO:-}' ERR
-      ;;
-  esac
-  trap 'handle_exit $? ${LINENO:-}' EXIT HUP INT QUIT ABRT ALRM TERM
+  trap 'handle_exit $? ${LINENO:-}' ERR EXIT HUP INT QUIT ABRT ALRM TERM
 }
 
 
