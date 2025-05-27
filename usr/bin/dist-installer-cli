@@ -512,10 +512,10 @@ die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounde
 kernel_modules_load() {
   local modules_disabled
   ## Does usually not require root but might on some hardened systems.
-  if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat /proc/sys/kernel/modules_disabled) ; then
+  if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat -- /proc/sys/kernel/modules_disabled) ; then
     kernel_modules_can_be_load=maybe
     user_warned_potential_startup_issue=true
-    log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /proc/sys/kernel/modules_disabled)"
+    log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat -- /proc/sys/kernel/modules_disabled)"
     return 0
   fi
   if [ "$modules_disabled" = "0" ]; then
@@ -531,10 +531,10 @@ kernel_modules_load() {
 kernel_modules_signed_only() {
   local sig_enforce
   ## Does usually not require root but might on some hardened systems.
-  if ! sig_enforce=$(root_cmd_loglevel="echo" root_cmd cat /sys/module/module/parameters/sig_enforce) ; then
+  if ! sig_enforce=$(root_cmd_loglevel="echo" root_cmd cat -- /sys/module/module/parameters/sig_enforce) ; then
     modules_signed_only=maybe
     user_warned_potential_startup_issue=true
-    log warn "${underline}Kernel Module Signature Enforcement Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
+    log warn "${underline}Kernel Module Signature Enforcement Check Result:${nounderline} 'failed' (failed to cat -- /sys/module/module/parameters/sig_enforce)"
     return 0
   fi
   if [ "$sig_enforce" = "Y" ]; then
@@ -2482,7 +2482,7 @@ set_trap() {
 
   log info "Current PATH: '${PATH}'"
   ## Sometimes ps is not available, default to sh.
-  curr_shell="$(cat /proc/$$/comm)"
+  curr_shell="$(cat -- "/proc/$$/comm")"
   ## Get current shell from current process
   ## If the process if the file name, get its shell from shebang
   ## sometimes the process name is the base name of the script with some
