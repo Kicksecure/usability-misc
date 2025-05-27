@@ -2845,10 +2845,10 @@ test_file() {
   file="${2}"
   ## realpath needs to be able to access the path it checks
   real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
-  ## find needs to start execution in a directory it can access
+  ## 'find' needs to start execution in a directory it can access
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f)" ]; then
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)" ]; then
       popd >/dev/null
       return 1
     else
@@ -2856,7 +2856,7 @@ test_file() {
       return 0
     fi
   elif [ "${mode}" = '-d' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d)" ];
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)" ];
     then
       popd >/dev/null
       return 1
@@ -2875,7 +2875,7 @@ test_file() {
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-e' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0)" ];
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)" ];
     then
       popd >/dev/null
       return 1
