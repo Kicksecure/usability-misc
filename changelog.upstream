@@ -1,3 +1,69 @@
+commit 8e72c8e2d38505173c0f8699b27b09c2d2e92e7d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:38:23 2025 -0400
+
+    build
+
+commit 0421d070597960100c8e3e3d66179c218bc50364
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:26:31 2025 -0400
+
+    code simplification
+
+commit 20124ceecba45dadd00d0b6b494b9e4f4d469bb2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:21:43 2025 -0400
+
+    fix
+
+commit 9bd0c23ccaa9a31dc0ac77273619ff4ea11d89c2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:18:52 2025 -0400
+
+    refactoring
+
+commit b3db471b42e48183e535c84dbeb5fa4196803a32
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:18:01 2025 -0400
+
+    fix
+
+commit 476b87167e3509ba1d7f8dec7bce19a9447755cb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:15:01 2025 -0400
+
+    refactoring
+
+commit 2f49d6a7a2f41fdf97e03375edb2d0b479b50bf9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:13:03 2025 -0400
+
+    refactoring
+
+commit 5db49777bea67f77d186018635c6b037aadfa2cc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 14:51:53 2025 -0400
+
+    build
+
+commit d39af96e3582aa0ab261ca8d17036a5c6ceca1c6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 14:51:12 2025 -0400
+
+    output program name first in terminal output
+
+commit 6ff9ceadaae546a8511137b1bce5ea43c1c07b39
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 14:41:17 2025 -0400
+
+    move position of debug log file location to the top of the terminal output
+
+commit 3462f8876c358795fa96311e53196d055713c5b5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 27 15:52:17 2025 +0000
+
+    bumped changelog version
+
 commit 278381394267eef5898b49a9f0c85d778d2b089e
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue May 27 11:40:26 2025 -0400
