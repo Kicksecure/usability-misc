@@ -434,6 +434,8 @@ get_os(){
               ;;
             (VERSION_ID) distro_version="${val}"
               ;;
+            (VERSION_CODENAME) distro_codename="${val}"
+              ;;
           esac
         done < /etc/os-release
       else
@@ -459,6 +461,12 @@ get_os(){
 
   ## Debian 'testing' /etc/os-release does not contain VERSION_ID.
   if printf '%s' "${distro}" | grep "/sid" &>/dev/null ; then
+    log info "Debian 'testing' or 'unstable' detection: '/sid' matched"
+    debian_testing_or_unstable_detected=1
+  fi
+
+  if [ "$distro_codename" = "trixie" ]; then
+    log info "Debian 'testing' or 'unstable' detection: 'trixie' still considered 'testing' (hardcoded in this program)"
     debian_testing_or_unstable_detected=1
   fi
 
@@ -466,10 +474,10 @@ get_os(){
   distro_derivative_version="(No derivative detected.)"
   if test -f /usr/share/kicksecure/marker; then
     distro_derivative_name_pretty="Kicksecure"
-    distro_derivative_version="$(cat /etc/kicksecure_version)"
+    distro_derivative_version="$(cat -- /etc/kicksecure_version)"
   elif test -f /usr/share/whonix/marker; then
     distro_derivative_name_pretty="Whonix"
-    distro_derivative_version="$(cat /etc/whonix_version)"
+    distro_derivative_version="$(cat -- /etc/whonix_version)"
   fi
 
   log notice "Architecture detected: '${arch}'"
@@ -478,7 +486,7 @@ get_os(){
   log notice "Distribution/Derivative version detected: '${distro_version}' / '${distro_derivative_version}'"
 
   if [ "$debian_testing_or_unstable_detected" = "1" ]; then
-    log notice "Debian 'testing' or 'unstable' detection: 'success'"
+    log notice "Debian 'testing' or 'unstable' detection: 'yes', detected"
     if test "${oracle_repo}" = "1"; then
       log error "You are attempting to use '--oracle-repo' on Debian 'testing' or 'unstable'. This is impossible."
       if test "${ci}" = "1"; then
@@ -489,19 +497,19 @@ get_os(){
     fi
     log info "Not attempting to use '--oracle-repo' on Debian 'testing' or 'unstable', good."
     ## In Debian 'testing' distro_version was previously observed as 'n/a' or empty, because
-    ## Debian testing /etc/os-release does not contain VERSION_ID.
+    ## Debian 'testing' '/etc/os-release' does not contain VERSION_ID.
     return 0
   fi
-  log info "Debian 'testing' or 'unstable' detection: 'not detected'"
+  log info "Debian 'testing' or 'unstable' detection: 'no', not detected"
 
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
   if [ -z "${distro_version}" ]; then
     if test -f /etc/os-release; then
-      log notice "Contents of /etc/os-release:"
-      cat /etc/os-release || true
+      log notice "Contents of '/etc/os-release' file:"
+      cat -- /etc/os-release || true
     else
-      log notice "/etc/os-release file not found."
+      log notice "'/etc/os-release' file not found."
     fi
     die 101 "${underline}Distribution Check:${nounderline} Failed to find distribution version."
     ## it will fail later on get_host_pkgs if the system is not supported.
@@ -565,7 +573,7 @@ get_distro() {
   esac
 
   if test "${oracle_repo:-}" = "1" && test "${kali_derivative_detected:-}"; then
-    die 1 "Distribution Extended Check: Oracle repository does not work with Kali"
+    die 1 "Distribution Extended Check: Oracle repository does not work with Kali."
   fi
 
   if test ! "${fedora_derivative_detected:-}" = "1" ||
@@ -1245,10 +1253,10 @@ die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounde
 kernel_modules_load() {
   local modules_disabled
   ## Does usually not require root but might on some hardened systems.
-  if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat /proc/sys/kernel/modules_disabled) ; then
+  if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat -- /proc/sys/kernel/modules_disabled) ; then
     kernel_modules_can_be_load=maybe
     user_warned_potential_startup_issue=true
-    log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat /proc/sys/kernel/modules_disabled)"
+    log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat -- /proc/sys/kernel/modules_disabled)"
     return 0
   fi
   if [ "$modules_disabled" = "0" ]; then
@@ -1264,10 +1272,10 @@ kernel_modules_load() {
 kernel_modules_signed_only() {
   local sig_enforce
   ## Does usually not require root but might on some hardened systems.
-  if ! sig_enforce=$(root_cmd_loglevel="echo" root_cmd cat /sys/module/module/parameters/sig_enforce) ; then
+  if ! sig_enforce=$(root_cmd_loglevel="echo" root_cmd cat -- /sys/module/module/parameters/sig_enforce) ; then
     modules_signed_only=maybe
     user_warned_potential_startup_issue=true
-    log warn "${underline}Kernel Module Signature Enforcement Check Result:${nounderline} 'failed' (failed to cat /sys/module/module/parameters/sig_enforce)"
+    log warn "${underline}Kernel Module Signature Enforcement Check Result:${nounderline} 'failed' (failed to cat -- /sys/module/module/parameters/sig_enforce)"
     return 0
   fi
   if [ "$sig_enforce" = "Y" ]; then
@@ -2190,7 +2198,7 @@ install_package_fedora_common() {
 
 
 install_package_debian_common() {
-  local dpkg_audit_output
+  local dpkg_audit_output sources_list_d_file
 
   if [[ -v APTGETOPT_SERIALIZED ]]; then
     # shellcheck disable=SC2128
@@ -2262,11 +2270,12 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
   ## Hence only doing it for '--dev'.
   if [ "${dev}" = "1" ]; then
     if [ -f /etc/apt/sources.list ]; then
-      cat /etc/apt/sources.list
+      cat -- /etc/apt/sources.list
     fi
-    for file in /etc/apt/sources.list.d/*; do
-      if [ -f "$file" ]; then
-        cat -- "$file"
+
+    for sources_list_d_file in /etc/apt/sources.list.d/*; do
+      if [ -f "$sources_list_d_file" ]; then
+        cat -- "$sources_list_d_file"
       fi
     done
   fi
@@ -2492,62 +2501,63 @@ install_repositories_for_virtualbox_on_debian() {
   ## - unit tests
   log warn "APT Repository List: Deb822-style Format is unsupported"
 
-  for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
-    [ -f "${file}" ] || continue
+  local sources_list_file
+  for sources_list_file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
+    [ -f "${sources_list_file}" ] || continue
 
-    if get_pattern_sources_debian "${file}" "${oracle_clearnet}"
+    if get_pattern_sources_debian "${sources_list_file}" "${oracle_clearnet}"
     then
       oracle_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "${kicksecure_clearnet}|${kicksecure_onion}"
+    if get_pattern_sources_debian "${sources_list_file}" "${kicksecure_clearnet}|${kicksecure_onion}"
     then
       kicksecure_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid)"
+    if get_pattern_sources_debian "${sources_list_file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid)"
     then
       unstable_found=1
     fi
 
     ## Need to check if not only unstable repository or sid codename is enabled but also check if the 'contrib' suite is enabled,
     ## because VirtualBox is only available from 'contrib'.
-    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.*\s(unstable|sid).*\scontrib"
+    if get_pattern_sources_debian "${sources_list_file}" "(${unstable_clearnet}|${unstable_onion})/debian.*\s(unstable|sid).*\scontrib"
     then
       unstable_found_with_contrib=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/?\s*${distro_codename_common_use}-backports"
+    if get_pattern_sources_debian "${sources_list_file}" "(${backports_clearnet}|${backports_onion})/debian/?\s*${distro_codename_common_use}-backports"
     then
       backports_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_suffix_debsource_regex}"
+    if get_pattern_sources_debian "${sources_list_file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_suffix_debsource_regex}"
     then
       fasttrack_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_backports_staging_suffix_debsource_regex}"
+    if get_pattern_sources_debian "${sources_list_file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_backports_staging_suffix_debsource_regex}"
     then
       fasttrack_backports_staging_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "${kali_clearnet}"
+    if get_pattern_sources_debian "${sources_list_file}" "${kali_clearnet}"
     then
       kali_found=1
     fi
 
     ## Kali VirtualBox is in 'contrib'.
-    if get_pattern_sources_debian "${file}" "${kali_clearnet}/kali.*\scontrib"
+    if get_pattern_sources_debian "${sources_list_file}" "${kali_clearnet}/kali.*\scontrib"
     then
       kali_found_with_contrib=1
     fi
 
-    if get_pattern_sources_debian "${file}" "tor://|tor\+"; then
+    if get_pattern_sources_debian "${sources_list_file}" "tor://|tor\+"; then
       apt_torified=1
     fi
 
-    if get_pattern_sources_debian "${file}" "\.onion"; then
+    if get_pattern_sources_debian "${sources_list_file}" "\.onion"; then
       apt_onion=1
     fi
   done
@@ -2578,18 +2588,18 @@ install_repositories_for_virtualbox_on_debian() {
       oracle_domain_debsource="${oracle_clearnet}"
       if [ "${apt_torified}" = '1' ]; then
         if [ "${oracle_repo}" = "1" ]; then
-          log warn "Fallback Oracle repository to torified clearnet"
+          log warn "Fallback Oracle repository to torified clearnet."
         fi
         if [ "${kali_derivative_detected}" = "1" ]; then
-          log warn "Fallback Kali repository to torified clearnet"
+          log warn "Fallback Kali repository to torified clearnet."
         fi
         protocol_prefix_debsource="tor+https://"
       else
         if [ "${oracle_repo}" = "1" ]; then
-          log warn "Fallback Oracle repository to clearnet"
+          log warn "Fallback Oracle repository to clearnet."
         fi
         if [ "${kali_derivative_detected}" = "1" ]; then
-          log warn "Fallback Kali repository to clearnet"
+          log warn "Fallback Kali repository to clearnet."
         fi
         protocol_prefix_debsource="https://"
       fi
@@ -3213,7 +3223,7 @@ set_trap() {
 
   log info "Current PATH: '${PATH}'"
   ## Sometimes ps is not available, default to sh.
-  curr_shell="$(cat /proc/$$/comm)"
+  curr_shell="$(cat -- "/proc/$$/comm")"
   ## Get current shell from current process
   ## If the process if the file name, get its shell from shebang
   ## sometimes the process name is the base name of the script with some
@@ -3578,10 +3588,10 @@ test_file() {
   file="${2}"
   ## realpath needs to be able to access the path it checks
   real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
-  ## find needs to start execution in a directory it can access
+  ## 'find' needs to start execution in a directory it can access
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f)" ]; then
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)" ]; then
       popd >/dev/null
       return 1
     else
@@ -3589,7 +3599,7 @@ test_file() {
       return 0
     fi
   elif [ "${mode}" = '-d' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d)" ];
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)" ];
     then
       popd >/dev/null
       return 1
@@ -3608,7 +3618,7 @@ test_file() {
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-e' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0)" ];
+    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)" ];
     then
       popd >/dev/null
       return 1
