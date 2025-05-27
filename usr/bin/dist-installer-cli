@@ -311,7 +311,8 @@ handle_exit() {
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
-      signal_caught="$(kill --list -- "${signal_code}")"
+      ## 'kill --list' does not support end-of-options.
+      signal_caught="$(kill --list "${signal_code}")"
       log error "Signal received: '${signal_caught}'"
     fi
   fi
@@ -4040,7 +4041,7 @@ run_installer() {
   ## Logging mechanism.
   log_term_and_file
   welcome
-exit 130
+
   get_os
   get_distro
   get_installer_version
