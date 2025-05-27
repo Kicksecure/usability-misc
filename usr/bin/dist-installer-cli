@@ -255,6 +255,11 @@ end_exit() {
     # shellcheck disable=SC2086
     kill -9 ${tail_pid}
   fi
+
+  true "INFO: Show log file locations at end of xtrace."
+  test -n "${log_file_user:-}"
+  test -n "${log_file_debug:-}"
+
   ## Exit with desired exit code.
   exit "${last_exit}"
 }
@@ -310,9 +315,6 @@ handle_exit() {
       log error "Signal received: '${signal_caught}'"
     fi
   fi
-  ## xtrace
-  printf "%s\n" "log_file_user: '${log_file_user}'" >/dev/null
-  printf "%s\n" "log_file_debug: '${log_file_debug}'" >/dev/null
   ## Print exit code.
   log error "Installer exited with code: '${last_exit}'"
   end_exit
