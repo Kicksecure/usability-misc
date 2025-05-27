@@ -3377,10 +3377,6 @@ main() {
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving user log to: '${log_file_user}'"
-  if test_file -f "${log_file_debug}"; then
-    log notice "Saving debug log to: '${log_file_debug}'"
-  fi
   log info "Starting main function."
 
   guest_pretty="$(capitalize_first_char "${guest}")"
@@ -4007,8 +4003,13 @@ log_term_and_file() {
   export BASH_XTRACEFD=9
   set -o xtrace
   xtrace=1
-}
 
+  log notice "Saving user log to: '${log_file_user}'"
+
+  if test_file -f "${log_file_debug}"; then
+    log notice "Saving debug log to: '${log_file_debug}'"
+  fi
+}
 
 end_installer() {
   log notice "Installer Result: ${green}${bold}'SUCCESS'${nobold}${nocolor}"
