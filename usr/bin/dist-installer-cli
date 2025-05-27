@@ -1457,7 +1457,7 @@ install_package_fedora_common() {
 
 
 install_package_debian_common() {
-  local dpkg_audit_output
+  local dpkg_audit_output sources_list_d_file
 
   if [[ -v APTGETOPT_SERIALIZED ]]; then
     # shellcheck disable=SC2128
@@ -1529,11 +1529,12 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
   ## Hence only doing it for '--dev'.
   if [ "${dev}" = "1" ]; then
     if [ -f /etc/apt/sources.list ]; then
-      cat /etc/apt/sources.list
+      cat -- /etc/apt/sources.list
     fi
-    for file in /etc/apt/sources.list.d/*; do
-      if [ -f "$file" ]; then
-        cat -- "$file"
+
+    for sources_list_d_file in /etc/apt/sources.list.d/*; do
+      if [ -f "$sources_list_d_file" ]; then
+        cat -- "$sources_list_d_file"
       fi
     done
   fi
@@ -1759,62 +1760,63 @@ install_repositories_for_virtualbox_on_debian() {
   ## - unit tests
   log warn "APT Repository List: Deb822-style Format is unsupported"
 
-  for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
-    [ -f "${file}" ] || continue
+  local sources_list_file
+  for sources_list_file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
+    [ -f "${sources_list_file}" ] || continue
 
-    if get_pattern_sources_debian "${file}" "${oracle_clearnet}"
+    if get_pattern_sources_debian "${sources_list_file}" "${oracle_clearnet}"
     then
       oracle_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "${kicksecure_clearnet}|${kicksecure_onion}"
+    if get_pattern_sources_debian "${sources_list_file}" "${kicksecure_clearnet}|${kicksecure_onion}"
     then
       kicksecure_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid)"
+    if get_pattern_sources_debian "${sources_list_file}" "(${unstable_clearnet}|${unstable_onion})/debian.* (unstable|sid)"
     then
       unstable_found=1
     fi
 
     ## Need to check if not only unstable repository or sid codename is enabled but also check if the 'contrib' suite is enabled,
     ## because VirtualBox is only available from 'contrib'.
-    if get_pattern_sources_debian "${file}" "(${unstable_clearnet}|${unstable_onion})/debian.*\s(unstable|sid).*\scontrib"
+    if get_pattern_sources_debian "${sources_list_file}" "(${unstable_clearnet}|${unstable_onion})/debian.*\s(unstable|sid).*\scontrib"
     then
       unstable_found_with_contrib=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${backports_clearnet}|${backports_onion})/debian/?\s*${distro_codename_common_use}-backports"
+    if get_pattern_sources_debian "${sources_list_file}" "(${backports_clearnet}|${backports_onion})/debian/?\s*${distro_codename_common_use}-backports"
     then
       backports_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_suffix_debsource_regex}"
+    if get_pattern_sources_debian "${sources_list_file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_suffix_debsource_regex}"
     then
       fasttrack_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_backports_staging_suffix_debsource_regex}"
+    if get_pattern_sources_debian "${sources_list_file}" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_backports_staging_suffix_debsource_regex}"
     then
       fasttrack_backports_staging_found=1
     fi
 
-    if get_pattern_sources_debian "${file}" "${kali_clearnet}"
+    if get_pattern_sources_debian "${sources_list_file}" "${kali_clearnet}"
     then
       kali_found=1
     fi
 
     ## Kali VirtualBox is in 'contrib'.
-    if get_pattern_sources_debian "${file}" "${kali_clearnet}/kali.*\scontrib"
+    if get_pattern_sources_debian "${sources_list_file}" "${kali_clearnet}/kali.*\scontrib"
     then
       kali_found_with_contrib=1
     fi
 
-    if get_pattern_sources_debian "${file}" "tor://|tor\+"; then
+    if get_pattern_sources_debian "${sources_list_file}" "tor://|tor\+"; then
       apt_torified=1
     fi
 
-    if get_pattern_sources_debian "${file}" "\.onion"; then
+    if get_pattern_sources_debian "${sources_list_file}" "\.onion"; then
       apt_onion=1
     fi
   done
