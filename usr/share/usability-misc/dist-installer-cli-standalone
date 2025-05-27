@@ -4120,13 +4120,7 @@ main() {
   ###############
   ## BEGIN PRE ##
   ###############
-  log notice "Saving user log to: '${log_file_user}'"
-  if test_file -f "${log_file_debug}"; then
-    log notice "Saving debug log to: '${log_file_debug}'"
-  fi
   log info "Starting main function."
-
-  guest_pretty="$(capitalize_first_char "${guest}")"
 
   case "${guest}" in
     whonix)
@@ -4143,11 +4137,6 @@ main() {
     log info "  ${item}"
   done
 
-  if [ "${virtualbox_only}" = "1" ]; then
-    log notice "${underline}Installer:${nounderline} ${bold}'VirtualBox Installer'${nobold}"
-  else
-    log notice "${underline}Installer:${nounderline} ${bold}'${guest_pretty} ${interface_name} for ${hypervisor_pretty} Installer'${nobold}"
-  fi
   if [ "${non_interactive}" != "1" ]; then
     log notice "If you wish to cancel installation, press Ctrl+C."
   fi
@@ -4597,6 +4586,7 @@ parse_opt() {
     set -o xtrace
   fi
   range_arg guest "${guest}" none whonix kicksecure
+  guest_pretty="$(capitalize_first_char "${guest}")"
   range_arg interface "${interface}" cli xfce
   range_arg hypervisor "${hypervisor}" kvm virtualbox
   range_arg import_only "${import_only}" workstation gateway both
@@ -4752,6 +4742,19 @@ log_term_and_file() {
   xtrace=1
 }
 
+welcome() {
+  if [ "${virtualbox_only}" = "1" ]; then
+    log notice "${underline}Installer:${nounderline} ${bold}'VirtualBox Installer'${nobold}"
+  else
+    log notice "${underline}Installer:${nounderline} ${bold}'${guest_pretty} ${interface_name} for ${hypervisor_pretty} Installer'${nobold}"
+  fi
+
+  log notice "Saving user log to: '${log_file_user}'"
+
+  if test_file -f "${log_file_debug}"; then
+    log notice "Saving debug log to: '${log_file_debug}'"
+  fi
+}
 
 end_installer() {
   log notice "Installer Result: ${green}${bold}'SUCCESS'${nobold}${nocolor}"
@@ -4777,6 +4780,7 @@ run_installer() {
   parse_opt "${@}"
   ## Logging mechanism.
   log_term_and_file
+  welcome
 
   get_os
   get_distro
