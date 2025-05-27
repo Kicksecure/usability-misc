@@ -16,7 +16,9 @@ else
   ## Script was executed.
   dist_installer_cli_was_sourced="false"
   set -o errexit
+  set -o errtrace
   set -o nounset
+  set -o pipefail
 fi
 
 
@@ -2481,35 +2483,7 @@ get_transfer_cmd() {
 
 ## Set default traps
 set_trap() {
-  local shebang
-
-  log info "Current PATH: '${PATH}'"
-  ## Sometimes ps is not available, default to sh.
-  curr_shell="$(cat -- "/proc/$$/comm")"
-  ## Get current shell from current process
-  ## If the process if the file name, get its shell from shebang
-  ## sometimes the process name is the base name of the script with some
-  ## missing letters.
-  case "${0##*/}" in
-    ${curr_shell}*)
-      ## necessary glob because /bin/sh makes the file name
-      ## appear with one letter less
-      shebang="$(head -1 "${0}")"
-      curr_shell="${shebang##*/}"
-      ;;
-  esac
-  ## TODO: This is not shown on CI.
-  log info "Current shell: '${curr_shell}'"
-  case "${curr_shell}" in
-    *bash|*ksh|*zsh)
-      if [ "${curr_shell}" = "bash" ]; then
-        set -o errtrace
-        set -o pipefail
-      fi
-      trap 'handle_exit $? ${LINENO:-}' ERR
-      ;;
-  esac
-  trap 'handle_exit $? ${LINENO:-}' EXIT HUP INT QUIT ABRT ALRM TERM
+  trap 'handle_exit $? ${LINENO:-}' ERR EXIT HUP INT QUIT ABRT ALRM TERM
 }
 
 
