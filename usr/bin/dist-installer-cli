@@ -1847,18 +1847,18 @@ install_repositories_for_virtualbox_on_debian() {
       oracle_domain_debsource="${oracle_clearnet}"
       if [ "${apt_torified}" = '1' ]; then
         if [ "${oracle_repo}" = "1" ]; then
-          log warn "Fallback Oracle repository to torified clearnet"
+          log warn "Fallback Oracle repository to torified clearnet."
         fi
         if [ "${kali_derivative_detected}" = "1" ]; then
-          log warn "Fallback Kali repository to torified clearnet"
+          log warn "Fallback Kali repository to torified clearnet."
         fi
         protocol_prefix_debsource="tor+https://"
       else
         if [ "${oracle_repo}" = "1" ]; then
-          log warn "Fallback Oracle repository to clearnet"
+          log warn "Fallback Oracle repository to clearnet."
         fi
         if [ "${kali_derivative_detected}" = "1" ]; then
-          log warn "Fallback Kali repository to clearnet"
+          log warn "Fallback Kali repository to clearnet."
         fi
         protocol_prefix_debsource="https://"
       fi
