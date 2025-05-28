@@ -313,8 +313,9 @@ handle_exit() {
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
-      ## 'kill --list' does not support end-of-options.
-      signal_caught="$(kill --list "${signal_code}")"
+      ## 'kill -l': Use short option name because 'kill' is a built-in and does not support long option name '--list'.
+      ## 'kill -l' does not support end-of-options.
+      signal_caught="$(kill -l "${signal_code}")"
       log error "Signal received: '${signal_caught}'"
     fi
   fi
