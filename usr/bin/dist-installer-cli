@@ -255,6 +255,7 @@ end_exit() {
     ## output all the logs to the screen before the background job is killed.
     sleep 0.3
     if kill -0 -- "${tail_pid}"; then
+      ## TODO: Check if this is really necessary.
       # shellcheck disable=SC2086
       kill -s sigterm -- "${tail_pid}" || true
     fi
