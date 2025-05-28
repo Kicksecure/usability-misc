@@ -262,8 +262,8 @@ end_exit() {
   fi
 
   true "INFO: Show log file locations at end of xtrace."
-  test -n "${log_file_user:-}" || true
-  test -n "${log_file_debug:-}" || true
+  true "${log_file_user:-}"
+  true "${log_file_debug:-}"
 
   ## Exit with desired exit code.
   exit "${last_exit}"
