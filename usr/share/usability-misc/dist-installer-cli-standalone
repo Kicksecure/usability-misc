@@ -1003,8 +1003,11 @@ end_exit() {
     ## Sleep less than a second so the file descriptors have enough time to
     ## output all the logs to the screen before the background job is killed.
     sleep 0.3
-    # shellcheck disable=SC2086
-    kill -9 -- "${tail_pid}"
+    if kill -0 -- "${tail_pid}"; then
+      ## TODO: Check if this is really necessary.
+      # shellcheck disable=SC2086
+      kill -s sigterm -- "${tail_pid}" || true
+    fi
   fi
 
   true "INFO: Show log file locations at end of xtrace."
@@ -1062,8 +1065,9 @@ handle_exit() {
   else
     if [ "${last_exit}" -gt 128 ] && [ "${last_exit}" -lt 193 ]; then
       signal_code=$((last_exit-128))
-      ## 'kill --list' does not support end-of-options.
-      signal_caught="$(kill --list "${signal_code}")"
+      ## 'kill -l': Use short option name because 'kill' is a built-in and does not support long option name '--list'.
+      ## 'kill -l' does not support end-of-options.
+      signal_caught="$(kill -l "${signal_code}")"
       log error "Signal received: '${signal_caught}'"
     fi
   fi
