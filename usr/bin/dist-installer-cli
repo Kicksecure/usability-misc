@@ -254,8 +254,10 @@ end_exit() {
     ## Sleep less than a second so the file descriptors have enough time to
     ## output all the logs to the screen before the background job is killed.
     sleep 0.3
-    # shellcheck disable=SC2086
-    kill -s sigterm -- "${tail_pid}"
+    if kill -0 -- "${tail_pid}"; then
+      # shellcheck disable=SC2086
+      kill -s sigterm -- "${tail_pid}" || true
+    fi
   fi
 
   true "INFO: Show log file locations at end of xtrace."
