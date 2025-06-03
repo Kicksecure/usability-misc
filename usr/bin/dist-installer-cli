@@ -2582,7 +2582,7 @@ get_system_stat() {
 
 Running this installer in Live Mode will usually not work unless the system has a huge amount of RAM. Booting into persistent mode is recommended for using this installer.
 
-- If this is an ISO: Consider installing the operating system to the to an internal or external hard drive first.
+- If this is an ISO: Consider installing the operating system to an internal or external hard drive first.
   For more information, refer to:
   ${url_version_domain}/wiki/USB_Installation
 
