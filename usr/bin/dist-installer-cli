@@ -2578,6 +2578,7 @@ get_system_stat() {
   if has live-status-detected; then
     live_status_detected="$(live-status-detected)" || true
     if [ "$live_status_detected" = "true" ]; then
+      log warn "Live Mode Detected: Yes, live mode detected. Unusual. Most users use this installer in persistent mode. But can be OK."
       live_status_extra_message="  - ${underline}Live Mode detected:${nounderline} Yes. NOTE:
 
 Running this installer in Live Mode will usually not work unless the system has a huge amount of RAM. Booting into persistent mode is recommended for using this installer.
@@ -2591,10 +2592,13 @@ Running this installer in Live Mode will usually not work unless the system has 
   ${url_version_domain}/wiki/Persistent_Mode"
     elif [ "$live_status_detected" = "false" ]; then
       live_status_extra_message=""
+      log info "Live Mode Detected: No, live mode not detected, ok."
     else
+      log info "Live Mode Detected: Detection failed."
       live_status_extra_message="  - ${underline}Live Mode detected:${nounderline} 'Detection failed.'"
     fi
   else
+    log info "Live Mode Detected: Skipped, because live-status-detected (from helper-scripts) is unavailable, ok."
     live_status_extra_message=""
   fi
 
