@@ -3322,12 +3322,42 @@ get_system_stat() {
     free_space_required="1"
   fi
 
+  local live_status_detected
+  ## live-status-detected is provided only if package helper-scripts is installed.
+  if has live-status-detected; then
+    live_status_detected="$(live-status-detected)" || true
+    if [ "$live_status_detected" = "true" ]; then
+      log warn "Live Mode Detected: Yes, live mode detected. Unusual. Most users use this installer in persistent mode. But can be OK."
+      live_status_extra_message="  - ${underline}Live Mode detected:${nounderline} Yes. NOTE:
+
+Running this installer in Live Mode will usually not work unless the system has a huge amount of RAM. Booting into persistent mode is recommended for using this installer.
+
+- If this is an ISO: Consider installing the operating system to an internal or external hard drive first.
+  For more information, refer to:
+  ${url_version_domain}/wiki/USB_Installation
+
+- If this is grub-live mode: Boot into persistent mode.
+  For more information, refer to:
+  ${url_version_domain}/wiki/Persistent_Mode"
+    elif [ "$live_status_detected" = "false" ]; then
+      live_status_extra_message=""
+      log info "Live Mode Detected: No, live mode not detected, ok."
+    else
+      log info "Live Mode Detected: Detection failed."
+      live_status_extra_message="  - ${underline}Live Mode detected:${nounderline} 'Detection failed.'"
+    fi
+  else
+    log info "Live Mode Detected: Skipped, because live-status-detected (from helper-scripts) is unavailable, ok."
+    live_status_extra_message=""
+  fi
+
   if [ "${free_space_available}" -lt "$free_space_required" ]; then
     die 101 "\
-${underline}Free Disk Space Check Result:${nounderline} Insufficient free disk space!
+${underline}Free Disk Space Check Result:${nounderline} 'FAIL.' - Insufficient free disk space!
 
-  - available: '${free_space_available}G'
-  - required : '${free_space_required}G'
+  - ${underline}available:${nounderline} '${free_space_available}G'
+  - ${underline}required :${nounderline} '${free_space_required}G'
+${live_status_extra_message}
 
 Debugging information:
 - Command to test the available free space on ${directory_prefix}:
@@ -3335,6 +3365,8 @@ df --output=avail -BG \"${directory_prefix}\"
 - Available free space result:
 $df_output"
   fi
+
+  log info "Free Disk Space Check Result: Success."
 }
 
 
