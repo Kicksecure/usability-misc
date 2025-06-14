@@ -6,10 +6,10 @@ https://www.kicksecure.com/wiki/Desktop#Disable_Autologin
 
 Creates folders /home/user/Downloads and /home/user/Pictures.
 
-Adds user "user" to group libvirt as well as to group kvm.
+Adds account "user" to group libvirt as well as to group kvm.
 
 Ships a file /etc/sudoers.d/user-passwordless that contains comments and
-"#user   ALL=(ALL:ALL) NOPASSWD:ALL". Lets user "user" easily run all
+"#user   ALL=(ALL:ALL) NOPASSWD:ALL". Lets account "user" easily run all
 commands without password. Disabled (out commented) by default.
 
 Simplifies running OpenVPN as unprivileged user.
