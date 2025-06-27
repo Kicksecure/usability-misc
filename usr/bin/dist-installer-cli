@@ -2642,7 +2642,7 @@ check_tor_proxy() {
   expected_response_header="HTTP/1.0 501 Tor is not an HTTP Proxy"
   log info "Expected response header:"
   log info "'$expected_response_header'"
-  cmd_check_proxy=( 'env' 'UTW_DEV_PASSTHROUGH=1' 'curl' '--silent' '--show-error' '--max-time' '3' '--head' "http://${proxy}" )
+  cmd_check_proxy=( 'env' 'UWT_DEV_PASSTHROUGH=1' 'curl' '--silent' '--show-error' '--max-time' '3' '--head' "http://${proxy}" )
   log info "Command used to check if proxy is functional:"
   log info "${cmd_check_proxy[*]}"
   actual_response_header="$("${cmd_check_proxy[@]}" 2>&1)"
