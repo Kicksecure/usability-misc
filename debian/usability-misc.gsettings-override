@@ -1,0 +1,17 @@
+## Copyright (C) 2018 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## NOTE: This file must be vendored under debian/ rather than under
+## /usr/share/glib2.0/schemas/ in order to trigger dh_installgsettings to
+## recompile schemas on installation. See
+## https://manpages.debian.org/testing/debhelper/dh_installgsettings.1.en.html
+##
+## NOTE: This file must be named exactly 'usability-misc.gsettings-override`
+## to be picked up by dh_installgsettings. Do NOT attempt to rename it with a
+## number at the start of the name to enforce ordering, and do NOT change the
+## file name extension.
+
+## Open new documents in Mousepad in a new window
+## https://forums.kicksecure.com/t/set-mousepad-to-launch-in-new-windows-instead-of-tabs-by-default/1107
+[org.xfce.mousepad.preferences.window]
+opening-mode='window'
