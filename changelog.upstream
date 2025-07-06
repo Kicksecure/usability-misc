@@ -1,3 +1,22 @@
+commit 0003794a43b5806a695d8dab1a925f040b37f58b
+Merge: 9e839fc bd8be2b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 6 12:10:57 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/mousepad'
+
+commit bd8be2b441b73f36534d8db8aa5b472148141eb9
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Jun 29 15:53:16 2025 -0500
+
+    Make mousepad open files in a new window rather than a new tab
+
+commit 9e839fc446202bd1735abbf16c8fc2dc09b776e4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 27 12:55:45 2025 +0000
+
+    bumped changelog version
+
 commit 70ce5eb57e216a22dff4710ec10c8867e2f5c6a2
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jun 27 08:49:15 2025 -0400
