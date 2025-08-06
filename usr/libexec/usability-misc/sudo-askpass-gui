@@ -31,6 +31,6 @@ set -e
 
 ## https://askubuntu.com/questions/314395/proper-way-to-let-user-enter-password-for-a-bash-script-using-only-the-gui-with
 
-zenity \
+yad \
   --password \
   --title="Authentication required"

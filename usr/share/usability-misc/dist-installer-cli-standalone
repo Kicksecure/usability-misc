@@ -2244,8 +2244,8 @@ install_package_debian_common() {
   pkg_mngr_upgradable_check() {
     local upgrade_check_output
     ## Not using 'apt list --upgradable', because it is not the same as
-    ## 'sudo apt-get dist-upgrade --target-release=bookworm-fasttrack'.
-    ## It misses out on packages from "bookworm-fasttrack".
+    ## 'sudo apt-get dist-upgrade --target-release=trixie-fasttrack'.
+    ## It misses out on packages from "trixie-fasttrack".
     upgrade_check_output="$(root_cmd "${pkg_mngr_upgrade_check[@]}" "$@" 2>&1)" || true
     local upgrade_check_grep_output
     ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
@@ -2432,7 +2432,7 @@ install_repositories_for_virtualbox_on_debian() {
     fi
   elif [ "${debian_derivative_detected}" = "1" ]; then
     if [ "${kali_derivative_detected}" = "1" ]; then
-      distro_codename_debian="bookworm"
+      distro_codename_debian="trixie"
     else
       distro_codename_debian="${distro_codename_common_use}"
     fi
@@ -2482,7 +2482,7 @@ install_repositories_for_virtualbox_on_debian() {
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
   fasttrack_backports_staging_file_debsource="/etc/apt/sources.list.d/fasttrack-backports-staging.list"
-  fasttrack_prefix_debsource="deb "
+  fasttrack_prefix_debsource="deb [signed-by=/usr/share/keyrings/fasttrack-archive-keyring.gpg] "
   fasttrack_dir_regex="/debian(-fasttrack)?/?\s"
   fasttrack_suffix_components="main contrib non-free"
   fasttrack_suffix_components_regex="main\s+contrib\s+non-free"
@@ -2669,12 +2669,12 @@ install_repositories_for_virtualbox_on_debian() {
       install_backports_and_fasttrack_repository_debian
       return 0
       ;;
-    trixie)
-      install_unstable_repository_debian
-      return 0
-      ;;
     kali-rolling)
       install_kali_repository_debian
+      return 0
+      ;;
+    *)
+      install_unstable_repository_debian
       return 0
       ;;
   esac
@@ -2841,7 +2841,7 @@ install_backports_and_fasttrack_repository_debian() {
 
   ## virtualbox-guest-additions-iso is available from Debian stable and fasttrack.
   ## Debian stable version however is outdated.
-  ## If not using APT with option '--target-release=bookworm-fasttrack' then
+  ## If not using APT with option '--target-release=trixie-fasttrack' then
   ## APT would download an outdated version from Debian stable instead the
   ## newer version from Debian fasttrack.
   install_pkg_fasttrack_extra_args_maybe=( "--target-release=${distro_codename_common_use}-fasttrack" )

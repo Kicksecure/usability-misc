@@ -47,7 +47,7 @@ set_default_variable apt_source_key_derivative "/var/lib/derivative-maker/repo-a
 set_default_variable sources_list_target_folder_build_remote_derivative "/etc/apt/sources.list.d"
 set_default_variable sources_list_target_build_remote_derivative "/etc/apt/sources.list.d/derivative.list"
 
-set_default_variable codename "bookworm"
+set_default_variable codename "trixie"
 set_default_variable sources_list_build_remote_derivative "deb [signed-by=$apt_target_key_derivative] https://deb.kicksecure.com $codename main contrib non-free"
 
 mkdir --parents -- "$sources_list_target_folder_build_remote_derivative"
