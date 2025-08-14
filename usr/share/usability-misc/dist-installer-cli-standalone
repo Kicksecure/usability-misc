@@ -2800,11 +2800,11 @@ install_unstable_repository_debian() {
 
 Package: *
 Pin: release a=testing
-Pin-Priority: 700
+Pin-Priority: 499
 
 Package: *
 Pin: release a=unstable
-Pin-Priority: 650
+Pin-Priority: 450
 " | root_cmd tee -- "$file" ||
     die 1 "${underline}APT Preferences Configuration Writer:${nounderline} Failed to write to file: '$file'"
 
