@@ -7,6 +7,60 @@
 ## BEGIN DEFAULT VALUES ##
 ##########################
 
+## Declare global variables
+declare version me start_time dialog_title license adrelanos_signify \
+  hulahoop_signify oracle_pgp user_home_dir directory_prefix guest \
+  hypervisor interface oracle_repo log_level guest_version socks_proxy onion \
+  non_interactive dev noupdate dry_run getversion getopt ci no_import \
+  no_boot redownload import_only destroy_existing_guest testers allow_errors \
+  mirror virtualbox_only target_user last_exit guest_pretty xtrace sucmd \
+  url_version_domain run_background background_pid  \
+  debian_derivative_detected ubuntu_derivative_detected \
+  kali_derivative_detected fedora_derivative_detected \
+  virtualbox_linux_user_group qubes_template_detected \
+  install_pkg_fasttrack_extra_args_maybe user_warned_potential_startup_issue \
+  vboxmanage_locale_english dist_installer_version_pretty \
+  log_file_user log_file_debug hypervisor_pretty nested_virt_tool \
+  fasttrack_backports_staging_suites_debsource secure_boot_dkms_key_enrolled \
+  secure_boot_status_pretty secure_boot_status_short \
+  secure_boot_mokutil_dkms_test_key kernel_modules_can_be_loaded \
+  kernel_module_has_been_loaded kernel_module_signer \
+  kernel_module_modprobe_output modules_signed_only console_write_command \
+  package_manager_issue_extra_help_text pkg_mngr pkg_mngr_install \
+  pkg_mngr_update pkg_mngr_check_installed pkg_mngr_upgrade_check \
+  pkg_mngr_upgrade_install guest_full_vm_name_gateway \
+  guest_full_vm_name_workstation guest_full_vm_name_kicksecure \
+  workstation_exists gateway_exists vm_or_vms_already_existing_test_result \
+  guest_file guest_file_ext debian_testing_or_unstable_detected \
+  distro_codename_common_use use_deb822_sources oracle_found \
+  oracle_file_debsource oracle_file_deb822source unstable_found \
+  unstable_found_with_contrib unstable_file_debsource \
+  unstable_file_deb822source backports_found backports_file_debsource \
+  backports_file_deb822source fasttrack_found fasttrack_file_debsource \
+  fasttrack_file_deb822source fasttrack_backports_staging_found \
+  fasttrack_backports_staging_file_debsource \
+  fasttrack_backports_staging_file_deb822source kicksecure_found \
+  kicksecure_file_debsource kicksecure_file_deb822source kali_found \
+  kali_found_with_contrib kali_file_debsource kali_file_deb822source \
+  connection_type_debsource kicksecure_oneline_source \
+  unstable_oneline_source fasttrack_oneline_source \
+  fasttrack_backports_staging_oneline_source backports_oneline_source \
+  kali_oneline_source kicksecure_deb822_source unstable_deb822_source \
+  fasttrack_deb822_source fasttrack_backports_staging_deb822_source \
+  backports_deb822_source kali_deb822_source oracle_oneline_source \
+  oracle_deb822_source log_dir_cur virtualbox_qt_package_name \
+  virtualbox_cache_version_cmd virtualbox_guest_additions_iso_package_name \
+  use_rsync use_curl transfer_utility transfer_max_time_large_file \
+  transfer_max_time_small_file transfer_size_test_connection \
+  transfer_size_small_file transfer_size_large_file transfer_io_timeout_opt \
+  transfer_connect_timeout_opt transfer_size_opt transfer_dryrun_opt \
+  transfer_output_dir_opt transfer_output_file_opt transfer_verbosity_opt \
+  transfer_speed_optimization_opt transfer_proxy_prefix \
+  transfer_proxy_suffix proxy curl_transfer_proxy curl_opt_ssl \
+  url_guest_file url_origin signify_key signify_signer url_domain \
+  url_version download_flag checkhash interface_name \
+  dist_installer_cli_was_sourced APTGETOPT APTGETOPT_SERIALIZED
+
 if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
   ## This is useful for other programs / scripts to be able to `source` the
@@ -20,7 +74,6 @@ else
   set -o nounset
   set -o pipefail
 fi
-
 
 set_globals() {
   local all_args
@@ -173,6 +226,8 @@ get_installer_version() {
 
 
 get_installer_package_version() {
+  local dist_installer_package
+
   if [ ! "${debian_derivative_detected}" = "1" ]; then
     ## usability-misc package only available for Debian derivatives.
     ## Check using dpkg-query implemented below only available on Debian and derivatives.
@@ -193,7 +248,7 @@ get_installer_package_version() {
     return 0
   fi
 
-  local dist_installer_package="usability-misc"
+  dist_installer_package="usability-misc"
   ## Overwrite with '|| true' as this is not important enough to hard fail here.
   version="$(dpkg-query --show --showformat='${Version}' "${dist_installer_package}")" || true
   dist_installer_version_pretty="${dist_installer_package} ${version}"
@@ -337,6 +392,7 @@ handle_exit() {
 ###########################
 
 claim_unsupported_distro() {
+  local status distro
   status="${1}"
   distro="${2}"
   log error "At this time, your Operating System is unsupported by the '${guest_pretty}' Installer."
@@ -442,7 +498,7 @@ secure_boot_test() {
   if mokutil_output_sb_state=$(root_cmd mokutil --sb-state 2>&1) ; then
     if printf '%s' "$mokutil_output_sb_state" | grep --ignore-case --fixed-strings -- "enabled" >/dev/null; then
       secure_boot_status_pretty="'enabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
-      secure_boot_status_short=true
+      secure_boot_status_short='true'
       ## sudo mokutil --test-key /var/lib/dkms/mok.pub
       ## > /var/lib/dkms/mok.pub is already enrolled
       ## > zsh: exit 1     sudo mokutil --test-key /var/lib/dkms/mok.pub#
@@ -454,14 +510,14 @@ secure_boot_test() {
         secure_boot_dkms_key_enrolled=true
       fi
     elif printf '%s' "$mokutil_output_sb_state" | grep --ignore-case --fixed-strings -- "disabled" >/dev/null ; then
-      secure_boot_status_short=false
+      secure_boot_status_short='false'
       secure_boot_status_pretty="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     else
-      secure_boot_status_short=false
+      secure_boot_status_short='false'
       secure_boot_status_pretty="'unknown-please-report-this-minor-bug' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
     fi
   else
-    secure_boot_status_short=false
+    secure_boot_status_short='false'
     secure_boot_status_pretty="'disabled' (mokutil_output_sb_state: '$mokutil_output_sb_state')"
   fi
   log info "Secure Boot Check Result: $secure_boot_status_pretty Ok."
@@ -522,17 +578,17 @@ kernel_modules_load() {
   local modules_disabled
   ## Does usually not require root but might on some hardened systems.
   if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat -- /proc/sys/kernel/modules_disabled) ; then
-    kernel_modules_can_be_load=maybe
+    kernel_modules_can_be_loaded=maybe
     user_warned_potential_startup_issue=true
     log warn "${underline}Kernel Module Load Check Result:${nounderline} 'failed' (failed to cat -- /proc/sys/kernel/modules_disabled)"
     return 0
   fi
   if [ "$modules_disabled" = "0" ]; then
-    kernel_modules_can_be_load=true
+    kernel_modules_can_be_loaded=true
     log info "Kernel Module Load Check Result: 'yes' - modules can be load. (sysctl kernel.modules_disabled=0 is set.)"
     return 0
   fi
-  kernel_modules_can_be_load=false
+  kernel_modules_can_be_loaded=false
   log info "${underline}Kernel Module Load Check Result:${nounderline} 'no' - modules cannot be load. (sysctl kernel.modules_disabled=1 is set.)"
 }
 
@@ -741,7 +797,7 @@ ${package_manager_issue_extra_help_text}"
 
 ## Install package only if not installed already.
 install_pkg() {
-  local pkgs special_args pkg_not_installed
+  local pkgs arg special_args pkg_not_installed
 
   pkgs="${*}"
   special_args=()
@@ -913,6 +969,8 @@ check_vm_exists_general() {
 
 
 check_vm_file_exists_virtualbox_general() {
+  local file_name_list file_name_item
+
   ## '/home/user/VirtualBox VMs/Kicksecure-Xfce/Kicksecure-Xfce.vbox'
   ## '/home/user/VirtualBox VMs/Whonix-Gateway-Xfce/Whonix-Gateway-Xfce.vbox'
   ## '/home/user/VirtualBox VMs/Whonix-Workstation-Xfce/Whonix-Workstation-Xfce.vbox'
@@ -922,7 +980,7 @@ check_vm_file_exists_virtualbox_general() {
     return 0
   fi
 
-  local file_name_list=()
+  file_name_list=()
   case "${guest}" in
     whonix)
       if [ "${import_only}" = "gateway" ]; then
@@ -939,7 +997,6 @@ check_vm_file_exists_virtualbox_general() {
     ;;
   esac
 
-  local file_name_item
   for file_name_item in "${file_name_list[@]}" ; do
     if test_file -e "$file_name_item" ; then
       log warn "VM Import Check: Inconsistent state.
@@ -1058,18 +1115,18 @@ check_guest_boot() {
       ;;
   esac
 
-  if [ "$kernel_module_has_been_load" = "false" ]; then
+  if [ "$kernel_module_has_been_loaded" = "false" ]; then
     ## Kernel modules have not been load.
     user_warned_potential_startup_issue=true
     log warn "Debugging information:
 Secure Boot Status: '$secure_boot_status_pretty'
-Kernel module has been load: '$kernel_module_has_been_load'
-Kernel module can be load: '$kernel_modules_can_be_load' (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
+Kernel module has been loaded: '$kernel_module_has_been_loaded'
+Kernel modules can be loaded: '$kernel_modules_can_be_loaded' (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
 Only signed kernel modules can be load: '$modules_signed_only'
 Kernel module vboxdrv signer: '$kernel_module_signer'
 kernel_module_modprobe_output ('$sucmd modprobe vboxdrv'): '$kernel_module_modprobe_output'"
 
-    if [ "$kernel_modules_can_be_load" = "true" ]; then
+    if [ "$kernel_modules_can_be_loaded" = "true" ]; then
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel modules have not been load yet.
   - Kernel modules can be load in theory, should be loaded by now, but are not.
   - This is a VirtualBox installation issue."
@@ -1201,10 +1258,10 @@ import_guest() {
 
 
 extract_vm_name_from_virtualbox_ova() {
+  local output system_number a b c d
   has awk || die 1 "${underline}extract_vm_name_from_virtualbox_ova:${nounderline} Package 'gawk' is missing. Please install."
-  local output="$1"
-  local system_number="$2"
-  local a b c d
+  output="$1"
+  system_number="$2"
   a=$(printf '%s' "$output" | grep --max-count=1 --after-context=4 -- "Virtual system $system_number:")
   b=$(printf '%s' "$a" | grep -- "Suggested VM name")
   c=$(printf '%s' "$b" | grep -oP -- '"\K[^"]+')
@@ -1218,7 +1275,7 @@ extract_vm_name_from_virtualbox_ova() {
 ## Import VirtualBox images
 import_virtualbox() {
   local vbox_arg_normal vbox_arg_general vm_purge vbox_arg_importonly \
-    vsys_0_actual vsys_1_actual
+    vsys_0_actual vsys_1_actual do_continue output
 
   ## Check how many systems to import.
   ## vsys 0: gateway or Kicksecure
@@ -1250,7 +1307,6 @@ import_virtualbox() {
       ;;
   esac
 
-  local do_continue
   if [ "${vm_or_vms_already_existing_test_result}" = "true" ]; then
     if [ -n "${import_only}" ]; then
       do_continue=yes
@@ -1270,7 +1326,6 @@ import_virtualbox() {
 
   check_vm_file_exists_virtualbox_general
 
-  local output
   output=$(log_run notice run_as_target_user "${vboxmanage_locale_english[@]}" import "${directory_prefix}/${guest_file}.${guest_file_ext}" "${vbox_arg_normal[@]}" --dry-run) || \
     die 105 "${underline}VM Import:${nounderline} Failed to import virtual machines."
 
@@ -1396,16 +1451,81 @@ virtualbox_start_failed() {
 }
 
 
-## Detect if repository is configured in the sources list.
+## Detect if repository is configured in the one-line format sources list.
 get_pattern_sources_debian() {
-  local pattern
+  local file pattern
 
   file="${1}"
   pattern="${2}"
   grep -v "^\s*#" -- "${file}" | grep -E -- "${pattern}" >/dev/null || return 1
 }
 
+## Detect if repository is configured in the deb822 format sources.
+get_pattern_sources_deb822_debian() {
+  local file types_pattern uris_pattern suites_pattern components_pattern \
+    current_types current_uris current_suites current_components match_hit \
+    line
+
+  file="${1:-}"
+  types_pattern="${2:-}"
+  uris_pattern="${3:-}"
+  suites_pattern="${4:-}"
+  components_pattern="${5:-}"
+
+  current_types=""
+  current_uris=""
+  current_suites=""
+  current_components=""
+
+  while read -r line; do
+    if [[ "${line}" =~ ^\s*# ]]; then
+      continue
+    fi
+
+    line="$(sed 's/^\s*//; s/\s*$//;' <<< "${line}")"
+    if [ -z "${line}" ]; then
+      match_hit='yes'
+      if [ -n "${types_pattern}" ] \
+        && ! [[ "${current_types}" =~ ${types_pattern} ]]; then
+        match_hit='no'
+      elif [ -n "${uris_pattern}" ] \
+        && ! [[ "${current_uris}" =~ ${uris_pattern} ]]; then
+        match_hit='no'
+      elif [ -n "${suites_pattern}" ] \
+        && ! [[ "${current_suites}" =~ ${suites_pattern} ]]; then
+        match_hit='no'
+      elif [ -n "${current_components}" ] \
+        && ! [[ "${current_components}" =~ ${components_pattern} ]]; then
+        match_hit='no'
+      fi
+
+      if [ "${match_hit}" = 'yes' ]; then
+        return 0
+      fi
+
+      current_types=""
+      current_uris=""
+      current_suites=""
+      current_components=""
+    fi
+
+    if [[ "${line}" =~ ^Types: ]]; then
+      current_types="$(cut -d' ' -f2-)"
+    elif [[ "${line}" =~ ^URIs: ]]; then
+      current_uris="$(cut -d' ' -f2-)"
+    elif [[ "${line}" =~ ^Suites: ]]; then
+      current_suites="$(cut -d' ' -f2-)"
+    elif [[ "${line}" =~ ^Components: ]]; then
+      current_components="$(cut -d' ' -f2-)"
+    fi
+  done < "${file}"
+
+  return 1
+}
+
 write_sources_debian() {
+  local url file
+
   url="${1}"
   file="${2}"
   printf '%s\n' "${url}" | root_cmd tee -- "${file}" ||
@@ -1416,6 +1536,8 @@ write_sources_debian() {
 ## https://stackoverflow.com/a/54239534
 ## "apt list --installed $pkg" does not fail if package is not installed.
 check_installed_debian() {
+  local status
+
   status="$(dpkg-query --show --showformat='${db:Status-Status}' "$1" 2>&1)"
   # shellcheck disable=SC2181
   if [ "$?" != 0 ] || [ "$status" != "installed" ]; then
@@ -1493,16 +1615,14 @@ install_package_debian_common() {
   log info "pkg_mngr_update: '${pkg_mngr_update[@]}'"
 
   pkg_mngr_upgradable_check() {
-    local upgrade_check_output
+    local upgrade_check_output upgrade_check_grep_output number_upgradable
     ## Not using 'apt list --upgradable', because it is not the same as
     ## 'sudo apt-get dist-upgrade --target-release=trixie-fasttrack'.
     ## It misses out on packages from "trixie-fasttrack".
     upgrade_check_output="$(root_cmd "${pkg_mngr_upgrade_check[@]}" "$@" 2>&1)" || true
-    local upgrade_check_grep_output
     ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
     ## APT has things to do.
     upgrade_check_grep_output="$(printf '%s' "${upgrade_check_output}" | grep -e '^Inst' -e '^Conf')" || true
-    local number_upgradable
     number_upgradable=0
     if [ -n "$upgrade_check_grep_output" ]; then
       number_upgradable="$(printf '%s' "${upgrade_check_grep_output}" | wc -l)"
@@ -1622,11 +1742,11 @@ kernel_modules_check() {
   fi
 
   if [ ! -e /dev/vboxdrv ]; then
-    kernel_module_has_been_load=false
+    kernel_module_has_been_loaded=false
     user_warned_potential_startup_issue=true
-    log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file '/dev/vboxdrv' does not exist. This probably means that the 'vboxdrv' kernel module has not been load yet."
+    log warn "${underline}VirtualBox Kernel Module Loaded Test Result${nounderline}: 'no' - file '/dev/vboxdrv' does not exist. This probably means that the 'vboxdrv' kernel module has not been loaded yet."
   else
-    kernel_module_has_been_load=true
+    kernel_module_has_been_loaded=true
     log info "VirtualBox Kernel Module Loaded Test Result: 'yes' - file '/dev/vboxdrv' exists."
   fi
 
@@ -1653,40 +1773,67 @@ kernel_modules_check() {
 
 install_repositories_for_virtualbox_on_debian() {
   local distro_codename_real distro_codename_debian distro_codename_ubuntu \
-    distro_codename_kicksecure_use \
-    oracle_clearnet oracle_prefix_debsource oracle_suffix_debsource \
-    oracle_domain_debsource \
-    unstable_clearnet unstable_onion unstable_prefix_debsource \
-    unstable_suffix_debsource unstable_domain_debsource \
-    backports_clearnet backports_onion backports_prefix_debsource \
-    backports_suffix_debsource backports_domain_debsource \
-    fasttrack_clearnet fasttrack_onion fasttrack_dir_regex \
-    fasttrack_prefix_debsource fasttrack_suffix_components \
-    fasttrack_suffix_components_regex fasttrack_suffix_debsource \
-    fasttrack_suffix_debsource_regex \
-    fasttrack_backports_staging_suffix_debsource \
-    fasttrack_backports_staging_suffix_debsource_regex \
-    fasttrack_domain_debsource \
-    kicksecure_clearnet kicksecure_onion kicksecure_prefix_debsource \
-    kicksecure_suffix_debsource kicksecure_domain_debsource  \
-    kali_clearnet kali_prefix_debsource kali_suffix_debsource \
-    kali_domain_debsource  \
-    apt_torified apt_onion protocol_prefix_debsource
+    distro_codename_kicksecure_use oracle_clearnet oracle_clearnet_uri_base \
+    oracle_types_debsource oracle_signedby_debsource \
+    oracle_components_debsource oracle_suites_debsource unstable_clearnet \
+    unstable_onion unstable_clearnet_uri_base unstable_onion_uri_base \
+    unstable_types_debsource unstable_signedby_debsource \
+    unstable_components_debsource unstable_suites_debsource \
+    backports_clearnet backports_onion backports_clearnet_uri_base \
+    backports_onion_uri_base backports_types_debsource \
+    backports_signedby_debsource backports_components_debsource \
+    backports_suites_debsource fasttrack_clearnet fasttrack_onion \
+    fasttrack_clearnet_uri_base fasttrack_onion_uri_base \
+    fasttrack_types_debsource fasttrack_signedby_debsource \
+    fasttrack_components_debsource fasttrack_components_debsource \
+    fasttrack_suites_debsource fasttrack_components_debsource_regex \
+    fasttrack_dir_regex fasttrack_suffix_debsource_regex \
+    fasttrack_backports_staging_suites_debsource \
+    fasttrack_backports_staging_suffix_debsource_regex kicksecure_clearnet \
+    kicksecure_onion kicksecure_clearnet_uri_base kicksecure_onion_uri_base \
+    kicksecure_types_debsource kicksecure_signedby_debsource \
+    kicksecure_components_debsource kicksecure_suites_debsource \
+    kali_clearnet kali_clearnet_uri_base kali_types_debsource \
+    kali_signedby_debsource kali_components_debsource kali_suites_debsource \
+    apt_torified apt_onion oracle_uri_debsource kicksecure_uri_debsource \
+    unstable_uri_debsource fasttrack_uri_debsource backports_uri_debsource \
+    kali_uri_debsource sources_list_file sources_deb822_file
 
   distro_codename_real=$(lsb_release --short --codename)
   distro_codename_common_use="${distro_codename_real}"
+
+  ## TODO: How to handle the default value for use_deb822_sources? If we
+  ## default to 'yes', old releases might end up with deb822 sources
+  ## incorrectly. If we default to 'no', new releases might end up with
+  ## one-line sources incorrectly. Defaulting to 'no' for now.
   if [ "${ubuntu_derivative_detected}" = "1" ]; then
     if grep --quiet -- "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
       distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
     else
       distro_codename_ubuntu="noble"
     fi
+    case "${distro_codename_ubuntu}" in
+      noble|plucky|questing)
+        use_deb822_sources='yes'
+        ;;
+      *)
+        use_deb822_sources='no'
+        ;;
+    esac
   elif [ "${debian_derivative_detected}" = "1" ]; then
     if [ "${kali_derivative_detected}" = "1" ]; then
-      distro_codename_debian="trixie"
+      distro_codename_debian="forky"
     else
       distro_codename_debian="${distro_codename_common_use}"
     fi
+    case "${distro_codename_debian}" in
+      trixie|forky|sid)
+        use_deb822_sources='yes'
+        ;;
+      *)
+        use_deb822_sources='no'
+        ;;
+    esac
   fi
 
   if [ "${dev}" = "1" ]; then
@@ -1698,78 +1845,172 @@ install_repositories_for_virtualbox_on_debian() {
   oracle_found=""
   oracle_clearnet="download.virtualbox.org"
   #oracle_onion="" ## non-existing
+  oracle_clearnet_uri_base="${oracle_clearnet}/virtualbox/debian/"
+  #oracle_onion_uri_base="" ## non-existing
   oracle_file_debsource="/etc/apt/sources.list.d/oracle.list"
-  oracle_prefix_debsource="deb [signed-by=/usr/share/keyrings/oracle-virtualbox-2016.asc] "
+  oracle_file_deb822source="/etc/apt/sources.list.d/oracle.sources"
+  oracle_types_debsource="deb"
+  oracle_signedby_debsource="/usr/share/keyrings/oracle-virtualbox-2016.asc"
+  oracle_components_debsource="contrib"
   ## Oracle does not have a Kali dist section, use Debian stable.
   if [ "${ubuntu_derivative_detected}" = "1" ]; then
-    oracle_suffix_debsource="/virtualbox/debian ${distro_codename_ubuntu} contrib"
+    oracle_suites_debsource="${distro_codename_ubuntu}"
   elif [ "${debian_derivative_detected}" = "1" ]; then
-    oracle_suffix_debsource="/virtualbox/debian ${distro_codename_debian} contrib"
+    oracle_suites_debsource="${distro_codename_debian}"
   else
-    oracle_suffix_debsource="/virtualbox/debian ${distro_codename_common_use} contrib"
+    oracle_suites_debsource="${distro_codename_common_use}"
   fi
 
   unstable_found=""
   unstable_clearnet="deb.debian.org"
   unstable_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
+  unstable_clearnet_uri_base="${unstable_clearnet}/debian/"
+  unstable_onion_uri_base="${unstable_onion}/debian/"
   unstable_file_debsource="/etc/apt/sources.list.d/unstable.list"
+  unstable_file_deb822source="/etc/apt/sources.list.d/unstable.sources"
+  unstable_types_debsource="deb"
   ## CI /etc/apt/sources.list.d/debian.sources uses:
   ## Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
   ## So we have to use signed-by here too, otherwise we get an apt-get error:
   ## E: Conflicting values set for option Signed-By regarding source
-  unstable_prefix_debsource="deb [signed-by=/usr/share/keyrings/debian-archive-keyring.gpg] "
-  unstable_suffix_debsource="/debian/ unstable main contrib non-free"
+  ## Also needed to avoid an apt notice when using deb822 format sources.
+  unstable_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.gpg"
+  unstable_components_debsource="main contrib non-free"
+  unstable_suites_debsource="unstable"
 
   backports_found=""
   backports_clearnet="deb.debian.org"
   backports_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
+  backports_clearnet_uri_base="${backports_clearnet}/debian/"
+  backports_onion_uri_base="${backports_onion}/debian/"
   backports_file_debsource="/etc/apt/sources.list.d/backports.list"
-  backports_prefix_debsource="deb "
-  backports_suffix_debsource="/debian/ ${distro_codename_common_use}-backports main contrib non-free"
+  backports_file_deb822source="/etc/apt/sources.list.d/backports.sources"
+  backports_types_debsource="deb"
+  backports_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.gpg"
+  backports_components_debsource="main contrib non-free"
+  backports_suites_debsource="${distro_codename_common_use}-backports"
 
   fasttrack_found=""
-  fasttrack_backports_staging_found=""
   fasttrack_clearnet="fasttrack.debian.net"
   fasttrack_onion="5phjdr2nmprmhdhw4fdqfxvpvt363jyoeppewju2oqllec7ymnolieyd.onion"
+  fasttrack_clearnet_uri_base="${fasttrack_clearnet}/debian-fasttrack/"
+  fasttrack_onion_uri_base="${fasttrack_onion}/debian-fasttrack/"
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
-  fasttrack_backports_staging_file_debsource="/etc/apt/sources.list.d/fasttrack-backports-staging.list"
-  fasttrack_prefix_debsource="deb [signed-by=/usr/share/keyrings/fasttrack-archive-keyring.gpg] "
+  fasttrack_file_deb822source="/etc/apt/sources.list.d/fasttrack.sources"
+  fasttrack_types_debsource="deb"
+  fasttrack_signedby_debsource="/usr/share/keyrings/fasttrack-archive-keyring.gpg"
+  fasttrack_components_debsource="main contrib non-free"
+  fasttrack_suites_debsource="${distro_codename_common_use}-fasttrack"
+  fasttrack_components_debsource_regex="main\s+contrib\s+non-free"
   fasttrack_dir_regex="/debian(-fasttrack)?/?\s"
-  fasttrack_suffix_components="main contrib non-free"
-  fasttrack_suffix_components_regex="main\s+contrib\s+non-free"
-  fasttrack_suite="${distro_codename_common_use}-fasttrack"
-  fasttrack_suffix_debsource="/debian-fasttrack/ ${fasttrack_suite} ${fasttrack_suffix_components}"
-  fasttrack_suffix_debsource_regex="${fasttrack_dir_regex}\s*${fasttrack_suite}\s+${fasttrack_suffix_components_regex}"
-  fasttrack_backports_staging_suite="${distro_codename_common_use}-backports-staging"
-  fasttrack_backports_staging_suffix_debsource="/debian-fasttrack/ ${fasttrack_backports_staging_suite} ${fasttrack_suffix_components}"
-  fasttrack_backports_staging_suffix_debsource_regex="${fasttrack_dir_regex}\s*${fasttrack_backports_staging_suite}\s+${fasttrack_suffix_components_regex}"
+  fasttrack_suffix_debsource_regex="${fasttrack_dir_regex}\s*${fasttrack_suites_debsource}\s*${fasttrack_components_debsource_regex}"
+
+  fasttrack_backports_staging_found=""
+  ## same clearnet as fasttrack
+  ## same onion as fasttrack
+  ## same clearnet_uri_base as fasttrack
+  ## same onion_uri_base as fasttrack
+  fasttrack_backports_staging_file_debsource="/etc/apt/sources.list.d/fasttrack-backports-staging.list"
+  fasttrack_backports_staging_file_deb822source="/etc/apt/sources.list.d/fasttrack-backports-staging.sources"
+  ## same types as fasttrack
+  ## same signedby as fasttrack
+  ## same components as fasttrack
+  fasttrack_backports_staging_suites_debsource="${distro_codename_common_use}-backports-staging"
+  ## same components_debsource_regex as fasttrack
+  ## same dir_regex as fasttrack
+  fasttrack_backports_staging_suffix_debsource_regex="${fasttrack_dir_regex}\s*${fasttrack_backports_staging_suites_debsource}\s+${fasttrack_components_debsource_regex}"
 
   kicksecure_found=""
   kicksecure_clearnet="deb.kicksecure.com"
   kicksecure_onion="deb.w5j6stm77zs6652pgsij4awcjeel3eco7kvipheu6mtr623eyyehj4yd.onion"
+  kicksecure_clearnet_uri_base="${kicksecure_clearnet}/"
+  kicksecure_onion_uri_base="${kicksecure_onion}/"
   kicksecure_file_debsource="/etc/apt/sources.list.d/derivative.list"
-  kicksecure_prefix_debsource="deb [signed-by=/usr/share/keyrings/derivative.asc] "
-  kicksecure_suffix_debsource=" ${distro_codename_kicksecure_use} main contrib non-free"
+  kicksecure_file_deb822source="/etc/apt/sources.list.d/derivative.sources"
+  kicksecure_types_debsource="deb"
+  kicksecure_signedby_debsource="/usr/share/keyrings/derivative.asc"
+  kicksecure_components_debsource="main contrib non-free"
+  kicksecure_suites_debsource="${distro_codename_kicksecure_use}"
 
   kali_found=""
   kali_clearnet="http.kali.org"
   #kali_onion="" ## non-existing
+  kali_clearnet_uri_base="${kali_clearnet}/"
+  #kali_onion_uri_base="" ## non-existing
   kali_file_debsource="/etc/apt/sources.list.d/kali.list"
-  kali_prefix_debsource="deb "
-  kali_suffix_debsource=" ${distro_codename_common_use} main contrib non-free non-free-firmware"
+  kali_file_deb822source="/etc/apt/sources.list.d/kali.sources"
+  kali_types_debsource="deb"
+  ## TODO: Fill in Kali key file and add Signed-By fields to appropriate
+  ## sources below
+  kali_signedby_debsource="UNKNOWN"
+  kali_components_debsource="main contrib non-free non-free-firmware"
+  kali_suites_debsource="${distro_codename_common_use}"
 
   apt_torified=""
   apt_onion=""
 
   ## TODO:
   ## - handle case if using Debian mirrors
-  ## - add support for Deb822-style Format parsing
-  ## - write sources.list files in one-line-style format or Deb822-style format?
-  ##   https://forums.kicksecure.com/t/apt-sources-list-one-line-format-versus-deb822-style-format/267
   ## - unit tests
-  log warn "APT Repository List: Deb822-style Format is unsupported"
 
-  local sources_list_file
+  for sources_deb822_file in /etc/apt/sources.list.d/*.sources; do
+    [ -f "${sources_deb822_file}" ] || continue
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "${oracle_clearnet}" "" ""
+    then
+      oracle_found=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "${kicksecure_clearnet}|${kicksecure_onion}" "" ""
+    then
+      kicksecure_found=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "(${unstable_clearnet}|${unstable_onion})/debian.*" "(unstable|sid)" ""
+    then
+      unstable_found=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "(${unstable_clearnet}|${unstable_onion})/debian.*" "(unstable|sid)" "contrib"
+    then
+      unstable_found_with_contrib=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "(${backports_clearnet}|${backports_onion})/debian/?" "${distro_codename_common_use}-backports" ""
+    then
+      backports_found=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_dir_regex}" "${fasttrack_suites_debsource}" "${fasttrack_components_debsource_regex}"
+    then
+      fasttrack_found=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "(${fasttrack_clearnet}|${fasttrack_onion})${fasttrack_dir_regex}" "${fasttrack_backports_staging_suites_debsource}" "${fasttrack_components_debsource_regex}"
+    then
+      fasttrack_backports_staging_found=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "${kali_clearnet}" "" ""
+    then
+      kali_found=1
+    fi
+
+    ## Kali VirtualBox is in 'contrib'.
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "${kali_clearnet}/kali" "" "contrib"
+    then
+      kali_found_with_contrib=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "tor://|tor\+" "" ""; then
+      apt_torified=1
+    fi
+
+    if get_pattern_sources_deb822_debian "${sources_deb822_file}" "" "\.onion" "" ""; then
+      apt_onion=1
+    fi
+  done
+
   for sources_list_file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
     [ -f "${sources_list_file}" ] || continue
 
@@ -1843,7 +2084,6 @@ install_repositories_for_virtualbox_on_debian() {
 
   ## If user has onion repositories configured, prefer it.
   if [ "${apt_onion}" = '1' ]; then
-    protocol_prefix_debsource="tor+http://"
     connection_type_debsource="onion"
     if [ "${oracle_repo}" = "1" ] || [ "${kali_derivative_detected}" = "1" ]; then
       if [ "${oracle_repo}" = "1" ]; then
@@ -1852,8 +2092,6 @@ install_repositories_for_virtualbox_on_debian() {
       if [ "${kali_derivative_detected}" = "1" ]; then
         log warn "Kali doesn't provide onion repositories."
       fi
-      kali_domain_debsource="${kali_clearnet}"
-      oracle_domain_debsource="${oracle_clearnet}"
       if [ "${apt_torified}" = '1' ]; then
         if [ "${oracle_repo}" = "1" ]; then
           log warn "Fallback Oracle repository to torified clearnet."
@@ -1861,7 +2099,8 @@ install_repositories_for_virtualbox_on_debian() {
         if [ "${kali_derivative_detected}" = "1" ]; then
           log warn "Fallback Kali repository to torified clearnet."
         fi
-        protocol_prefix_debsource="tor+https://"
+        kali_uri_debsource="tor+https://${kali_clearnet_uri_base}"
+        oracle_uri_debsource="tor+https://${oracle_clearnet_uri_base}"
       else
         if [ "${oracle_repo}" = "1" ]; then
           log warn "Fallback Oracle repository to clearnet."
@@ -1869,48 +2108,93 @@ install_repositories_for_virtualbox_on_debian() {
         if [ "${kali_derivative_detected}" = "1" ]; then
           log warn "Fallback Kali repository to clearnet."
         fi
-        protocol_prefix_debsource="https://"
+        kali_uri_debsource="https://${kali_clearnet_uri_base}"
+        oracle_uri_debsource="https://${oracle_clearnet_uri_base}"
       fi
     else
-      kali_domain_debsource="${kali_clearnet}"
-      oracle_domain_debsource="${oracle_clearnet}"
-      log warn "Fallback FastTrack repository to clearnet."
-      fasttrack_domain_debsource="${fasttrack_clearnet}"
+      if [ "${apt_torified}" = '1' ]; then
+        kali_uri_debsource="tor+https://${kali_clearnet_uri_base}"
+        oracle_uri_debsource="tor+https://${oracle_clearnet_uri_base}"
+      else
+        kali_uri_debsource="https://${kali_clearnet_uri_base}"
+        oracle_uri_debsource="https://${oracle_clearnet_uri_base}"
+      fi
     fi
-    kicksecure_domain_debsource="${kicksecure_onion}"
-    unstable_domain_debsource="${unstable_onion}"
-    backports_domain_debsource="${backports_onion}"
+    fasttrack_uri_debsource="http://${fasttrack_onion_uri_base}"
+    kicksecure_uri_debsource="http://${kicksecure_onion_uri_base}"
+    unstable_uri_debsource="http://${unstable_onion_uri_base}"
+    backports_uri_debsource="http://${backports_onion_uri_base}"
   ## If user has torified repositories configured, prefer it.
   elif [ "${apt_torified}" = '1' ]; then
-    protocol_prefix_debsource="tor+https://"
     connection_type_debsource="torified clearnet"
-    oracle_domain_debsource="${oracle_clearnet}"
-    kicksecure_domain_debsource="${kicksecure_clearnet}"
-    unstable_domain_debsource="${unstable_clearnet}"
-    fasttrack_domain_debsource="${fasttrack_clearnet}"
-    backports_domain_debsource="${backports_clearnet}"
-    kali_domain_debsource="${kali_clearnet}"
+    oracle_uri_debsource="tor+https://${oracle_clearnet_uri_base}"
+    kicksecure_uri_debsource="tor+https://${kicksecure_clearnet_uri_base}"
+    unstable_uri_debsource="tor+https://${unstable_clearnet_uri_base}"
+    fasttrack_uri_debsource="tor+https://${fasttrack_clearnet_uri_base}"
+    backports_uri_debsource="tor+https://${backports_clearnet_uri_base}"
+    kali_uri_debsource="tor+https://${kali_clearnet_uri_base}"
   ## If user doesn't have torified repositories, use clearnet one.
   else
-    protocol_prefix_debsource="https://"
     connection_type_debsource="clearnet"
-    oracle_domain_debsource="${oracle_clearnet}"
-    kicksecure_domain_debsource="${kicksecure_clearnet}"
-    unstable_domain_debsource="${unstable_clearnet}"
-    fasttrack_domain_debsource="${fasttrack_clearnet}"
-    backports_domain_debsource="${backports_clearnet}"
-    kali_domain_debsource="${kali_clearnet}"
+    oracle_uri_debsource="https://${oracle_clearnet_uri_base}"
+    kicksecure_uri_debsource="https://${kicksecure_clearnet_uri_base}"
+    unstable_uri_debsource="https://${unstable_clearnet_uri_base}"
+    fasttrack_uri_debsource="https://${fasttrack_clearnet_uri_base}"
+    backports_uri_debsource="https://${backports_clearnet_uri_base}"
+    kali_uri_debsource="https://${kali_clearnet_uri_base}"
   fi
 
-  kicksecure_url="${kicksecure_prefix_debsource}${protocol_prefix_debsource}${kicksecure_domain_debsource}${kicksecure_suffix_debsource}"
-  unstable_url="${unstable_prefix_debsource}${protocol_prefix_debsource}${unstable_domain_debsource}${unstable_suffix_debsource}"
-  fasttrack_url="${fasttrack_prefix_debsource}${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_suffix_debsource}"
-  fasttrack_backports_staging_url="${fasttrack_prefix_debsource}${protocol_prefix_debsource}${fasttrack_domain_debsource}${fasttrack_backports_staging_suffix_debsource}"
-  backports_url="${backports_prefix_debsource}${protocol_prefix_debsource}${backports_domain_debsource}${backports_suffix_debsource}"
-  kali_url="${kali_prefix_debsource}${protocol_prefix_debsource}${kali_domain_debsource}${kali_suffix_debsource}"
+  kicksecure_oneline_source="${kicksecure_types_debsource} [signed-by=${kicksecure_signedby_debsource}] ${kicksecure_uri_debsource} ${kicksecure_suites_debsource} ${kicksecure_components_debsource}"
+  unstable_oneline_source="${unstable_types_debsource} [signed-by=${unstable_signedby_debsource}] ${unstable_uri_debsource} ${unstable_suites_debsource} ${unstable_components_debsource}"
+  fasttrack_oneline_source="${fasttrack_types_debsource} [signed-by=${fasttrack_signedby_debsource}] ${fasttrack_uri_debsource} ${fasttrack_suites_debsource} ${fasttrack_components_debsource}"
+  fasttrack_backports_staging_oneline_source="${fasttrack_types_debsource} [signed-by=${fasttrack_signedby_debsource}] ${fasttrack_uri_debsource} ${fasttrack_backports_staging_suites_debsource} ${fasttrack_components_debsource}"
+  backports_oneline_source="${backports_types_debsource} [signed-by=${backports_signedby_debsource}] ${backports_uri_debsource} ${backports_suites_debsource} ${backports_components_debsource}"
+  kali_oneline_source="${kali_types_debsource} ${kali_uri_debsource} ${kali_suites_debsource} ${kali_components_debsource}"
+
+  kicksecure_deb822_source="\
+Types: ${kicksecure_types_debsource}
+URIs: ${kicksecure_uri_debsource}
+Suites: ${kicksecure_suites_debsource}
+Components: ${kicksecure_components_debsource}
+Signed-By: ${kicksecure_signedby_debsource}"
+  unstable_deb822_source="\
+Types: ${unstable_types_debsource}
+URIs: ${unstable_uri_debsource}
+Suites: ${unstable_suites_debsource}
+Components: ${unstable_components_debsource}
+Signed-By: ${unstable_signedby_debsource}"
+  fasttrack_deb822_source="\
+Types: ${fasttrack_types_debsource}
+URIs: ${fasttrack_uri_debsource}
+Suites: ${fasttrack_suites_debsource}
+Components: ${fasttrack_components_debsource}
+Signed-By: ${fasttrack_signedby_debsource}"
+  fasttrack_backports_staging_deb822_source="\
+Types: ${fasttrack_types_debsource}
+URIs: ${fasttrack_uri_debsource}
+Suites: ${fasttrack_backports_staging_suites_debsource}
+Components: ${fasttrack_components_debsource}
+Signed-By: ${fasttrack_signedby_debsource}"
+  backports_deb822_source="\
+Types: ${backports_types_debsource}
+URIs: ${backports_uri_debsource}
+Suites: ${backports_suites_debsource}
+Components: ${backports_components_debsource}
+Signed-By: ${backports_signedby_debsource}"
+  kali_deb822_source="\
+Types: ${kali_types_debsource}
+URIs: ${kali_uri_debsource}
+Suites: ${kali_suites_debsource}
+Components: ${kali_components_debsource}"
 
   if [ "${oracle_repo}" = "1" ]; then
-    oracle_url="${oracle_prefix_debsource} ${protocol_prefix_debsource}${oracle_domain_debsource}${oracle_suffix_debsource}"
+    oracle_oneline_source="${oracle_types_debsource} [signed-by=${oracle_signedby_debsource}] ${oracle_uri_debsource} ${oracle_suites_debsource} ${oracle_components_debsource}"
+    oracle_deb822_source="\
+Types: ${oracle_types_debsource}
+URIs: ${oracle_uri_debsource}
+Suites: ${oracle_suites_debsource}
+Components: ${oracle_components_debsource}
+Signed-By: ${oracle_signedby_debsource}"
     install_oracle_repository_debian
     return 0
   fi
@@ -1929,13 +2213,14 @@ install_repositories_for_virtualbox_on_debian() {
       return 0
       ;;
   esac
-  if test "${ubuntu_derivative_detected}" = "1"; then
-    ## Doesn't require extra repository, but this function is used to get
-    ## Oracle repository information and protocol (onion, https, tor+http etc)
-    return 0
-  fi
-
-  die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename_real}'!"
+  ## Out-commented. Unreachable code.
+  #if test "${ubuntu_derivative_detected}" = "1"; then
+  #  ## Doesn't require extra repository, but this function is used to get
+  #  ## Oracle repository information and protocol (onion, https, tor+http etc)
+  #  return 0
+  #fi
+  #
+  #die 1 "${underline}Repository Add:${nounderline} Unsupported distribution codename: '${distro_codename_real}'!"
 }
 
 
@@ -1987,7 +2272,6 @@ install_oracle_repository_debian() {
   if [ "${oracle_found}" = "1" ]; then
     log info "Oracle Repository: Skipped adding Oracle repository because it was already found."
   else
-    log notice "Oracle Repository: Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_debsource}"
     if [ -f /usr/share/keyrings/oracle.asc ]; then
       log info "Oracle Repository: Key /usr/share/keyrings/oracle.asc already exists."
     else
@@ -1996,7 +2280,13 @@ install_oracle_repository_debian() {
       printf '%s\n' "${oracle_pgp}" | \
         root_cmd tee -- /usr/share/keyrings/oracle-virtualbox-2016.asc >/dev/null
     fi
-    write_sources_debian "${oracle_url}" "${oracle_file_debsource}"
+    if [ "${use_deb822_sources}" = 'yes' ]; then
+      log notice "Oracle Repository: Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_deb822source}"
+      write_sources_debian "${oracle_deb822_source}" "${oracle_file_deb822source}"
+    else
+      log notice "Oracle Repository: Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_debsource}"
+      write_sources_debian "${oracle_oneline_source}" "${oracle_file_debsource}"
+    fi
   fi
 }
 
@@ -2020,8 +2310,13 @@ install_kicksecure_repository_debian() {
   if [ "${kicksecure_found}" = "1" ]; then
     log info "Kicksecure Repository: Skipped adding Kicksecure repository because it was already found."
   else
-    log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
-    write_sources_debian "${kicksecure_url}" "${kicksecure_file_debsource}"
+    if [ "${use_deb822_sources}" = 'yes' ]; then
+      log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_deb822source}"
+      write_sources_debian "${kicksecure_deb822_source}" "${kicksecure_file_deb822source}"
+    else
+      log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
+      write_sources_debian "${kicksecure_oneline_source}" "${kicksecure_file_debsource}"
+    fi
   fi
 }
 
@@ -2032,8 +2327,13 @@ install_kali_repository_debian() {
     return 0
   fi
 
-  log notice "APT Repository Configuration: Adding 'kali' ${connection_type_debsource} repository to ${kali_file_debsource}"
-  write_sources_debian "${kali_url}" "${kali_file_debsource}"
+  if [ "${use_deb822_sources}" = 'yes' ]; then
+    log notice "APT Repository Configuration: Adding 'kali' ${connection_type_debsource} repository to ${kali_file_deb822source}"
+    write_sources_debian "${kali_deb822_source}" "${kali_file_deb822source}"
+  else
+    log notice "APT Repository Configuration: Adding 'kali' ${connection_type_debsource} repository to ${kali_file_debsource}"
+    write_sources_debian "${kali_oneline_source}" "${kali_file_debsource}"
+  fi
 }
 
 
@@ -2059,8 +2359,13 @@ Pin-Priority: 450
 " | root_cmd tee -- "$file" ||
     die 1 "${underline}APT Preferences Configuration Writer:${nounderline} Failed to write to file: '$file'"
 
-  log notice "APT Repository Configuration: Adding 'unstable' ${connection_type_debsource} repository to ${unstable_file_debsource}"
-  write_sources_debian "${unstable_url}" "${unstable_file_debsource}"
+  if [ "${use_deb822_sources}" = 'yes' ]; then
+    log notice "APT Repository Configuration: Adding 'unstable' ${connection_type_debsource} repository to ${unstable_file_deb822source}"
+    write_sources_debian "${unstable_deb822_source}" "${unstable_file_deb822source}"
+  else
+    log notice "APT Repository Configuration: Adding 'unstable' ${connection_type_debsource} repository to ${unstable_file_debsource}"
+    write_sources_debian "${unstable_oneline_source}" "${unstable_file_debsource}"
+  fi
 }
 
 
@@ -2071,22 +2376,37 @@ install_backports_and_fasttrack_repository_debian() {
   if [ "${backports_found}" = "1" ]; then
     log info "APT Repository Configuration: Skipped adding 'backports' repository because it was already found."
   else
-    log notice "APT Repository Configuration: Adding 'backports' ${connection_type_debsource} repository to ${backports_file_debsource}"
-    write_sources_debian "${backports_url}" "${backports_file_debsource}"
+    if [ "${use_deb822_sources}" = 'yes' ]; then
+      log notice "APT Repository Configuration: Adding 'backports' ${connection_type_debsource} repository to ${backports_file_deb822source}"
+      write_sources_debian "${backports_deb822_source}" "${backports_file_deb822source}"
+    else
+      log notice "APT Repository Configuration: Adding 'backports' ${connection_type_debsource} repository to ${backports_file_debsource}"
+      write_sources_debian "${backports_oneline_source}" "${backports_file_debsource}"
+    fi
   fi
 
   if [ "${fasttrack_found}" = "1" ]; then
     log info "APT Repository Configuration: Skipped adding 'fasttrack' repository because it was already found."
   else
-    log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
-    write_sources_debian "${fasttrack_url}" "${fasttrack_file_debsource}"
+    if [ "${use_deb822_sources}" = 'yes' ]; then
+      log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_deb822source}"
+      write_sources_debian "${fasttrack_deb822_source}" "${fasttrack_file_deb822source}"
+    else
+      log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
+      write_sources_debian "${fasttrack_oneline_source}" "${fasttrack_file_debsource}"
+    fi
   fi
 
   if [ "${fasttrack_backports_staging_found}" = "1" ]; then
-    log info "APT Repository Configuration: Skipped adding 'fasttrack' with suite '${fasttrack_backports_staging_suite}' repository because it was already found."
+    log info "APT Repository Configuration: Skipped adding 'fasttrack' with suite '${fasttrack_backports_staging_suites_debsource}' repository because it was already found."
   else
-    log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository with suite '${fasttrack_backports_staging_suite}' to ${fasttrack_file_debsource}"
-    write_sources_debian "${fasttrack_backports_staging_url}" "${fasttrack_backports_staging_file_debsource}"
+    if [ "${use_deb822_sources}" = 'yes' ]; then
+      log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository with suite '${fasttrack_backports_staging_suites_debsource}' to ${fasttrack_backports_staging_file_deb822source}"
+      write_sources_debian "${fasttrack_backports_staging_deb822_source}" "${fasttrack_backports_staging_file_deb822source}"
+    else
+      log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository with suite '${fasttrack_backports_staging_suites_debsource}' to ${fasttrack_backports_staging_file_debsource}"
+      write_sources_debian "${fasttrack_backports_staging_oneline_source}" "${fasttrack_backports_staging_file_debsource}"
+    fi
   fi
 
 
@@ -2101,7 +2421,7 @@ install_backports_and_fasttrack_repository_debian() {
 
 virtualbox_installation_failure_debug() {
   local virtualbox_dkms_main_folder latest_folder \
-  virtualbox_dkms_latest_folder make_log
+    virtualbox_dkms_latest_folder make_log
 
   virtualbox_dkms_main_folder=/var/lib/dkms/virtualbox
 
@@ -2180,7 +2500,7 @@ install_virtualbox_fedora() {
   if get_virtualbox_version_fedora ; then
     test_pkg "${virtualbox_qt_package_name}" 2>/dev/null && has_virtualbox_qt=1
   else
-    true "INFO: get_virtualbox_version_fedora failed the first time which is normal is the repository has not been enabled yet."
+    true "INFO: get_virtualbox_version_fedora failed the first time which is normal as the repository has not been enabled yet."
   fi
 
   ## Guard against adding extraneous repositories.
@@ -2231,6 +2551,8 @@ get_virtualbox_version_debian() {
 
 ## Begin installation of VirtualBox on Debian and derived systems.
 install_virtualbox_debian_common_begin() {
+  local pkg
+
   log notice "VirtualBox Installation: Preparing to install VirtualBox..."
   if [ "${oracle_repo}" = "1" ]; then
     ## Workaround for undeclared dependencies bug by virtualbox.org (Oracle) repository.
@@ -2294,7 +2616,10 @@ install_virtualbox_debian() {
 
 ## Install VirtualBox on Ubuntu
 install_virtualbox_ubuntu() {
+  local install_virtualbox_args
+
   install_virtualbox_debian_common_begin
+
   install_virtualbox_args=()
   [ "${#install_pkg_fasttrack_extra_args_maybe[@]}" != '0' ] \
     && install_virtualbox_args+=( "${install_pkg_fasttrack_extra_args_maybe[@]}" )
@@ -2302,6 +2627,7 @@ install_virtualbox_ubuntu() {
   [ -n "${virtualbox_guest_additions_iso_package_name}" ] \
     && install_virtualbox_args+=( "${virtualbox_guest_additions_iso_package_name}" )
   install_pkg "${install_virtualbox_args[@]}" linux-image-generic linux-headers-generic
+
   install_virtualbox_debian_common_end
 }
 
@@ -2318,7 +2644,7 @@ install_signify() {
 
 ## Test if user accepts the license, if not, abort.
 check_license() {
-  local license_agreement
+  local license_agreement dialog_box
 
   if [ "${non_interactive}" = "1" ]; then
     log notice "License Check: 'success' - User agreement confirmed via '--non-interactive' option."
@@ -2330,7 +2656,6 @@ check_license() {
 
   [ "${dry_run}" != "1" ] && sleep 5
 
-  local dialog_box
   dialog_box=""
   ## 'whiptail' is the Debian version of Dialog with much less features.
   ## Dialog types problems:
@@ -2420,10 +2745,10 @@ get_transfer_cmd() {
 
   case "${transfer_utility}" in
     rsync)
-      rsync=1
+      use_rsync=1
       ;;
     curl)
-      curl=1
+      use_curl=1
       ;;
   esac
   ## 45m
@@ -2494,7 +2819,7 @@ set_trap() {
 ## Check if system status is supported
 get_system_stat() {
   local min_ram_mb total_mem_kB total_mem df_output free_space_available \
-    free_space_required
+    free_space_required live_status_detected live_status_extra_message
 
   if [ "${arch}" != "x86_64" ]; then
     die 101 "${underline}Architecture Check:${nounderline} Only supported architecture is 'x86_64', yours is: '${arch}'."
@@ -2573,7 +2898,6 @@ get_system_stat() {
     free_space_required="1"
   fi
 
-  local live_status_detected
   ## live-status-detected is provided only if package helper-scripts is installed.
   if has live-status-detected; then
     live_status_detected="$(live-status-detected)" || true
@@ -2668,7 +2992,7 @@ Debugging information:
 '${cmd_check_proxy[*]}'
 
 - Expected response header:
-'$expected_response_header'
+'${expected_response_header}'
 
 - Actual received header:
 '${actual_response_header}'
@@ -2692,8 +3016,8 @@ set_transfer_proxy() {
   ## Set transfer proxy per utility.
   case "${transfer_utility}" in
     curl)
-      transfer_proxy_prefix=()
       transfer_proxy_suffix=( '--proxy' "socks5h://${1}" )
+      transfer_proxy_prefix=()
       ;;
     rsync*)
       transfer_proxy_suffix=()
@@ -2816,7 +3140,7 @@ get_version() {
 ## Helper for download_files() to make it less repetitive.
 ## usage: get_file small|large $url
 get_file() {
-  local size download_opt_prefix download_opt download_opt_full round \
+  local size url download_opt_prefix download_opt download_opt_full round \
     download_opt_full_len download_opt_full_idx
 
   size="${1}"
@@ -3156,8 +3480,8 @@ get_download_links() {
   ## get download links by mirror of choice.
   case "${mirror}" in
     0)
-      site_download_clearnet="${curl+download.}${site_clearnet}${rsync+/${guest}}"
-      site_download_onion="${curl+download.}${site_onion}${rsync+/${guest}}"
+      site_download_clearnet="${use_curl+download.}${site_clearnet}${use_rsync+/${guest}}"
+      site_download_onion="${use_curl+download.}${site_onion}${use_rsync+/${guest}}"
       ;;
     1)
       site_download_clearnet="mirrors.dotsrc.org/${guest}"
@@ -3385,7 +3709,7 @@ check_integrity() {
 
 ## Self explanatory name, make everything after option parsing.
 main() {
-  local item cmd_check_internet
+  local item cmd_check_internet cmd_check_internet_idx cmd_check_internet_len
 
   ###############
   ## BEGIN PRE ##
@@ -3435,7 +3759,6 @@ main() {
     if [ "${dry_run}" != "1" ]; then
       log notice "Connectivity Test: Testing internet connection to '${url_origin}'..."
       cmd_check_internet=( 'timeout' '--foreground' "${transfer_max_time_small_file}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_proxy_suffix[@]}" "${transfer_dryrun_opt}" "${transfer_size_opt}" "${transfer_size_test_connection}" "${url_origin}" )
-      local cmd_check_internet_idx cmd_check_internet_len
       cmd_check_internet_len="${#cmd_check_internet[@]}"
       for (( cmd_check_internet_idx=0; cmd_check_internet_idx < cmd_check_internet_len; cmd_check_internet_idx++ )); do
         if [ -z "${cmd_check_internet[cmd_check_internet_idx]}" ]; then
@@ -3599,7 +3922,6 @@ set_default() {
   fedora_derivative_detected=""
   virtualbox_linux_user_group="vboxusers"
   # shellcheck disable=SC2034
-  credential_caching_status=""
   qubes_template_detected=""
   install_pkg_fasttrack_extra_args_maybe=()
   user_warned_potential_startup_issue=""
@@ -3975,6 +4297,8 @@ parse_opt() {
 ## Bash supports process substitution and saving xtrace to a file, which is a
 ## simpler way to log to file and console.
 log_term_and_file() {
+  local temp_folder xtrace_fifo
+
   ## Discover if terminal is attached to stdout
   if [ ! -t 1 ]; then
     log warn "Terminal: Output is not being sent to the terminal because terminal is not connected to stdout."
