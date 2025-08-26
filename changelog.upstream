@@ -1,3 +1,82 @@
+commit 899c76b3150f0f8dcfddb5dd25d67ea7a8bcd577
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 26 05:21:42 2025 -0400
+
+    re-generate man pages (generated using "genmkfile manpages")
+
+commit 890f4f57b6d81d8b795edf7a6f0f971b75787fd9
+Merge: bf9669d 62a4fcd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Aug 20 10:05:25 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit bf9669d9038021658599ccc9890346b509eb6ad6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Aug 20 06:57:31 2025 -0400
+
+    bumped Standards-Version
+
+commit 179d0265bc889eeebec4b2bf32f84160363bc0bd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Aug 20 06:25:38 2025 -0400
+
+    readme
+
+commit 62a4fcd05897f25f61c216fb35e9cfb4e45c1cde
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Aug 14 21:00:32 2025 -0500
+
+    dist-installer-cli: add deb822 support, make variable handling safer, rename some variables
+
+commit d78a44cdfd3cb5f6421b708c2151311cb3d766d5
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Wed Aug 13 21:06:25 2025 -0500
+
+    dist-installer-cli: Reduce testing and unstable pin priority to avoid unintentionally upgrading a system to Testing or Sid
+
+commit c2a3830e6f02f29d63c314238613fd9f3ee172dd
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Aug 10 16:09:10 2025 -0500
+
+    Move upgrade-nonroot from usability-misc to helper-scripts
+
+commit e205cb06c557841f8a4102f6a5d38257193a7930
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Aug 10 16:07:20 2025 -0500
+
+    Move apt-get-reset from usability-misc to helper-scripts
+
+commit 1425c4a60d981f6db839cd0498334d9650797168
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Aug 10 16:06:18 2025 -0500
+
+    Move apt-get-noninteractive from usability-misc to helper-scripts
+
+commit eed566ae7695264af57a538cf1a9ead38bd85f21
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Aug 10 15:47:38 2025 -0500
+
+    Move apt-get-update-plus from usability-misc to helper-scripts
+
+commit fed9b802d7639a7e42154cdc5f43abc15046f033
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Aug 10 15:32:49 2025 -0500
+
+    Remove apt-cacher-ng-prepare/undo, we now use approx in image builds
+
+commit 9158ff8838c1629ae36b1b993d39e053c4199658
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Aug 5 22:58:10 2025 -0500
+
+    Port to Trixie.
+
+commit 9c2431eafb32e6fa1dd0d299a4dc6edd7872123c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 6 16:14:14 2025 +0000
+
+    bumped changelog version
+
 commit 0003794a43b5806a695d8dab1a925f040b37f58b
 Merge: 9e839fc bd8be2b
 Author: Patrick Schleizer <adrelanos@whonix.org>
