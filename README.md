@@ -29,15 +29,7 @@ Disable sudo default lecture.
 Add pwfeedback to sudo Defaults so password asterisks are shown while typing.
 /etc/sudoers.d/pwfeedback
 
-xfce4-terminal:
-
-* Disables automatic scroll on output when manually scrolled up to make
-reading output such as "sudo journalctl -f" easier.  Automatic scroll on
-output still happening in default when not manually scrolling up beforehand
-first.
-
-* Enables unlimited scrollback by default to avoid output from being
-truncated.
+qterminal:
 
 Ships gsudoedit, a wrapper to run sudoedit with a graphical editor.
 
