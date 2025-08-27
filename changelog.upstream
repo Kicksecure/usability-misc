@@ -1,8 +1,47 @@
+commit 086936e1f20528d86107d25588a2e532ed07d54b
+Merge: 48d5b18 f462106
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Aug 27 04:23:05 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit f462106110a84b90052374d5256d9146e34b4cba
+Merge: 74bf8ca 48d5b18
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Aug 26 19:22:01 2025 -0500
+
+    Merge branch 'master' into arraybolt3/trixie
+
+commit 48d5b188d3aa0655d80756a94342b15a16fd26e9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Aug 26 09:21:43 2025 +0000
+
+    bumped changelog version
+
 commit 899c76b3150f0f8dcfddb5dd25d67ea7a8bcd577
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 26 05:21:42 2025 -0400
 
     re-generate man pages (generated using "genmkfile manpages")
+
+commit 74bf8caabe4cd8cf64de06052a88df4505548be0
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Mon Aug 25 19:11:41 2025 -0500
+
+    Move dpkg-noninteractive from usability-misc to helper-scripts
+
+commit 928b00f8a3cdca4407e52c1a4b8969ed4dbcd6bc
+Merge: 0bf4142 890f4f5
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Aug 21 20:22:28 2025 -0500
+
+    Merge branch 'master' into arraybolt3/trixie
+
+commit 0bf41428f76052ba96ae947f1d96dca302d47ee2
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Aug 21 18:53:48 2025 -0500
+
+    Adjust for Wayland/LXQt
 
 commit 890f4f57b6d81d8b795edf7a6f0f971b75787fd9
 Merge: bf9669d 62a4fcd
