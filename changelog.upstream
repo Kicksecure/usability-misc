@@ -1,8 +1,33 @@
+commit eae99cfdbd57d86dda870c27c94e5aec7179bd42
+Merge: 291d77c 8acc388
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Sep 2 10:04:33 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 291d77cbb6cb02b040988f365656c20e98da5cbc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Sep 2 13:37:49 2025 +0000
+
+    bumped changelog version
+
 commit 734b678097aa76e6ca43ac51b6dd806677d3f1bf
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Sep 2 09:35:04 2025 -0400
 
     bump
+
+commit 8acc3882e1cdc6e2446651d983850d0ab06c45d2
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Aug 31 12:41:14 2025 -0500
+
+    Fix VirtualBox with Linux 6.12 and higher
+
+commit f37120bc543948308c805bed387264c350c6b79f
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Aug 31 12:29:34 2025 -0500
+
+    Keep VirtualBox and KVM from conflicting
 
 commit a2afad95bf7fb4b14d5a66eca804623f6167da88
 Author: Patrick Schleizer <adrelanos@whonix.org>
