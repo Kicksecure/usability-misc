@@ -59,7 +59,8 @@ declare version me start_time dialog_title license adrelanos_signify \
   transfer_proxy_suffix proxy curl_transfer_proxy curl_opt_ssl \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
-  dist_installer_cli_was_sourced APTGETOPT APTGETOPT_SERIALIZED
+  dist_installer_cli_was_sourced can_boot_virtualbox_guest_vms APTGETOPT \
+  APTGETOPT_SERIALIZED
 
 if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
@@ -1098,6 +1099,10 @@ check_guest_boot() {
     return 0
   fi
 
+  if [ "${can_boot_virtualbox_guest_vms}" = 'false' ]; then
+    log warning "A reboot may be required before the installed virtual machine(s) can be launched."
+  fi
+
   ## Refresh variables vm_or_vms_already_existing_test_result, gateway_exists and workstation_exists.
   check_vm_exists_general "(check after import)"
 
@@ -1547,6 +1552,86 @@ check_installed_debian() {
 }
 
 
+disable_kvm_virt_at_load() {
+  local module_list_str kvm_variant kvm_variant_unload_failed \
+    kvm_core_unload_failed kvm_reload_failed
+
+  module_list_str=''
+  kvm_variant=''
+  kvm_variant_unload_failed='false'
+  kvm_core_unload_failed='false'
+  kvm_reload_failed='false'
+
+  ## KVM's 'enable_virt_at_load' feature renders VirtualBox unusable on systems
+  ## using Linux 6.12 or higher.
+  ##
+  ## VirtualBox can be fixed by setting 'enable_virt_at_load=0' in the KVM
+  ## driver. This does not break KVM, it simply prevents it from conflicting
+  ## with VirtualBox (at the expense of making the first KVM VM launch and the
+  ## last KVM VM shutdown take slightly longer). This is safe to set even on
+  ## kernels older than 6.12, it will act as a no-op there.
+  ##
+  ## Using modprobe.d for setting this parameter as recommended by
+  ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1082157#29
+  ##
+  ## Using same method documented at
+  ## https://www.kicksecure.com/wiki/Template:VirtualBox_Host_Software_Installation#Ubuntu
+  log notice "Disabling KVM virt-at-load feature to enable VirtualBox to function. This will not break the ability to use KVM virtual machines..."
+  printf '%s\n' "\
+## Prevent VirtualBox and KVM from conflicting. This does not break KVM.
+options kvm enable_virt_at_load=0" \
+    | root_cmd tee /etc/modprobe.d/disable-kvm-virt-at-load.conf >/dev/null
+  log notice "KVM virt-at-load feature disabled."
+
+  ## Hot-reloading KVM kernel module if possible. This is necessary for VM
+  ## autostart to work later.
+  log notice "Attempting hot reload of KVM kernel modules to allow VirtualBox VM auto-start later..."
+  module_list_str="$(lsmod | cut -d' ' -f1)"
+
+  if grep '^kvm_intel$' <<< "${module_list_str}" ; then
+    kvm_variant='intel'
+  elif grep '^kvm_amd$' <<< "${module_list_str}" ; then
+    kvm_variant='amd'
+  elif grep '^kvm$' <<< "${module_list_str}" ; then
+    ## KVM hot-reload will almost certainly fail if we can't detect the KVM
+    ## variant, as the core KVM module requires a helper module for the
+    ## specific CPU architecture. Warn, but try to reload anyway.
+    log warn "Could not detect KVM variant. KVM hot reload will probably fail."
+    kvm_variant='unknown'
+  fi
+
+  if [ "${kvm_variant}" != 'unknown' ]; then
+    root_cmd modprobe -r "kvm_${kvm_variant}" || kvm_variant_unload_failed='true'
+  fi
+  root_cmd modprobe -r 'kvm' || kvm_core_unload_failed='true'
+
+  if [ "${kvm_variant_unload_failed}" = 'true' ]; then
+    log warn "Failed to unload KVM kernel modules. A reboot will possibly be required before VirtualBox VMs will function properly."
+    can_boot_virtualbox_guest_vms='false'
+  elif [ "${kvm_core_unload_failed}" = 'true' ]; then
+    ## Try to put the variant kernel module back. It is not fatal if this
+    ## fails.
+    root_cmd modprobe "kvm_${kvm_variant}" || true
+    log warn "Failed to unload KVM kernel modules. A reboot will possibly be required before VirtualBox VMs will function properly."
+    can_boot_virtualbox_guest_vms='false'
+  fi
+
+  if [ "${kvm_variant}" != 'unknown' ]; then
+    root_cmd modprobe "kvm_${kvm_variant}" || kvm_reload_failed='true'
+  else
+    root_cmd modprobe 'kvm' || kvm_reload_failed='true'
+  fi
+
+  if [ "${kvm_reload_failed}" = 'true' ]; then
+    log warn "Failed to reload KVM kernel modules. A reboot will possibly be required before either VirtualBox or KVM VMs will function properly."
+    can_boot_virtualbox_guest_vms='false'
+    return 0
+  fi
+
+  log notice "Successfully reloaded KVM kernel modules. VirtualBox VMs should be functional."
+}
+
+
 install_package_fedora_common() {
   pkg_mngr="dnf"
   pkg_mngr_install=( "${pkg_mngr}" 'install' '--assumeyes' '--setopt=install_weak_deps=False' )
@@ -1719,6 +1804,7 @@ install_virtualbox_fedora_common_end() {
   fi
 
   add_user_to_vbox_group
+  disable_kvm_virt_at_load
 }
 
 
@@ -1733,6 +1819,7 @@ install_virtualbox_debian_common_end() {
   fi
 
   add_user_to_vbox_group
+  disable_kvm_virt_at_load
 }
 
 
@@ -3925,6 +4012,7 @@ set_default() {
   qubes_template_detected=""
   install_pkg_fasttrack_extra_args_maybe=()
   user_warned_potential_startup_issue=""
+  can_boot_virtualbox_guest_vms="true"
   ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
   vboxmanage_locale_english=( 'env' 'LC_ALL=C.UTF-8' 'LANG=C.UTF-8' 'LANGUAGE=C' 'vboxmanage' )
 }
