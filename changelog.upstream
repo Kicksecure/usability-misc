@@ -1,3 +1,22 @@
+commit 9c0dd3e076e3b3ae182b10c11e0b9182bdf90833
+Merge: 67b0527 562b4c7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 7 03:16:10 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 562b4c727458eba79809aa2fba17996faeec711c
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sat Sep 6 22:34:19 2025 -0500
+
+    Add flameshot compatibility wrapper
+
+commit 67b05278d6240ec73749ab2390d431a54c1b966c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Sep 2 15:31:10 2025 +0000
+
+    bumped changelog version
+
 commit d975f0f0f6d67f2a7db627931c2031a28ea6fced
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Sep 2 14:06:01 2025 +0000
