@@ -1,0 +1,18 @@
+#!/bin/bash
+
+## Copyright (C) 2020 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@kicksecure.com>
+## See the file COPYING for copying conditions.
+
+flameshot_exe="$(command -v flameshot.dist-orig)" || true
+if [ -z "${flameshot_exe}" ]; then
+  echo 'Please install the flameshot and xdg-desktop-portal-wlr packages to use this tool.'
+  exit 1
+fi
+
+export XDG_CURRENT_DESKTOP=sway
+export XDG_SESSION_DESKTOP=sway
+
+## Simply calling flameshot.dist-orig directly results in notifications that
+## contain the string 'flameshot.dist-orig'. Resolving this requires spoofing
+## Flameshot's argv[0], which requires calling the dynamic linker directly.
+exec /usr/lib64/ld-linux-x86-64.so.2 --argv0 flameshot "${flameshot_exe}" "$@"

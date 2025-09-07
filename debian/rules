@@ -6,7 +6,7 @@
 #export DH_VERBOSE=1
 
 %:
-	dh $@
+	dh $@ --with=config-package
 
 override_dh_installman:
 	dh_installman $(CURDIR)/auto-generated-man-pages/*
