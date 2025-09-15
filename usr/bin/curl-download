@@ -3,37 +3,4 @@
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-# get options that require arguments
-list="$(curl --help all | grep -o "^ .* <" | sed "s/<.*//g" | tr "\n" " " | tr -s " ")"
-
-# default opts [-O|--remote-name]
-def_opt="--remote-name"
-
-# loop arguments to set options for URLs or to not set it at all
-for res in "$@"; do
-  # exclude arguments from options
-  if [ "$skip_next" = "1" ]; then
-    skip_next=0
-    opt="$opt \"$res\""
-    continue
-  fi
-  # exclude options that require arguments
-  if printf '%s\n' "${list}" | tr " " "\n" | grep -- "^${res}$" >/dev/null 2>/dev/null; then
-    skip_next=1
-    if [ "$res" = "--url" ]; then
-      opt="$opt $def_opt $res"
-    else
-      opt="$opt $res"
-    fi
-    continue
-  fi
-  # exclude options that don't require arguments
-  if [[ $res == -* ]]; then
-    opt="$opt $res"
-    continue
-  fi
-  # for sure this is an url
-  opt="$opt $def_opt $res"
-done
-
-curl --location $opt
+wcurl "$@"
