@@ -1,3 +1,15 @@
+commit d1e388d464ad6188f30f5c2675fa86f44cd502be
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 15 05:01:58 2025 -0400
+
+    `curl-download` / `scurl-download`: ported to `wcurl`
+
+commit 958cae0d3725ba048b5d65f55105678e2bf362c7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 7 08:05:51 2025 +0000
+
+    bumped changelog version
+
 commit 9c0dd3e076e3b3ae182b10c11e0b9182bdf90833
 Merge: 67b0527 562b4c7
 Author: Patrick Schleizer <adrelanos@whonix.org>
