@@ -1141,7 +1141,7 @@ kernel_module_modprobe_output ('$sucmd modprobe vboxdrv'): '$kernel_module_modpr
     else
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'REBOOT REQUIRED'${nobold}${nocolor} - because kernel module loading is disabled on your system:
   - The system administrator might have disabled module loading.
-  - Module loading might have been disabled by Kicksecure package security-misc.
+  - Module loading might have been disabled by Kicksecure package security-misc-shared.
   - You can re-run this installer again after reboot."
       if [ "${ci}" != "1" ]; then
         virtualbox_start_failed
