@@ -1,3 +1,22 @@
+commit ecc25c6ff88e533148349cc1d11d4ec4b352b140
+Merge: d529fef 9ec8f58
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 22 13:05:12 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 9ec8f588267aa26719d620e7b215a9ac3057a579
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Sep 21 16:08:43 2025 -0500
+
+    dist-installer-cli string changes for security-misc split
+
+commit d529fef8632332fe14dc48843f07e4f607396c46
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Sep 19 16:23:07 2025 +0000
+
+    bumped changelog version
+
 commit c498ae6e0c1b6f60eeaac93303a6af79e3a87072
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Sep 18 10:08:31 2025 -0400
