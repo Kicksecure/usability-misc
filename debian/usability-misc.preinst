@@ -19,13 +19,12 @@ set -e
 #+ true
 if [ "$(dpkg-divert --listpackage /etc/zsh/zshrc)" = "desktop-config-dist" ]; then
   unlink /etc/zsh/zshrc || true
+  dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zshrc || true
 fi
 if [ "$(dpkg-divert --listpackage /etc/zsh/zprofile)" = "desktop-config-dist" ]; then
   unlink /etc/zsh/zprofile || true
+  dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zprofile || true
 fi
-
-dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zshrc || true
-dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zprofile || true
 
 true "INFO: debhelper beginning here."
 
