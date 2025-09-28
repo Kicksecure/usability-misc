@@ -1,0 +1,109 @@
+#!/usr/bin/env zsh
+
+# the host has the symbol %M, but not inserted because whonix always
+# sets the host as "host"
+_git_prompt_info() {
+  case "$PWD" in
+    /net/*|/Volumes/*) return ;;
+  esac
+  if [ -d .svn ]; then
+    ref=.svn
+  else
+    ref=${$(command git symbolic-ref HEAD 2> /dev/null)#refs/heads/} || \
+      ref=${$(command git rev-parse HEAD 2>/dev/null)[1][1,7]} || \
+      return
+  fi
+  case "$TERM" in
+    *-256color|xterm-kitty) branchcolor=$'\e[38;5;31m'   ;;
+    *-88color|rxvt-unicode) branchcolor=$'\e[38;5;22m'   ;;
+    *)                      branchcolor=$'\e[00;94m'     ;;
+  esac
+print -Pn '(%%{$branchcolor%%}%20>...>$ref%<<%%{\e[00m%%})'
+}
+
+_get_dist_prompt() {
+  test -z "${dist_prompt}" && return
+  dist_prompt_color=$'\e[00;35m'
+  print -Pn '%%{\e[00m%%}%%{$dist_prompt_color%%}%20>...>$dist_prompt%<<%%{\e[00m%%} '
+}
+
+local usercolor=$'\e[00;93m'
+local dircolor=$'\e[00;34m'
+# Use echotc Co?
+case "$TERM" in
+  *-256color|xterm-kitty)
+    usercolor=$'\e[38;5;184m'
+    dircolor=$'\e[38;5;27m'
+    ;;
+  *-88color|rxvt-unicode)
+    usercolor=$'\e[38;5;56m'
+    dircolor=$'\e[38;5;23m'
+    ;;
+esac
+[ $UID = '0' ] && usercolor=$'\e[00;97m'
+reset_color=$'\e[00m'
+red=$'\e[00;31m'
+autoload -U colors && colors
+if test -f ${zsh_custom_dir}/dev; then
+  ## developer prompt
+  PS1="%{$red%}[\$(_get_dist_prompt)%{$usercolor%}%n%{$reset_color%}%{$reset_color%} %{$dircolor%}%20<...<%~%<<%{$reset_color%}\$(_git_prompt_info)%{$red%}]%{$reset_color%}%# "
+else
+  ## user prompt
+  PS1="%{$red%}[\$(_get_dist_prompt)%{$usercolor%}%n%{$reset_color%}%{$reset_color%} %{$dircolor%}%~%{$reset_color%}%{$red%}]%{$reset_color%}%# "
+fi
+
+## print previous command exit code
+#RPS1="%(?..(%{"$'\e[01;35m'"%}%?%{$reset_color%}%)%<<)"
+
+## set window title
+_set_title() {
+  case "${1:-}" in
+    *install*)
+      hash -r ;;
+  esac
+  print -Pn '\e]1;%l@%m${1+*}\a'
+  print -Pn '\e]2;%n@%m:%~'
+  if [ -n "${1:-}" ]; then
+    print -Pnr ' (%24>..>$1%>>)'|tr '\0-\037' '?'
+  fi
+  print -Pn " [%l]\a"
+}
+
+case $TERM in
+  screen*)
+    precmd() {
+      _set_title "$@"
+      if [ "$STY" -o "$TMUX" ]; then
+        # print -Pn "\e]1;\a\e]1;@%m\a"
+        print -Pn '\ek@\e\\'
+      else
+        print -Pn '\ek@%m\e\\'
+      fi
+    }
+    preexec() {
+      _set_title "$@"
+      print -n "\ek"
+      print -Pnr '%10>..>$1' | tr '\0-\037' '?'
+      if [ "$STY" -o "$TMUX" ]; then
+        print -Pn '@\e\\'
+      else
+        print -Pn '@%m\e\\'
+      fi
+    }
+  ;;
+
+  xterm*|rxvt*|Eterm*|kterm*|putty*|dtterm*|ansi*|cygwin*)
+    precmd () { _set_title "$@" }
+    preexec() { _set_title "$@" }
+    ;;
+
+  linux*|vt220*) ;;
+
+  *)
+    PS1="%n@%m:%~%# "
+    RPS1="%(?..(%?%)%<<)"
+    ;;
+esac
+
+unset hostcolor hostletter hostcode dircolor usercolor usercode reset_color red
+

@@ -1,0 +1,137 @@
+#!/usr/bin/env zsh
+
+## Control keys "Ctrl" or "Strg" equals to the "^" (caret) symbol
+## For more information, read https://en.wikipedia.org/wiki/Caret_notation
+## To discover new keys, use
+## $ cat >/dev/null
+## and type the desired key combination
+
+## Vi mode
+bindkey -v
+export KEYTIMEOUT=1
+
+## Standard keys
+bindkey -M viins '^A' beginning-of-line
+bindkey -M viins '^B' backward-char
+bindkey -M viins '^D' delete-char-or-list
+bindkey -M viins '^E' end-of-line
+bindkey -M viins '^F' forward-char
+bindkey -M viins '^H' backward-delete-char
+bindkey -M viins '^J' accept-search 2>/dev/null
+bindkey -M viins '^K' kill-line
+bindkey -M viins '^L' clear-screen
+bindkey -M viins '^M' accept-line
+bindkey -M viins '^N' down-line-or-history
+bindkey -M viins '^P' up-line-or-history
+bindkey -M viins '^R' history-incremental-search-backward
+bindkey -M viins '^S' history-incremental-search-forward
+bindkey -M viins '^T' transpose-chars
+bindkey -M viins '^U' backward-kill-line
+bindkey -M viins '^W' backward-kill-word
+bindkey -M viins '^Y' yank
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins '^_' undo
+bindkey -M viins ' ' magic-space
+
+## Completion menu keys
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect '^M' accept-search
+
+## Move words with control and arrow keys
+bindkey -M viins '^[[1;5D' backward-word
+bindkey -M viins '^[[1;5C' forward-word
+
+## Mode agnostic editing
+## Home (Pos1)
+bindkey -M viins '^[[H'  beginning-of-line
+bindkey -M vicmd '^[[H'  beginning-of-line
+bindkey -M viins '^[[1~' beginning-of-line
+bindkey -M vicmd '^[[1~' beginning-of-line
+## End (Ende)
+bindkey -M viins '^[[F' end-of-line
+bindkey -M vicmd '^[[F' end-of-line
+bindkey -M viins '^[[4~' end-of-line
+bindkey -M vicmd '^[[4~' end-of-line
+## Del
+bindkey -M viins '^[[3~' delete-char
+bindkey -M vicmd '^[[3~' delete-char
+bindkey -M vicmd '^[[P'  vi-delete-char
+bindkey -M visual '^[[P' vi-delete
+
+## Change cursor shape for different vi modes.
+zle-keymap-select zle-line-init() {
+  # Check ~/.st/config.h for the cursor escape sequences.
+  case $KEYMAP in
+    vicmd)      print -n -- "\e[2 q";;
+    viins|main) print -n -- "\e[5 q";;
+  esac
+
+  zle reset-prompt
+  zle -R
+}
+
+zle-line-finish() {
+  print -n -- "\e[2 q"
+}
+
+zle -N zle-line-init
+zle -N zle-line-finish
+zle -N zle-keymap-select
+
+
+autoload -Uz select-word-style
+select-word-style bash
+
+change-first-word() {
+  zle beginning-of-line -N
+  zle kill-word
+}
+zle -N change-first-word
+bindkey -M emacs "\ea" change-first-word
+
+bindkey -M emacs "^XD" describe-key-briefly
+
+fg-widget() {
+  if [[ $#BUFFER -eq 0 ]]; then
+    if jobs %- >/dev/null 2>&1; then
+      BUFFER='fg %-'
+    else
+      BUFFER='fg'
+    fi
+    zle accept-line
+  else
+    zle push-input
+    zle clear-screen
+  fi
+}
+zle -N fg-widget
+bindkey -M vicmd "^Z" fg-widget
+bindkey -M viins "^Z" fg-widget
+
+autoload -Uz incarg
+zle -N incarg
+bindkey -M vicmd "^A" incarg
+
+bindkey -M vicmd ga what-cursor-position
+
+new-screen() {
+  [ -z "$STY" ] || screen < "$TTY"
+  [ -z "$TMUX" ] || tmux new-window
+}
+zle -N new-screen
+[[ -z "$terminfo[kf12]" ]] || bindkey "$terminfo[kf12]" new-screen
+
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M emacs '^[e'  edit-command-line
+bindkey -M emacs '^X^E' edit-command-line
+bindkey -M visual v      edit-command-line
+
+for binding in ${(f)$(bindkey -M emacs|grep '^"\^X')}; do
+  bindkey -M viins "${(@Qz)binding}"
+done
+unset binding
+

@@ -48,6 +48,10 @@ Sets 1024x768 as boot screen resolution
 Ships a /etc/default/grub.d/30_screen_resolution.cfg configuration file, that
 injects "vga=0x0317" into the GRUB_CMDLINE_LINUX_DEFAULT variable.
 
+Ships `zsh` derivative configuration settings folder `/etc/zsh`.
+But does not configure `zsh` as default shell.
+(That is up to package `dist-base-files`.)
+
 ## How to install `usability-misc` using apt-get ##
 
 1\. Download the APT Signing Key.

@@ -1,12 +1,7 @@
 #!/bin/bash
 
-## Copyright (C) 2020 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## Copyright (C) 2022 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-genmkfile_lintian_post_opts+=" --suppress-tags no-manual-page "
-
-#make_deb-pkg-build_hook_pre() {
-## This complicates the build process. See
-## usr/share/usability-misc/build-dist-installer-cli for comments.
-#  ./usr/share/usability-misc/check-dist-installer-cli
-#}
+## Avoid zsh being a dependency of this package due to /etc/zsh folder.
+genmkfile_lintian_post_opts+=" --suppress-tags missing-dep-for-interpreter "

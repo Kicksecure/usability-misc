@@ -1,0 +1,95 @@
+#!/usr/bin/env zsh
+
+## Credits:
+## https://github.com/tpope/dotfiles
+## https://github.com/LukeSmithXYZ/voidrice
+## https://github.com/jeffreytse/zsh-vi-mode/blob/master/zsh-vi-mode.zsh
+## https://github.com/cloudhead/dotfiles/blob/master/.zshrc
+
+## base dir
+zsh_custom_dir="/etc/zsh"
+
+## Use root path from /etc/profile so programs in /sbin are highlighted in green
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+## history
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+
+## options
+## - history
+setopt hist_expire_dups_first # purge dups first
+setopt hist_ignore_dups # ignore dups in history list
+setopt hist_verify # if command has hist expansion, show it before executing
+## - files
+setopt autocd
+setopt nonomatch # if a pattern has no matches, avoid printing an error
+setopt numericglobsort # sort file names numerically when relevant
+setopt magicequalsubst # filename expansion for 'opt=arg'
+## - words
+setopt interactivecomments
+setopt noequals
+## - prompt
+setopt promptsubst
+setopt printexitvalue
+
+# https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/safe-paste/safe-paste.plugin.zsh
+set zle_bracketed_paste  # Explicitly restore this zsh default
+autoload -Uz bracketed-paste-magic
+zle -N bracketed-paste bracketed-paste-magic
+
+## base for any shell
+source ${zsh_custom_dir}/shrc
+
+## prompt
+if test -f ${zsh_custom_dir}/zshrc_prompt; then
+  source ${zsh_custom_dir}/zshrc_prompt
+fi
+
+## completion
+if test -f ${zsh_custom_dir}/zshrc_completions; then
+  source ${zsh_custom_dir}/zshrc_completions
+fi
+
+## key bindings
+if test -f ${zsh_custom_dir}/zshrc_bindkeys; then
+  source ${zsh_custom_dir}/zshrc_bindkeys
+fi
+
+if test "$color_prompt" = "yes"; then
+  ## Enable auto-suggestions based on the history
+  if test -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh; then
+    ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=30
+    source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  fi
+  ## Highlight commands as you type
+  if test -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; then
+    ## https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/hig +hlighters
+    ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern regexp)
+    typeset -A ZSH_HIGHLIGHT_STYLES
+    ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red'
+    ZSH_HIGHLIGHT_STYLES[default]='fg=white'
+    ZSH_HIGHLIGHT_STYLES[alias]='fg=cyan'
+    ZSH_HIGHLIGHT_STYLES[function]='fg=cyan'
+    ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
+    ZSH_HIGHLIGHT_STYLES[command]='fg=green'
+    ZSH_HIGHLIGHT_STYLES[precommand]='fg=green'
+    ZSH_HIGHLIGHT_STYLES[comment]='fg=black,bold'
+    ZSH_HIGHLIGHT_STYLES[globbing]='fg=cyan'
+    typeset -A ZSH_HIGHLIGHT_REGEXP
+    ZSH_HIGHLIGHT_REGEXP+=('^rm .*' 'fg=magenta')
+    typeset -A ZSH_HIGHLIGHT_PATTERNS
+    ZSH_HIGHLIGHT_PATTERNS+=('sudo*' 'fg=magenta')
+    ZSH_HIGHLIGHT_PATTERNS+=('doas*' 'fg=magenta')
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  fi
+fi
+
+## enable command-not-found if installed
+if test -f /etc/zsh_command_not_found; then
+  source /etc/zsh_command_not_found
+fi
+
+
+
