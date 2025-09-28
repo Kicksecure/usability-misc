@@ -1,0 +1,29 @@
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+if [ -f /usr/libexec/helper-scripts/pre.bsh ]; then
+   source /usr/libexec/helper-scripts/pre.bsh
+fi
+
+set -e
+
+## imported from desktop-config-dist
+dpkg-divert --quiet --rename --package desktop-config-dist --remove /etc/zsh/zshrc &>/dev/null || true
+dpkg-divert --quiet --rename --package desktop-config-dist --remove /etc/zsh/zprofile &>/dev/null || true
+
+true "INFO: debhelper beginning here."
+
+#DEBHELPER#
+
+true "INFO: Done with debhelper."
+
+true "
+#####################################################################
+## INFO: END  : $DPKG_MAINTSCRIPT_PACKAGE $DPKG_MAINTSCRIPT_NAME $@
+#####################################################################
+"
+
+## Explicitly "exit 0", so eventually trapped errors can be ignored.
+exit 0
