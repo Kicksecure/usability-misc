@@ -1,3 +1,15 @@
+commit 910ccc0d32222a28718d1927bf69cad1c84b75c6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 17:50:28 2025 -0400
+
+    fix packaging: zsh configuration files migration config-package-dev
+
+commit b98dabb2ab25593e3bc21a6a76cfe8a01dd74939
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 21:36:18 2025 +0000
+
+    bumped changelog version
+
 commit 4d669b44da5b791df16ff29141bb82629c196909
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Sep 28 17:36:05 2025 -0400
