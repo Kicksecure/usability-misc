@@ -4,3 +4,4 @@
 ## imported from desktop-config-dist
 /etc/zsh/zshrc.dist
 /etc/zsh/zprofile.dist
+/usr/bin/flameshot.dist
