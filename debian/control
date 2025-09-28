@@ -18,7 +18,9 @@ Package: usability-misc
 Architecture: all
 Depends: sudo, policyrcd-script-zg2, adduser, python3, damngpl,
  helper-scripts (>= 3:35.3-1), ${misc:Depends}
-Replaces: gpl-sources-download, scurl, grub-screen-resolution
+Breaks: desktop-config-dist (<< 3:13.8-1)
+Replaces: desktop-config-dist (<< 3:13.8-1), gpl-sources-download,
+ scurl, grub-screen-resolution
 Description: Misc usability improvements
  Enables auto login for user `user` in `lightdm`.
  `/etc/lightdm/lightdm.conf.d/30_autologin.conf`
