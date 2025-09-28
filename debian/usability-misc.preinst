@@ -10,8 +10,8 @@ fi
 set -e
 
 ## imported from desktop-config-dist
-dpkg-divert --quiet --rename --package desktop-config-dist --remove /etc/zsh/zshrc &>/dev/null || true
-dpkg-divert --quiet --rename --package desktop-config-dist --remove /etc/zsh/zprofile &>/dev/null || true
+dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zshrc || true
+dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zprofile || true
 
 true "INFO: debhelper beginning here."
 
