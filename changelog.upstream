@@ -1,3 +1,15 @@
+commit c0d9d8ef046d927534bc27a1fee1e2e4199b6e5b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 18:21:40 2025 -0400
+
+    config-package-dev displace migration from desktop-config-dist to usability-misc
+
+commit ee621b0761862372eb1c1c28ec8e8a464007576d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 22:06:45 2025 +0000
+
+    bumped changelog version
+
 commit 098042a24e69352207d0951c97e0aa2d3b9540ed
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Sep 28 18:06:31 2025 -0400
