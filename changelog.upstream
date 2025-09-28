@@ -1,3 +1,22 @@
+commit ac6b86adcd104964579a65ddfe777cec59a3378a
+Merge: 2b35a67 a00612f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 17:01:41 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit a00612f57dca096aa6fb2598749f20140309705b
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Sep 28 15:56:27 2025 -0500
+
+    Put flameshot executable displace back, it got dropped by accident
+
+commit 2b35a6754338cf4605793ad99a28efec052e6f52
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 13:39:00 2025 +0000
+
+    bumped changelog version
+
 commit 590a39b221a25e4da6c78a77e538b04fb1462b24
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Sep 28 09:37:31 2025 -0400
