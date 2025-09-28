@@ -9,7 +9,21 @@ fi
 
 set -e
 
-## imported from desktop-config-dist
+## config-package-dev displace migration from desktop-config-dist to usability-misc
+##
+## Using 'dpkg-divert' with '--rename' is not possible.
+#+ dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zshrc
+#Removing 'diversion of /etc/zsh/zshrc to /etc/zsh/zshrc.dist-orig by desktop-config-dist'
+#dpkg-divert: error: rename involves overwriting '/etc/zsh/zshrc' with
+#  different file '/etc/zsh/zshrc.dist-orig', not allowed
+#+ true
+if [ "$(dpkg-divert --listpackage /etc/zsh/zshrc)" = "desktop-config-dist" ]; then
+  unlink /etc/zsh/zshrc || true
+fi
+if [ "$(dpkg-divert --listpackage /etc/zsh/zprofile)" = "desktop-config-dist" ]; then
+  unlink /etc/zsh/zprofile || true
+fi
+
 dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zshrc || true
 dpkg-divert --rename --package desktop-config-dist --remove /etc/zsh/zprofile || true
 
