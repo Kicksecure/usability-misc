@@ -6,3 +6,7 @@ usability-misc: package-contains-file-in-etc-skel [etc/skel/*]
 
 ## Read-only access is ok.
 usability-misc: uses-dpkg-database-directly [usr/bin/gpl_download_sources]
+
+## "Conflicts should only be used if two packages can never be unpacked at the same time."
+## This is the case here.
+usability-misc: conflicts-with-version desktop-config-dist *
