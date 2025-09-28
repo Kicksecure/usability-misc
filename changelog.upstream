@@ -1,3 +1,27 @@
+commit 590a39b221a25e4da6c78a77e538b04fb1462b24
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 09:37:31 2025 -0400
+
+    Breaks, Replaces: desktop-config-dist (<< 3:13.8-1)
+
+commit de61e04e4a1fa07f2abb6ff9ac641e46b6f9f487
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 09:18:43 2025 -0400
+
+    delete superfluous man pages
+
+commit 998296328b483917dcfbe1e44521c4f98f739a71
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Sep 28 09:17:20 2025 -0400
+
+    import zsh configuration from desktop-config-dist
+
+commit bd899e7248224b1a3d12919cf030c529a086357d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Sep 22 17:26:53 2025 +0000
+
+    bumped changelog version
+
 commit ecc25c6ff88e533148349cc1d11d4ec4b352b140
 Merge: d529fef 9ec8f58
 Author: Patrick Schleizer <adrelanos@whonix.org>
