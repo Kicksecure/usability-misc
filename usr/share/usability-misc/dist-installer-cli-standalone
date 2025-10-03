@@ -2751,15 +2751,17 @@ install_repositories_for_virtualbox_on_debian() {
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
   fasttrack_file_deb822source="/etc/apt/sources.list.d/fasttrack.sources"
   fasttrack_types_debsource="deb"
-  if test -e /usr/share/keyrings/fasttrack-archive-keyring.gpg; then
-    ## stable: trixie
-    fasttrack_signedby_debsource="/usr/share/keyrings/fasttrack-archive-keyring.gpg"
-  elif test -e /etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg; then
-    ## oldstable: bookworm
-    fasttrack_signedby_debsource="/etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg"
-  else
-    fasttrack_signedby_debsource="/usr/share/keyrings/unknown-please-report-this-bug"
-  fi
+  case "${distro_codename_debian}" in
+    bookworm)
+      fasttrack_signedby_debsource="/etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg"
+      ;;
+    trixie|forky|sid)
+      fasttrack_signedby_debsource="/usr/share/keyrings/fasttrack-archive-keyring.gpg"
+      ;;
+    *)
+      fasttrack_signedby_debsource="/usr/share/keyrings/unknown-please-report-this-bug"
+      ;;
+  esac
   fasttrack_components_debsource="main contrib non-free"
   fasttrack_suites_debsource="${distro_codename_common_use}-fasttrack"
   fasttrack_components_debsource_regex="main\s+contrib\s+non-free"
