@@ -2321,10 +2321,10 @@ Signed-By: ${oracle_signedby_debsource}"
       return 0
       ;;
     *)
-      install_unstable_repository_debian
       return 0
       ;;
   esac
+
   ## Out-commented. Unreachable code.
   #if test "${ubuntu_derivative_detected}" = "1"; then
   #  ## Doesn't require extra repository, but this function is used to get
