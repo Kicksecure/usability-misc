@@ -1970,7 +1970,15 @@ install_repositories_for_virtualbox_on_debian() {
   ## So we have to use signed-by here too, otherwise we get an apt-get error:
   ## E: Conflicting values set for option Signed-By regarding source
   ## Also needed to avoid an apt notice when using deb822 format sources.
-  unstable_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.gpg"
+  if test -e "/usr/share/keyrings/debian-archive-keyring.pgp"; then
+    ## new
+    unstable_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.pgp"
+  elif test -e "/usr/share/keyrings/debian-archive-keyring.gpg"; then
+    ## old
+    unstable_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.gpg"
+  else
+    unstable_signedby_debsource="/usr/share/keyrings/unknown-please-report-this-bug"
+  fi
   unstable_components_debsource="main contrib non-free"
   unstable_suites_debsource="unstable"
 
@@ -2001,7 +2009,7 @@ install_repositories_for_virtualbox_on_debian() {
     ## oldstable: bookworm
     fasttrack_signedby_debsource="/etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg"
   else
-    fasttrack_signedby_debsource="/usr/share/keyrings/unkown-please-report-this-bug"
+    fasttrack_signedby_debsource="/usr/share/keyrings/unknown-please-report-this-bug"
   fi
   fasttrack_components_debsource="main contrib non-free"
   fasttrack_suites_debsource="${distro_codename_common_use}-fasttrack"
