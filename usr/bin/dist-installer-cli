@@ -2027,9 +2027,8 @@ install_repositories_for_virtualbox_on_debian() {
   kali_file_debsource="/etc/apt/sources.list.d/kali.list"
   kali_file_deb822source="/etc/apt/sources.list.d/kali.sources"
   kali_types_debsource="deb"
-  ## TODO: Fill in Kali key file and add Signed-By fields to appropriate
-  ## sources below
-  kali_signedby_debsource="UNKNOWN"
+  ## TODO: Test.
+  kali_signedby_debsource="/usr/share/keyrings/kali-archive-keyring.gpg"
   kali_components_debsource="main contrib non-free non-free-firmware"
   kali_suites_debsource="${distro_codename_common_use}"
 
@@ -2236,7 +2235,7 @@ install_repositories_for_virtualbox_on_debian() {
   fasttrack_oneline_source="${fasttrack_types_debsource} [signed-by=${fasttrack_signedby_debsource}] ${fasttrack_uri_debsource} ${fasttrack_suites_debsource} ${fasttrack_components_debsource}"
   fasttrack_backports_staging_oneline_source="${fasttrack_types_debsource} [signed-by=${fasttrack_signedby_debsource}] ${fasttrack_uri_debsource} ${fasttrack_backports_staging_suites_debsource} ${fasttrack_components_debsource}"
   backports_oneline_source="${backports_types_debsource} [signed-by=${backports_signedby_debsource}] ${backports_uri_debsource} ${backports_suites_debsource} ${backports_components_debsource}"
-  kali_oneline_source="${kali_types_debsource} ${kali_uri_debsource} ${kali_suites_debsource} ${kali_components_debsource}"
+  kali_oneline_source="${kali_types_debsource} [signed-by=${kali_signedby_debsource}] ${kali_uri_debsource} ${kali_suites_debsource} ${kali_components_debsource}"
 
   kicksecure_deb822_source="\
 Types: ${kicksecure_types_debsource}
@@ -2272,7 +2271,8 @@ Signed-By: ${backports_signedby_debsource}"
 Types: ${kali_types_debsource}
 URIs: ${kali_uri_debsource}
 Suites: ${kali_suites_debsource}
-Components: ${kali_components_debsource}"
+Components: ${kali_components_debsource}
+Signed-By: ${kali_signedby_debsource}"
 
   if [ "${oracle_repo}" = "1" ]; then
     oracle_oneline_source="${oracle_types_debsource} [signed-by=${oracle_signedby_debsource}] ${oracle_uri_debsource} ${oracle_suites_debsource} ${oracle_components_debsource}"
