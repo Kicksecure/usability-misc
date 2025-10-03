@@ -1,3 +1,63 @@
+commit 3270baabfd2bad7562e4740e7c8d62e008a5189e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:22:41 2025 -0400
+
+    build
+
+commit db1708621f6520935898197c4d87b8251ecbab35
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:22:18 2025 -0400
+
+    fix
+
+commit 50c4f0f81196e9f08f2306bcff1d40037c9433b0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:19:49 2025 -0400
+
+    forky
+
+commit 2c8b0ebd81f1237f2f2234d8e41fd981c4af7957
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:18:01 2025 -0400
+
+    trixie
+
+commit bc3e50e1ad1558fe7e9b594615faba9a9e223707
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:16:52 2025 -0400
+
+    dist-installer-cli: fix, don't enable unstable repository as fallback
+
+commit e9dabaf59f8ca0462f0903fa4bc26629a91ae8d8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:07:22 2025 -0400
+
+    dist-installer-cli: support new file location `/usr/share/keyrings/debian-archive-keyring.pgp`
+
+commit 06c83dbeb102ff1f826b1418a071f86f358be5e9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:03:13 2025 -0400
+
+    CI
+
+commit 2c82c0fdd9917eaa9275f2ca5bcf7eb2e411b1ea
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 16:01:12 2025 -0400
+
+    dist-installer-cli: test if signed-by key exists
+
+commit 798a375a0c92ee9b6cc73a31a6b2d3af61759da6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 15:45:45 2025 -0400
+
+    dist-installer-cli: kali signed-by
+
+commit 619cbaca79cd3ee1a7f0bc7a2de8abd70c8b60bd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 15:41:22 2025 +0000
+
+    bumped changelog version
+
 commit 5060167054d7877ead9366e6d4bb30977f243caf
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Oct 3 11:39:10 2025 -0400
