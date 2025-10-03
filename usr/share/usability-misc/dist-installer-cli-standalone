@@ -1849,7 +1849,7 @@ check_guest_boot() {
   fi
 
   if [ "${can_boot_virtualbox_guest_vms}" = 'false' ]; then
-    log warning "A reboot may be required before the installed virtual machine(s) can be launched."
+    log warn "A reboot may be required before the installed virtual machine(s) can be launched."
   fi
 
   ## Refresh variables vm_or_vms_already_existing_test_result, gateway_exists and workstation_exists.
