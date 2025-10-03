@@ -2316,6 +2316,10 @@ Signed-By: ${oracle_signedby_debsource}"
       install_backports_and_fasttrack_repository_debian
       return 0
       ;;
+    forky)
+      install_unstable_repository_debian
+      return 0
+      ;;
     kali-rolling)
       install_kali_repository_debian
       return 0
