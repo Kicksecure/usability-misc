@@ -2005,7 +2005,7 @@ install_repositories_for_virtualbox_on_debian() {
   if test -e /usr/share/keyrings/fasttrack-archive-keyring.gpg; then
     ## stable: trixie
     fasttrack_signedby_debsource="/usr/share/keyrings/fasttrack-archive-keyring.gpg"
-  elif -e /etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg; then
+  elif test -e /etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg; then
     ## oldstable: bookworm
     fasttrack_signedby_debsource="/etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg"
   else
