@@ -2312,7 +2312,7 @@ Signed-By: ${oracle_signedby_debsource}"
   fi
 
   case "${distro_codename_real}" in
-    bullseye|bookworm)
+    bullseye|bookworm|trixie)
       install_backports_and_fasttrack_repository_debian
       return 0
       ;;
