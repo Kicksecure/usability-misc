@@ -1370,6 +1370,11 @@ need_reboot_check_first() {
     return 0
   fi
 
+  if [ "${ci}" = "1" ]; then
+    true "INFO: Ignore need_reboot_check_first because running on CI."
+    return 0
+  fi
+
   ## Building for an old kernel might result in missing kernel headers for that kernel
   ## In result, VirtualBox would fail to start.
   die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
@@ -2278,10 +2283,14 @@ get_pattern_sources_deb822_debian() {
 }
 
 write_sources_debian() {
-  local url file
+  local url file signed_by_key
 
   url="${1}"
   file="${2}"
+  signed_by_key="${3}"
+
+  test -e "${signed_by_key}" || die 1 "${underline}Sources List Writer:${nounderline} signed-by key missing: '${signed_by_key}'"
+
   printf '%s\n' "${url}" | root_cmd tee -- "${file}" ||
     die 1 "${underline}Sources List Writer:${nounderline} Failed to write to file: '${file}'"
 }
@@ -2610,27 +2619,27 @@ kernel_modules_check() {
 install_repositories_for_virtualbox_on_debian() {
   local distro_codename_real distro_codename_debian distro_codename_ubuntu \
     distro_codename_kicksecure_use oracle_clearnet oracle_clearnet_uri_base \
-    oracle_types_debsource oracle_signedby_debsource \
+    oracle_types_debsource \
     oracle_components_debsource oracle_suites_debsource unstable_clearnet \
     unstable_onion unstable_clearnet_uri_base unstable_onion_uri_base \
     unstable_types_debsource unstable_signedby_debsource \
     unstable_components_debsource unstable_suites_debsource \
     backports_clearnet backports_onion backports_clearnet_uri_base \
     backports_onion_uri_base backports_types_debsource \
-    backports_signedby_debsource backports_components_debsource \
+    backports_components_debsource \
     backports_suites_debsource fasttrack_clearnet fasttrack_onion \
     fasttrack_clearnet_uri_base fasttrack_onion_uri_base \
-    fasttrack_types_debsource fasttrack_signedby_debsource \
+    fasttrack_types_debsource \
     fasttrack_components_debsource fasttrack_components_debsource \
     fasttrack_suites_debsource fasttrack_components_debsource_regex \
     fasttrack_dir_regex fasttrack_suffix_debsource_regex \
     fasttrack_backports_staging_suites_debsource \
     fasttrack_backports_staging_suffix_debsource_regex kicksecure_clearnet \
     kicksecure_onion kicksecure_clearnet_uri_base kicksecure_onion_uri_base \
-    kicksecure_types_debsource kicksecure_signedby_debsource \
+    kicksecure_types_debsource \
     kicksecure_components_debsource kicksecure_suites_debsource \
     kali_clearnet kali_clearnet_uri_base kali_types_debsource \
-    kali_signedby_debsource kali_components_debsource kali_suites_debsource \
+    kali_components_debsource kali_suites_debsource \
     apt_torified apt_onion oracle_uri_debsource kicksecure_uri_debsource \
     unstable_uri_debsource fasttrack_uri_debsource backports_uri_debsource \
     kali_uri_debsource sources_list_file sources_deb822_file
@@ -2710,7 +2719,15 @@ install_repositories_for_virtualbox_on_debian() {
   ## So we have to use signed-by here too, otherwise we get an apt-get error:
   ## E: Conflicting values set for option Signed-By regarding source
   ## Also needed to avoid an apt notice when using deb822 format sources.
-  unstable_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.gpg"
+  if test -e "/usr/share/keyrings/debian-archive-keyring.pgp"; then
+    ## new
+    unstable_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.pgp"
+  elif test -e "/usr/share/keyrings/debian-archive-keyring.gpg"; then
+    ## old
+    unstable_signedby_debsource="/usr/share/keyrings/debian-archive-keyring.gpg"
+  else
+    unstable_signedby_debsource="/usr/share/keyrings/unknown-please-report-this-bug"
+  fi
   unstable_components_debsource="main contrib non-free"
   unstable_suites_debsource="unstable"
 
@@ -2734,7 +2751,15 @@ install_repositories_for_virtualbox_on_debian() {
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
   fasttrack_file_deb822source="/etc/apt/sources.list.d/fasttrack.sources"
   fasttrack_types_debsource="deb"
-  fasttrack_signedby_debsource="/usr/share/keyrings/fasttrack-archive-keyring.gpg"
+  if test -e /usr/share/keyrings/fasttrack-archive-keyring.gpg; then
+    ## stable: trixie
+    fasttrack_signedby_debsource="/usr/share/keyrings/fasttrack-archive-keyring.gpg"
+  elif test -e /etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg; then
+    ## oldstable: bookworm
+    fasttrack_signedby_debsource="/etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg"
+  else
+    fasttrack_signedby_debsource="/usr/share/keyrings/unknown-please-report-this-bug"
+  fi
   fasttrack_components_debsource="main contrib non-free"
   fasttrack_suites_debsource="${distro_codename_common_use}-fasttrack"
   fasttrack_components_debsource_regex="main\s+contrib\s+non-free"
@@ -2776,9 +2801,8 @@ install_repositories_for_virtualbox_on_debian() {
   kali_file_debsource="/etc/apt/sources.list.d/kali.list"
   kali_file_deb822source="/etc/apt/sources.list.d/kali.sources"
   kali_types_debsource="deb"
-  ## TODO: Fill in Kali key file and add Signed-By fields to appropriate
-  ## sources below
-  kali_signedby_debsource="UNKNOWN"
+  ## TODO: Test.
+  kali_signedby_debsource="/usr/share/keyrings/kali-archive-keyring.gpg"
   kali_components_debsource="main contrib non-free non-free-firmware"
   kali_suites_debsource="${distro_codename_common_use}"
 
@@ -2985,7 +3009,7 @@ install_repositories_for_virtualbox_on_debian() {
   fasttrack_oneline_source="${fasttrack_types_debsource} [signed-by=${fasttrack_signedby_debsource}] ${fasttrack_uri_debsource} ${fasttrack_suites_debsource} ${fasttrack_components_debsource}"
   fasttrack_backports_staging_oneline_source="${fasttrack_types_debsource} [signed-by=${fasttrack_signedby_debsource}] ${fasttrack_uri_debsource} ${fasttrack_backports_staging_suites_debsource} ${fasttrack_components_debsource}"
   backports_oneline_source="${backports_types_debsource} [signed-by=${backports_signedby_debsource}] ${backports_uri_debsource} ${backports_suites_debsource} ${backports_components_debsource}"
-  kali_oneline_source="${kali_types_debsource} ${kali_uri_debsource} ${kali_suites_debsource} ${kali_components_debsource}"
+  kali_oneline_source="${kali_types_debsource} [signed-by=${kali_signedby_debsource}] ${kali_uri_debsource} ${kali_suites_debsource} ${kali_components_debsource}"
 
   kicksecure_deb822_source="\
 Types: ${kicksecure_types_debsource}
@@ -3021,7 +3045,8 @@ Signed-By: ${backports_signedby_debsource}"
 Types: ${kali_types_debsource}
 URIs: ${kali_uri_debsource}
 Suites: ${kali_suites_debsource}
-Components: ${kali_components_debsource}"
+Components: ${kali_components_debsource}
+Signed-By: ${kali_signedby_debsource}"
 
   if [ "${oracle_repo}" = "1" ]; then
     oracle_oneline_source="${oracle_types_debsource} [signed-by=${oracle_signedby_debsource}] ${oracle_uri_debsource} ${oracle_suites_debsource} ${oracle_components_debsource}"
@@ -3036,8 +3061,12 @@ Signed-By: ${oracle_signedby_debsource}"
   fi
 
   case "${distro_codename_real}" in
-    bullseye|bookworm)
+    bullseye|bookworm|trixie)
       install_backports_and_fasttrack_repository_debian
+      return 0
+      ;;
+    forky)
+      install_unstable_repository_debian
       return 0
       ;;
     kali-rolling)
@@ -3045,10 +3074,10 @@ Signed-By: ${oracle_signedby_debsource}"
       return 0
       ;;
     *)
-      install_unstable_repository_debian
       return 0
       ;;
   esac
+
   ## Out-commented. Unreachable code.
   #if test "${ubuntu_derivative_detected}" = "1"; then
   #  ## Doesn't require extra repository, but this function is used to get
@@ -3118,10 +3147,10 @@ install_oracle_repository_debian() {
     fi
     if [ "${use_deb822_sources}" = 'yes' ]; then
       log notice "Oracle Repository: Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_deb822source}"
-      write_sources_debian "${oracle_deb822_source}" "${oracle_file_deb822source}"
+      write_sources_debian "${oracle_deb822_source}" "${oracle_file_deb822source}" "${oracle_signedby_debsource}"
     else
       log notice "Oracle Repository: Adding Oracle's ${connection_type_debsource} repository to ${oracle_file_debsource}"
-      write_sources_debian "${oracle_oneline_source}" "${oracle_file_debsource}"
+      write_sources_debian "${oracle_oneline_source}" "${oracle_file_debsource}" "${oracle_signedby_debsource}"
     fi
   fi
 }
@@ -3148,10 +3177,10 @@ install_kicksecure_repository_debian() {
   else
     if [ "${use_deb822_sources}" = 'yes' ]; then
       log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_deb822source}"
-      write_sources_debian "${kicksecure_deb822_source}" "${kicksecure_file_deb822source}"
+      write_sources_debian "${kicksecure_deb822_source}" "${kicksecure_file_deb822source}" "${kicksecure_signedby_debsource}"
     else
       log notice "Kicksecure Repository: Adding Kicksecure's ${connection_type_debsource} repository to ${kicksecure_file_debsource}"
-      write_sources_debian "${kicksecure_oneline_source}" "${kicksecure_file_debsource}"
+      write_sources_debian "${kicksecure_oneline_source}" "${kicksecure_file_debsource}" "${kicksecure_signedby_debsource}"
     fi
   fi
 }
@@ -3165,10 +3194,10 @@ install_kali_repository_debian() {
 
   if [ "${use_deb822_sources}" = 'yes' ]; then
     log notice "APT Repository Configuration: Adding 'kali' ${connection_type_debsource} repository to ${kali_file_deb822source}"
-    write_sources_debian "${kali_deb822_source}" "${kali_file_deb822source}"
+    write_sources_debian "${kali_deb822_source}" "${kali_file_deb822source}" "${kali_signedby_debsource}"
   else
     log notice "APT Repository Configuration: Adding 'kali' ${connection_type_debsource} repository to ${kali_file_debsource}"
-    write_sources_debian "${kali_oneline_source}" "${kali_file_debsource}"
+    write_sources_debian "${kali_oneline_source}" "${kali_file_debsource}" "${kali_signedby_debsource}"
   fi
 }
 
@@ -3197,10 +3226,10 @@ Pin-Priority: 450
 
   if [ "${use_deb822_sources}" = 'yes' ]; then
     log notice "APT Repository Configuration: Adding 'unstable' ${connection_type_debsource} repository to ${unstable_file_deb822source}"
-    write_sources_debian "${unstable_deb822_source}" "${unstable_file_deb822source}"
+    write_sources_debian "${unstable_deb822_source}" "${unstable_file_deb822source}" "${unstable_signedby_debsource}"
   else
     log notice "APT Repository Configuration: Adding 'unstable' ${connection_type_debsource} repository to ${unstable_file_debsource}"
-    write_sources_debian "${unstable_oneline_source}" "${unstable_file_debsource}"
+    write_sources_debian "${unstable_oneline_source}" "${unstable_file_debsource}" "${unstable_signedby_debsource}"
   fi
 }
 
@@ -3214,10 +3243,10 @@ install_backports_and_fasttrack_repository_debian() {
   else
     if [ "${use_deb822_sources}" = 'yes' ]; then
       log notice "APT Repository Configuration: Adding 'backports' ${connection_type_debsource} repository to ${backports_file_deb822source}"
-      write_sources_debian "${backports_deb822_source}" "${backports_file_deb822source}"
+      write_sources_debian "${backports_deb822_source}" "${backports_file_deb822source}" "${backports_signedby_debsource}"
     else
       log notice "APT Repository Configuration: Adding 'backports' ${connection_type_debsource} repository to ${backports_file_debsource}"
-      write_sources_debian "${backports_oneline_source}" "${backports_file_debsource}"
+      write_sources_debian "${backports_oneline_source}" "${backports_file_debsource}" "${backports_signedby_debsource}"
     fi
   fi
 
@@ -3226,10 +3255,10 @@ install_backports_and_fasttrack_repository_debian() {
   else
     if [ "${use_deb822_sources}" = 'yes' ]; then
       log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_deb822source}"
-      write_sources_debian "${fasttrack_deb822_source}" "${fasttrack_file_deb822source}"
+      write_sources_debian "${fasttrack_deb822_source}" "${fasttrack_file_deb822source}" "${fasttrack_signedby_debsource}"
     else
       log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository to ${fasttrack_file_debsource}"
-      write_sources_debian "${fasttrack_oneline_source}" "${fasttrack_file_debsource}"
+      write_sources_debian "${fasttrack_oneline_source}" "${fasttrack_file_debsource}" "${fasttrack_signedby_debsource}"
     fi
   fi
 
@@ -3238,10 +3267,10 @@ install_backports_and_fasttrack_repository_debian() {
   else
     if [ "${use_deb822_sources}" = 'yes' ]; then
       log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository with suite '${fasttrack_backports_staging_suites_debsource}' to ${fasttrack_backports_staging_file_deb822source}"
-      write_sources_debian "${fasttrack_backports_staging_deb822_source}" "${fasttrack_backports_staging_file_deb822source}"
+      write_sources_debian "${fasttrack_backports_staging_deb822_source}" "${fasttrack_backports_staging_file_deb822source}" "${fasttrack_signedby_debsource}"
     else
       log notice "APT Repository Configuration: Adding 'fasttrack' ${connection_type_debsource} repository with suite '${fasttrack_backports_staging_suites_debsource}' to ${fasttrack_backports_staging_file_debsource}"
-      write_sources_debian "${fasttrack_backports_staging_oneline_source}" "${fasttrack_backports_staging_file_debsource}"
+      write_sources_debian "${fasttrack_backports_staging_oneline_source}" "${fasttrack_backports_staging_file_debsource}" "${fasttrack_signedby_debsource}"
     fi
   fi
 
