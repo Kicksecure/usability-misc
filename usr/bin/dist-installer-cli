@@ -621,6 +621,11 @@ need_reboot_check_first() {
     return 0
   fi
 
+  if [ "${ci}" = "1" ]; then
+    true "INFO: Ignore need_reboot_check_first because running on CI."
+    return 0
+  fi
+
   ## Building for an old kernel might result in missing kernel headers for that kernel
   ## In result, VirtualBox would fail to start.
   die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
