@@ -2751,7 +2751,7 @@ install_repositories_for_virtualbox_on_debian() {
   fasttrack_file_debsource="/etc/apt/sources.list.d/fasttrack.list"
   fasttrack_file_deb822source="/etc/apt/sources.list.d/fasttrack.sources"
   fasttrack_types_debsource="deb"
-  case "${distro_codename_debian}" in
+  case "${distro_codename_real}" in
     bookworm)
       fasttrack_signedby_debsource="/etc/apt/trusted.gpg.d/fasttrack-archive-keyring.gpg"
       ;;
@@ -3063,8 +3063,14 @@ Signed-By: ${oracle_signedby_debsource}"
   fi
 
   case "${distro_codename_real}" in
-    bullseye|bookworm|trixie)
+    bullseye|bookworm)
       install_backports_and_fasttrack_repository_debian
+      return 0
+      ;;
+    trixie)
+      ## Please upload VirtualBox to trixie-fasttrack
+      ## https://salsa.debian.org/fasttrack-team/support/-/issues/74
+      install_unstable_repository_debian
       return 0
       ;;
     forky)
