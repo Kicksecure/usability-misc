@@ -39,7 +39,7 @@ jobs:
             matrix:
                 include:
                     - image: fedora:41
-                    ## Fedora 42 not yet supported by VirtualBox at time of writing.
+                    - image: fedora:42
                     #- image: fedora:latest
                     #- image: fedora:rawhide
                     - image: debian:oldoldstable
