@@ -42,7 +42,9 @@ jobs:
                     - image: fedora:42
                     #- image: fedora:latest
                     #- image: fedora:rawhide
-                    - image: debian:oldoldstable
+                    ## Debian bullseye: EOL
+                    ## E: The repository '\''https://deb.debian.org/debian bullseye-backports Release'\'' does not have a Release file.
+                    #- image: debian:oldoldstable
                     - image: debian:oldstable
                     - image: debian:stable
                     - image: debian:testing
