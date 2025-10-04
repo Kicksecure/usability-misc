@@ -12,7 +12,7 @@
 declare version me start_time dialog_title license adrelanos_signify \
   hulahoop_signify oracle_pgp user_home_dir directory_prefix guest \
   hypervisor interface oracle_repo log_level guest_version socks_proxy onion \
-  non_interactive dev noupdate dry_run getversion getopt ci no_import \
+  non_interactive dev noupdate noupgrade dry_run getversion getopt ci no_import \
   no_boot redownload import_only destroy_existing_guest testers allow_errors \
   mirror virtualbox_only target_user last_exit guest_pretty xtrace sucmd \
   url_version_domain run_background background_pid  \
@@ -1522,8 +1522,8 @@ check_upgrades_simulation() {
     return 0
   fi
 
-  if [ "${noupdate}" = "1" ]; then
-    log warn "Package Upgrade Simulation: Package upgrades available but proceeding anyhow via '--noupdate' option."
+  if [ "${noupgrade}" = "1" ]; then
+    log warn "Package Upgrade Simulation: Package upgrades available but proceeding anyhow via '--noupgrade' option."
     return 0
   fi
 
@@ -4750,6 +4750,7 @@ Developer options:
                      Enable non-interactive mode; license will be accepted.
  -D, --dev           Activate development mode. Downloads an empty image.
  --noupdate          Skip package manager list update. For development only.
+ --noupgrade         Ignore pending upgrades. For development only.
  --ci                Enable Continuous Integration (CI) mode.
  --testers           Download the tester's version.
  -d, --dry-run       Simulate execution; log commands without executing.
@@ -4782,6 +4783,7 @@ set_default() {
   non_interactive=""
   dev=""
   noupdate=""
+  noupgrade=""
   dry_run=""
   getversion=""
   getopt=""
@@ -4885,6 +4887,7 @@ print_getopt() {
   non_interactive=${non_interactive}
   dev=${dev}
   noupdate=${noupdate}
+  noupgrade=${noupgrade}
   dry_run=${dry_run}
   getversion=${getversion}
   getopt=${getopt}
@@ -5022,6 +5025,9 @@ parse_opt() {
         ;;
       noupdate)
         noupdate=1
+        ;;
+      noupgrade)
+        noupgrade=1
         ;;
       testers)
         testers=1
