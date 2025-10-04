@@ -2616,7 +2616,7 @@ install_virtualbox_fedora() {
 
   get_virtualbox_version_fedora() {
     ## Too many issues with auto detection. Therefore hardcoded.
-    virtualbox_qt_package_name="VirtualBox-7.1"
+    virtualbox_qt_package_name="VirtualBox-7.2"
     return 0
 
 #     log info "VirtualBox Version Detection: Running 'dnf search VirtualBox-*'. This can take a while..."
