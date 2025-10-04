@@ -1,3 +1,69 @@
+commit 6a58e1985e279fd756f8110ebb8ba938b786bfbc
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 13:54:03 2025 -0400
+
+    build
+
+commit 0f68c855ea7591047ff1c0a1d442cb833c6f384c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 13:53:16 2025 -0400
+
+    dist-installer-cli: implement `--noupgrade` development option to ignore pending upgrades
+
+commit dc69e61369c823d90cab711cd003b9af5c59d230
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:54:41 2025 -0400
+
+    CI
+
+commit 17546afee99fe2890f57ac5d2a49bd5047d16bd1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:48:41 2025 -0400
+
+    build
+
+commit 291333a68f0804b55a1a43c047b2045c18a9e70f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:48:21 2025 -0400
+
+    fix
+
+commit 5101d5a3c92314a8b68f4898e7c600b07a0f5903
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:36:31 2025 -0400
+
+    build
+
+commit 7f7d047cff40ff65a84cc198a4f4778db2caac5c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:35:39 2025 -0400
+
+    dist-installer-cli: Fedoar VirtualBox version bump
+
+commit 9cb637fe94b5f85e9d5603d1ecb45582fc5c3b2c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:32:53 2025 -0400
+
+    CI
+
+commit 2aa0eb7b25562b6b16bc362465a98f09a5a50e79
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:27:37 2025 -0400
+
+    CI
+
+commit e342ace098f85e17f247f2f3e735196f21208d1e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 12:25:23 2025 -0400
+
+    dist-installer-cli: fix APT pinning to prefer `stable` (`trixie` at time of writing) over `unstable`
+
+commit 148a62cc6c62609f3510715af15809f5081847ab
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 3 20:58:53 2025 +0000
+
+    bumped changelog version
+
 commit 87bc0396b03d73a2af77851ea05dc3b6292450bb
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Oct 3 16:52:43 2025 -0400
