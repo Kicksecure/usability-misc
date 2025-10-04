@@ -42,6 +42,7 @@ jobs:
                     ## Fedora 42 not yet supported by VirtualBox at time of writing.
                     #- image: fedora:latest
                     #- image: fedora:rawhide
+                    - image: debian:oldoldstable
                     - image: debian:oldstable
                     - image: debian:stable
                     - image: debian:testing
