@@ -3216,19 +3216,34 @@ install_unstable_repository_debian() {
     return 0
   fi
 
-  log notice "APT Preferences Configuration Writer: Adding APT pinning configuration to prefer testing over unstable."
+  log notice "APT Preferences Configuration Writer: Adding APT pinning configuration to prefer 'stable' ('trixie') over 'unstable'."
   file="/etc/apt/preferences.d/40-installer-dist-pinning"
   printf '%s\n' "\
 ## This file was created by: $0
 ## It can be safely deleted if you know what you are doing.
 
+## Prefer 'stable' over 'trixie' if both are available.
+## Note: 'stable' is an alias that will eventually move to the next release after 'trixie'.
 Package: *
-Pin: release a=testing
-Pin-Priority: 499
+Pin: release a=stable
+Pin-Priority: 995
 
+## Prefer 'trixie' (at time of writing 'stable') for all upgrades.
+Package: *
+Pin: release n=trixie
+Pin-Priority: 993
+
+## Optionally prefer 'testing' over 'unstable' (disabled by default).
+## Out-commented by default, because not enabling 'testing' with this script.
+#Package: *
+#Pin: release a=testing
+#Pin-Priority: 50
+
+## Allow package installation from 'unstable' only if explicitly requested
+## (never chosen automatically by APT).
 Package: *
 Pin: release a=unstable
-Pin-Priority: 450
+Pin-Priority: 25
 " | root_cmd tee -- "$file" ||
     die 1 "${underline}APT Preferences Configuration Writer:${nounderline} Failed to write to file: '$file'"
 
@@ -3350,7 +3365,7 @@ install_virtualbox_fedora() {
 
   get_virtualbox_version_fedora() {
     ## Too many issues with auto detection. Therefore hardcoded.
-    virtualbox_qt_package_name="VirtualBox-7.1"
+    virtualbox_qt_package_name="VirtualBox-7.2"
     return 0
 
 #     log info "VirtualBox Version Detection: Running 'dnf search VirtualBox-*'. This can take a while..."
