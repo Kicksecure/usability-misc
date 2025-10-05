@@ -1,3 +1,21 @@
+commit 1ed07dd5ef3e40651f13c9fdeb8fa4f730e70e5f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 14:20:40 2025 -0400
+
+    build
+
+commit b9817fe078b73dc1a0ab8e7d6c6e17d2ed84696a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 14:15:03 2025 -0400
+
+    dist-installer-cli: more minimal APT pinning configuration
+
+commit d5533abf69df8a88e1c328e921b76013938e4b34
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 17:05:44 2025 +0000
+
+    bumped changelog version
+
 commit 096bce9f23e9ab8b1f87abfac58ee7fff0b62bba
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Oct 5 13:05:27 2025 -0400
