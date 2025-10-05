@@ -1,3 +1,21 @@
+commit 096bce9f23e9ab8b1f87abfac58ee7fff0b62bba
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 13:05:27 2025 -0400
+
+    build
+
+commit 0732cb9c31a842b605e40c3527829945d34bda31
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 13:04:23 2025 -0400
+
+    dist-installer-cli: APT pinning - consider cases where one is using specific codename `sid` instead of generic suite `unstable`
+
+commit 59571936b6aa7959c7dfce3732e06ed7cd633056
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 4 17:54:24 2025 +0000
+
+    bumped changelog version
+
 commit 6a58e1985e279fd756f8110ebb8ba938b786bfbc
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Oct 4 13:54:03 2025 -0400
