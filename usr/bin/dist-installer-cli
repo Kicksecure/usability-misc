@@ -2495,6 +2495,11 @@ Pin-Priority: 993
 Package: *
 Pin: release a=unstable
 Pin-Priority: 25
+
+## In case using specific codename 'sid' instead of generic suite 'unstable'.
+Package: *
+Pin: release n=sid
+Pin-Priority: 25
 " | root_cmd tee -- "$file" ||
     die 1 "${underline}APT Preferences Configuration Writer:${nounderline} Failed to write to file: '$file'"
 
