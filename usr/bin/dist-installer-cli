@@ -1775,11 +1775,12 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
   true "kali_derivative_detected: $kali_derivative_detected"
 
   ## https://bugs.debian.org/1066313
-  if [ "${debian_testing_or_unstable_detected}" != "1" ] && [ "${kali_derivative_detected}" != "1" ]; then
-    true "INFO: either debian_testing_or_unstable_detected or kali_derivative_detected = 1"
-    install_pkg torsocks
-  fi
-  install_signify signify-openbsd
+  #if [ "${debian_testing_or_unstable_detected}" != "1" ] && [ "${kali_derivative_detected}" != "1" ]; then
+    #true "INFO: either debian_testing_or_unstable_detected or kali_derivative_detected = 1"
+    #install_pkg torsocks
+  #fi
+
+  install_signify signify-openbsd torsocks
 }
 
 
@@ -2864,11 +2865,12 @@ get_transfer_cmd() {
   ## might not have torsocks installed, which is necessary for rsync as it
   ## doesn't support SOCKS5.
   ## https://pkg.kali.org/news/583693/torsocks-240-1-removed-from-kali-rolling/
-  if [ "${debian_testing_or_unstable_detected}" = "1" ] || [ "${kali_derivative_detected}" = "1" ]; then
-    transfer_utility=curl
-  else
-    transfer_utility=rsync
-  fi
+  #if [ "${debian_testing_or_unstable_detected}" = "1" ] || [ "${kali_derivative_detected}" = "1" ]; then
+    #transfer_utility=curl
+  #else
+    #transfer_utility=rsync
+  #fi
+  transfer_utility=rsync
 
   case "${transfer_utility}" in
     rsync)
