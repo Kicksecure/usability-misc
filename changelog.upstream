@@ -1,3 +1,27 @@
+commit 0f167720cdf3336b8eeb854cba892eab3a08b372
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 15:09:32 2025 -0400
+
+    build
+
+commit 9f46595b729ce337e8a425b3f9ab2cf81c80fdaf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 15:09:17 2025 -0400
+
+    trixie
+
+commit 5d4d00dcbbab23dc7262569543ae92968c868335
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 15:06:49 2025 -0400
+
+    build
+
+commit 008304a4e1dc1c0367a1209ce05a18f80ce7d2b8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 18:26:20 2025 +0000
+
+    bumped changelog version
+
 commit 1ed07dd5ef3e40651f13c9fdeb8fa4f730e70e5f
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Oct 5 14:20:40 2025 -0400
