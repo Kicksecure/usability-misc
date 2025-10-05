@@ -3222,23 +3222,6 @@ install_unstable_repository_debian() {
 ## This file was created by: $0
 ## It can be safely deleted if you know what you are doing.
 
-## Prefer 'stable' over 'trixie' if both are available.
-## Note: 'stable' is an alias that will eventually move to the next release after 'trixie'.
-Package: *
-Pin: release a=stable
-Pin-Priority: 995
-
-## Prefer 'trixie' (at time of writing 'stable') for all upgrades.
-Package: *
-Pin: release n=trixie
-Pin-Priority: 993
-
-## Optionally prefer 'testing' over 'unstable' (disabled by default).
-## Out-commented by default, because not enabling 'testing' with this script.
-#Package: *
-#Pin: release a=testing
-#Pin-Priority: 50
-
 ## Allow package installation from 'unstable' only if explicitly requested
 ## (never chosen automatically by APT).
 Package: *
