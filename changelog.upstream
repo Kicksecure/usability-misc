@@ -1,3 +1,22 @@
+commit 46b1de0b53fc686dfef929b23b59b72d880f734a
+Merge: 78dd20a 0a8c2d7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Oct 6 04:14:49 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 0a8c2d7d97345d78aa7cd58199b5b67925ab93cf
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Oct 5 15:21:03 2025 -0500
+
+    Switch default file manager to PCManFM-Qt
+
+commit 78dd20a1723485f7b595815c68bf668e529bbf55
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 5 19:15:41 2025 +0000
+
+    bumped changelog version
+
 commit 0f167720cdf3336b8eeb854cba892eab3a08b372
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Oct 5 15:09:32 2025 -0400
