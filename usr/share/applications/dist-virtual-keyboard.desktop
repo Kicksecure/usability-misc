@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=On-Screen Keyboard
+Comment=Launch the wvkbd virtual keyboard
+Exec=/usr/bin/dist-virtual-keyboard
+Terminal=false
+Type=Application
+Categories=Utility;Accessibility;
+Icon=input-keyboard

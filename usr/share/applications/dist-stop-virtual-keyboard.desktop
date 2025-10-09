@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Stop On-Screen Keyboard
+Comment=Terminate the wvkbd virtual keyboard
+Exec=/usr/bin/dist-virtual-keyboard --terminate
+Terminal=false
+Type=Application
+Categories=Utility;Accessibility;
+Icon=emblem-remove
