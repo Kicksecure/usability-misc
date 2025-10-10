@@ -10,3 +10,6 @@ usability-misc: uses-dpkg-database-directly [usr/bin/gpl_download_sources]
 ## "Conflicts should only be used if two packages can never be unpacked at the same time."
 ## This is the case here.
 usability-misc: conflicts-with-version desktop-config-dist *
+
+usability-misc: desktop-command-not-in-package usr/bin/dist-virtual-keyboard [usr/share/applications/dist-virtual-keyboard.desktop]
+usability-misc: desktop-command-not-in-package usr/bin/dist-virtual-keyboard [usr/share/applications/dist-stop-virtual-keyboard.desktop]
