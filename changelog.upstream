@@ -1,3 +1,47 @@
+commit 5ef4be25fed097b293f1ced765175e8dba23494c
+Merge: 968e71e df649ba
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 10 03:52:00 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit df649ba089dbfe57edea5338a7c9dd22e7726c8c
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Oct 9 18:46:33 2025 -0500
+
+    Move dist-virtual-keyboard from usability-misc to helper-scripts
+
+commit 968e71e64e7ca7f3fc89d9c4ed44255a495ef81d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 9 12:56:10 2025 -0400
+
+    `dist-virtual-keyboard`: port to `start-stop-daemon`
+
+commit 1633380387e5214257cf62d9a5c5b4374be04ada
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 9 11:42:57 2025 -0400
+
+    end-of-options
+
+commit 3f33bf1c6d5c9ae799dac96dbcaf4af1b826659e
+Merge: d150cb1 e876b7b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Oct 9 11:41:37 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit e876b7bcff4a3cb3977840871e10cdb5e437b62d
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Wed Oct 8 23:23:53 2025 -0500
+
+    Add wrapper script and desktop files for virtual keyboard
+
+commit d150cb111ea5afbb18738a40ae2b2047794341a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Oct 6 08:15:15 2025 +0000
+
+    bumped changelog version
+
 commit 46b1de0b53fc686dfef929b23b59b72d880f734a
 Merge: 78dd20a 0a8c2d7
 Author: Patrick Schleizer <adrelanos@whonix.org>
