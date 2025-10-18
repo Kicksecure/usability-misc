@@ -1,3 +1,22 @@
+commit aecbed41b7ad8e7ba29e50b5f0c0d97ea391c784
+Merge: 2834aaa 5722cb0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 18 04:46:14 2025 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 5722cb045c0f6efbbcebaf3eb713a466ba205ebb
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Fri Oct 17 14:52:12 2025 -0500
+
+    Move passwordless-root from usability-misc to helper-scripts
+
+commit 2834aaa9fe0321b2ea239e696a231cabc115b4d8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 10 08:32:06 2025 +0000
+
+    bumped changelog version
+
 commit a0253172963dbbc99feb135dfcdae86eaa1415c1
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Oct 10 04:31:46 2025 -0400
