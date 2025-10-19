@@ -5278,7 +5278,6 @@ run_installer() {
 
   get_os
   get_distro
-  get_specifics
   get_installer_version
   check_not_qubes_template
   get_system_stat
@@ -5286,6 +5285,7 @@ run_installer() {
   get_host_pkgs
   need_reboot_check_second
   get_independent_host_pkgs
+  get_specifics
   kernel_modules_check
   nested_virtualization_test
   secure_boot_test
