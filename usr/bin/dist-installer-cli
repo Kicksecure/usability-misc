@@ -1931,6 +1931,14 @@ install_repositories_for_virtualbox_on_debian() {
         use_deb822_sources='no'
         ;;
     esac
+    case "${distro_codename_debian}" in
+      trixie)
+        log info "Install VirtualBox from Oracle repository because at the time of writing VirtualBox is not yet in Debian 'fasttrack' and Debian 'unstable' ('sid') is no longer compatible with 'trixie'."
+        oracle_repo=1
+        ;;
+      *)
+        ;;
+    esac
   fi
 
   if [ "${dev}" = "1" ]; then
@@ -2328,7 +2336,8 @@ Signed-By: ${oracle_signedby_debsource}"
       ## 'trixie' is no longer compatible with 'unstable'.
       #install_unstable_repository_debian
       ## Therefore, fall back to Oracle repository.
-      install_oracle_repository_debian
+      ## No need, because checking 'if [ "${oracle_repo}" = "1" ]; then' above.
+      #install_oracle_repository_debian
       return 0
       ;;
     forky)
