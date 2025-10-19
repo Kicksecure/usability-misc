@@ -3889,7 +3889,6 @@ main() {
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
 
-
   if should_download; then
     if [ "${dry_run}" != "1" ]; then
       log notice "Connectivity Test: Testing internet connection to '${url_origin}'..."
