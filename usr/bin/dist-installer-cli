@@ -1724,6 +1724,9 @@ install_package_fedora_common() {
     install_pkg lsb_release >/dev/null 2>&1
   fi
 
+  ## Requires lsb_release / lsb-release.
+  get_specifics
+
   install_signify signify
 }
 
@@ -1811,6 +1814,9 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
   if [ "$debian_derivative_detected" = "1" ]; then
     install_pkg lsb-release procps
   fi
+
+  ## Requires lsb_release / lsb-release.
+  get_specifics
 
   if [ "${virtualbox_only}" = "1" ]; then
     return 0
@@ -4535,7 +4541,6 @@ run_installer() {
   get_host_virtualizer_pkgs
   need_reboot_check_second
   get_independent_host_pkgs
-  get_specifics
   kernel_modules_check
   nested_virtualization_test
   secure_boot_test
