@@ -2302,14 +2302,15 @@ Suites: ${kali_suites_debsource}
 Components: ${kali_components_debsource}
 Signed-By: ${kali_signedby_debsource}"
 
-  if [ "${oracle_repo}" = "1" ]; then
-    oracle_oneline_source="${oracle_types_debsource} [signed-by=${oracle_signedby_debsource}] ${oracle_uri_debsource} ${oracle_suites_debsource} ${oracle_components_debsource}"
-    oracle_deb822_source="\
+  oracle_oneline_source="${oracle_types_debsource} [signed-by=${oracle_signedby_debsource}] ${oracle_uri_debsource} ${oracle_suites_debsource} ${oracle_components_debsource}"
+  oracle_deb822_source="\
 Types: ${oracle_types_debsource}
 URIs: ${oracle_uri_debsource}
 Suites: ${oracle_suites_debsource}
 Components: ${oracle_components_debsource}
 Signed-By: ${oracle_signedby_debsource}"
+
+  if [ "${oracle_repo}" = "1" ]; then
     install_oracle_repository_debian
     return 0
   fi
