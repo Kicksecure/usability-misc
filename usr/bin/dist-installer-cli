@@ -2322,7 +2322,12 @@ Signed-By: ${oracle_signedby_debsource}"
     trixie)
       ## Please upload VirtualBox to trixie-fasttrack
       ## https://salsa.debian.org/fasttrack-team/support/-/issues/74
-      install_unstable_repository_debian
+      #install_backports_and_fasttrack_repository_debian
+      ##
+      ## 'trixie' is no longer compatible with 'unstable'.
+      #install_unstable_repository_debian
+      ## Therefore, fall back to Oracle repository.
+      install_oracle_repository_debian
       return 0
       ;;
     forky)
