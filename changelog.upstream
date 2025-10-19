@@ -1,3 +1,111 @@
+commit 086104ae492c04a83f5525a4681bff728fc6d7d1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 10:04:11 2025 -0400
+
+    build
+
+commit cda8d12a831bcb65b3f486685acf86309d2e1846
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 10:04:05 2025 -0400
+
+    fix
+
+commit cc53e1e8c07f746c4e151b26e9ffa3c6b9d55ac8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 10:01:18 2025 -0400
+
+    refactoring
+
+commit 2a579858b2d8e55123a5f4fa2374b1e3835825f3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:56:48 2025 -0400
+
+    build
+
+commit c20ba1d27953e9fd7ad85853cfcac10272ea71a4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:56:42 2025 -0400
+
+    fix
+
+commit 12d46635f27319ebce4e75bea37246559207cf16
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:46:10 2025 -0400
+
+    build
+
+commit 1458e739d570001acef5d8d1ce1ad0a082f18efd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:46:04 2025 -0400
+
+    fix
+
+commit e71f1c4a9bedb54f912f82ddb126af704592c079
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:43:44 2025 -0400
+
+    build
+
+commit c6b06571a2cd59c76f42ee2aa5e9e032e189d068
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:43:28 2025 -0400
+
+    fix
+
+commit e0f1ef8c49ab3e9136278b1c1172bac69fd28ccb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:37:49 2025 -0400
+
+    debugging
+
+commit e31adbb9a33b32037616c04877c09b6758be17c5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:32:28 2025 -0400
+
+    build
+
+commit 314393eb8c8ab727345894ee9001dca7271fd4be
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:32:03 2025 -0400
+
+    fix
+
+commit 648b2305cabbb82ffefa3e1811c64c3adc622851
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:16:22 2025 -0400
+
+    build
+
+commit f2ec0906dc5609663c2a7efaecff06caccda93fe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:15:44 2025 -0400
+
+    fix
+
+commit 131663a4bdbd87169840f4428b919a5dbb1dd2de
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:07:58 2025 -0400
+
+    minor
+
+commit 23c1e480bbefe0c21132eba0b0778ace1f5ff705
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:04:47 2025 -0400
+
+    fix
+
+commit 983e9122216b8d413ac5043d0005c2391980c0a3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Oct 19 09:02:28 2025 -0400
+
+    `dist-installer-cli`: `trixie` based: Install VirtualBox from Oracle repository because VirtualBox is not yet in Debian `fasttrack` and Debian `unstable`is no longer compatible with `trixie`.
+
+commit b523caa2e136825e603cd722f6d2419d0d3f46a1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Oct 18 09:20:24 2025 +0000
+
+    bumped changelog version
+
 commit aecbed41b7ad8e7ba29e50b5f0c0d97ea391c784
 Merge: 2834aaa 5722cb0
 Author: Patrick Schleizer <adrelanos@whonix.org>
