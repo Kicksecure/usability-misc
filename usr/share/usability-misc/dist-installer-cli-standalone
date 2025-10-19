@@ -2681,6 +2681,14 @@ install_repositories_for_virtualbox_on_debian() {
         use_deb822_sources='no'
         ;;
     esac
+    case "${distro_codename_debian}" in
+      trixie)
+        log info "Install VirtualBox from Oracle repository because at the time of writing VirtualBox is not yet in Debian 'fasttrack' and Debian 'unstable' ('sid') is no longer compatible with 'trixie'."
+        oracle_repo=1
+        ;;
+      *)
+        ;;
+    esac
   fi
 
   if [ "${dev}" = "1" ]; then
@@ -3052,14 +3060,15 @@ Suites: ${kali_suites_debsource}
 Components: ${kali_components_debsource}
 Signed-By: ${kali_signedby_debsource}"
 
-  if [ "${oracle_repo}" = "1" ]; then
-    oracle_oneline_source="${oracle_types_debsource} [signed-by=${oracle_signedby_debsource}] ${oracle_uri_debsource} ${oracle_suites_debsource} ${oracle_components_debsource}"
-    oracle_deb822_source="\
+  oracle_oneline_source="${oracle_types_debsource} [signed-by=${oracle_signedby_debsource}] ${oracle_uri_debsource} ${oracle_suites_debsource} ${oracle_components_debsource}"
+  oracle_deb822_source="\
 Types: ${oracle_types_debsource}
 URIs: ${oracle_uri_debsource}
 Suites: ${oracle_suites_debsource}
 Components: ${oracle_components_debsource}
 Signed-By: ${oracle_signedby_debsource}"
+
+  if [ "${oracle_repo}" = "1" ]; then
     install_oracle_repository_debian
     return 0
   fi
@@ -3072,7 +3081,13 @@ Signed-By: ${oracle_signedby_debsource}"
     trixie)
       ## Please upload VirtualBox to trixie-fasttrack
       ## https://salsa.debian.org/fasttrack-team/support/-/issues/74
-      install_unstable_repository_debian
+      #install_backports_and_fasttrack_repository_debian
+      ##
+      ## 'trixie' is no longer compatible with 'unstable'.
+      #install_unstable_repository_debian
+      ## Therefore, fall back to Oracle repository.
+      ## No need, because checking 'if [ "${oracle_repo}" = "1" ]; then' above.
+      #install_oracle_repository_debian
       return 0
       ;;
     forky)
@@ -4632,7 +4647,6 @@ main() {
     guest_file="${guest_pretty}-${interface_name}-${guest_version}"
     download_flag="${directory_prefix}/${guest_file}.${guest_file_ext}.flag"
   fi
-
 
   if should_download; then
     if [ "${dry_run}" != "1" ]; then
