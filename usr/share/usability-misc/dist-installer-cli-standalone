@@ -646,6 +646,53 @@ get_distro() {
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_os.sh
 
+get_specifics() {
+  distro_codename_real=$(lsb_release --short --codename)
+  distro_codename_common_use="${distro_codename_real}"
+
+  ## TODO: How to handle the default value for use_deb822_sources? If we
+  ## default to 'yes', old releases might end up with deb822 sources
+  ## incorrectly. If we default to 'no', new releases might end up with
+  ## one-line sources incorrectly. Defaulting to 'no' for now.
+  if [ "${ubuntu_derivative_detected}" = "1" ]; then
+    if grep --quiet -- "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
+      distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
+    else
+      distro_codename_ubuntu="noble"
+    fi
+    case "${distro_codename_ubuntu}" in
+      noble|plucky|questing)
+        use_deb822_sources='yes'
+        ;;
+      *)
+        use_deb822_sources='no'
+        ;;
+    esac
+  elif [ "${debian_derivative_detected}" = "1" ]; then
+    if [ "${kali_derivative_detected}" = "1" ]; then
+      distro_codename_debian="forky"
+    else
+      distro_codename_debian="${distro_codename_common_use}"
+    fi
+    case "${distro_codename_debian}" in
+      trixie|forky|sid)
+        use_deb822_sources='yes'
+        ;;
+      *)
+        use_deb822_sources='no'
+        ;;
+    esac
+    case "${distro_codename_debian}" in
+      trixie)
+        log info "Install VirtualBox from Oracle repository because at the time of writing VirtualBox is not yet in Debian 'fasttrack' and Debian 'unstable' ('sid') is no longer compatible with 'trixie'."
+        oracle_repo=1
+        ;;
+      *)
+        ;;
+    esac
+  fi
+}
+
 get_installer_version() {
   dist_installer_version_pretty="${me} ${version}"
 
@@ -2619,8 +2666,8 @@ kernel_modules_check() {
 
 
 install_repositories_for_virtualbox_on_debian() {
-  local distro_codename_real distro_codename_debian distro_codename_ubuntu \
-    distro_codename_kicksecure_use oracle_clearnet oracle_clearnet_uri_base \
+  local \
+    oracle_clearnet oracle_clearnet_uri_base \
     oracle_types_debsource \
     oracle_components_debsource oracle_suites_debsource unstable_clearnet \
     unstable_onion unstable_clearnet_uri_base unstable_onion_uri_base \
@@ -2645,51 +2692,6 @@ install_repositories_for_virtualbox_on_debian() {
     apt_torified apt_onion oracle_uri_debsource kicksecure_uri_debsource \
     unstable_uri_debsource fasttrack_uri_debsource backports_uri_debsource \
     kali_uri_debsource sources_list_file sources_deb822_file
-
-  distro_codename_real=$(lsb_release --short --codename)
-  distro_codename_common_use="${distro_codename_real}"
-
-  ## TODO: How to handle the default value for use_deb822_sources? If we
-  ## default to 'yes', old releases might end up with deb822 sources
-  ## incorrectly. If we default to 'no', new releases might end up with
-  ## one-line sources incorrectly. Defaulting to 'no' for now.
-  if [ "${ubuntu_derivative_detected}" = "1" ]; then
-    if grep --quiet -- "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
-      distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
-    else
-      distro_codename_ubuntu="noble"
-    fi
-    case "${distro_codename_ubuntu}" in
-      noble|plucky|questing)
-        use_deb822_sources='yes'
-        ;;
-      *)
-        use_deb822_sources='no'
-        ;;
-    esac
-  elif [ "${debian_derivative_detected}" = "1" ]; then
-    if [ "${kali_derivative_detected}" = "1" ]; then
-      distro_codename_debian="forky"
-    else
-      distro_codename_debian="${distro_codename_common_use}"
-    fi
-    case "${distro_codename_debian}" in
-      trixie|forky|sid)
-        use_deb822_sources='yes'
-        ;;
-      *)
-        use_deb822_sources='no'
-        ;;
-    esac
-    case "${distro_codename_debian}" in
-      trixie)
-        log info "Install VirtualBox from Oracle repository because at the time of writing VirtualBox is not yet in Debian 'fasttrack' and Debian 'unstable' ('sid') is no longer compatible with 'trixie'."
-        oracle_repo=1
-        ;;
-      *)
-        ;;
-    esac
-  fi
 
   if [ "${dev}" = "1" ]; then
     distro_codename_kicksecure_use="${distro_codename_common_use}-developers"
@@ -5278,6 +5280,7 @@ run_installer() {
 
   get_os
   get_distro
+  get_specifics
   get_installer_version
   check_not_qubes_template
   get_system_stat
