@@ -1798,11 +1798,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
   ## Dumping all sources.list files could have privacy implications.
   ## Hence only doing it for '--dev'.
   if [ "${dev}" = "1" ]; then
-    if [ -f /etc/apt/sources.list ]; then
-      cat -- /etc/apt/sources.list
-    fi
-
-    for sources_list_d_file in /etc/apt/sources.list.d/*; do
+    for sources_list_d_file in /etc/apt/sources.list /etc/apt/sources.sources /etc/apt/sources.list.d/*; do
       if [ -f "$sources_list_d_file" ]; then
         cat -- "$sources_list_d_file"
       fi
