@@ -502,6 +502,10 @@ get_independent_host_pkgs() {
     install_pkg virt-what && nested_virt_tool="virt-what" && break
     break
   done
+
+  if [ "$debian_derivative_detected" = "1" ]; then
+    install_pkg lsb-release procps
+  fi
 }
 
 
@@ -1807,8 +1811,6 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
 
   update_sources
   check_upgrades_simulation
-
-  install_pkg lsb-release procps
 
   if [ "${virtualbox_only}" = "1" ]; then
     return 0
