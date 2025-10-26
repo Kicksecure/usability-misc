@@ -9,6 +9,12 @@ fi
 
 set -e
 
+true "
+#####################################################################
+## INFO: START: $DPKG_MAINTSCRIPT_PACKAGE $DPKG_MAINTSCRIPT_NAME $@
+#####################################################################
+"
+
 ## config-package-dev displace migration from desktop-config-dist to usability-misc
 ##
 ## Using 'dpkg-divert' with '--rename' is not possible.

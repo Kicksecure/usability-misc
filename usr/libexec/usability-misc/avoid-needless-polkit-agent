@@ -1,0 +1,33 @@
+#!/bin/bash
+
+## Copyright (C) 2021 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+set -o errexit
+set -o nounset
+set -o errtrace
+set -o pipefail
+
+source /usr/libexec/helper-scripts/package_installed_check.bsh
+
+if pkg_installed user-sysmaint-split ; then
+  kernel_cmdline=''
+  if [ -f /proc/cmdline ]; then
+    kernel_cmdline="$(cat /proc/cmdline)"
+  elif [ -f /proc/1/cmdline ]; then
+    kernel_cmdline="$(cat /proc/1/cmdline)"
+  fi
+
+  polkit_agent_desktop_path='/etc/xdg/autostart/polkit-mate-authentication-agent-1.desktop'
+  polkit_agent_desktop_disabled_path='/var/lib/usability-misc/polkit-mate-authentication-agent-1.desktop.disabled-by-security-misc'
+
+  if [[ "$kernel_cmdline" =~ 'boot-role=sysmaint' ]]; then
+    if [ -f "${polkit_agent_desktop_disabled_path}" ]; then
+      mv "${polkit_agent_desktop_disabled_path}" "${polkit_agent_desktop_path}" || true
+    fi
+  else
+    if [ -f "${polkit_agent_desktop_path}" ]; then
+      mv "${polkit_agent_desktop_path}" "${polkit_agent_desktop_disabled_path}" || true
+    fi
+  fi
+fi
