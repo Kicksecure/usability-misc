@@ -1,0 +1,12 @@
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+command -v lspci >/dev/null || exit 0
+
+export LC_ALL='C'
+if lspci | grep -q 'USB controller:' ; then
+  exit 0
+fi
+exit 1
