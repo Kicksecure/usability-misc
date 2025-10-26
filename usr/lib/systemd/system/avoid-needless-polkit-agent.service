@@ -1,0 +1,17 @@
+## Copyright (C) 2021 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+[Unit]
+Description=prevents polkit-mate-authentication-agent-1 from starting in unprivileged user sessions
+DefaultDependencies=no
+Before=sysinit.target
+After=local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+ExecStart=/usr/libexec/usability-misc/avoid-needless-polkit-agent
+
+[Install]
+WantedBy=sysinit.target
