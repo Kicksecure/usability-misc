@@ -16,10 +16,6 @@ Simplifies running OpenVPN as unprivileged user.
 
 Ships a FoxyProxy add-on configuration file for use with Tor Browser.
 
-Provides apt-get-noninteractive that is a simple wrapper around apt-get, that
-sets all required environment variables to make it interactive as well as to
-prevent systemd service starts and restarts during apt-get.
-
 Sets mousepad as the default editor for environment variable VISUAL
 is unset and if mousepad is installed.
 
