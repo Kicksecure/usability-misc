@@ -3349,12 +3349,13 @@ test_file() {
   elif [ "${mode}" = '-d' ]; then
     find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)" || true
     find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1 >/dev/null)" || true
-    if [ -z "${find_result_stdout}" ]; then
-      popd >/dev/null
-      return 1
-    else
+    #if [ -z "${find_result_stdout}" ]; then
+    if run_as_target_user /usr/bin/test -d "${real_file}"; then
       popd >/dev/null
       return 0
+    else
+      popd >/dev/null
+      return 1
     fi
   elif [ "${mode}" = '-w' ]; then
     retcode=0
@@ -3369,12 +3370,13 @@ test_file() {
   elif [ "${mode}" = '-e' ]; then
     find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)" || true
     find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 2>&1 >/dev/null)" || true
-    if [ -z "${find_result_stdout}" ]; then
-      popd >/dev/null
-      return 1
-    else
+    #if [ -z "${find_result_stdout}" ]; then
+    if run_as_target_user /usr/bin/test -e "${real_file}"; then
       popd >/dev/null
       return 0
+    else
+      popd >/dev/null
+      return 1
     fi
   else
     popd >/dev/null
