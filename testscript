@@ -7,7 +7,8 @@ source usr/bin/dist-installer-cli
 target_user=root
 
 test_file -f /etc/hostname
-test_file -r /etc/hostname
-test_file -e /
 test_file -d /
 test_file -w "$HOME"
+test_file -r /
+test_file -e /
+

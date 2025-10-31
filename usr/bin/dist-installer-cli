@@ -3335,21 +3335,19 @@ test_file() {
   ## 'realpath' needs to be able to access the path it checks.
   real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
   ## 'find' needs to start execution in a directory it can access.
+  ## 'find' is used for debugging only.
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)" || true
-    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>&1 >/dev/null)" || true
-    if [ -z "${find_result_stdout}" ]; then
-      popd >/dev/null
-      return 1
-    else
+    find_result="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>&1)" || true
+    if run_as_target_user /usr/bin/test -f "${real_file}"; then
       popd >/dev/null
       return 0
+    else
+      popd >/dev/null
+      return 1
     fi
   elif [ "${mode}" = '-d' ]; then
-    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)" || true
-    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1 >/dev/null)" || true
-    #if [ -z "${find_result_stdout}" ]; then
+    find_result="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1)" || true
     if run_as_target_user /usr/bin/test -d "${real_file}"; then
       popd >/dev/null
       return 0
@@ -3358,19 +3356,23 @@ test_file() {
       return 1
     fi
   elif [ "${mode}" = '-w' ]; then
-    retcode=0
-    run_as_target_user /usr/bin/test -w "${real_file}" || { retcode="$?"; true; };
-    popd >/dev/null
-    return "${retcode}"
+    if run_as_target_user /usr/bin/test -w "${real_file}"; then
+      popd >/dev/null
+      return 0
+    else
+      popd >/dev/null
+      return 1
+    fi
   elif [ "${mode}" = '-r' ]; then
-    retcode=0
-    run_as_target_user /usr/bin/test -r "${real_file}" || { retcode="$?"; true; };
-    popd >/dev/null
-    return "${retcode}"
+    if run_as_target_user /usr/bin/test -r "${real_file}"; then
+      popd >/dev/null
+      return 0
+    else
+      popd >/dev/null
+      return 1
+    fi
   elif [ "${mode}" = '-e' ]; then
-    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)" || true
-    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 2>&1 >/dev/null)" || true
-    #if [ -z "${find_result_stdout}" ]; then
+    find_result="$(run_as_target_user find "${real_file}" -maxdepth 0 2>&1)" || true
     if run_as_target_user /usr/bin/test -e "${real_file}"; then
       popd >/dev/null
       return 0
