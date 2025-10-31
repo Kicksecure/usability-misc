@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+source usr/bin/dist-installer-cli
+
+target_user=root
+
+test_file -f /etc/hostname
+test_file -r /etc/hostname
+test_file -e /
+test_file -d /
+test_file -w "$HOME"
