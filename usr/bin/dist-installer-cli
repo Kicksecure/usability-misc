@@ -3329,16 +3329,15 @@ get_file() {
 
 
 test_file() {
-  local mode file real_file retcode find_result_stdout find_result_stderr
+  local mode file real_file
   mode="${1}"
   file="${2}"
   ## 'realpath' needs to be able to access the path it checks.
   real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
   ## 'find' needs to start execution in a directory it can access.
-  ## 'find' is used for debugging only.
+  ## But we are no longer using find. Maybe no longer needed.
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    find_result="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>&1)" || true
     if run_as_target_user /usr/bin/test -f "${real_file}"; then
       popd >/dev/null
       return 0
@@ -3347,7 +3346,6 @@ test_file() {
       return 1
     fi
   elif [ "${mode}" = '-d' ]; then
-    find_result="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1)" || true
     if run_as_target_user /usr/bin/test -d "${real_file}"; then
       popd >/dev/null
       return 0
@@ -3372,7 +3370,6 @@ test_file() {
       return 1
     fi
   elif [ "${mode}" = '-e' ]; then
-    find_result="$(run_as_target_user find "${real_file}" -maxdepth 0 2>&1)" || true
     if run_as_target_user /usr/bin/test -e "${real_file}"; then
       popd >/dev/null
       return 0
