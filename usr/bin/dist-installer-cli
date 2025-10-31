@@ -3378,6 +3378,7 @@ test_file() {
     fi
   else
     popd >/dev/null
+    die 1 "${underline}test_file:${nounderline} bug: Missing option."
     return 1
   fi
 }
