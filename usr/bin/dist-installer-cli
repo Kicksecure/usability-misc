@@ -3357,13 +3357,13 @@ test_file() {
       return 0
     fi
   elif [ "${mode}" = '-w' ]; then
-    run_as_target_user test -w "${real_file}"
-    retcode="$?"
+    retcode=0
+    run_as_target_user test -w "${real_file}" || { retcode="$?"; true; };
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-r' ]; then
-    run_as_target_user test -r "${real_file}"
-    retcode="$?"
+    retcode=0
+    run_as_target_user test -r "${real_file}" || { retcode="$?"; true; };
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-e' ]; then
