@@ -30,7 +30,7 @@ systemd_journald_audit_transport_enable() {
    ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1038993
    ##
    ## Enable systemd-journald audit transport.
-   ## Requried by helper-scripts 'apparmor-info' and 'apparmor-watch'.
+   ## Required by helper-scripts 'apparmor-info' and 'apparmor-watch'.
    deb-systemd-helper enable systemd-journald-audit.socket
 
    mkdir -p "/var/lib/usability-misc/do_once"
