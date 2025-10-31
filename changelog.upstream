@@ -1,3 +1,63 @@
+commit 8620a298ebf211a21504f2777c901be81c36e13a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:36:48 2025 -0400
+
+    description
+
+commit 11f5c42d62845217a649e8303eb94584e3b52508
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:28:56 2025 -0400
+
+    comment
+
+commit 3f07a861504c6d56ec106d0b605fc653ca4c733d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:28:12 2025 -0400
+
+    Enable systemd-journald audit transport.
+    Required by helper-scripts `apparmor-info` and `apparmor-watch`.
+    
+    `deb-systemd-helper enable systemd-journald-audit.socket`
+    
+    Debian no longer enables systemd-journald-audit.socket by default.
+    https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1038993
+
+commit efc1aca90861b3a11d544c03e1b1cb6d69c33735
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:13:58 2025 -0400
+
+    build
+
+commit 1a47de4baab372e6f5474f0d2dc525356a65114b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:12:55 2025 -0400
+
+    code simplification
+
+commit 34f8e86604717f114ee721a11eba7ed75bb6b1eb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:11:44 2025 -0400
+
+    code simplification
+
+commit 7615d0ee0ed59cc83936f540d8bf16f8d38f8b41
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:09:05 2025 -0400
+
+    debugging
+
+commit 9546f4519b2136eaf8a1bd2686ac6d190bbe85f2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 10:07:38 2025 -0400
+
+    cleanup
+
+commit 8e0979c2b3bfeee0a6a10c4c7a6ccedb9e081dd3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 13:56:56 2025 +0000
+
+    bumped changelog version
+
 commit e420f24cc59777571621981371b7ee628a6f4e30
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Oct 31 09:51:04 2025 -0400
