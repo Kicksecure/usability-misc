@@ -4475,6 +4475,7 @@ run_installer() {
   parse_name
   ## If account 'sysmaint' is in use and the user hasn't configured their own directory
   ## prefix and target user, default to target account 'user'.
+  ## Runs function 'set_target_user_account'.
   adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
   ## Uses function 'test_file' which in turn uses 'root_cmd'.
