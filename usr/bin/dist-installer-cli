@@ -3332,30 +3332,26 @@ test_file() {
   local mode file real_file
   mode="${1}"
   file="${2}"
+
   ## 'realpath' needs to be able to access the path it checks.
-  real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
-  ## 'find' needs to start execution in a directory it can access.
-  ## But we are no longer using find. Maybe no longer needed.
-  pushd / >/dev/null
+  ## Using '2>/dev/null' to suppress error output such as:
+  ## > realpath: /home/sysmaint/dist-installer-cli-download/logs/1: No such file or directory
+  real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}" 2>/dev/null)"
+
   if [ "${mode}" = '-f' ]; then
     if run_as_target_user /usr/bin/test -f "${real_file}"; then
-      popd >/dev/null
       return 0
     else
-      popd >/dev/null
       return 1
     fi
   elif [ "${mode}" = '-d' ]; then
     if run_as_target_user /usr/bin/test -d "${real_file}"; then
-      popd >/dev/null
       return 0
     else
-      popd >/dev/null
       return 1
     fi
   elif [ "${mode}" = '-w' ]; then
     if run_as_target_user /usr/bin/test -w "${real_file}"; then
-      popd >/dev/null
       return 0
     else
       popd >/dev/null
@@ -3363,22 +3359,17 @@ test_file() {
     fi
   elif [ "${mode}" = '-r' ]; then
     if run_as_target_user /usr/bin/test -r "${real_file}"; then
-      popd >/dev/null
       return 0
     else
-      popd >/dev/null
       return 1
     fi
   elif [ "${mode}" = '-e' ]; then
     if run_as_target_user /usr/bin/test -e "${real_file}"; then
-      popd >/dev/null
       return 0
     else
-      popd >/dev/null
       return 1
     fi
   else
-    popd >/dev/null
     die 1 "${underline}test_file:${nounderline} bug: Missing option."
     return 1
   fi
