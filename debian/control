@@ -68,3 +68,9 @@ Description: Misc usability improvements
  Ships `zsh` derivative configuration settings folder `/etc/zsh`.
  But does not configure `zsh` as default shell.
  (That is up to package `dist-base-files`.)
+ .
+ Enable systemd-journald audit transport.
+ (`deb-systemd-helper enable systemd-journald-audit.socket`)
+ Required by helper-scripts `apparmor-info` and `apparmor-watch`.
+ Debian no longer enables systemd-journald-audit.socket by default.
+ https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1038993
