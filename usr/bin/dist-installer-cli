@@ -3358,12 +3358,12 @@ test_file() {
     fi
   elif [ "${mode}" = '-w' ]; then
     retcode=0
-    run_as_target_user test -w "${real_file}" || { retcode="$?"; true; };
+    run_as_target_user /usr/bin/test -w "${real_file}" || { retcode="$?"; true; };
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-r' ]; then
     retcode=0
-    run_as_target_user test -r "${real_file}" || { retcode="$?"; true; };
+    run_as_target_user /usr/bin/test -r "${real_file}" || { retcode="$?"; true; };
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-e' ]; then
