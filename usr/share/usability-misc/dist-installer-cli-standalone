@@ -4079,51 +4079,57 @@ get_file() {
 
 
 test_file() {
-  local mode file real_file retcode
+  local mode file real_file
   mode="${1}"
   file="${2}"
-  ## realpath needs to be able to access the path it checks
+  ## 'realpath' needs to be able to access the path it checks.
   real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
-  ## 'find' needs to start execution in a directory it can access
+  ## 'find' needs to start execution in a directory it can access.
+  ## But we are no longer using find. Maybe no longer needed.
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)" ]; then
-      popd >/dev/null
-      return 1
-    else
+    if run_as_target_user /usr/bin/test -f "${real_file}"; then
       popd >/dev/null
       return 0
+    else
+      popd >/dev/null
+      return 1
     fi
   elif [ "${mode}" = '-d' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)" ];
-    then
-      popd >/dev/null
-      return 1
-    else
+    if run_as_target_user /usr/bin/test -d "${real_file}"; then
       popd >/dev/null
       return 0
+    else
+      popd >/dev/null
+      return 1
     fi
   elif [ "${mode}" = '-w' ]; then
-    run_as_target_user test -w "${real_file}"
-    retcode="$?"
-    popd >/dev/null
-    return "${retcode}"
-  elif [ "${mode}" = '-r' ]; then
-    run_as_target_user test -r "${real_file}"
-    retcode="$?"
-    popd >/dev/null
-    return "${retcode}"
-  elif [ "${mode}" = '-e' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)" ];
-    then
-      popd >/dev/null
-      return 1
-    else
+    if run_as_target_user /usr/bin/test -w "${real_file}"; then
       popd >/dev/null
       return 0
+    else
+      popd >/dev/null
+      return 1
+    fi
+  elif [ "${mode}" = '-r' ]; then
+    if run_as_target_user /usr/bin/test -r "${real_file}"; then
+      popd >/dev/null
+      return 0
+    else
+      popd >/dev/null
+      return 1
+    fi
+  elif [ "${mode}" = '-e' ]; then
+    if run_as_target_user /usr/bin/test -e "${real_file}"; then
+      popd >/dev/null
+      return 0
+    else
+      popd >/dev/null
+      return 1
     fi
   else
     popd >/dev/null
+    die 1 "${underline}test_file:${nounderline} bug: Missing option."
     return 1
   fi
 }
