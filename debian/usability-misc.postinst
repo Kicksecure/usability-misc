@@ -21,6 +21,22 @@ bisq_desktop_directories_workaround() {
    touch "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1"
 }
 
+systemd_journald_audit_transport_enable() {
+   if [ -f "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1" ]; then
+      return 0
+   fi
+
+   ## Debian no longer enables systemd-journald-audit.socket by default.
+   ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1038993
+   ##
+   ## Enable systemd-journald audit transport.
+   ## Requried by helper-scripts 'apparmor-info' and 'apparmor-watch'.
+   deb-systemd-helper enable systemd-journald-audit.socket
+
+   mkdir -p "/var/lib/usability-misc/do_once"
+   touch "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1"
+}
+
 true "
 #####################################################################
 ## INFO: BEGIN: $DPKG_MAINTSCRIPT_PACKAGE $DPKG_MAINTSCRIPT_NAME $@
@@ -54,6 +70,7 @@ case "$1" in
 esac
 
 bisq_desktop_directories_workaround
+systemd_journald_audit_transport_enable
 
 if [ -d /run/systemd/system ] ; then
         systemd-tmpfiles --create /usr/lib/tmpfiles.d/50_openvpn_unpriv.conf >/dev/null || true
