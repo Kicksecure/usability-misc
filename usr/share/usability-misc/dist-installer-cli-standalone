@@ -406,6 +406,35 @@ get_su_cmd(){
     fi
   fi
 }
+
+
+test_run_as_target_user() {
+  local root_output
+  root_output="$(run_as_target_user timeout --kill-after 5 5 test -d /usr 2>&1)"
+  if test -n "${root_output}"; then
+    log error "'run_as_target_user' output: '${root_output}'"
+    die 1 "${underline}run_as_target_user:${nounderline} Unexpected non-empty output for 'sudo -u ${target_user}' test."
+  fi
+}
+
+
+run_as_target_user() {
+  if [ -z "${target_user}" ]; then
+    "${@}"
+  else
+    ROOT_CMD_TARGET_USER="${target_user}" root_cmd "${@}"
+  fi
+}
+
+
+run_as_target_user_and_dir() {
+  local target_dir
+  target_dir="${1:-}"
+  [ -z "${target_dir}" ] && die 1 "Failed to provide directory name to 'run_as_target_user_and_dir'!"
+  [ -z "${target_user}" ] && die 1 "Cannot use 'run_as_target_user_and_dir' if 'set_target_user_account' is not used first!"
+  shift
+  ROOT_CMD_TARGET_USER="${target_user}" ROOT_CMD_TARGET_DIR="${target_dir}" root_cmd "${@}"
+}
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/root_cmd.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/ip_syntax.sh
@@ -4509,7 +4538,7 @@ check_hash() {
   local shafile dir
 
   shafile="${1}"
-  dir="$(dirname "${shafile}")"
+  dir="$(dirname -- "${shafile}")"
   log info "Checking SHA512 checksum: '${shafile}"
   ## $checkhash needs to be executed on the same folder as the compared file.
   log info "Changing to directory: '${dir}'"
@@ -4811,27 +4840,8 @@ set_target_user_account() {
   ## 'getent' may fail if the account doesn't exist, however we ignore it for now.
   ## The reason is because if this is run as a user account `sysmaint` on a
   ## system with no account 'user', this will fail, but the account may have passed
-  ## their own --user and --directory-prefix flags which will fix it.
+  ## their own '--user' and '--directory-prefix' flags which will fix it.
   user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)" || true
-}
-
-
-run_as_target_user() {
-  if [ -z "${target_user}" ]; then
-    "${@}"
-  else
-    ROOT_CMD_TARGET_USER="${target_user}" root_cmd "${@}"
-  fi
-}
-
-
-run_as_target_user_and_dir() {
-  local target_dir
-  target_dir="${1:-}"
-  [ -z "${target_dir}" ] && die 1 "Failed to provide directory name to 'run_as_target_user_and_dir'!"
-  [ -z "${target_user}" ] && die 1 "Cannot use 'run_as_target_user_and_dir' if 'set_target_user_account' is not used first!"
-  shift
-  ROOT_CMD_TARGET_USER="${target_user}" ROOT_CMD_TARGET_DIR="${target_dir}" root_cmd "${@}"
 }
 
 
@@ -5089,7 +5099,7 @@ parse_opt() {
     fi
 
     ## Test if parent directory exists.
-    directory_prefix_parent="$(dirname "${directory_prefix}")"
+    directory_prefix_parent="$(dirname -- "${directory_prefix}")"
     if ! test_file -d "${directory_prefix_parent}"; then
       die 1 "Directory doesn't exist: '${directory_prefix_parent}'"
     fi
@@ -5244,12 +5254,15 @@ run_installer() {
   parse_name
   ## If account 'sysmaint' is in use and the user hasn't configured their own directory
   ## prefix and target user, default to target account 'user'.
+  ## Runs function 'set_target_user_account'.
   adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
+  ## Uses function 'test_file' which in turn uses 'root_cmd'.
   parse_opt "${@}"
   ## Logging mechanism.
   log_term_and_file
   welcome
+  test_run_as_target_user
 
   get_os
   get_distro
