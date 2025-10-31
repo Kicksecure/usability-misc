@@ -3336,7 +3336,10 @@ test_file() {
   ## 'realpath' needs to be able to access the path it checks.
   ## Using '2>/dev/null' to suppress error output such as:
   ## > realpath: /home/sysmaint/dist-installer-cli-download/logs/1: No such file or directory
-  real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}" 2>/dev/null)"
+  if ! real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}" 2>/dev/null)"; then
+    true "INFO: realpath failed to determine the real path of file: ${file}"
+    return 1
+  fi
 
   if [ "${mode}" = '-f' ]; then
     if run_as_target_user /usr/bin/test -f "${real_file}"; then
