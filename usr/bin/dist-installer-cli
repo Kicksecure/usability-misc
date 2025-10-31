@@ -3342,36 +3342,15 @@ test_file() {
   fi
 
   if [ "${mode}" = '-f' ]; then
-    if run_as_target_user /usr/bin/test -f "${real_file}"; then
-      return 0
-    else
-      return 1
-    fi
+    run_as_target_user /usr/bin/test -f "${real_file}"
   elif [ "${mode}" = '-d' ]; then
-    if run_as_target_user /usr/bin/test -d "${real_file}"; then
-      return 0
-    else
-      return 1
-    fi
+    run_as_target_user /usr/bin/test -d "${real_file}"
   elif [ "${mode}" = '-w' ]; then
-    if run_as_target_user /usr/bin/test -w "${real_file}"; then
-      return 0
-    else
-      popd >/dev/null
-      return 1
-    fi
+    run_as_target_user /usr/bin/test -w "${real_file}"
   elif [ "${mode}" = '-r' ]; then
-    if run_as_target_user /usr/bin/test -r "${real_file}"; then
-      return 0
-    else
-      return 1
-    fi
+    run_as_target_user /usr/bin/test -r "${real_file}"
   elif [ "${mode}" = '-e' ]; then
-    if run_as_target_user /usr/bin/test -e "${real_file}"; then
-      return 0
-    else
-      return 1
-    fi
+    run_as_target_user /usr/bin/test -e "${real_file}"
   else
     die 1 "${underline}test_file:${nounderline} bug: Missing option."
     return 1

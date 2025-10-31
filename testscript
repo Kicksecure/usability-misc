@@ -12,3 +12,8 @@ test_file -w "$HOME"
 test_file -r /
 test_file -e /
 
+if ! test_file -f /nonexisting; then
+   true OK
+else
+   exit 1
+fi
