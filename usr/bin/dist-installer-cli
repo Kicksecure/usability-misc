@@ -2727,8 +2727,10 @@ install_virtualbox_debian_common_begin() {
       fi
     done
   fi
-  if has vboxmanage && ! dpkg --search "$(command -v vboxmanage)"; then
-    die 109 "Found Oracle VirtualBox installed from tarball/source. Using a package manager can conflict with your already manually installed VirtualBox. Uninstall VirtualBox first and then rerun this script. Use the option '--oracle-repo' if you want to install from the Oracle repository."
+  if has vboxmanage; then
+    if ! dpkg --search "$(command -v vboxmanage)"; then
+      die 109 "Found Oracle VirtualBox installed from tarball/source. Using a package manager can conflict with your already manually installed VirtualBox. Uninstall VirtualBox first and then rerun this script. Use the option '--oracle-repo' if you want to install from the Oracle repository."
+    fi
   fi
 
   install_repositories_for_virtualbox_on_debian
