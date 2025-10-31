@@ -3350,7 +3350,6 @@ test_file() {
     find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)"
     find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1 >/dev/null)"
     if [ -z "${find_result_stdout}" ]; then
-    then
       popd >/dev/null
       return 1
     else
@@ -3370,8 +3369,7 @@ test_file() {
   elif [ "${mode}" = '-e' ]; then
     find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)"
     find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 2>&1 >/dev/null)"
-    if [ -z "${find_result_stdout}" ];
-    then
+    if [ -z "${find_result_stdout}" ]; then
       popd >/dev/null
       return 1
     else
