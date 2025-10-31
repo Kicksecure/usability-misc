@@ -1,3 +1,51 @@
+commit 7ae2fed7d869950be419aa7dc4a9b6cc746eff4c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 14:19:15 2025 -0400
+
+    build
+
+commit 182a1b1e3639e0301652815c710dd6713e54e9cd
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 14:17:49 2025 -0400
+
+    test function run_as_target_user
+
+commit 1a6de688124863632ebc66eebae3eb651d485036
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 14:00:56 2025 -0400
+
+    comment
+
+commit f840e8ca8fbbe98e276606c5a3792ca77282f408
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 13:59:58 2025 -0400
+
+    comment
+
+commit 653f212c83780034bae5fc39097208221a04ff36
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 13:59:20 2025 -0400
+
+    move to helper-scripts
+
+commit e0f3e165a407b2db004dde0dafd4ea023de23fed
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 13:54:53 2025 -0400
+
+    comment
+
+commit 140d0bbc11b8618d0bced381e063dd9e9735533f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 13:50:40 2025 -0400
+
+    end-of-options
+
+commit 74ae52c3eaa601e57ef5d8e4c91f93b3da2b0fff
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Oct 31 15:19:58 2025 +0000
+
+    bumped changelog version
+
 commit 683a1259a59daef221dfdac8f92480e9c6649030
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Oct 31 11:18:41 2025 -0400
