@@ -3759,7 +3759,7 @@ check_hash() {
   local shafile dir
 
   shafile="${1}"
-  dir="$(dirname "${shafile}")"
+  dir="$(dirname -- "${shafile}")"
   log info "Checking SHA512 checksum: '${shafile}"
   ## $checkhash needs to be executed on the same folder as the compared file.
   log info "Changing to directory: '${dir}'"
@@ -4339,7 +4339,7 @@ parse_opt() {
     fi
 
     ## Test if parent directory exists.
-    directory_prefix_parent="$(dirname "${directory_prefix}")"
+    directory_prefix_parent="$(dirname -- "${directory_prefix}")"
     if ! test_file -d "${directory_prefix_parent}"; then
       die 1 "Directory doesn't exist: '${directory_prefix_parent}'"
     fi
