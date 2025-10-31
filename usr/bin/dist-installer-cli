@@ -4496,6 +4496,7 @@ run_installer() {
   ## prefix and target user, default to target account 'user'.
   adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
+  ## Uses function 'test_file' which in turn uses 'root_cmd'.
   parse_opt "${@}"
   ## Logging mechanism.
   log_term_and_file
