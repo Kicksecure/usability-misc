@@ -3337,8 +3337,8 @@ test_file() {
   ## 'find' needs to start execution in a directory it can access.
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)"
-    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>&1 >/dev/null)"
+    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)" || true
+    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>&1 >/dev/null)" || true
     if [ -z "${find_result_stdout}" ]; then
       popd >/dev/null
       return 1
@@ -3347,8 +3347,8 @@ test_file() {
       return 0
     fi
   elif [ "${mode}" = '-d' ]; then
-    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)"
-    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1 >/dev/null)"
+    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)" || true
+    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1 >/dev/null)" || true
     if [ -z "${find_result_stdout}" ]; then
       popd >/dev/null
       return 1
