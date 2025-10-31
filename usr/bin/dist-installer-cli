@@ -3329,15 +3329,17 @@ get_file() {
 
 
 test_file() {
-  local mode file real_file retcode
+  local mode file real_file retcode find_result_stdout find_result_stderr
   mode="${1}"
   file="${2}"
-  ## realpath needs to be able to access the path it checks
+  ## 'realpath' needs to be able to access the path it checks.
   real_file="$(root_cmd_loglevel="echo" dry_run=0 root_cmd realpath -- "${file}")"
-  ## 'find' needs to start execution in a directory it can access
+  ## 'find' needs to start execution in a directory it can access.
   pushd / >/dev/null
   if [ "${mode}" = '-f' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)" ]; then
+    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>/dev/null)"
+    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type f 2>&1 >/dev/null)"
+    if [ -z "${find_result_stdout}" ]; then
       popd >/dev/null
       return 1
     else
@@ -3345,7 +3347,9 @@ test_file() {
       return 0
     fi
   elif [ "${mode}" = '-d' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)" ];
+    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>/dev/null)"
+    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 -follow -type d 2>&1 >/dev/null)"
+    if [ -z "${find_result_stdout}" ]; then
     then
       popd >/dev/null
       return 1
@@ -3364,7 +3368,9 @@ test_file() {
     popd >/dev/null
     return "${retcode}"
   elif [ "${mode}" = '-e' ]; then
-    if [ -z "$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)" ];
+    find_result_stdout="$(run_as_target_user find "${real_file}" -maxdepth 0 2>/dev/null)"
+    find_result_stderr="$(run_as_target_user find "${real_file}" -maxdepth 0 2>&1 >/dev/null)"
+    if [ -z "${find_result_stdout}" ];
     then
       popd >/dev/null
       return 1
