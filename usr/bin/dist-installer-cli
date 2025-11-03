@@ -277,9 +277,9 @@ get_installer_package_version() {
   local dist_installer_package
 
   if [ ! "${debian_derivative_detected}" = "1" ]; then
-    ## usability-misc package only available for Debian derivatives.
-    ## Check using dpkg-query implemented below only available on Debian and derivatives.
-    true "INFO: No debian derivative detected."
+    ## The usability-misc package is only available for Debian derivatives.
+    ## The check using dpkg-query implemented below is only available on Debian and derivatives.
+    true "INFO: No Debian derivative detected."
     return 0
   fi
   ## Do not use commit-hash replace-me as search string to avoid replacement script replacing this.
@@ -470,9 +470,9 @@ get_host_virtualizer_pkgs() {
 get_independent_host_pkgs() {
   ## Platform independent packages
   if has signify-openbsd; then
-    ## fix Debian unconventional naming
+    ## Fix Debian's unconventional naming.
     run_signify() {
-      ## Debian places in signify-openbsd in folder '/bin' and not '/usr/bin'.
+      ## Debian places signify-openbsd in the '/bin' folder instead of '/usr/bin'.
       run_as_target_user signify-openbsd "${@}"
     }
   else
@@ -508,7 +508,7 @@ get_independent_host_pkgs() {
 nested_virtualization_test() {
   #nested_virtualization_detected=""
   if [ -z "${nested_virt_tool:-}" ]; then
-    ## No hard fail, not a requirement, good to have only.
+    ## No hard fail; not a requirement, only good to have.
     user_warned_potential_startup_issue=true
     log warn "${underline}Nested Virtualization Test:${nounderline} Detection tool for nested virtualization is missing."
   else
@@ -601,13 +601,13 @@ dkms_signing_key_enrollment() {
   ## With exit code 0.
   ##
   ## sudo mokutil --root-pw --import /var/lib/dkms/mok.pub
-  ## This can fail if the root account is locked / has no password such as in Kicksecure.
+  ## This can fail if the root account is locked or has no password, such as in Kicksecure.
   ## > Failed to get root password hash
   ##
   ## This is a Debian DKMS / shim-signed issue:
   ## - dkms Debian: enroll DKMS signing key / automate running "sudo mokutil --import /var/lib/dkms/mok.pub"
   ##   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1076269
-  ## - shim-signed Debian: please update update-secureboot-policy / add '--new-key' option
+  ## - shim-signed Debian: please update the update-secureboot-policy script / add '--new-key' option
   ##   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1076278
   ## - dkms upstream: automate running "`sudo mokutil --import /var/lib/dkms/mok.pub`"
   ##   https://github.com/dell/dkms/issues/429
@@ -624,7 +624,7 @@ die 1 "${underline}Secure Boot DKMS Signing Key Enrollment Check Result:${nounde
 
 kernel_modules_load() {
   local modules_disabled
-  ## Does usually not require root but might on some hardened systems.
+  ## Usually does not require root but might on some hardened systems.
   if ! modules_disabled=$(root_cmd_loglevel=null root_cmd cat -- /proc/sys/kernel/modules_disabled) ; then
     kernel_modules_can_be_loaded=maybe
     user_warned_potential_startup_issue=true
@@ -633,17 +633,17 @@ kernel_modules_load() {
   fi
   if [ "$modules_disabled" = "0" ]; then
     kernel_modules_can_be_loaded=true
-    log info "Kernel Module Load Check Result: 'yes' - modules can be load. (sysctl kernel.modules_disabled=0 is set.)"
+    log info "Kernel Module Load Check Result: 'yes' - modules can be loaded. (sysctl kernel.modules_disabled=0 is set.)"
     return 0
   fi
   kernel_modules_can_be_loaded=false
-  log info "${underline}Kernel Module Load Check Result:${nounderline} 'no' - modules cannot be load. (sysctl kernel.modules_disabled=1 is set.)"
+  log info "${underline}Kernel Module Load Check Result:${nounderline} 'no' - modules cannot be loaded. (sysctl kernel.modules_disabled=1 is set.)"
 }
 
 
 kernel_modules_signed_only() {
   local sig_enforce
-  ## Does usually not require root but might on some hardened systems.
+  ## Usually does not require root but might on some hardened systems.
   if ! sig_enforce=$(root_cmd_loglevel="echo" root_cmd cat -- /sys/module/module/parameters/sig_enforce) ; then
     modules_signed_only=maybe
     user_warned_potential_startup_issue=true
@@ -652,11 +652,11 @@ kernel_modules_signed_only() {
   fi
   if [ "$sig_enforce" = "Y" ]; then
     modules_signed_only=true
-    log info "Kernel Module Signature Enforcement Check Result: 'yes' - only signed modules can be load. (kernel parameter module.sig_enforce=1 might be set.)"
+    log info "Kernel Module Signature Enforcement Check Result: 'yes' - only signed modules can be loaded. (kernel parameter module.sig_enforce=1 might be set.)"
     return 0
   fi
   modules_signed_only=false
-  log info "Kernel Module Signature Enforcement Check Result: 'no' - unsigned modules can be load."
+  log info "Kernel Module Signature Enforcement Check Result: 'no' - unsigned modules can be loaded."
 }
 
 
@@ -674,7 +674,7 @@ need_reboot_check_first() {
   fi
 
   ## Building for an old kernel might result in missing kernel headers for that kernel
-  ## In result, VirtualBox would fail to start.
+  ## As a result, VirtualBox would fail to start.
   die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
 
 Please reboot your system and restart this installer.
@@ -763,7 +763,7 @@ package_manager_issue_extra_help_text="The user is advised to attempt to debug t
 1. Run above command as root (with sudo).
 2. If there is an issue, use search engines, documentation and if needed
    contact the support of your operating system.
-3. Once this has been fixed fixed, re-run this installer."
+3. Once this has been fixed, re-run this installer."
 
 
 update_sources_error() {
@@ -1173,19 +1173,19 @@ check_guest_boot() {
   esac
 
   if [ "$kernel_module_has_been_loaded" = "false" ]; then
-    ## Kernel modules have not been load.
+    ## Kernel modules have not been loaded.
     user_warned_potential_startup_issue=true
     log warn "Debugging information:
 Secure Boot Status: '$secure_boot_status_pretty'
 Kernel module has been loaded: '$kernel_module_has_been_loaded'
-Kernel modules can be loaded: '$kernel_modules_can_be_loaded' (modules can be load. (sysctl kernel.modules_disabled=0 is set.)
-Only signed kernel modules can be load: '$modules_signed_only'
+Kernel modules can be loaded: '$kernel_modules_can_be_loaded' (sysctl kernel.modules_disabled=0 is set.)
+Only signed kernel modules can be loaded: '$modules_signed_only'
 Kernel module vboxdrv signer: '$kernel_module_signer'
 kernel_module_modprobe_output ('$sucmd modprobe vboxdrv'): '$kernel_module_modprobe_output'"
 
     if [ "$kernel_modules_can_be_loaded" = "true" ]; then
-      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel modules have not been load yet.
-  - Kernel modules can be load in theory, should be loaded by now, but are not.
+      log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel modules have not been loaded yet.
+  - Kernel modules can be loaded in theory, should be loaded by now, but are not.
   - This is a VirtualBox installation issue."
       if [ "${ci}" != "1" ]; then
         virtualbox_start_failed
@@ -1764,8 +1764,8 @@ install_package_debian_common() {
     ## 'sudo apt-get dist-upgrade --target-release=trixie-fasttrack'.
     ## It misses out on packages from "trixie-fasttrack".
     upgrade_check_output="$(root_cmd "${pkg_mngr_upgrade_check[@]}" "$@" 2>&1)" || true
-    ## Counting both 'Inst' and 'Conf' is not an accurate counting. Will double count. But will also mean that
-    ## APT has things to do.
+    ## Counting both 'Inst' and 'Conf' is not precise and will double count, but it
+    ## still indicates that APT has work to do.
     upgrade_check_grep_output="$(printf '%s' "${upgrade_check_output}" | grep -e '^Inst' -e '^Conf')" || true
     number_upgradable=0
     if [ -n "$upgrade_check_grep_output" ]; then
@@ -2404,7 +2404,7 @@ repo_gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
 ' | root_cmd tee -- /etc/yum.repos.d/oracle.repo
 
-    ## dnf does not have a command to accept add the key to its database.
+    ## dnf does not have a command to add the key to its database.
     ## https://bugzilla.redhat.com/show_bug.cgi?id=1768206
     ## Workaround to accept the key with --assumeyes without accepting other things.
     ## Does not work.
@@ -2560,9 +2560,9 @@ install_backports_and_fasttrack_repository_debian() {
 
 
   ## virtualbox-guest-additions-iso is available from Debian stable and fasttrack.
-  ## Debian stable version however is outdated.
+  ## The Debian stable version, however, is outdated.
   ## If not using APT with option '--target-release=trixie-fasttrack' then
-  ## APT would download an outdated version from Debian stable instead the
+  ## APT would download an outdated version from Debian stable instead of the
   ## newer version from Debian fasttrack.
   install_pkg_fasttrack_extra_args_maybe=( "--target-release=${distro_codename_common_use}-fasttrack" )
 }
@@ -2918,19 +2918,19 @@ get_transfer_cmd() {
   case ${transfer_utility} in
     curl)
       ## Maximum time in seconds that we allow the whole operation to take.
-      ## Option works but as rsync doesn't have it, we are using timeout
+      ## The option works, but because rsync doesn't support it, we are using the timeout
       ## utility from coreutils.
       #transfer_max_time_opt="--max-time"
-      ## Curl does not have I/O timeout.
+      ## curl does not have an I/O timeout.
       transfer_io_timeout_opt=()
       ## Maximum time in seconds that we allow curl's connection to take.
-      ## This only limits the connection phase, so if curl's connect in the
+      ## This only limits the connection phase, so if curl connects within the
       ## given period, it will continue.
       transfer_connect_timeout_opt=( '--connect-timeout' "${transfer_connect_timeout}" )
       ## curl max-filesize is not a definitive barrier:
       ## The file size is not always known prior to download, and for
       ## such files this option has no effect even if the file transfer ends
-      ## up  being  larger than this given limit.
+      ## up being larger than this given limit.
       transfer_size_opt="--max-filesize"
       transfer_dryrun_opt=""
       transfer_output_dir_opt="--output-dir"
@@ -2939,8 +2939,8 @@ get_transfer_cmd() {
       transfer_speed_optimization_opt=()
       ;;
     rsync*)
-      ## Rsync does not have an option to set maximum time for of operation.
-      ## Option works but as rsync doesn't have it, we are using timeout
+      ## Rsync does not have an option to set the maximum time for the operation.
+      ## The option works, but because rsync doesn't support it, we are using the timeout
       ## utility from coreutils.
       #transfer_max_time_opt=""
       ## If no data is transferred in the specified time, rsync will exit.
@@ -4316,7 +4316,7 @@ parse_opt() {
     ## Only accept an absolute path.
     if [ "${directory_prefix}" = "${directory_prefix#/}" ]; then
       log error "Invalid directory prefix: '${directory_prefix}'"
-      die 1 "Directory prefix can not be a relative path, must be an absolute path."
+      die 1 "Directory prefix cannot be a relative path, must be an absolute path."
     fi
 
     ## Test if parent directory exists.
