@@ -1,3 +1,28 @@
+commit d294b74caee95ff661122070560f98d79dc35811
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 3 06:18:42 2025 -0500
+
+    build
+
+commit 301856854aa450a9cf2ac4e102a6327b5a30c7e1
+Merge: 151a38b 0eb7451
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 3 06:18:02 2025 -0500
+
+    Merge remote-tracking branch 'assisted-by-ai/codex/check-usr/bin/dist-installer-cli-for-typos-and-grammar'
+
+commit 0eb74518899e60df881446b2af7f3436b133b68d
+Author: assisted-by-ai (Bot Account) <server@kicksecure.com>
+Date:   Mon Nov 3 06:12:33 2025 -0500
+
+    Polish additional dist-installer messaging grammar
+
+commit 151a38b5ca91ce031a7d436369e86e432d5e4fa3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Nov 1 09:43:19 2025 +0000
+
+    bumped changelog version
+
 commit 025b5906d0a6384bf56b630bf52609ca25ac0d51
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Nov 1 03:35:47 2025 -0400
