@@ -20,8 +20,16 @@ if [ "$XDG_SESSION_TYPE" = "tty" ]; then
 fi
 
 if [ "$VISUAL" = "" ]; then
+   if command -v featherpad 1>/dev/null 2>/dev/null ; then
+      VISUAL="featherpad"
+      export VISUAL
+      return 0
+      exit 0
+   fi
    if command -v mousepad 1>/dev/null 2>/dev/null ; then
       VISUAL="mousepad"
       export VISUAL
+      return 0
+      exit 0
    fi
 fi
