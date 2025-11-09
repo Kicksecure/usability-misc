@@ -1,3 +1,21 @@
+commit 4a3de6359652bbe81a724794e1e9a2331e19ef2d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 9 02:00:17 2025 -0500
+
+    comments
+
+commit 16f42159adb29d8b65ed75491baddc3b800dcb79
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 9 01:58:07 2025 -0500
+
+    `/usr/libexec/default-editor/default_editor.sh`: set to `featherpad` (part of port to LXQt)
+
+commit b7bfa23cbbee41bfc0e6ad9250cbb69997bfe87d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 3 11:23:33 2025 +0000
+
+    bumped changelog version
+
 commit d294b74caee95ff661122070560f98d79dc35811
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Nov 3 06:18:42 2025 -0500
