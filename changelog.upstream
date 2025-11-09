@@ -1,3 +1,15 @@
+commit a2208da98d6444dc1f7fb9082af460202631749a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 9 04:08:50 2025 -0500
+
+    code simplification: merge `/usr/libexec/default-editor/default_editor.sh` into `/etc/profile.d/50_default_editor.sh`
+
+commit ecd8d6652fb3daa62884b21113080cc5febb484b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 9 08:18:01 2025 +0000
+
+    bumped changelog version
+
 commit 4a3de6359652bbe81a724794e1e9a2331e19ef2d
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Nov 9 02:00:17 2025 -0500
