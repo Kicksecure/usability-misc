@@ -31,12 +31,6 @@ if ! printf '%s\n' "$XDG_DATA_DIRS" | grep -- "/usr/share/usability-misc/xdg-ove
    export XDG_DATA_DIRS="/usr/share/usability-misc/xdg-override/:$XDG_DATA_DIRS"
 fi
 
-if [ "$XDG_SESSION_TYPE" = "tty" ]; then
-   true "$0: INFO: Running inside tty. Stop."
-   return 0
-   exit 0
-fi
-
 if [ ! "$VISUAL" = "" ]; then
    return 0
    exit 0
@@ -54,4 +48,3 @@ if command -v mousepad 1>/dev/null 2>/dev/null ; then
    return 0
    exit 0
 fi
-
