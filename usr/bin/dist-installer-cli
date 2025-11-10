@@ -1591,6 +1591,8 @@ write_sources_debian() {
 
   printf '%s\n' "${url}" | root_cmd tee -- "${file}" ||
     die 1 "${underline}Sources List Writer:${nounderline} Failed to write to file: '${file}'"
+
+  root_cmd chmod o+r -- "${file}"
 }
 
 
