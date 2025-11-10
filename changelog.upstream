@@ -1,3 +1,34 @@
+commit 2ef122351b6bc983f1d1b324d167bd6988e372e2
+Merge: 29ac2ca 548aa11
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 10 02:50:25 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 29ac2ca290b9abafb826dc9d8d9fcb2cf8c62f1e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 10 01:54:25 2025 -0500
+
+    build
+
+commit ffbaeeb7d38a9e4bb29e3bdb34ce706268c70a2f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Nov 10 01:53:29 2025 -0500
+
+    `dist-installer-cli`: fix, run "`chmod o+r`" on any created sources list files
+
+commit 548aa11b9d36862a1c48579dc670d7b20f3ce031
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Nov 9 19:08:57 2025 -0600
+
+    Remove problematic tty check from 50_default_editor.sh
+
+commit f0d461823ea792f4d695ba8d49fe954721e00e36
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Nov 9 09:10:09 2025 +0000
+
+    bumped changelog version
+
 commit a2208da98d6444dc1f7fb9082af460202631749a
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Nov 9 04:08:50 2025 -0500
