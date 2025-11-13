@@ -256,6 +256,51 @@ if test "${get_colors_sourced:-}" != "1"; then
 fi
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.bsh
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## NOTE: Must not include bashisms!
+
+## NOTE: code duplication: Function pkg_installed is duplicated elsewhere in derivative-maker source code.
+pkg_installed() {
+   local package_name dpkg_query_output
+   local requested_action status error_state
+
+   package_name="$1"
+   ## Cannot use '&>' because it is a bashism.
+   dpkg_query_output="$(dpkg-query --show --showformat='${Status}' "$package_name" 2>/dev/null)" || true
+   ## dpkg_query_output Examples:
+   ## install ok half-configured
+   ## install ok installed
+
+   requested_action=$(printf '%s' "$dpkg_query_output" | awk '{print $1}')
+   status=$(printf '%s' "$dpkg_query_output" | awk '{print $2}')
+   error_state=$(printf '%s' "$dpkg_query_output" | awk '{print $3}')
+
+   if [ "$requested_action" = 'install' ]; then
+      true "$0: INFO: $package_name is installed, ok."
+      return 0
+   fi
+
+   true "$0: INFO: $package_name is not installed, ok."
+   return 1
+}
+
+if [ "${BASH_SOURCE}" = "${0}" ]; then
+  ## Script was executed.
+  ## This is useful to allow non-Bash shell scripts to use this functionality.
+  set -o errexit
+  set -o nounset
+  set -o errtrace
+  set -o pipefail
+  pkg_installed "$1"
+fi
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.bsh
+
 ########################
 ## END DEFAULT VALUES ##
 ########################
@@ -365,6 +410,9 @@ get_su_cmd(){
     has su && sucmd=su && break
     [ -z "${sucmd:-}" ] && sucmd=''
     test -z "${sucmd}" && {
+      if pkg_installed user-sysmaint-split; then
+        die 1 "${underline}get_su_cmd:${nounderline} Failed to find program to run commands with administrative ('root') privileges. Package 'user-sysmaint-split' detected. You need to boot into sysmaint session."
+      fi
       die 1 "${underline}get_su_cmd:${nounderline} Failed to find program to run commands with administrative ('root') privileges. This program requires either one of the following programs to be installed:
 - sudo (recommended)
 - doas
