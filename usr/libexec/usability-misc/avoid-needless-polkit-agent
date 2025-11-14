@@ -8,9 +8,7 @@ set -o nounset
 set -o errtrace
 set -o pipefail
 
-source /usr/libexec/helper-scripts/package_installed_check.sh
-
-if ! pkg_installed user-sysmaint-split ; then
+if ! package-installed-check user-sysmaint-split ; then
   exit 0
 fi
 
