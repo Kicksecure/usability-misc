@@ -45,7 +45,7 @@ generate_grub_keyboard_layouts_maybe() {
    if ! [ -d /boot/grub/kb_layouts ]; then
       if timeout --kill-after 5 5 localectl >/dev/null; then
          if ischroot; then
-           set-grub-keymap --build-all --no-update-grub || true
+           true "INFO: Skipping 'set-grub-keymap --build-all' because postinst is running in chroot, ok."
          else
            set-grub-keymap --build-all || true
          fi
