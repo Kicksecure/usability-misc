@@ -4,7 +4,7 @@ set -e
 
 source usr/bin/dist-installer-cli
 
-target_user=root
+set_target_user_account root
 
 test_file -f /etc/hostname
 test_file -d /
