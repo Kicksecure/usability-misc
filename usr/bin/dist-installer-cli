@@ -197,8 +197,8 @@ source /usr/libexec/helper-scripts/wc-test.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 source /usr/libexec/helper-scripts/get_colors.sh
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
-source /usr/libexec/helper-scripts/package_installed_check.bsh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
+source /usr/libexec/helper-scripts/package_installed_check.sh
 
 ########################
 ## END DEFAULT VALUES ##

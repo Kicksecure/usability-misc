@@ -256,8 +256,8 @@ if test "${get_colors_sourced:-}" != "1"; then
 fi
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
-##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.bsh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -300,7 +300,7 @@ if [ "${BASH_SOURCE}" = "${0}" ]; then
   set -o pipefail
   pkg_installed "$1"
 fi
-##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.bsh
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.sh
 
 ########################
 ## END DEFAULT VALUES ##
