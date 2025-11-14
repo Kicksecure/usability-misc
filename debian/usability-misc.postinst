@@ -44,7 +44,11 @@ generate_grub_keyboard_layouts_maybe() {
 
    if ! [ -d /boot/grub/kb_layouts ]; then
       if timeout --kill-after 5 5 localectl >/dev/null; then
-         set-grub-keymap --build-all || true
+         if ischroot; then
+           set-grub-keymap --build-all --no-update-grub || true
+         else
+           set-grub-keymap --build-all || true
+         fi
       fi
    fi
 
