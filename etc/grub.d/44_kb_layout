@@ -13,8 +13,6 @@ if ! [ -d /boot/grub/kb_layouts ]; then
   exit 0
 fi
 
-user_layout_name="$(cat /boot/grub/kb_layouts/user-layout.name)" || { user_layout_name='unknown'; true; }
-
 printf '%s\n' "\
 function load_kb_layout {
   kb_layout_name=\"\$1\"
@@ -52,10 +50,20 @@ function load_kb_layout {
   return 0
 }
 
-submenu 'Keyboard layout options' \$menuentry_id_option 'kb-layout-options' {
+submenu 'Keyboard layout options' \$menuentry_id_option 'kb-layout-options' {"
+
+if [ -f /boot/grub/kb_layouts/user-layout.gkb ]; then
+  if [ -f /boot/grub/kb_layouts/user-layout.name ]; then
+    user_layout_name="$(cat /boot/grub/kb_layouts/user-layout.name)" || { user_layout_name='unknown'; true; }
+  else
+    user_layout_name='unknown'
+  fi
+
+  printf '%s\n' "\
   menuentry \"SWITCH to user-defined keyboard layout '$user_layout_name'\" \$menuentry_id_option 'switch-kb-layout-user-defined' {
     load_kb_layout 'user-layout'
   }"
+fi
 
 for layout_file in /boot/grub/kb_layouts/*.gkb; do
   if ! [ -f "$layout_file" ]; then

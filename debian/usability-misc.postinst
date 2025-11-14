@@ -37,6 +37,21 @@ systemd_journald_audit_transport_enable() {
    touch "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1"
 }
 
+generate_grub_keyboard_layouts_maybe() {
+   if [ -f "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1" ]; then
+      return 0
+   fi
+
+   if ! [ -d /boot/grub/kb_layouts ]; then
+      if timeout --kill-after 5 5 localectl >/dev/null; then
+         set-grub-keymap --build-all || true
+      fi
+   fi
+
+   mkdir -p "/var/lib/usability-misc/do_once"
+   touch "/var/lib/usability-misc/do_once/${FUNCNAME}_version_1"
+}
+
 true "
 #####################################################################
 ## INFO: BEGIN: $DPKG_MAINTSCRIPT_PACKAGE $DPKG_MAINTSCRIPT_NAME $@
@@ -60,6 +75,8 @@ case "$1" in
       true "INFO: Configuring $DPKG_MAINTSCRIPT_PACKAGE..."
 
       adduser --home /run/tunnel --no-create-home --quiet --system --group --shell /bin/false "tunnel" || true
+
+      generate_grub_keyboard_layouts_maybe
 
       true "INFO: End configuring $DPKG_MAINTSCRIPT_PACKAGE."
 
