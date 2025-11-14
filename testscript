@@ -17,3 +17,8 @@ if ! test_file -f /nonexisting; then
 else
    exit 1
 fi
+
+test_run_as_target_user
+
+true "$0: END"
+
