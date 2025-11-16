@@ -256,9 +256,9 @@ if test "${get_colors_sourced:-}" != "1"; then
 fi
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
-##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.bsh
-#!/bin/bash
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.sh
+#!/bin/sh
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
@@ -278,6 +278,7 @@ pkg_installed() {
    ## install ok installed
 
    requested_action=$(printf '%s' "$dpkg_query_output" | awk '{print $1}')
+   # shellcheck disable=SC2034
    status=$(printf '%s' "$dpkg_query_output" | awk '{print $2}')
    # shellcheck disable=SC2034
    error_state=$(printf '%s' "$dpkg_query_output" | awk '{print $3}')
@@ -290,17 +291,7 @@ pkg_installed() {
    true "$0: INFO: $package_name is not installed, ok."
    return 1
 }
-
-if [ "${BASH_SOURCE}" = "${0}" ]; then
-  ## Script was executed.
-  ## This is useful to allow non-Bash shell scripts to use this functionality.
-  set -o errexit
-  set -o nounset
-  set -o errtrace
-  set -o pipefail
-  pkg_installed "$1"
-fi
-##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.bsh
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.sh
 
 ########################
 ## END DEFAULT VALUES ##
@@ -462,7 +453,7 @@ test_run_as_target_user() {
   ## root_output would catch xtrace and hence variable root_output would be non-empty.
   ## Therefore disabling xtrace.
   disable_xtrace
-  root_output="$(run_as_target_user timeout --kill-after 5 5 test -d /usr 2>&1)"
+  xtrace_force_no_re_enable=true root_output="$(run_as_target_user timeout --kill-after 5 5 test -d /usr 2>&1)"
   re_enable_xtrace_maybe
   if test -n "${root_output}"; then
     die 1 "${underline}run_as_target_user:${nounderline} 'sudo -u ${target_user}' test produced unexpected output: '${root_output}'"
@@ -1029,6 +1020,9 @@ disable_xtrace() {
 }
 
 re_enable_xtrace_maybe() {
+  if [ "${xtrace_force_no_re_enable:-}" = "true" ]; then
+    return 0
+  fi
   if test "${xtrace:-}" = "1"; then
     set -o xtrace
   fi
@@ -4890,6 +4884,10 @@ set_default() {
 
 set_target_user_account() {
   target_user="${1:-}"
+
+  if ! id --user -- "${target_user}" >/dev/null; then
+    die 1 "target_user '${target_user}' does not exist!"
+  fi
 
   if [ "${sucmd}" != 'sudo' ]; then
     log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under account 'sysmaint' is untested."

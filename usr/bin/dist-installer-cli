@@ -197,8 +197,8 @@ source /usr/libexec/helper-scripts/wc-test.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 source /usr/libexec/helper-scripts/get_colors.sh
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.bsh
-source /usr/libexec/helper-scripts/package_installed_check.bsh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
+source /usr/libexec/helper-scripts/package_installed_check.sh
 
 ########################
 ## END DEFAULT VALUES ##
@@ -4058,6 +4058,10 @@ set_default() {
 
 set_target_user_account() {
   target_user="${1:-}"
+
+  if ! id --user -- "${target_user}" >/dev/null; then
+    die 1 "target_user '${target_user}' does not exist!"
+  fi
 
   if [ "${sucmd}" != 'sudo' ]; then
     log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under account 'sysmaint' is untested."
