@@ -47,6 +47,12 @@ generate_grub_keyboard_layouts_maybe() {
       return 0
    fi
 
+   ## > /usr/bin/set-grub-keymap: ERROR: Cannot proceed with generating GRUB keymap because requirements are unavailable. The 'ckbcomp' program is unavailable in the PATH environment variable or not installed. Is package 'console-setup' or 'console-setup-mini' installed?
+   if ! command -v ckbcomp >/dev/null 2>&1; then
+      true "INFO: Skipping 'set-grub-keymap --build-all' because ckbcomp is unavailable, ok."
+      return 0
+   fi
+
    if ! [ -d /boot/grub/kb_layouts ]; then
       if timeout --kill-after 5 5 localectl >/dev/null; then
          if ischroot; then
