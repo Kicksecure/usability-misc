@@ -1,3 +1,23 @@
+commit 54f5388b7e8dfb8ab85b834b4a7557bc9edac896
+Merge: 7d5fff8 74cf4ae
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 21 04:06:27 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 74cf4ae748cac09de35672aefef3a68cf4197b6d
+Merge: 6ba62c6 7d5fff8
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sat Nov 15 19:56:44 2025 -0600
+
+    Merge branch 'master' into arraybolt3/trixie
+
+commit 7d5fff8846950268f10d803fbdb8e0a8aca09c79
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 14 06:56:52 2025 +0000
+
+    bumped changelog version
+
 commit 09a9ca3335066150caf9bbf0749b410016b7f68c
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 14 01:40:19 2025 -0500
@@ -39,6 +59,42 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 14 00:51:37 2025 -0500
 
     refactoring
+
+commit 6ba62c6a3ad224ed83e3f46a6d43df10c522c213
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Nov 13 23:25:22 2025 -0600
+
+    Silence spurious messages from Lintian
+
+commit 5c97604d92e13cfe31903752ae0483bfc39630cc
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Nov 13 23:24:45 2025 -0600
+
+    Don't try to run set-grub-keymap in a chroot at all
+
+commit 4a2a168556d77871dd4765c33333a087d9a89028
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Nov 13 22:50:17 2025 -0600
+
+    Do not update grub when building GRUB keyboard layouts if running in a chroot
+
+commit 1eb376c86adc8e45f6fa1dc867094625f0a7ebda
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Nov 13 18:24:22 2025 -0600
+
+    Fixes to GRUB keyboard options menu, generate GRUB keyboard layouts on upgrade/installation if possible
+
+commit f98d24343b93fd692a3e68332443c1d4590430e3
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Nov 13 17:42:06 2025 -0600
+
+    Move keyboard menu to the bottom of the boot menu
+
+commit abc7010d8b5383e58032bfdacd0865ccef06ff81
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Nov 13 17:39:05 2025 -0600
+
+    Add keyboard layout menu to GRUB
 
 commit db7ca3f878a92e0d795f249e89a97a312373b07d
 Author: Patrick Schleizer <adrelanos@whonix.org>
