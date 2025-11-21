@@ -1,3 +1,15 @@
+commit 284a568b8ac8ed2116eeba08ef325d2d421cb4b0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 21 10:22:29 2025 -0500
+
+    skip set-grub-keymap in Qubes
+
+commit dba4886fd2ed33ee39bad84b2b3012bcc628e402
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 21 15:01:56 2025 +0000
+
+    bumped changelog version
+
 commit 4f42e395fefb789a688775978b3fbc37662cc3bb
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 21 08:33:39 2025 -0500
