@@ -42,6 +42,14 @@ generate_grub_keyboard_layouts_maybe() {
       return 0
    fi
 
+   ## > Would console-setup (or console-setup-mini) package be discouraged?
+   ## @marmarek in Matrix qubes-public
+   ## > I guess it's harmless if small, but also not very useful
+   if [ -f /usr/share/qubes/marker-vm ]; then
+      true "INFO: Skipping 'set-grub-keymap --build-all' because Qubes detected, ok."
+      return 0
+   fi
+
    if ! command -v update-grub >/dev/null 2>&1; then
       true "INFO: Skipping 'set-grub-keymap --build-all' because update-grub is unavailable, ok."
       return 0
