@@ -58,6 +58,7 @@ generate_grub_keyboard_layouts_maybe() {
          ## Test run of 'localectl'  was successful.
          if ischroot; then
            true "INFO: Skipping 'set-grub-keymap --build-all' because postinst is running in chroot, ok."
+           return 0
          else
            ## Use '--no-update-grub' because this postinst script will run 'update-grub' if available anyhow.
            if set-grub-keymap --build-all --no-update-grub >/dev/null 2>&1; then
@@ -67,6 +68,9 @@ generate_grub_keyboard_layouts_maybe() {
               return 0
            fi
          fi
+      else
+         true "INFO: Skipping 'set-grub-keymap --build-all' because localectl failed, ok."
+         return 0
       fi
    fi
 
