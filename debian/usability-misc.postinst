@@ -55,6 +55,7 @@ generate_grub_keyboard_layouts_maybe() {
 
    if ! [ -d /boot/grub/kb_layouts ]; then
       if timeout --kill-after 5 5 localectl &>/dev/null; then
+         ## Test run of 'localectl'  was successful.
          if ischroot; then
            true "INFO: Skipping 'set-grub-keymap --build-all' because postinst is running in chroot, ok."
          else
@@ -63,6 +64,7 @@ generate_grub_keyboard_layouts_maybe() {
               printf '%s\n' "INFO: Command 'set-grub-keymap --build-all' success."
            else
               printf '%s\n' "INFO: Minor issue. Command 'set-grub-keymap --build-all' failed. This means, the GRUB boot menu will have no keyboard layout selection menu, which is a minor usability feature. For most users, no action is required. If you know to need this feature, please execute 'sudo set-grub-keymap --build-all' (in sysmaint session)."
+              return 0
            fi
          fi
       fi
