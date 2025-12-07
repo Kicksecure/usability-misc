@@ -12,3 +12,4 @@ ExecStop=/usr/libexec/usability-misc/check-user-slice-on-shutdown
 
 [Install]
 WantedBy=multi-user.target
+WantedBy=sysmaint-boot.target
