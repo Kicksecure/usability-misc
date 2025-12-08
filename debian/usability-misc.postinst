@@ -62,7 +62,7 @@ generate_grub_keyboard_layouts_maybe() {
    fi
 
    if [ -d /boot/grub/kb_layouts ]; then
-      true "INFO: Skipping 'set-grub-keymap --build-all' because file '/boot/grub/kb_layouts' already exists, ok."
+      true "INFO: Skipping 'set-grub-keymap --build-all' because folder '/boot/grub/kb_layouts' already exists, ok."
       return 0
    fi
 
