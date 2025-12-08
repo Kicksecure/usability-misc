@@ -1,3 +1,28 @@
+commit 94e88ca5efe054c3d35fecd0fac8719bcfa1464a
+Merge: 949d234 437e6ad
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 8 06:49:31 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 437e6ad310273f16130d248e8eb48085d4b20e11
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Dec 7 13:58:36 2025 -0600
+
+    Make user session process checker also run in sysmaint sessions if enabled
+
+commit 33eb929c336c2f6df0a4cb5e816fffa74db2135e
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Sun Dec 7 13:54:45 2025 -0600
+
+    Add optional unit for debugging stuck user processes on shutdown
+
+commit 949d2344551ad39537d1a270350f83e01daa2f8b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Nov 21 15:23:06 2025 +0000
+
+    bumped changelog version
+
 commit 284a568b8ac8ed2116eeba08ef325d2d421cb4b0
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Nov 21 10:22:29 2025 -0500
