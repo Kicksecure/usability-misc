@@ -17,3 +17,6 @@ usability-misc: desktop-command-not-in-package usr/bin/dist-virtual-keyboard [us
 ## These occur in strings and are part of GRUB's syntax, they aren't part of
 ## the script itself.
 usability-misc: bash-term-in-posix-shell 'read' [etc/grub.d/44_kb_layout*]
+
+## user-sysmaint-split
+usability-misc: systemd-service-file-refers-to-unusual-wantedby-target sysmaint-boot.target [usr/lib/systemd/system/check-user-slice-on-shutdown.service]
