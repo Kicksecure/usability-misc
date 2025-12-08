@@ -1,0 +1,15 @@
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+[Unit]
+Description=displays information about user processes that become hung during shutdown
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=true
+ExecStop=/usr/libexec/usability-misc/check-user-slice-on-shutdown
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=sysmaint-boot.target
