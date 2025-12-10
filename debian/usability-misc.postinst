@@ -66,8 +66,8 @@ generate_grub_keyboard_layouts_maybe() {
       return 0
    fi
 
-   ## Use '--no-update-grub' because this postinst script will run 'update-grub' if available anyhow.
-   if ! set-grub-keymap --build-all --no-update-grub >/dev/null 2>&1; then
+   ## Use '--no-live-changes' because this postinst script will run 'update-grub' if available anyhow.
+   if ! set-grub-keymap --build-all --no-live-changes >/dev/null 2>&1; then
       printf '%s\n' "INFO: Minor issue. Command 'set-grub-keymap --build-all' failed. This means, the GRUB boot menu will have no keyboard layout selection menu, which is a minor usability feature. For most users, no action is required. If you know to need this feature, please execute 'sudo set-grub-keymap --build-all' (in sysmaint session)."
       return 0
    fi
