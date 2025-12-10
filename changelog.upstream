@@ -1,3 +1,36 @@
+commit 34b7e3d3480695ad2de99438420faed52315d288
+Merge: 184d9ff 678be26
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 10 07:38:44 2025 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 184d9ff9171187826c7a17a692e3300b5c5437ff
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 10 06:02:11 2025 -0500
+
+    disable `orca-kill-at-shutdown.service` by default
+    
+    because might slow down shutdown
+
+commit b27fc15850189ef82e03af7885e37cd1eeeb51f9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 10 00:58:37 2025 -0500
+
+    improve
+
+commit 678be26f6e4fb01287de6b305c15622f50d051e3
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Tue Dec 9 21:53:30 2025 -0600
+
+    Rename set-keyboard-layout.sh --no-update-grub -> --no-live-changes
+
+commit d0fc63550e9904f42f3a126c761827c7d41770d5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Dec 8 12:52:30 2025 +0000
+
+    bumped changelog version
+
 commit 01b129afe01d78df3f738521ee2be2b805d5ac71
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Dec 8 07:52:10 2025 -0500
