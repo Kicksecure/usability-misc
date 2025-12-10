@@ -6,3 +6,6 @@ disable orca-kill-at-shutdown.service
 
 ## Slows down normal shutdown by one second.
 disable check-user-slice-on-shutdown.service
+
+## Slows down normal shutdown by 5 seconds.
+disable orca-kill-at-shutdown.service
