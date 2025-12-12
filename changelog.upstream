@@ -1,3 +1,21 @@
+commit f7304c00bf435d632a50e51a6ca67c263e56f69c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 12 10:12:00 2025 -0500
+
+    build
+
+commit 2b40a13062b5e823092ca753fefce1c7c5fbb1aa
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 12 10:11:36 2025 -0500
+
+    xfce -> lxqt
+
+commit f4abaae39eb8e751c22b56c7c56ac4d82fb77c8a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Dec 10 15:13:03 2025 +0000
+
+    bumped changelog version
+
 commit 34b7e3d3480695ad2de99438420faed52315d288
 Merge: 184d9ff 678be26
 Author: Patrick Schleizer <adrelanos@whonix.org>
