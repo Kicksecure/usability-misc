@@ -1,4 +1,4 @@
-#compdef dist-installer-cli kicksecure-cli-installer-cli kicksecure-xfce-installer-cli whonix-cli-installer-cli whonix-xfce-installer-cli virtualbox-installer-cli
+#compdef dist-installer-cli kicksecure-cli-installer-cli kicksecure-lxqt-installer-cli whonix-cli-installer-cli whonix-lxqt-installer-cli virtualbox-installer-cli
 # vim: set sw=2 sts=2 ts=2 et :
 ## Copyright (C) 2022 grass <grass@danwin1210.de>
 ## Copyright (C) 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -56,7 +56,7 @@ case "$state" in
     local interfaces
     interfaces=(
       'cli:Commad-Line Interface'
-      'xfce:Xfce Desktop Environment'
+      'lxqt:LXQt Desktop Environment'
     )
     _describe -t interfaces 'interfaces' interfaces && ret=0
     ;;

@@ -9,9 +9,9 @@
 
 /usr/bin/dist-installer-cli /usr/bin/virtualbox-installer-cli
 /usr/bin/dist-installer-cli /usr/bin/kicksecure-cli-installer-cli
-/usr/bin/dist-installer-cli /usr/bin/kicksecure-xfce-installer-cli
+/usr/bin/dist-installer-cli /usr/bin/kicksecure-lxqt-installer-cli
 /usr/bin/dist-installer-cli /usr/bin/whonix-cli-installer-cli
-/usr/bin/dist-installer-cli /usr/bin/whonix-xfce-installer-cli
+/usr/bin/dist-installer-cli /usr/bin/whonix-lxqt-installer-cli
 
 /etc/profile.d/50_default_editor.sh /etc/zprofile.d/50_default_editor.zsh
 /etc/profile.d/50_default_editor.sh /etc/X11/Xsession.d/50_default_editor

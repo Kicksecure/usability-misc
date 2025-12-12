@@ -14,7 +14,7 @@ dist-installer-cli(1) -- download and import Whonix/Kicksecure VMs
 
 ## DESCRIPTION
 **dist-installer-cli** is an installer that automates the download and import
-of Kicksecure and Whonix VMs. It supports interfaces CLI or Xfce,
+of Kicksecure and Whonix VMs. It supports interfaces CLI or LXQt,
 and allows users to choose their preferred hypervisor, such as KVM or VirtualBox.
 
 ## OPTIONS
@@ -36,7 +36,7 @@ format <guest-interface-installer>.
 
 `-i`, `--interface`=<interface>
 
-        Define the guest interface. Options: cli, xfce (default).
+        Define the guest interface. Options: cli, lxqt (default).
 
 `-m`, `--hypervisor`=<hypervisor>
 
@@ -150,9 +150,9 @@ format <guest-interface-installer>.
 
 ## EXAMPLES
 
-To install Whonix Xfce for KVM:
+To install Whonix LXQt for KVM:
 
-        $ dist-installer-cli --guest=whonix --interface=xfce --hypervisor=kvm
+        $ dist-installer-cli --guest=whonix --interface=lxqt --hypervisor=kvm
 
 To install the default configuration using Tor onion routing and a SOCKS proxy:
 

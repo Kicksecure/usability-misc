@@ -6,7 +6,7 @@
 .SH "SYNOPSIS"
 \fBdist\-installer\-cli\fR \fIoptions\fR
 .SH "DESCRIPTION"
-\fBdist\-installer\-cli\fR is an installer that automates the download and import of Kicksecure and Whonix VMs\. It supports interfaces CLI or Xfce, and allows users to choose their preferred hypervisor, such as KVM or VirtualBox\.
+\fBdist\-installer\-cli\fR is an installer that automates the download and import of Kicksecure and Whonix VMs\. It supports interfaces CLI or LXQt, and allows users to choose their preferred hypervisor, such as KVM or VirtualBox\.
 .SH "OPTIONS"
 Options start with one or two dashes\. Both long and short options that require arguments can be separated by either spaces or an equal sign\.
 .P
@@ -31,7 +31,7 @@ The guest and interface can also be set by renaming the script following the for
 \fB\-i\fR, \fB\-\-interface\fR=\fIinterface\fR
 .IP "" 4
 .nf
-    Define the guest interface\. Options: cli, xfce (default)\.
+    Define the guest interface\. Options: cli, lxqt (default)\.
 .fi
 .IP "" 0
 .P
@@ -214,10 +214,10 @@ The guest and interface can also be set by renaming the script following the for
 .fi
 .IP "" 0
 .SH "EXAMPLES"
-To install Whonix Xfce for KVM:
+To install Whonix LXQt for KVM:
 .IP "" 4
 .nf
-    $ dist\-installer\-cli \-\-guest=whonix \-\-interface=xfce \-\-hypervisor=kvm
+    $ dist\-installer\-cli \-\-guest=whonix \-\-interface=lxqt \-\-hypervisor=kvm
 .fi
 .IP "" 0
 .P

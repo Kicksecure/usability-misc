@@ -1027,9 +1027,9 @@ check_vm_exists_general() {
 check_vm_file_exists_virtualbox_general() {
   local file_name_list file_name_item
 
-  ## '/home/user/VirtualBox VMs/Kicksecure-Xfce/Kicksecure-Xfce.vbox'
-  ## '/home/user/VirtualBox VMs/Whonix-Gateway-Xfce/Whonix-Gateway-Xfce.vbox'
-  ## '/home/user/VirtualBox VMs/Whonix-Workstation-Xfce/Whonix-Workstation-Xfce.vbox'
+  ## '/home/user/VirtualBox VMs/Kicksecure-LXQt/Kicksecure-LXQt.vbox'
+  ## '/home/user/VirtualBox VMs/Whonix-Gateway-LXQt/Whonix-Gateway-LXQt.vbox'
+  ## '/home/user/VirtualBox VMs/Whonix-Workstation-LXQt/Whonix-Workstation-LXQt.vbox'
 
   if [ -z "${user_home_dir+x}" ]; then
     log warn "VM Import Check: Skip testing if there is an extraneous '.vbox' file because environment variable user_home_dir is unset."
@@ -1325,8 +1325,8 @@ extract_vm_name_from_virtualbox_ova() {
   a=$(printf '%s' "$output" | grep --max-count=1 --after-context=4 -- "Virtual system $system_number:")
   b=$(printf '%s' "$a" | grep -- "Suggested VM name")
   c=$(printf '%s' "$b" | grep -oP -- '"\K[^"]+')
-  ## Take first word only because VirtualBox would suggest name "Whonix-Gateway-Xfce 1" in case,
-  ## a VM "Whonix-Gateway-Xfce" is already registered in VirtualBox.
+  ## Take first word only because VirtualBox would suggest name "Whonix-Gateway-LXQt 1" in case,
+  ## a VM "Whonix-Gateway-LXQt" is already registered in VirtualBox.
   d=$(printf '%s' "$c" | awk '{print $1}')
   printf '%s' "$d"
 }
@@ -2989,7 +2989,7 @@ get_system_stat() {
   ## already
   # shellcheck disable=SC2034
   case "${interface}" in
-    xfce)
+    lxqt)
       min_ram_mb="3328"
       ;;
     cli)
@@ -3028,7 +3028,7 @@ get_system_stat() {
   case "${guest}" in
     whonix)
       case "${interface}" in
-        xfce)
+        lxqt)
           free_space_required="5"
           ;;
         cli)
@@ -3038,7 +3038,7 @@ get_system_stat() {
       ;;
     kicksecure)
       case "${interface}" in
-        xfce)
+        lxqt)
           free_space_required="2"
           ;;
         cli)
@@ -3941,7 +3941,7 @@ User Options:
  -u, --guest-version=<version>
                      Specify guest version, or query from API if not provided.
  -i, --interface=<interface>
-                     Choose the interface. Options: cli, xfce (default)
+                     Choose the interface. Options: cli, lxqt (default)
  -m, --hypervisor=<platform>
                      Select the virtualization platform. Options: kvm, virtualbox (default)
  --oracle-repo       Use Oracle's repository for VirtualBox
@@ -4009,7 +4009,7 @@ set_default() {
   directory_prefix="${HOME}/dist-installer-cli-download"
   guest=whonix
   hypervisor=virtualbox
-  interface=xfce
+  interface=lxqt
   oracle_repo=""
   log_level=notice
   guest_version=""
@@ -4130,8 +4130,8 @@ parse_name() {
   [ "${me}" = "dist-installer-cli-standalone" ] && return 0
   ## check if file name is valid
   case "${me}" in
-    whonix-xfce-installer-cli | whonix-cli-installer-cli | \
-      kicksecure-xfce-installer-cli | kicksecure-cli-installer-cli )
+    whonix-lxqt-installer-cli | whonix-cli-installer-cli | \
+      kicksecure-lxqt-installer-cli | kicksecure-cli-installer-cli )
       log info "Valid script name to set options: '${me}'"
       ;;
     virtualbox-installer-cli )
@@ -4294,14 +4294,14 @@ parse_opt() {
   fi
   range_arg guest "${guest}" none whonix kicksecure
   guest_pretty="$(capitalize_first_char "${guest}")"
-  range_arg interface "${interface}" cli xfce
+  range_arg interface "${interface}" cli lxqt
   range_arg hypervisor "${hypervisor}" kvm virtualbox
   range_arg import_only "${import_only}" workstation gateway both
 
   case "${interface}" in
-    xfce)
-      ## Whonix 17 and above uses Xfce instead of XFCE.
-      interface_name="Xfce"
+    lxqt)
+      ## Whonix 18 and above uses LXQt instead of Xfce.
+      interface_name="LXQt"
       ;;
     cli)
       interface_name="CLI"

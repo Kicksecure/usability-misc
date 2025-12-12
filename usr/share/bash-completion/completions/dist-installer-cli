@@ -28,7 +28,7 @@ _dist_installer_cli()
             return
             ;;
         --interface )
-            COMPREPLY=($(compgen -W "xfce cli" -- "$cur"))
+            COMPREPLY=($(compgen -W "lxqt cli" -- "$cur"))
             return
             ;;
         --hypervisor )
@@ -58,8 +58,8 @@ _dist_installer_cli()
 
 } &&
     complete -F _dist_installer_cli dist-installer-cli \
-                kicksecure-cli-installer-cli kicksecure-xfce-installer-cli \
-                whonix-cli-installer-cli whonix-xfce-installer-cli \
+                kicksecure-cli-installer-cli kicksecure-lxqt-installer-cli \
+                whonix-cli-installer-cli whonix-lxqt-installer-cli \
                 virtualbox-installer-cli
 
 # ex: filetype=sh
