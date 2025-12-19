@@ -16,14 +16,25 @@ source /usr/libexec/helper-scripts/light_sleep.bsh
 counter=0
 while (( counter < 10 )); do
   light_sleep 1
+  ## TODO: Add a comment: Is '2>&1' a good idea here?
   systemd_cgls_output="$(systemd-cgls --no-pager --full --unit user.slice)"
-  if [ "$(wc -l <<< "$systemd_cgls_output")" == '1' ]; then
+  number_of_lines="$(wc -l <<< "$systemd_cgls_output")"
+  if [ "$number_of_lines" == '0' ]; then
+    printf '%s\n' "$0: ERROR: Number of lines: '$number_of_lines' - Existing." >&2
+    exit 1
+  fi
+  if [ "$number_of_lines" == '1' ]; then
+    ## Example systemd_cgls_output:
+    ## > Unit user.slice (/user.slice):
+    printf '%s\n' "$0: INFO: Number of lines: '$number_of_lines'"
     printf '%s\n' "$0: INFO: End. OK."
     exit 0
   fi
-  printf '%s\n' "$0: WARNING: user.slice is not empty yet. Contents:" >&2
+  printf '%s\n' "$0: WARNING: 'user.slice' is not empty yet. (number of lines: '$number_of_lines') Contents:" >&2
   printf '%s\n' "$systemd_cgls_output" >&2
+  printf '%s\n' "$0: --------------------------------------------------" >&2
+  printf '%s\n' "$0: WARNING: 'user.slice' was not empty yet. (number of lines: '$number_of_lines')" >&2
 done
 
-printf '%s\n' "$0: ERROR: user.slice not empty after 10 seconds!" >&2
+printf '%s\n' "$0: ERROR: 'user.slice' not empty after 10 seconds!" >&2
 exit 1
