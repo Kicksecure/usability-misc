@@ -8,10 +8,10 @@ set -o nounset
 set -o errtrace
 set -o pipefail
 
+printf '%s\n' "$0: INFO: Start."
+
 source /usr/libexec/helper-scripts/wc-test.sh
 source /usr/libexec/helper-scripts/light_sleep.bsh
-
-printf '%s\n' "$0: INFO: Start."
 
 counter=0
 while (( counter < 10 )); do
