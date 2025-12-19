@@ -1,3 +1,21 @@
+commit 9819e44542ab01035e23b37a575eb482909aba1f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 19 05:10:25 2025 -0500
+
+    improve check-user-slice-on-shutdown
+
+commit d20051e5d2f9ee186c81cbe93d7f7eb597e18c8a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 19 05:01:10 2025 -0500
+
+    fix
+
+commit d411279c65cb0ab9f3045afeed31d6135f4a72ed
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 19 09:56:59 2025 +0000
+
+    bumped changelog version
+
 commit ab13f15a7ed9e2680997dbf8939df3c5766ebfa5
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Dec 19 03:22:25 2025 -0500
