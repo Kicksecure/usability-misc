@@ -1,3 +1,17 @@
+commit ab13f15a7ed9e2680997dbf8939df3c5766ebfa5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 19 03:22:25 2025 -0500
+
+    check-user-slice-on-shutdown: use `systemd-cgls` with option `--full`
+    
+    fixes https://github.com/Kicksecure/usability-misc/issues/16
+
+commit 8d5a87b21fe0ca283f3e4740afcf53f2f6f44e1d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Dec 12 15:23:06 2025 +0000
+
+    bumped changelog version
+
 commit f7304c00bf435d632a50e51a6ca67c263e56f69c
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Dec 12 10:12:00 2025 -0500
