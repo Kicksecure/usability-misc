@@ -16,7 +16,7 @@ printf '%s\n' "$0: INFO: Start."
 counter=0
 while (( counter < 10 )); do
   light_sleep 1
-  systemd_cgls_output="$(systemd-cgls --no-pager --unit user.slice)"
+  systemd_cgls_output="$(systemd-cgls --no-pager --full --unit user.slice)"
   if [ "$(wc -l <<< "$systemd_cgls_output")" == '1' ]; then
     printf '%s\n' "$0: INFO: End. OK."
     exit 0
