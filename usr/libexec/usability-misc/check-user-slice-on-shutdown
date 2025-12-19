@@ -19,11 +19,11 @@ while (( counter < 10 )); do
   ## TODO: Add a comment: Is '2>&1' a good idea here?
   systemd_cgls_output="$(systemd-cgls --no-pager --full --unit user.slice)"
   number_of_lines="$(wc -l <<< "$systemd_cgls_output")"
-  if [ "$number_of_lines" == '0' ]; then
-    printf '%s\n' "$0: ERROR: Number of lines: '$number_of_lines' - Existing." >&2
+  if [ "$number_of_lines" = '0' ]; then
+    printf '%s\n' "$0: ERROR: Number of lines: '$number_of_lines' - Exiting." >&2
     exit 1
   fi
-  if [ "$number_of_lines" == '1' ]; then
+  if [ "$number_of_lines" = '1' ]; then
     ## Example systemd_cgls_output:
     ## > Unit user.slice (/user.slice):
     printf '%s\n' "$0: INFO: Number of lines: '$number_of_lines'"
