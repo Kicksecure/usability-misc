@@ -4368,14 +4368,14 @@ parse_opt() {
   if [ "${dev}" = "1" ]; then
     if [ -z "${guest_version}" ]; then
       log notice "Version Detection: Setting development testing empty software version via '--dev' option."
-      guest_version="17.0.3.4"
+      guest_version="18.0.9.5"
     fi
   fi
   if [ "${dry_run}" = "1" ]; then
     if [ -z "${guest_version}" ]; then
       log notice "Simulation: commands will be printed but not executed via '--dry-run' option."
       log notice "Version Detection: Using simulated software version via '--dry-run' option."
-      guest_version="17.0.3.4"
+      guest_version="18.0.9.5"
     fi
   fi
   if [ "${allow_errors}" = "1" ]; then
