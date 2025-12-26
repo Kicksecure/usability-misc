@@ -4409,7 +4409,7 @@ log_term_and_file() {
   ## global console_write_command
   if tty_output="$(tty 2>&1)" ; then
     console_write_command=( 'tee' '--' '/dev/tty' )
-    log info "Terminal: 'tty' connected: 'yes' (tty_output: '${tty_output}' | console_write_command: '${console_write_command[*]}')"
+    log info "Terminal: 'tty' connected: 'yes' (console_write_command: '${console_write_command[*]}')"
   else
     ## github actions CI issue:
     ## tee: /dev/tty: No such device or address
