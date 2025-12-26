@@ -78,3 +78,9 @@ sed -i \
   "${target}"
 
 echo "$0: INFO: BUILD: SUCCESS"
+echo "$0: INFO: Running shellcheck..."
+
+shellcheck "${target}"
+
+echo "$0: INFO: shellcheck: SUCCESS"
+echo "$0: INFO: END: OK"
