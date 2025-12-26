@@ -719,7 +719,7 @@ get_distro() {
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_os.sh
 
 get_specifics() {
-  distro_codename_real=$(lsb_release --short --codename)
+  distro_codename_real="$(lsb_release --short --codename)"
   distro_codename_common_use="${distro_codename_real}"
 
   ## TODO: How to handle the default value for use_deb822_sources? If we
@@ -1542,18 +1542,6 @@ Debugging information: needs-restarting reported that a reboot is required."
 update_sources() {
   local update_output update_cmd
 
-  log notice "Updating package list..."
-
-  ## global console_write_command
-  if tty >/dev/null >&1 ; then
-    console_write_command=( 'tee' '/dev/tty' )
-  else
-    ## github actions CI issue:
-    ## tee: /dev/tty: No such device or address
-    ## https://github.com/actions/runner/issues/241
-    console_write_command=( 'cat' )
-  fi
-
   #root_cmd "${pkg_mngr_update[@]}" 2>&1 || true
   #update_sources_error
   ## result: OK: command_without_extraneous_spaces="sudo -- apt-get update --yes --error-on=any"
@@ -1563,23 +1551,26 @@ update_sources() {
   if [ "${noupdate}" = "1" ]; then
     ## Too slow to run over and over again during testing.
     update_cmd=( 'true' "${pkg_mngr_update[@]}" )
-    log warn "Package List Update: Simulate only, via '--noupdate' option."
+    log warn "Package List Update: Simulate only, via '--noupdate' option..."
   else
+    log notice "Package List Update: Updating package list..."
     update_cmd=( "${pkg_mngr_update[@]}" )
   fi
 
+  log info "update_cmd: '${update_cmd[*]}'"
+
   if update_output=$(root_cmd_loglevel=notice root_cmd "${update_cmd[@]}" 2>&1 | "${console_write_command[@]}") ; then
+    log info "Package List Update: exit code '0' (OK)"
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if printf '%s' "$update_output" | grep --ignore-case -- "Error:" >/dev/null ; then
-      log error "${underline}Package List Update:${nounderline} Exit code was 0 but 'Error:' found in output."
+      log error "${underline}Package List Update:${nounderline} Exit code was '0' but 'Error:' found in output."
       if printf '%s' "$update_output" | grep --ignore-case -- "GPG signature verification error: Signing key not" >/dev/null; then
         log warn "${underline}Package List Update:${nounderline} Signing key not found. Skipping due to 'rpm --import' failing to import keys, but '--assumeyes' being used will import keys."
         return 0
       fi
       update_sources_error
     else
-      true "INFO: No error found in update output, ok."
-      return 0
+      log info "Package List Update: Success."
     fi
   else
     log error "${underline}Package List Update:${nounderline} Non-zero exit code. Stop."
@@ -5203,14 +5194,14 @@ parse_opt() {
   if [ "${dev}" = "1" ]; then
     if [ -z "${guest_version}" ]; then
       log notice "Version Detection: Setting development testing empty software version via '--dev' option."
-      guest_version="17.0.3.4"
+      guest_version="18.0.9.5"
     fi
   fi
   if [ "${dry_run}" = "1" ]; then
     if [ -z "${guest_version}" ]; then
       log notice "Simulation: commands will be printed but not executed via '--dry-run' option."
       log notice "Version Detection: Using simulated software version via '--dry-run' option."
-      guest_version="17.0.3.4"
+      guest_version="18.0.9.5"
     fi
   fi
   if [ "${allow_errors}" = "1" ]; then
@@ -5238,13 +5229,27 @@ parse_opt() {
 ## Bash supports process substitution and saving xtrace to a file, which is a
 ## simpler way to log to file and console.
 log_term_and_file() {
-  local temp_folder xtrace_fifo
+  local temp_folder xtrace_fifo tty_output
 
-  ## Discover if terminal is attached to stdout
+  tty_output=''
+  ## global console_write_command
+  if tty_output="$(tty 2>&1)" ; then
+    console_write_command=( 'tee' '--' '/dev/tty' )
+    log info "Terminal: 'tty' connected: 'yes' (console_write_command: '${console_write_command[*]}')"
+  else
+    ## github actions CI issue:
+    ## tee: /dev/tty: No such device or address
+    ## https://github.com/actions/runner/issues/241
+    console_write_command=( 'cat' '--' )
+    log info "Terminal: 'tty' connected: 'no' (tty_output: '${tty_output}' | console_write_command: '${console_write_command[*]}')"
+  fi
+
+  ## Discover if terminal is attached to 'stdout'.
   if [ ! -t 1 ]; then
-    log warn "Terminal: Output is not being sent to the terminal because terminal is not connected to stdout."
+    log info "Terminal: 'stdout' connected: 'no' - Output is not being sent to the terminal because terminal is not connected to 'stdout'."
     return 0
   fi
+  log info "Terminal: 'stdout' connected: 'yes'"
 
   run_as_target_user touch -- "${log_file_user}"
   run_as_target_user touch -- "${log_file_debug}"
