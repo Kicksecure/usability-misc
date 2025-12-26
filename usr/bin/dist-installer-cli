@@ -4408,13 +4408,13 @@ log_term_and_file() {
   tty_output=''
   ## global console_write_command
   if tty_output="$(tty 2>&1)" ; then
-    console_write_command=( 'tee' '/dev/tty' )
+    console_write_command=( 'tee' '--' '/dev/tty' )
     log info "Terminal: 'tty' connected: 'yes' (tty_output: '${tty_output}' | console_write_command: '${console_write_command[*]}')"
   else
     ## github actions CI issue:
     ## tee: /dev/tty: No such device or address
     ## https://github.com/actions/runner/issues/241
-    console_write_command=( 'cat' )
+    console_write_command=( 'cat' '--' )
     log info "Terminal: 'tty' connected: 'no' (tty_output: '${tty_output}' | console_write_command: '${console_write_command[*]}')"
   fi
 
