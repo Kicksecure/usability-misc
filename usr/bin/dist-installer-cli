@@ -222,7 +222,7 @@ source /usr/libexec/helper-scripts/ip_syntax.sh
 source /usr/libexec/helper-scripts/get_os.sh
 
 get_specifics() {
-  distro_codename_real=$(lsb_release --short --codename)
+  distro_codename_real="$(lsb_release --short --codename)"
   distro_codename_common_use="${distro_codename_real}"
 
   ## TODO: How to handle the default value for use_deb822_sources? If we
