@@ -4520,10 +4520,6 @@ run_installer() {
   welcome
   test_run_as_target_user
 
-## TODO: remove
-disable_kvm_virt_at_load
-exit
-
   get_os
   get_distro
   get_installer_version
