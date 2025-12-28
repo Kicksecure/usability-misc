@@ -3169,7 +3169,7 @@ Debugging information:
 ## usage: set_transfer_proxy ${proxy}
 set_transfer_proxy() {
   local proxy_port proxy_addr
-  local proxy_user proxy_pass random_socks_user_name
+  local proxy_user proxy_pass random_socks_user_name proxy_cred
 
   proxy_port="${1##*:}"
   proxy_addr="${1%%:*}"
