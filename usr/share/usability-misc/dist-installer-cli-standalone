@@ -256,6 +256,235 @@ if test "${get_colors_sourced:-}" != "1"; then
 fi
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.sh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/strings.bsh
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+br_add() {
+   local in out
+
+   if (( $# > 1 )); then
+      printf '%s\n' "br_add: too many arguments" >&2
+      return 1
+   fi
+
+   if (( $# == 1 )); then
+      in="$1"
+   else
+      in="$(cat)"
+   fi
+
+   ## Replace each newline with "<br />\n"
+   out="${in//$'\n'/'<br />'$'\n'}"
+   printf '%s\n' "$out"
+}
+
+br_add_to_file() {
+   local file_name="$1"
+
+   test -f "${file_name}"
+   safe-rm -f -- "${file_name}_br"
+   touch -- "${file_name}_br"
+
+   local line
+   while IFS= read -r line ; do
+      printf '%s\n' "$line<br />" | tee -a -- "${file_name}_br" >/dev/null
+   done < "${file_name}"
+}
+
+read_integer_file() {
+  local target_file lower_bound upper_bound file_contents
+
+  target_file="${1:-}"
+  lower_bound="${2:-}"
+  upper_bound="${3:-}"
+  if [ -z "$target_file" ]; then
+    printf '%s\n' "$0: ERROR: No target file specified!" >&2
+    return 1
+  fi
+  if [ -n "$lower_bound" ] && ! [[ "$lower_bound" =~ ^[0-9]+$ ]]; then
+    printf '%s\n' "$0: ERROR: Non-numeric lower bound specified!" >&2
+    return 1
+  fi
+  if [ -n "$upper_bound" ] && ! [[ "$upper_bound" =~ ^[0-9]+$ ]]; then
+    printf '%s\n' "$0: ERROR: Non-numeric upper bound specified!" >&2
+    return 1
+  fi
+
+  if ! test -f "$target_file" ; then
+    printf '%s\n' "$0: ERROR: Target file '$target_file' does not exist!" >&2
+    return 1
+  fi
+  if ! test -r "$target_file" ; then
+    printf '%s\n' "$0: ERROR: Target file '$target_file' not readable!" >&2
+    return 1
+  fi
+  if ! file_contents="$(stcat "$target_file")" ; then
+    printf '%s\n' "$0: ERROR: Cannot stcat target file '$target_file'!" >&2
+    return 1
+  fi
+  if [ -z "$file_contents" ]; then
+    printf '%s\n' "$0: ERROR: Empty target file '$target_file'!" >&2
+    return 1
+  fi
+  if ! [[ "$file_contents" =~ ^[0-9]+$ ]]; then
+    printf '%s\n' "$0: ERROR: Non-numeric value in target file '$target_file'!" >&2
+    return 1
+  fi
+  if [ -n "$lower_bound" ] && (( file_contents < lower_bound )); then
+    printf '%s\n' "$0: ERROR: Target file's '$target_file' value '$file_contents' is below the lower bound '$lower_bound'!" >&2
+    return 1
+  fi
+  if [ -n "$upper_bound" ] && (( file_contents > upper_bound )); then
+    printf '%s\n' "$0: ERROR: Target file's '$target_file' value '$file_contents' is above the upper bound '$upper_bound'!" >&2
+    return 1
+  fi
+  printf '%s\n' "$0: INFO: Target file '$target_file' file_contents: '$file_contents'" >/dev/null
+  printf '%s\n' "$file_contents"
+}
+
+check_is_not_empty_and_only_one_line() {
+   local varname value number_of_lines
+
+   if [ -z "$1" ]; then
+      printf '%s\n' "$0: ERROR: No variable name provided to check_is_not_empty_and_only_one_line." >&2
+      return 1
+   fi
+
+   varname="$1"
+   value="${!varname}"
+
+   ## Trim leading/trailing spaces while preserving newlines.
+   IFS= read -r trimmed_value <<< "$value"
+
+   ## Check if value is empty or only contains spaces/newlines.
+   if [[ -z "$trimmed_value" || -z "${value//[[:space:]]/}" ]]; then
+      printf '%s\n' "$0: ERROR: Variable '$varname' is empty or contains only whitespace/newlines." >&2
+      return 1
+   fi
+
+   ## Count the number of lines using mapfile.
+   mapfile -t lines <<< "$value"
+   number_of_lines="${#lines[@]}"
+
+   if [ "$number_of_lines" -ne 1 ]; then
+      printf '%s\n' "$0: ERROR: Variable '$varname' contains more than one line. Content:
+'$value'" >&2
+      return 1
+   fi
+
+   return 0
+}
+
+## Converts $1 to a newline-separated, properly escaped list.
+## Strips leading and trailing space, crunches multiple
+## consecutive spaces into single spaces, then converts spaces to newlines
+## and adds spaces and backslashes where necessary.
+trim_collapse_split() {
+   local input_list="$1"
+   local trimmed_list cleaned_list formatted_list
+
+   ## Step 1: Trim leading and trailing spaces.
+   trimmed_list="$(printf '%s\n' "$input_list" | sed 's/^\s\+//g; s/\s\+$//g')"
+
+   ## Step 2: Replace multiple spaces with a single space.
+   cleaned_list="$(printf '%s\n' "$trimmed_list" | sed 's/\s\+/ /g')"
+
+   ## Step 3: Replace spaces with ' \n' (newline prefixed by space).
+   formatted_list="$(printf '%s\n' "$cleaned_list" | sed 's/\s/ \\\n/g')"
+
+   printf '%s\n' "$formatted_list"
+}
+
+## success: whole numbers such as 1 2 3 456 etc. (purely numeric only) (isnum)
+## fail:
+## 5.5
+## 5,500
+## trailing spaces
+## leading spaces
+## empty input
+## space only
+## scientific notation such as 1.23e10
+## negative numbers such as -1
+is_whole_number() {
+   [[ "$1" =~ ^[0-9]+$ ]]
+}
+
+## NOTE: Duplicated in package 'uwt' file 'curl.anondist'.
+random_alpha_numeric() {
+  local n="${1:-43}"
+  LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/random | head --bytes="$n" || true
+  printf '%s\n' ""
+}
+
+run_test() {
+   local test_name varname value expected_exit_code
+   test_name="$1"
+   varname="$2"
+   value="$3"
+   expected_exit_code="$4"
+
+   eval "$varname=\"\$value\""
+   printf '%s\n' "$0: Running test: $test_name"
+
+   exit_code=0
+   check_is_not_empty_and_only_one_line "$varname" 2>/dev/null || { exit_code=$? ; true; };
+
+   if [ "$exit_code" -eq "$expected_exit_code" ]; then
+      printf '%s\n' "$0: Test Passed"
+   else
+      printf '%s\n' "$0: Test Failed (Expected exit code: $expected_exit_code, Got: $exit_code)" >&2
+      return 1
+   fi
+   printf '%s\n' "---------------------------------"
+}
+
+tests() {
+   set -e
+   set -o errtrace
+   set -o pipefail
+   set -o nounset
+
+   local input_string expected_result actual_result
+
+   run_test "Empty variable" "testvar1" "" 1
+   run_test "Only newlines" "testvar2" "
+
+
+   " 1
+   run_test "Whitespace only" "testvar3" "   " 1
+   run_test "Single valid line" "testvar4" "Hello, World!" 0
+   run_test "Multiple lines" "testvar5" "Hello
+   World" 1
+   run_test "Leading and trailing spaces" "testvar6" "  Hello  " 0
+
+   input_string="test1
+test2"
+   expected_result="test1<br />
+test2"
+   actual_result="$(br_add "$input_string")"
+   if ! [ "$expected_result" = "$actual_result" ]; then
+      error "br_add command failed!"
+   fi
+
+   actual_result="$(printf '%s\n' "$input_string" | br_add)"
+   if ! [ "$expected_result" = "$actual_result" ]; then
+      error "br_add pipe failed!"
+   fi
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+   tests
+fi
+
+#trim_collapse_split " aaa  bbb ccc ddd "
+#flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
+#trim_collapse_split "$flavor_meta_packages_to_install"
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/strings.bsh
+
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.sh
 #!/bin/sh
@@ -313,25 +542,8 @@ pkg_installed() {
 ## against aliases and functions.
 ## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
 has(){
-  local _cmd
   _cmd="$(command -v "${1}")" 2>/dev/null || return 1
   [ -x "${_cmd}" ] || return 1
-}
-
-lsmod_deterministic() {
-  lsmod | awk 'NR>1 {print $1}' | sort
-}
-
-kernel_module_loaded_check() {
-  lsmod_deterministic | grep --line-regexp --fixed-strings -- "${1}"
-}
-
-modprobe_remove() {
-  if ! kernel_module_loaded_check "${1}"; then
-    return 0
-  fi
-  modprobe --remove "${1}" || return 1
-  return 0
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
@@ -745,8 +957,8 @@ get_specifics() {
   ## incorrectly. If we default to 'no', new releases might end up with
   ## one-line sources incorrectly. Defaulting to 'no' for now.
   if [ "${ubuntu_derivative_detected}" = "1" ]; then
-    if grep --quiet -- "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
-      distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
+    if grep --quiet -- "^UBUNTU_CODENAME=" /etc/os-release; then
+      distro_codename_ubuntu="$(awk -F'=' -- '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
     else
       distro_codename_ubuntu="noble"
     fi
@@ -3973,19 +4185,6 @@ $df_output"
   log info "Free Disk Space Check Result: Success."
 }
 
-
-## Generate SOCKS credentials for stream isolation
-get_proxy_cred() {
-  local proxy_user proxy_pass
-
-  [ "${transfer_utility}" != "curl" ] && return 0
-  [ -z "${transfer_proxy_suffix:-}" ] && return 0
-  proxy_user="anonym"
-  proxy_pass="${1:?}"
-  printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
-}
-
-
 ## Test if can connect to SOCKS proxy and expect the correct Tor reply.
 check_tor_proxy() {
   local expected_response_header cmd_check_proxy actual_response_header \
@@ -4037,15 +4236,28 @@ Debugging information:
 ## usage: set_transfer_proxy ${proxy}
 set_transfer_proxy() {
   local proxy_port proxy_addr
+  local proxy_user proxy_pass random_socks_user_name
 
   proxy_port="${1##*:}"
   proxy_addr="${1%%:*}"
-  ## Used for transfers that only curl can do.
-  curl_transfer_proxy=( '--proxy' "socks5h://${1}" )
+
+  #[ "${transfer_utility}" != "curl" ] && return 0
+  #[ -z "${transfer_proxy_suffix:-}" ] && return 0
+
+  ## Generate SOCKS credentials for stream isolation
+  ## https://spec.torproject.org/socks-extensions.html
+  random_socks_user_name="$(random_alpha_numeric 43)"
+  proxy_user="<torS0X>0"
+  proxy_pass="dist-installer-cli_${random_socks_user_name}"
+  proxy_cred=( "--proxy-user" "${proxy_user}:${proxy_pass}" )
+
+  ## Used for transfers that only 'curl' can do.
+  curl_transfer_proxy=( '--proxy' "socks5h://${1}" "${proxy_cred[@]}" )
+
   ## Set transfer proxy per utility.
   case "${transfer_utility}" in
     curl)
-      transfer_proxy_suffix=( '--proxy' "socks5h://${1}" )
+      transfer_proxy_suffix=( '--proxy' "socks5h://${1}" "${proxy_cred[@]}" )
       transfer_proxy_prefix=()
       ;;
     rsync*)
@@ -4063,7 +4275,6 @@ torify_conn_maybe() {
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
   if [ ! "${onion}" = "1" ]; then
     if [ -z "${socks_proxy:-}" ]; then
-      ## TODO: lower log level
       log notice "Not torifying connection, because the 'socks_proxy' environment variable is unset nor using '--onion'."
       return 0
     fi
@@ -4087,16 +4298,17 @@ torify_conn_maybe() {
     proxy="${TOR_SOCKS_HOST:-127.0.0.1}:${TOR_SOCKS_PORT}"
     set_transfer_proxy "${proxy}"
   else
-    ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
     log warn "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050') and TBB (Tor Browser Bundle) (port: '9150')."
     proxy="127.0.0.1:9050"
-    set_transfer_proxy ${proxy}
+    set_transfer_proxy "${proxy}"
     if ! check_tor_proxy; then
       proxy="127.0.0.1:9150"
-      set_transfer_proxy ${proxy}
+      set_transfer_proxy "${proxy}"
     else
-      return 0
+      #return 0
+      true
+      ## TODO: ?
     fi
   fi
   check_tor_proxy || die 2 "\
@@ -4132,7 +4344,7 @@ get_version() {
   log info "Version Detection: API host: ${1}"
   cmd_raw_version=(
     'curl' "${curl_transfer_proxy[@]}"
-    "$(get_proxy_cred version)" "${curl_opt_ssl[@]}"
+    "${curl_opt_ssl[@]}"
     '--max-time' "${transfer_max_time_small_file}"
     '--max-filesize' "${transfer_size_small_file}"
     '--url' "${1}"
@@ -4149,6 +4361,7 @@ get_version() {
     log_run notice "${cmd_raw_version[@]}"
     return 0
   fi
+  log info "Version Detection: cmd_raw_version: '${cmd_raw_version[*]}'"
   raw_version="$("${cmd_raw_version[@]}")"
   ## First line only.
   guest_version="$(printf '%s' "$raw_version" | head -n 1)"
@@ -4169,14 +4382,11 @@ get_version() {
 ## Helper for download_files() to make it less repetitive.
 ## usage: get_file small|large $url
 get_file() {
-  local size url download_opt_prefix download_opt download_opt_full round \
+  local size url download_opt_prefix download_opt download_opt_full \
     download_opt_full_len download_opt_full_idx
 
   size="${1}"
   url="${2}"
-  ## Round is only used to get a different password every time.
-  [ -z "${round:-}" ] && round=10
-  round=$((round+1))
 
   download_opt=()
 
@@ -4194,7 +4404,7 @@ get_file() {
       log bug "Missing size option for get_file()."
       ;;
   esac
-  download_opt_full=( "${download_opt_prefix[@]}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_verbosity_opt[@]}" "${transfer_proxy_suffix[@]}" "$(get_proxy_cred ${round})" "${transfer_connect_timeout_opt[@]}" "${transfer_io_timeout_opt[@]}" "${download_opt[@]}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
+  download_opt_full=( "${download_opt_prefix[@]}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_verbosity_opt[@]}" "${transfer_proxy_suffix[@]}" "${transfer_connect_timeout_opt[@]}" "${transfer_io_timeout_opt[@]}" "${download_opt[@]}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
   download_opt_full_len="${#download_opt_full[@]}"
   for (( download_opt_full_idx=0; download_opt_full_idx < download_opt_full_len; download_opt_full_idx++ )); do
     if [ -z "${download_opt_full[download_opt_full_idx]}" ]; then
