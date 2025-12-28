@@ -3232,18 +3232,18 @@ torify_conn_maybe() {
     set_transfer_proxy "${proxy}"
   else
     log notice "Auto detection of SOCKS proxy for torified connections."
-    log notice "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050')..."
+    log info "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050')..."
     proxy="127.0.0.1:9050"
     set_transfer_proxy "${proxy}"
     if check_tor_proxy; then
-      log notice "system Tor ('little-t-tor') functional."
+      log info "system Tor ('little-t-tor') functional."
       return 0
     fi
-    log notice "Trying Tor defaults: TBB (Tor Browser Bundle) (port: '9150')..."
+    log info "Trying Tor defaults: TBB (Tor Browser Bundle) (port: '9150')..."
     proxy="127.0.0.1:9150"
     set_transfer_proxy "${proxy}"
     if check_tor_proxy; then
-      log notice "TBB (Tor Browser Bundle) functional."
+      log info "TBB (Tor Browser Bundle) functional."
       return 0
     fi
   fi
