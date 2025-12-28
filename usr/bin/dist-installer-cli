@@ -3128,10 +3128,10 @@ set_proxy_cred() {
   [ "${transfer_utility}" != "curl" ] && return 0
   [ -z "${transfer_proxy_suffix:-}" ] && return 0
 
+  ## https://spec.torproject.org/socks-extensions.html
   random_socks_user_name="$(random_alpha_numeric 43)"
-  ## TODO: https://spec.torproject.org/proposals/351-socks-auth-extensions.html
-  proxy_user="dist-installer-cli_${random_socks_user_name}"
-  proxy_pass="password"
+  proxy_user="<torS0X>0"
+  proxy_pass="dist-installer-cli_${random_socks_user_name}"
 
   ## global proxy_cred
   proxy_cred=( "--proxy-user" "${proxy_user}:${proxy_pass}" )
