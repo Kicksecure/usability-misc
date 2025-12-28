@@ -1653,9 +1653,9 @@ options kvm enable_virt_at_load=0" \
   fi
 
   if [ "${kvm_variant}" != 'unknown' ]; then
-    root_cmd modprobe -r "kvm_${kvm_variant}" || kvm_variant_unload_failed='true'
+    root_cmd modprobe --remove "kvm_${kvm_variant}" || kvm_variant_unload_failed='true'
   fi
-  root_cmd modprobe -r 'kvm' || kvm_core_unload_failed='true'
+  root_cmd modprobe --remove 'kvm' || kvm_core_unload_failed='true'
 
   if [ "${kvm_variant_unload_failed}" = 'true' ]; then
     log warn "Failed to unload KVM kernel modules. A reboot will possibly be required before VirtualBox VMs will function properly."
