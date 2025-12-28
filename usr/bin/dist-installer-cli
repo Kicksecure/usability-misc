@@ -3208,7 +3208,7 @@ torify_conn_maybe() {
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
   if [ ! "${onion}" = "1" ]; then
     if [ -z "${socks_proxy:-}" ]; then
-      log notice "Not torifying connection, because the 'socks_proxy' environment variable is unset nor using '--onion'."
+      log notice "Not torifying connection: Due to '--onion' option not being requested (and 'socks_proxy' is unset)."
       return 0
     fi
   fi
@@ -3231,8 +3231,8 @@ torify_conn_maybe() {
     proxy="${TOR_SOCKS_HOST:-127.0.0.1}:${TOR_SOCKS_PORT}"
     set_transfer_proxy "${proxy}"
   else
-    log warn "Missing SOCKS proxy for torified connections."
-    log warn "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050')..."
+    log notice "Missing SOCKS proxy for torified connections."
+    log notice "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050')..."
     proxy="127.0.0.1:9050"
     set_transfer_proxy "${proxy}"
     if check_tor_proxy; then
