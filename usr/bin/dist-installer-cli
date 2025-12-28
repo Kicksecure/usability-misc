@@ -1511,7 +1511,8 @@ get_pattern_sources_debian() {
 
   file="${1}"
   pattern="${2}"
-  grep -v "^\s*#" -- "${file}" | grep -E -- "${pattern}" >/dev/null || return 1
+  #grep -v "^\s*#" -- "${file}" | grep -E -- "${pattern}" >/dev/null || return 1
+  grep --invert-match --extended-regexp '^[[:space:]]*#' -- "${file}" | grep --extended-regexp -- "${pattern}" >/dev/null || return 1
 }
 
 ## Detect if repository is configured in the deb822 format sources.
