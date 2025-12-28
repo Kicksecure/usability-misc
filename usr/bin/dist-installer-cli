@@ -230,7 +230,7 @@ get_specifics() {
   ## incorrectly. If we default to 'no', new releases might end up with
   ## one-line sources incorrectly. Defaulting to 'no' for now.
   if [ "${ubuntu_derivative_detected}" = "1" ]; then
-    if grep --quiet -- "^UBUNTU_CODENAME=\S\+=" -- /etc/os-release; then
+    if grep --quiet -- "^UBUNTU_CODENAME=" /etc/os-release; then
       distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
     else
       distro_codename_ubuntu="noble"
@@ -3124,6 +3124,8 @@ get_proxy_cred() {
   proxy_user="anonym"
   proxy_pass="${1:?}"
   printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
+  ## TODO: use
+  #proxy_cred=( --proxy-user "${proxy_user}:${proxy_pass}" )
 }
 
 
