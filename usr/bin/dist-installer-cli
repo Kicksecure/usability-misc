@@ -1661,7 +1661,7 @@ options kvm enable_virt_at_load=0" \
   fi
 
   ## Hot unloading KVM kernel module if possible. This is necessary for VM
-  ## autostart to work later.
+  ## autostart to be functional later.
   log notice "Kernel modules configuration: attempting hot unload of KVM kernel modules (required for VirtualBox auto-start)."
 
   kvm_kernel_modules_unload_failed='true'
@@ -1680,7 +1680,7 @@ options kvm enable_virt_at_load=0" \
   fi
 
   if [ "${kvm_kernel_modules_unload_failed}" = 'true' ]; then
-    log warn "Kernel modules configuration: failed to unload KVM kernel modules; reboot may be required for VirtualBox to work."
+    log warn "Kernel modules configuration: failed to unload KVM kernel modules; reboot may be required for VirtualBox to function."
     can_boot_virtualbox_guest_vms='false'
     return 0
   fi
@@ -1696,12 +1696,12 @@ options kvm enable_virt_at_load=0" \
   fi
 
   if [ "${kvm_kernel_module_reload_success}" = 'false' ]; then
-    log warn "Kernel modules configuration: failed to reload KVM kernel modules; reboot may be required for VirtualBox and KVM to work."
+    log warn "Kernel modules configuration: failed to reload KVM kernel modules; reboot may be required for VirtualBox and KVM to function."
     can_boot_virtualbox_guest_vms='false'
     return 0
   fi
 
-  log notice "Kernel modules configuration: KVM kernel modules reloaded; VirtualBox should work."
+  log notice "Kernel modules configuration: KVM kernel modules reloaded; VirtualBox should function."
 }
 
 
