@@ -4289,6 +4289,9 @@ parse_opt() {
       h|help)
         usage 0
         ;;
+      "--")
+        break
+        ;;
       "")
         break
         ;;
