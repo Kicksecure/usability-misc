@@ -2552,7 +2552,7 @@ options kvm enable_virt_at_load=0" \
     root_cmd_loglevel=notice root_cmd modprobe -- 'kvm' "${kvm_variant}" || kvm_kernel_module_reload_success='false'
   fi
 
-  if [ "${kvm_kernel_module_reload_success}" = 'true' ]; then
+  if [ "${kvm_kernel_module_reload_success}" = 'false' ]; then
     log warn "Failed to reload KVM kernel modules. A reboot will possibly be required before either VirtualBox or KVM VMs will function properly."
     can_boot_virtualbox_guest_vms='false'
     return 0
