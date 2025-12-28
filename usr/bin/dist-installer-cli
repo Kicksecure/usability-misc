@@ -60,7 +60,7 @@ declare version me start_time dialog_title license adrelanos_signify \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
   dist_installer_cli_was_sourced can_boot_virtualbox_guest_vms APTGETOPT \
-  APTGETOPT_SERIALIZED proxy_cred
+  APTGETOPT_SERIALIZED
 
 if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
@@ -3117,27 +3117,6 @@ $df_output"
   log info "Free Disk Space Check Result: Success."
 }
 
-
-## Generate SOCKS credentials for stream isolation
-set_proxy_cred() {
-  local proxy_user proxy_pass random_socks_user_name
-
-  ## global proxy_cred
-  proxy_cred=()
-
-  [ "${transfer_utility}" != "curl" ] && return 0
-  [ -z "${transfer_proxy_suffix:-}" ] && return 0
-
-  ## https://spec.torproject.org/socks-extensions.html
-  random_socks_user_name="$(random_alpha_numeric 43)"
-  proxy_user="<torS0X>0"
-  proxy_pass="dist-installer-cli_${random_socks_user_name}"
-
-  ## global proxy_cred
-  proxy_cred=( "--proxy-user" "${proxy_user}:${proxy_pass}" )
-}
-
-
 ## Test if can connect to SOCKS proxy and expect the correct Tor reply.
 check_tor_proxy() {
   local expected_response_header cmd_check_proxy actual_response_header \
@@ -3189,15 +3168,28 @@ Debugging information:
 ## usage: set_transfer_proxy ${proxy}
 set_transfer_proxy() {
   local proxy_port proxy_addr
+  local proxy_user proxy_pass random_socks_user_name
 
   proxy_port="${1##*:}"
   proxy_addr="${1%%:*}"
-  ## Used for transfers that only curl can do.
-  curl_transfer_proxy=( '--proxy' "socks5h://${1}" )
+
+  #[ "${transfer_utility}" != "curl" ] && return 0
+  #[ -z "${transfer_proxy_suffix:-}" ] && return 0
+
+  ## Generate SOCKS credentials for stream isolation
+  ## https://spec.torproject.org/socks-extensions.html
+  random_socks_user_name="$(random_alpha_numeric 43)"
+  proxy_user="<torS0X>0"
+  proxy_pass="dist-installer-cli_${random_socks_user_name}"
+  proxy_cred=( "--proxy-user" "${proxy_user}:${proxy_pass}" )
+
+  ## Used for transfers that only 'curl' can do.
+  curl_transfer_proxy=( '--proxy' "socks5h://${1}" "${proxy_cred[@]}" )
+
   ## Set transfer proxy per utility.
   case "${transfer_utility}" in
     curl)
-      transfer_proxy_suffix=( '--proxy' "socks5h://${1}" )
+      transfer_proxy_suffix=( '--proxy' "socks5h://${1}" "${proxy_cred[@]}" )
       transfer_proxy_prefix=()
       ;;
     rsync*)
@@ -3215,7 +3207,6 @@ torify_conn_maybe() {
   ## onion=* -- Only torify clearnet if SOCKS proxy is specified.
   if [ ! "${onion}" = "1" ]; then
     if [ -z "${socks_proxy:-}" ]; then
-      ## TODO: lower log level
       log notice "Not torifying connection, because the 'socks_proxy' environment variable is unset nor using '--onion'."
       return 0
     fi
@@ -3247,7 +3238,9 @@ torify_conn_maybe() {
       proxy="127.0.0.1:9150"
       set_transfer_proxy "${proxy}"
     else
-      return 0
+      #return 0
+      true
+      ## TODO: ?
     fi
   fi
   check_tor_proxy || die 2 "\
@@ -3281,10 +3274,9 @@ get_version() {
   fi
   log info "Version Detection: Acquiring guest version using API..."
   log info "Version Detection: API host: ${1}"
-  set_proxy_cred
   cmd_raw_version=(
     'curl' "${curl_transfer_proxy[@]}"
-    "${proxy_cred[@]}" "${curl_opt_ssl[@]}"
+    "${curl_opt_ssl[@]}"
     '--max-time' "${transfer_max_time_small_file}"
     '--max-filesize' "${transfer_size_small_file}"
     '--url' "${1}"
@@ -3301,6 +3293,7 @@ get_version() {
     log_run notice "${cmd_raw_version[@]}"
     return 0
   fi
+  log info "Version Detection: cmd_raw_version: '${cmd_raw_version[*]}'"
   raw_version="$("${cmd_raw_version[@]}")"
   ## First line only.
   guest_version="$(printf '%s' "$raw_version" | head -n 1)"
@@ -3328,7 +3321,6 @@ get_file() {
   url="${2}"
 
   download_opt=()
-  set_proxy_cred
 
   case "${size}" in
     small)
@@ -3344,7 +3336,7 @@ get_file() {
       log bug "Missing size option for get_file()."
       ;;
   esac
-  download_opt_full=( "${download_opt_prefix[@]}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_verbosity_opt[@]}" "${transfer_proxy_suffix[@]}" "${proxy_cred[@]}" "${transfer_connect_timeout_opt[@]}" "${transfer_io_timeout_opt[@]}" "${download_opt[@]}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
+  download_opt_full=( "${download_opt_prefix[@]}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_verbosity_opt[@]}" "${transfer_proxy_suffix[@]}" "${transfer_connect_timeout_opt[@]}" "${transfer_io_timeout_opt[@]}" "${download_opt[@]}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
   download_opt_full_len="${#download_opt_full[@]}"
   for (( download_opt_full_idx=0; download_opt_full_idx < download_opt_full_len; download_opt_full_idx++ )); do
     if [ -z "${download_opt_full[download_opt_full_idx]}" ]; then
