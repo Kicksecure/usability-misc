@@ -421,7 +421,7 @@ random_alpha_numeric() {
 }
 
 run_test() {
-   local test_name varname value expected_exit_code
+   local test_name varname value expected_exit_code exit_code
    test_name="$1"
    varname="$2"
    value="$3"
@@ -496,6 +496,7 @@ fi
 
 ## NOTE: code duplication: Function pkg_installed is duplicated elsewhere in derivative-maker source code.
 pkg_installed() {
+   ## 'local' does not break 'sh'.
    local package_name dpkg_query_output
    local requested_action status error_state
 
@@ -542,8 +543,25 @@ pkg_installed() {
 ## against aliases and functions.
 ## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
 has(){
+  local _cmd
   _cmd="$(command -v "${1}")" 2>/dev/null || return 1
   [ -x "${_cmd}" ] || return 1
+}
+
+lsmod_deterministic() {
+  lsmod | awk 'NR>1 {print $1}' | sort
+}
+
+kernel_module_loaded_check() {
+  lsmod_deterministic | grep --line-regexp --fixed-strings -- "${1}" >/dev/null
+}
+
+modprobe_remove() {
+  if ! kernel_module_loaded_check "${1}"; then
+    return 0
+  fi
+  modprobe --remove "${1}" || return 1
+  return 0
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
@@ -586,7 +604,7 @@ ${underline}Non-Root Check:${nounderline} Running as root.
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
-  local cmdarr
+  local cmd cmdarr
 
   test -z "${1:-}" && die 1 "${underline}root_cmd function:${nounderline} Failed to pass arguments to function 'root_cmd'."
   if test -z "${sucmd:-}"; then
@@ -597,7 +615,7 @@ root_cmd(){
     su)
       ## Thanks to Congelli501 for su to not mess with quotes.
       ## https://stackoverflow.com/a/32966744/2605155
-      cmd="$(which -- "${1}")"
+      cmd="$(command -v -- "${1}")"
       shift
       log_run "$root_cmd_loglevel" su root -s "${cmd}" -- "${@}"
       ;;
@@ -2579,7 +2597,8 @@ get_pattern_sources_debian() {
 
   file="${1}"
   pattern="${2}"
-  grep -v "^\s*#" -- "${file}" | grep -E -- "${pattern}" >/dev/null || return 1
+  #grep -v "^\s*#" -- "${file}" | grep -E -- "${pattern}" >/dev/null || return 1
+  grep --invert-match --extended-regexp '^[[:space:]]*#' -- "${file}" | grep --extended-regexp -- "${pattern}" >/dev/null || return 1
 }
 
 ## Detect if repository is configured in the deb822 format sources.
@@ -4236,7 +4255,7 @@ Debugging information:
 ## usage: set_transfer_proxy ${proxy}
 set_transfer_proxy() {
   local proxy_port proxy_addr
-  local proxy_user proxy_pass random_socks_user_name
+  local proxy_user proxy_pass random_socks_user_name proxy_cred
 
   proxy_port="${1##*:}"
   proxy_addr="${1%%:*}"
@@ -5356,6 +5375,9 @@ parse_opt() {
         ;;
       h|help)
         usage 0
+        ;;
+      "--")
+        break
         ;;
       "")
         break
