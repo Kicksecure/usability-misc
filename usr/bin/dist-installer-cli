@@ -1627,6 +1627,8 @@ disable_kvm_virt_at_load() {
 ## Prevent VirtualBox and KVM from conflicting. This does not break KVM.
 options kvm enable_virt_at_load=0" \
     | root_cmd tee -- /etc/modprobe.d/disable-kvm-virt-at-load.conf >/dev/null
+  log notice "KVM: File '/etc/modprobe.d/disable-kvm-virt-at-load.conf' contents:"
+  cat -- /etc/modprobe.d/disable-kvm-virt-at-load.conf || true
   log notice "KVM: enable_virt_at_load disabled (modprobe.d configured)."
 
   kvm_variant='unknown'
@@ -4519,8 +4521,8 @@ run_installer() {
   test_run_as_target_user
 
 ## TODO: remove
-#disable_kvm_virt_at_load
-#exit
+disable_kvm_virt_at_load
+exit
 
   get_os
   get_distro
