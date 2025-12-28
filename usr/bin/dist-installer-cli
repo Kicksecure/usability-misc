@@ -1622,47 +1622,47 @@ disable_kvm_virt_at_load() {
   ##
   ## Using same method documented at
   ## https://www.kicksecure.com/wiki/Template:VirtualBox_Host_Software_Installation#Ubuntu
-  log notice "KVM: disabling enable_virt_at_load to avoid conflicts with VirtualBox (KVM remains usable)."
+  log notice "Kernel modules configuration: disabling KVM enable_virt_at_load to avoid conflicts with VirtualBox (KVM remains usable)."
   printf '%s\n' "\
 ## Prevent VirtualBox and KVM from conflicting. This does not break KVM.
 options kvm enable_virt_at_load=0" \
     | root_cmd tee -- /etc/modprobe.d/disable-kvm-virt-at-load.conf >/dev/null
-  log notice "KVM: File '/etc/modprobe.d/disable-kvm-virt-at-load.conf' contents:"
+  log notice "Kernel modules configuration: File '/etc/modprobe.d/disable-kvm-virt-at-load.conf' contents:"
   cat -- /etc/modprobe.d/disable-kvm-virt-at-load.conf || true
-  log notice "KVM: enable_virt_at_load disabled (modprobe.d configured)."
+  log notice "Kernel modules configuration: KVM enable_virt_at_load disabled (modprobe.d configured)."
 
   kvm_variant='unknown'
   kvm_kernel_module_found=''
   if kernel_module_loaded_check "kvm_intel"; then
     kvm_kernel_module_found='true'
     kvm_variant='kvm_intel'
-    log info "KVM: module variant active: '${kvm_variant}'."
+    log info "Kernel modules configuration: KVM module variant active: '${kvm_variant}'."
   fi
   if kernel_module_loaded_check "kvm_amd"; then
     kvm_kernel_module_found='true'
     kvm_variant='kvm_amd'
-    log info "KVM: module variant active: '${kvm_variant}'."
+    log info "Kernel modules configuration: KVM module variant active: '${kvm_variant}'."
   fi
   if kernel_module_loaded_check "kvm"; then
     kvm_kernel_module_found='true'
-    log info "KVM: main module active: 'kvm'."
+    log info "Kernel modules configuration: KVM main module active: 'kvm'."
     if [ "$kvm_variant" = "unknown" ]; then
       ## KVM hot unload will almost certainly fail if we can't detect the KVM
       ## variant, as the core KVM module requires a helper module for the
       ## specific CPU architecture. Warn, but try to unload anyway.
-      log warn "KVM: main module loaded but variant not detected; hot unload may fail."
+      log warn "Kernel modules configuration: KVM main module loaded but variant not detected; hot unload may fail."
       kvm_variant='none'
     fi
   fi
 
   if ! [ "$kvm_kernel_module_found" = 'true' ]; then
-    log notice "KVM: no kernel modules loaded (OK)."
+    log notice "Kernel modules configuration: no KVM kernel modules loaded (OK)."
     return 0
   fi
 
   ## Hot unloading KVM kernel module if possible. This is necessary for VM
   ## autostart to work later.
-  log notice "KVM: attempting hot unload of kernel modules (required for VirtualBox auto-start)."
+  log notice "Kernel modules configuration: attempting hot unload of KVM kernel modules (required for VirtualBox auto-start)."
 
   kvm_kernel_modules_unload_failed='true'
   if [ "${kvm_variant}" = 'unknown' ]; then
@@ -1680,7 +1680,7 @@ options kvm enable_virt_at_load=0" \
   fi
 
   if [ "${kvm_kernel_modules_unload_failed}" = 'true' ]; then
-    log warn "KVM: failed to unload kernel modules; reboot may be required for VirtualBox to work."
+    log warn "Kernel modules configuration: failed to unload KVM kernel modules; reboot may be required for VirtualBox to work."
     can_boot_virtualbox_guest_vms='false'
     return 0
   fi
@@ -1696,12 +1696,12 @@ options kvm enable_virt_at_load=0" \
   fi
 
   if [ "${kvm_kernel_module_reload_success}" = 'false' ]; then
-    log warn "KVM: failed to reload kernel modules; reboot may be required for VirtualBox and KVM to work."
+    log warn "Kernel modules configuration: failed to reload KVM kernel modules; reboot may be required for VirtualBox and KVM to work."
     can_boot_virtualbox_guest_vms='false'
     return 0
   fi
 
-  log notice "KVM: kernel modules reloaded; VirtualBox should work."
+  log notice "Kernel modules configuration: KVM kernel modules reloaded; VirtualBox should work."
 }
 
 
