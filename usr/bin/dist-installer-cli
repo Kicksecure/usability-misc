@@ -231,7 +231,7 @@ get_specifics() {
   ## one-line sources incorrectly. Defaulting to 'no' for now.
   if [ "${ubuntu_derivative_detected}" = "1" ]; then
     if grep --quiet -- "^UBUNTU_CODENAME=" /etc/os-release; then
-      distro_codename_ubuntu="$(awk -F'=' '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
+      distro_codename_ubuntu="$(awk -F'=' -- '/^UBUNTU_CODENAME=/{print $2}' /etc/os-release)"
     else
       distro_codename_ubuntu="noble"
     fi
