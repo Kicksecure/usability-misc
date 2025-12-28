@@ -3314,7 +3314,7 @@ get_version() {
 ## Helper for download_files() to make it less repetitive.
 ## usage: get_file small|large $url
 get_file() {
-  local size url download_opt_prefix download_opt download_opt_full round \
+  local size url download_opt_prefix download_opt download_opt_full \
     download_opt_full_len download_opt_full_idx
 
   size="${1}"
