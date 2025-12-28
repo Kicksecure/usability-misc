@@ -1,3 +1,191 @@
+commit b8d7bcd2a28a7809c6f411642df95585ae5ab81b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:49:17 2025 -0500
+
+    build
+
+commit ba424f8226e32e35275ab131a0ef439dda2ec6f8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:48:51 2025 -0500
+
+    output
+
+commit 94a5f8f3a4c6d34e203b589d4511ba5ad526155a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:45:25 2025 -0500
+
+    output
+
+commit 30586cc70ecfef3ada7b9aba6bc46397e416f907
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:43:06 2025 -0500
+
+    fix
+
+commit 906bd493b43604b9156bd7bbc99eacb85917e5da
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:42:37 2025 -0500
+
+    output
+
+commit 5a61ae2d92067491070b9e905bd87cff1e97cdae
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:39:34 2025 -0500
+
+    fix
+
+commit b3ac3a6cbb4f8f6d98187822b79f4a21e3822328
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:31:53 2025 -0500
+
+    build
+
+commit fdd70f7f18d8b651eff0f5f086f7d4c5ac083786
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:31:02 2025 -0500
+
+    fix
+
+commit 41555d182c54c86b346fe2bcd702e44a3cdcddae
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:28:47 2025 -0500
+
+    fix
+
+commit 52875e3f7ecb28915abf048ae6d3e5db2f41c0f7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:21:08 2025 -0500
+
+    end-of-options
+
+commit 25a50ba48e89d445aa07e05ac4c01d4a8d632870
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:06:53 2025 -0500
+
+    build
+
+commit 1e871d7ddf623af5d95a06a399303f744c8b684d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:06:51 2025 -0500
+
+    fix
+
+commit dbc2e7e70313d9da3712506557fb32fd8ee1469d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 09:05:50 2025 -0500
+
+    dist-installer-cli: improve stream isolation
+
+commit 9e8ccf12d33b879b500822c34f85332e8f350b46
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 08:27:53 2025 -0500
+
+    `dist-installer-cli`: implement `torS0X` stream isolation
+    
+    https://spec.torproject.org/socks-extensions.html
+
+commit 83185f906528ffed80246337c5ac5af184017327
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 08:13:21 2025 -0500
+
+    `dist-installer-cli`: improved stream isolation
+
+commit 851129dec5e649a3d4782dda471e2ecf2e4648d8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 07:53:05 2025 -0500
+
+    end-of-options
+
+commit 50474707d06cd7529441f2b265ef02246190e6af
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 07:52:05 2025 -0500
+
+    fix
+
+commit b2205a166a1267da262f1ced99a0302c2c0a1c23
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:50:19 2025 -0500
+
+    fix
+
+commit 63ac9c532ee16a577cc6a5f5f92288f0080fd781
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:30:53 2025 -0500
+
+    build
+
+commit 22b6fe04c0d7403eee4081ccf0d9278f6f9e9771
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:30:36 2025 -0500
+
+    fix
+
+commit b338f09e15c851ffbdb5def39e4670fd73d57867
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:27:52 2025 -0500
+
+    output
+
+commit c206b4fd1294727150942d8f7b803723450947c9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:26:39 2025 -0500
+
+    output
+
+commit b6a9c171679ee27ddb366b863961a7fddbf445e6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:15:17 2025 -0500
+
+    improve
+
+commit 75813b0bdfcf5fe83174536f80c52e1d46be285f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:12:05 2025 -0500
+
+    output
+
+commit d8e55f11a64bb27a2c77dde395bcc70d761c5cc5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:05:53 2025 -0500
+
+    build
+
+commit f62e31a78d2d1788f186bd8e1f8238745d7f6a94
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:03:09 2025 -0500
+
+    fix
+
+commit af2a325b6fca93689ebe44c9d2cbacd68b88d280
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:01:19 2025 -0500
+
+    build
+
+commit 7643410703af9f621bd05cd7f73c02b2c3c8fd3d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 05:00:20 2025 -0500
+
+    dist-installer-cli: improve kernel module handling
+
+commit fb1970126d62ec89f4c8246f2758ebfca2dd20a4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 02:32:27 2025 -0500
+
+    use long option names
+
+commit 2e490cf5ef8a1d49fe2e655b5f9096ede08b4c7b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Dec 28 02:29:48 2025 -0500
+
+    end-of-options
+
+commit 07fc5d2f00f2b1ff5c9f35d7e49af01abc551294
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Dec 27 12:31:46 2025 +0000
+
+    bumped changelog version
+
 commit 756f7dba43a11a6ffc4f0c08dbfab27c4a9e3056
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Dec 27 07:26:35 2025 -0500
