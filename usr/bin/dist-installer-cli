@@ -3239,9 +3239,9 @@ torify_conn_maybe() {
       log notice "system Tor ('little-t-tor') functional."
       return 0
     fi
+    log notice "Trying Tor defaults: TBB (Tor Browser Bundle) (port: '9150')..."
     proxy="127.0.0.1:9150"
     set_transfer_proxy "${proxy}"
-    log notice "Trying Tor defaults: TBB (Tor Browser Bundle) (port: '9150')..."
     if check_tor_proxy; then
       log notice "TBB (Tor Browser Bundle) functional."
       return 0
