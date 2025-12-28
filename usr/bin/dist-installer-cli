@@ -1605,14 +1605,8 @@ check_installed_debian() {
 
 
 disable_kvm_virt_at_load() {
-  local module_list_str kvm_variant kvm_variant_unload_failed \
-    kvm_core_unload_failed kvm_reload_failed
-
-  module_list_str=''
-  kvm_variant=''
-  kvm_variant_unload_failed='false'
-  kvm_core_unload_failed='false'
-  kvm_reload_failed='false'
+  local kvm_variant kvm_kernel_modules_unload_failed \
+  kvm_kernel_module_reload_success kvm_kernel_module_found
 
   ## KVM's 'enable_virt_at_load' feature renders VirtualBox unusable on systems
   ## using Linux 6.12 or higher.
@@ -1635,46 +1629,71 @@ options kvm enable_virt_at_load=0" \
     | root_cmd tee -- /etc/modprobe.d/disable-kvm-virt-at-load.conf >/dev/null
   log notice "KVM virt-at-load feature disabled."
 
-  ## Hot-reloading KVM kernel module if possible. This is necessary for VM
+  kvm_variant='unknown'
+  kvm_kernel_module_found=''
+  if kernel_module_loaded_check "kvm_intel"; then
+    kvm_kernel_module_found='true'
+    kvm_variant='kvm_intel'
+    log info "KVM kernel module model variant '${kvm_variant}' is active."
+  fi
+  if kernel_module_loaded_check "kvm_amd"; then
+    kvm_kernel_module_found='true'
+    kvm_variant='kvm_amd'
+    log info "KVM kernel module model variant '${kvm_variant}' is active."
+  fi
+  if kernel_module_loaded_check "kvm"; then
+    kvm_kernel_module_found='true'
+    log info "KVM main kernel module model 'main' is active."
+    if [ "$kvm_variant" = "unknown" ]; then
+      ## KVM hot unload will almost certainly fail if we can't detect the KVM
+      ## variant, as the core KVM module requires a helper module for the
+      ## specific CPU architecture. Warn, but try to unload anyway.
+      log warn "Found 'kvm' main module, but could not detect KVM module variant. KVM hot unload will probably fail."
+      kvm_variant='none'
+    fi
+  fi
+
+  if ! [ "$kvm_kernel_module_found" = 'true' ]; then
+    log notice "KVM kernel module loaded: 'no' - good."
+    return 0
+  fi
+
+  ## Hot unloading KVM kernel module if possible. This is necessary for VM
   ## autostart to work later.
-  log notice "Attempting hot reload of KVM kernel modules to allow VirtualBox VM auto-start later..."
-  module_list_str="$(lsmod | cut -d' ' -f1)"
+  log notice "Attempting hot unload of KVM kernel modules to allow VirtualBox VM auto-start later..."
 
-  if grep '^kvm_intel$' <<< "${module_list_str}" ; then
-    kvm_variant='intel'
-  elif grep '^kvm_amd$' <<< "${module_list_str}" ; then
-    kvm_variant='amd'
-  elif grep '^kvm$' <<< "${module_list_str}" ; then
-    ## KVM hot-reload will almost certainly fail if we can't detect the KVM
-    ## variant, as the core KVM module requires a helper module for the
-    ## specific CPU architecture. Warn, but try to reload anyway.
-    log warn "Could not detect KVM variant. KVM hot reload will probably fail."
-    kvm_variant='unknown'
-  fi
-
-  if [ "${kvm_variant}" != 'unknown' ]; then
-    root_cmd modprobe --remove "kvm_${kvm_variant}" || kvm_variant_unload_failed='true'
-  fi
-  root_cmd modprobe --remove 'kvm' || kvm_core_unload_failed='true'
-
-  if [ "${kvm_variant_unload_failed}" = 'true' ]; then
-    log warn "Failed to unload KVM kernel modules. A reboot will possibly be required before VirtualBox VMs will function properly."
-    can_boot_virtualbox_guest_vms='false'
-  elif [ "${kvm_core_unload_failed}" = 'true' ]; then
-    ## Try to put the variant kernel module back. It is not fatal if this
-    ## fails.
-    root_cmd modprobe "kvm_${kvm_variant}" || true
-    log warn "Failed to unload KVM kernel modules. A reboot will possibly be required before VirtualBox VMs will function properly."
-    can_boot_virtualbox_guest_vms='false'
-  fi
-
-  if [ "${kvm_variant}" != 'unknown' ]; then
-    root_cmd modprobe "kvm_${kvm_variant}" || kvm_reload_failed='true'
+  kvm_kernel_modules_unload_failed='true'
+  if [ "${kvm_variant}" = 'unknown' ]; then
+    if root_cmd_loglevel=notice root_cmd modprobe --remove -- 'kvm'; then
+      kvm_kernel_modules_unload_failed='false'
+    fi
+  elif [ "${kvm_variant}" = 'none' ]; then
+    if root_cmd_loglevel=notice root_cmd modprobe --remove -- 'kvm'; then
+      kvm_kernel_modules_unload_failed='false'
+    fi
   else
-    root_cmd modprobe 'kvm' || kvm_reload_failed='true'
+    if root_cmd_loglevel=notice root_cmd modprobe --remove -- "${kvm_variant}" "kvm"; then
+      kvm_kernel_modules_unload_failed='false'
+    fi
   fi
 
-  if [ "${kvm_reload_failed}" = 'true' ]; then
+  if [ "${kvm_kernel_modules_unload_failed}" = 'true' ]; then
+    log warn "Failed to unload KVM kernel modules. A reboot will possibly be required before VirtualBox VMs will function properly."
+    can_boot_virtualbox_guest_vms='false'
+    return 0
+  fi
+
+  kvm_kernel_module_reload_success='true'
+  if [ "${kvm_variant}" = 'unknown' ]; then
+    ## Try to put the variant kernel module back. It is not fatal if this fails.
+    root_cmd_loglevel=notice root_cmd modprobe -- 'kvm' || kvm_kernel_module_reload_success='false'
+  elif [ "${kvm_variant}" = 'none' ]; then
+    root_cmd_loglevel=notice root_cmd modprobe -- 'kvm' || kvm_kernel_module_reload_success='false'
+  else
+    root_cmd_loglevel=notice root_cmd modprobe -- 'kvm' "${kvm_variant}" || kvm_kernel_module_reload_success='false'
+  fi
+
+  if [ "${kvm_kernel_module_reload_success}" = 'true' ]; then
     log warn "Failed to reload KVM kernel modules. A reboot will possibly be required before either VirtualBox or KVM VMs will function properly."
     can_boot_virtualbox_guest_vms='false'
     return 0
@@ -3502,13 +3521,13 @@ get_virtualization() {
   else
     user_warned_potential_startup_issue=true
     log warn "Device /dev/kvm does not exist"
-    log warn "hint: '${sucmd} modprobe kvm_$brand'"
+    log warn "hint: '${sucmd} modprobe kvm_${brand}'"
   fi
 
   ## Prepare MSR access
   msr="/dev/cpu/0/msr"
   if root_cmd [ ! -r "${msr}" ]; then
-    root_cmd modprobe msr ||
+    root_cmd_loglevel=notice root_cmd modprobe msr ||
       die 1 "${underline}modprobe:${nounderline} Could not add module 'msr' to the kernel."
   fi
   if root_cmd [ ! -r "${msr}" ]; then
@@ -4498,6 +4517,10 @@ run_installer() {
   log_term_and_file
   welcome
   test_run_as_target_user
+
+## TODO: remove
+#disable_kvm_virt_at_load
+#exit
 
   get_os
   get_distro
