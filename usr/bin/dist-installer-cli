@@ -1632,7 +1632,7 @@ disable_kvm_virt_at_load() {
   printf '%s\n' "\
 ## Prevent VirtualBox and KVM from conflicting. This does not break KVM.
 options kvm enable_virt_at_load=0" \
-    | root_cmd tee /etc/modprobe.d/disable-kvm-virt-at-load.conf >/dev/null
+    | root_cmd tee -- /etc/modprobe.d/disable-kvm-virt-at-load.conf >/dev/null
   log notice "KVM virt-at-load feature disabled."
 
   ## Hot-reloading KVM kernel module if possible. This is necessary for VM
