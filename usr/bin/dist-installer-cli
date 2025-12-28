@@ -3232,10 +3232,10 @@ torify_conn_maybe() {
     log warn "Missing SOCKS proxy for torified connections."
     log warn "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050') and TBB (Tor Browser Bundle) (port: '9150')."
     proxy="127.0.0.1:9050"
-    set_transfer_proxy ${proxy}
+    set_transfer_proxy "${proxy}"
     if ! check_tor_proxy; then
       proxy="127.0.0.1:9150"
-      set_transfer_proxy ${proxy}
+      set_transfer_proxy "${proxy}"
     else
       return 0
     fi
