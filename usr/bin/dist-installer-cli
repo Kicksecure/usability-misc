@@ -60,7 +60,7 @@ declare version me start_time dialog_title license adrelanos_signify \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
   dist_installer_cli_was_sourced can_boot_virtualbox_guest_vms APTGETOPT \
-  APTGETOPT_SERIALIZED
+  APTGETOPT_SERIALIZED proxy_cred
 
 if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
@@ -196,6 +196,9 @@ source /usr/libexec/helper-scripts/wc-test.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 source /usr/libexec/helper-scripts/get_colors.sh
+
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.sh
+source /usr/libexec/helper-scripts/strings.bsh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
 source /usr/libexec/helper-scripts/package_installed_check.sh
@@ -3116,16 +3119,22 @@ $df_output"
 
 
 ## Generate SOCKS credentials for stream isolation
-get_proxy_cred() {
-  local proxy_user proxy_pass
+set_proxy_cred() {
+  local proxy_user proxy_pass random_socks_user_name
+
+  ## global proxy_cred
+  proxy_cred=()
 
   [ "${transfer_utility}" != "curl" ] && return 0
   [ -z "${transfer_proxy_suffix:-}" ] && return 0
-  proxy_user="anonym"
-  proxy_pass="${1:?}"
-  printf '%s' "--proxy-user ${proxy_user}:${proxy_pass}"
-  ## TODO: use
-  #proxy_cred=( --proxy-user "${proxy_user}:${proxy_pass}" )
+
+  random_socks_user_name="$(random_alpha_numeric 43)"
+  ## TODO: https://spec.torproject.org/proposals/351-socks-auth-extensions.html
+  proxy_user="dist-installer-cli_${random_socks_user_name}"
+  proxy_pass="password"
+
+  ## global proxy_cred
+  proxy_cred=( "--proxy-user" "${proxy_user}:${proxy_pass}" )
 }
 
 
@@ -3230,7 +3239,6 @@ torify_conn_maybe() {
     proxy="${TOR_SOCKS_HOST:-127.0.0.1}:${TOR_SOCKS_PORT}"
     set_transfer_proxy "${proxy}"
   else
-    ## Stream Isolation will be enforced get_proxy_cred()
     log warn "Missing SOCKS proxy for torified connections."
     log warn "Trying Tor defaults: system Tor ('little-t-tor') (port: '9050') and TBB (Tor Browser Bundle) (port: '9150')."
     proxy="127.0.0.1:9050"
@@ -3273,9 +3281,10 @@ get_version() {
   fi
   log info "Version Detection: Acquiring guest version using API..."
   log info "Version Detection: API host: ${1}"
+  set_proxy_cred
   cmd_raw_version=(
     'curl' "${curl_transfer_proxy[@]}"
-    "$(get_proxy_cred version)" "${curl_opt_ssl[@]}"
+    "${proxy_cred[@]}" "${curl_opt_ssl[@]}"
     '--max-time' "${transfer_max_time_small_file}"
     '--max-filesize' "${transfer_size_small_file}"
     '--url' "${1}"
@@ -3317,11 +3326,9 @@ get_file() {
 
   size="${1}"
   url="${2}"
-  ## Round is only used to get a different password every time.
-  [ -z "${round:-}" ] && round=10
-  round=$((round+1))
 
   download_opt=()
+  set_proxy_cred
 
   case "${size}" in
     small)
@@ -3337,7 +3344,7 @@ get_file() {
       log bug "Missing size option for get_file()."
       ;;
   esac
-  download_opt_full=( "${download_opt_prefix[@]}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_verbosity_opt[@]}" "${transfer_proxy_suffix[@]}" "$(get_proxy_cred ${round})" "${transfer_connect_timeout_opt[@]}" "${transfer_io_timeout_opt[@]}" "${download_opt[@]}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
+  download_opt_full=( "${download_opt_prefix[@]}" "${transfer_proxy_prefix[@]}" "${transfer_utility}" "${transfer_verbosity_opt[@]}" "${transfer_proxy_suffix[@]}" "${proxy_cred[@]}" "${transfer_connect_timeout_opt[@]}" "${transfer_io_timeout_opt[@]}" "${download_opt[@]}" "${transfer_output_file_opt}" "${url}" "${transfer_output_dir_opt}" "${directory_prefix}" )
   download_opt_full_len="${#download_opt_full[@]}"
   for (( download_opt_full_idx=0; download_opt_full_idx < download_opt_full_len; download_opt_full_idx++ )); do
     if [ -z "${download_opt_full[download_opt_full_idx]}" ]; then
