@@ -101,12 +101,9 @@ Third-party kernel modules and applications that depend on them may not \
 function if Secure Boot is enabled. See also:
 https://www.kicksecure.com/wiki/Secure_Boot"
 
-   if ! [ -f "${dkms_mok_public_file}" ] \
-      || ! [ -f "${dkms_mok_private_file}" ]; then
-      if dkms generate_mok; then
-         mok_keys_present='y'
-      fi
-   else
+   if [ -f "$dkms_mok_public_file" ] && [ -f "$dkms_mok_private_file" ]; then
+      mok_keys_present='y'
+   elif dkms generate_mok; then
       mok_keys_present='y'
    fi
 
