@@ -17,7 +17,7 @@ Rules-Requires-Root: no
 Package: usability-misc
 Architecture: all
 Depends: policyrcd-script-zg2, adduser, python3, damngpl,
- helper-scripts (>= 3:35.3-1), ${misc:Depends}
+ helper-scripts (>= 3:35.3-1), dkms, ${misc:Depends}
 Conflicts: desktop-config-dist (<< 3:13.8-1)
 Replaces: gpl-sources-download, scurl, grub-screen-resolution
 Description: Misc usability improvements
