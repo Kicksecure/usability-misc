@@ -1,3 +1,58 @@
+commit 49d6cce737c8a3026782666b5eadc82aadd9ad2f
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 6 06:20:15 2026 -0500
+
+    description
+
+commit afd3f43e6524d258c3f849a7937a0bd5b40c273d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 6 06:17:43 2026 -0500
+
+    move `shim-signed-mok-setup` to helper-scripts
+
+commit 981c36d5f378540c0d53bdda367af9cbfff7818b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 6 05:57:57 2026 -0500
+
+    improve
+
+commit 34afd372ea27777cc697988109e672d01af24e71
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 6 05:51:23 2026 -0500
+
+    code simplification
+
+commit cd568262ba389840e131c1b391da0a56c938e2d1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 6 05:42:29 2026 -0500
+
+    output
+
+commit 025b52d9b063cb414071fc9a4ce077223a2d53b0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 6 05:41:52 2026 -0500
+
+    minor
+
+commit 4080296077d29bb6ac98cee1fd3443bd05db6d0a
+Merge: 6e91e5f 36206e1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jan 6 05:39:07 2026 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 36206e14b0014e86ca9d6f62e5b7431a2ace8549
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Mon Jan 5 20:55:27 2026 -0600
+
+    Minor fixes in usability-misc.postinst, add shim-signed MOK key setup to postinst
+
+commit 6e91e5ff2084d51f6e55d6549f04b2c4f6334e6a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 5 10:31:06 2026 +0000
+
+    bumped changelog version
+
 commit b90ce8efbdde7c0611618aa54785ad61819cfb10
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Jan 5 05:26:28 2026 -0500
