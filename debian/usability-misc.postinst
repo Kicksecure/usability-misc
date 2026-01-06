@@ -83,6 +83,11 @@ shim_signed_mok_setup() {
       return 0
    fi
 
+   ## '--default-true': return true if detection fails
+   if ischroot --default-true ; then
+      return 0
+   fi
+
    ## Provided by package 'helper-scripts'.
    shim-signed-mok-setup || true
 
