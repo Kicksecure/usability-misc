@@ -87,7 +87,7 @@ shim_signed_mok_setup() {
       shim_mok_dir shim_mok_public_file shim_mok_private_file \
       mok_keys_present third_party_kernel_module_warning
 
-   true "INFO: Setting up MOK secure boot keys if necessary..."
+   printf '%s\n' "INFO: Setting up MOK secure boot keys if necessary..."
 
    dkms_mok_dir='/var/lib/dkms'
    dkms_mok_public_file="${dkms_mok_dir}/mok.pub"
@@ -102,9 +102,17 @@ function if Secure Boot is enabled. See also:
 https://www.kicksecure.com/wiki/Secure_Boot"
 
    if [ -f "$dkms_mok_public_file" ] && [ -f "$dkms_mok_private_file" ]; then
+      printf '%s\n' "INFO: File '$dkms_mok_public_file' and '$dkms_mok_private_file' already exist: yes"
       mok_keys_present='y'
-   elif dkms generate_mok; then
-      mok_keys_present='y'
+   elif
+      printf '%s\n' "INFO: File '$dkms_mok_public_file' and '$dkms_mok_private_file' already exist: no - Creating..."
+      if dkms generate_mok; then
+         mok_keys_present='y'
+         printf '%s\n' "INFO: File '$dkms_mok_public_file' and '$dkms_mok_private_file' successfully created: yes"
+      else
+         printf '%s\n' "WARNING: File '$dkms_mok_public_file' and '$dkms_mok_private_file' successfully created: no ${third_party_kernel_module_warning}"
+         return
+      fi
    fi
 
    if [ "${mok_keys_present}" != 'y' ]; then
@@ -133,7 +141,7 @@ ${third_party_kernel_module_warning}"
       return
    fi
 
-   true "INFO: Done setting up MOK secure boot keys if necessary."
+   printf '%s\n' "INFO: Done setting up MOK secure boot keys."
 
    mkdir -p "/var/lib/usability-misc/do_once"
    touch "/var/lib/usability-misc/do_once/${FUNCNAME[0]}_version_1"
