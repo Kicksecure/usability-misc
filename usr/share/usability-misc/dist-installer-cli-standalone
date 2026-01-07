@@ -4255,7 +4255,7 @@ Debugging information:
 ## usage: set_transfer_proxy ${proxy}
 set_transfer_proxy() {
   local proxy_port proxy_addr
-  local proxy_user proxy_pass random_socks_user_name proxy_cred
+  local proxy_user proxy_pass random_socks_password proxy_cred
 
   proxy_port="${1##*:}"
   proxy_addr="${1%%:*}"
@@ -4265,9 +4265,9 @@ set_transfer_proxy() {
 
   ## Generate SOCKS credentials for stream isolation
   ## https://spec.torproject.org/socks-extensions.html
-  random_socks_user_name="$(random_alpha_numeric 43)"
+  random_socks_password="$(random_alpha_numeric 43)"
   proxy_user="<torS0X>0"
-  proxy_pass="dist-installer-cli_${random_socks_user_name}"
+  proxy_pass="dist-installer-cli_${random_socks_password}"
   proxy_cred=( "--proxy-user" "${proxy_user}:${proxy_pass}" )
 
   ## Used for transfers that only 'curl' can do.
