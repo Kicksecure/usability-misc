@@ -1,3 +1,9 @@
+usability-misc (3:35.2-1) unstable; urgency=medium
+
+  * New upstream version (local package).
+
+ -- Patrick Schleizer <adrelanos@whonix.org>  Wed, 07 Jan 2026 10:21:38 +0000
+
 usability-misc (3:35.1-1) unstable; urgency=medium
 
   * New upstream version (local package).
