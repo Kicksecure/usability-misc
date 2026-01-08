@@ -1549,7 +1549,7 @@ get_pattern_sources_deb822_debian() {
       elif [ -n "${suites_pattern}" ] \
         && ! [[ "${current_suites}" =~ ${suites_pattern} ]]; then
         match_hit='no'
-      elif [ -n "${current_components}" ] \
+      elif [ -n "${components_pattern}" ] \
         && ! [[ "${current_components}" =~ ${components_pattern} ]]; then
         match_hit='no'
       fi
