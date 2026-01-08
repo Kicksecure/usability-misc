@@ -1549,7 +1549,7 @@ get_pattern_sources_deb822_debian() {
       elif [ -n "${suites_pattern}" ] \
         && ! [[ "${current_suites}" =~ ${suites_pattern} ]]; then
         match_hit='no'
-      elif [ -n "${current_components}" ] \
+      elif [ -n "${components_pattern}" ] \
         && ! [[ "${current_components}" =~ ${components_pattern} ]]; then
         match_hit='no'
       fi
@@ -1565,13 +1565,13 @@ get_pattern_sources_deb822_debian() {
     fi
 
     if [[ "${line}" =~ ^Types: ]]; then
-      current_types="$(cut -d' ' -f2-)"
+      current_types="$(cut -d' ' -f2- <<< "${line}")"
     elif [[ "${line}" =~ ^URIs: ]]; then
-      current_uris="$(cut -d' ' -f2-)"
+      current_uris="$(cut -d' ' -f2- <<< "${line}")"
     elif [[ "${line}" =~ ^Suites: ]]; then
-      current_suites="$(cut -d' ' -f2-)"
+      current_suites="$(cut -d' ' -f2- <<< "${line}")"
     elif [[ "${line}" =~ ^Components: ]]; then
-      current_components="$(cut -d' ' -f2-)"
+      current_components="$(cut -d' ' -f2- <<< "${line}")"
     fi
   done < "${file}"
 
