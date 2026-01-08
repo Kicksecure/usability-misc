@@ -1,3 +1,40 @@
+commit 79eac9b0742366583d6ec18cb2bb276b9eeef6be
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 8 04:41:15 2026 -0500
+
+    build
+
+commit e1338381a81c2f70c5c2cc5044f1dc7103b31d07
+Merge: 387d176 975cebb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 8 04:39:56 2026 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 387d1760f4cf6441cb0c88402410d206fa1c75c4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 8 04:39:42 2026 -0500
+
+    quotes
+
+commit 975cebbc06f6f137371905786acf1d2581b2d3c5
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Jan 8 00:15:28 2026 -0600
+
+    Typo'd variable name fix in dist-installer-cli
+
+commit 57616f90fc834ad8e903030d386811b5c2ae9c76
+Author: Aaron Rainbolt <arraybolt3@ubuntu.com>
+Date:   Thu Jan 8 00:11:49 2026 -0600
+
+    Fix the deb822 regex matcher of dist-installer-cli (was failing to pipe anything into 'cut')
+
+commit f24fb284ffb7ad9ddacdabe83f268dbddee32a25
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jan 7 10:21:38 2026 +0000
+
+    bumped changelog version
+
 commit 41af39b36bdd821c914fa7f9e43e2f6d508c0801
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Jan 7 05:17:40 2026 -0500
