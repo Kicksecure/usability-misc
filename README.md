@@ -54,6 +54,9 @@ Required by helper-scripts `apparmor-info` and `apparmor-watch`.
 Debian no longer enables systemd-journald-audit.socket by default.
 https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1038993
 
+Creates Secure Boot MOK key using 'shim-signed-mok-setup' (provided by
+package 'helper-scripts') during installation.
+
 ## How to install `usability-misc` using apt-get ##
 
 1\. Download the APT Signing Key.
