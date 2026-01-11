@@ -55,7 +55,7 @@ case "$state" in
   (interfaces)
     local interfaces
     interfaces=(
-      'cli:Commad-Line Interface'
+      'cli:Command-Line Interface'
       'lxqt:LXQt Desktop Environment'
     )
     _describe -t interfaces 'interfaces' interfaces && ret=0
