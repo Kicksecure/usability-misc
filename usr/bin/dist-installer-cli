@@ -4090,28 +4090,6 @@ set_target_user_account() {
 }
 
 
-adjust_default_for_sysmaint_maybe() {
-  if getent passwd sysmaint >/dev/null; then
-    log info "Account check result: Account 'sysmaint' exists: 'Yes'"
-
-    if [ "${id_of_user}" = 'sysmaint' ]; then
-      log info "Account check result: Running under account 'sysmaint': 'Yes'"
-      if [ "${target_user}" = "" ]; then
-        log info "Account check result: '--user=user' option in use: 'No' - Therefore adjusting to default '--user=user' option."
-        set_target_user_account 'user'
-      else
-        log info "Account check result: '--user=user' option in use: 'Yes' - Therefore using target_user '${target_user}'."
-      fi
-      directory_prefix="${user_home_dir}/dist-installer-cli-download"
-    else
-      log info "Running under account 'sysmaint': 'No'"
-    fi
-  else
-    log info "Account 'sysmaint' exists: 'No'"
-  fi
-}
-
-
 ## Print parsed options
 print_getopt() {
   printf '%s\n' "directory_prefix=${directory_prefix}
@@ -4374,6 +4352,28 @@ parse_opt() {
 
   [ -n "${socks_proxy}" ] && is_addr_port "${socks_proxy}"
 
+  ## Difficult to move to its own function and run from function 'run_installer':
+  ## - Should have '--log-level' already set for 'log info' to be functional.
+  ## - Should run before directory check.
+  if getent passwd sysmaint >/dev/null; then
+    log info "Account check result: Account 'sysmaint' exists: 'Yes'"
+
+    if [ "${id_of_user}" = 'sysmaint' ]; then
+      log info "Account check result: Running under account 'sysmaint': 'Yes'"
+      if [ "${target_user}" = "" ]; then
+        log info "Account check result: '--user=user' option in use: 'No' - Therefore adjusting to default '--user=user' option."
+        set_target_user_account 'user'
+      else
+        log info "Account check result: '--user=user' option in use: 'Yes' - Therefore using target_user '${target_user}'."
+      fi
+      directory_prefix="${user_home_dir}/dist-installer-cli-download"
+    else
+      log info "Running under account 'sysmaint': 'No'"
+    fi
+  else
+    log info "Account 'sysmaint' exists: 'No'"
+  fi
+
   if [ -n "${directory_prefix}" ]; then
     ## Remove trailing slash from directory.
     directory_prefix="${directory_prefix%*/}"
@@ -4386,13 +4386,22 @@ parse_opt() {
     ## Test if the parent directory exists.
     directory_prefix_parent="$(dirname -- "${directory_prefix}")"
     if ! test_file -d "${directory_prefix_parent}"; then
+      if [ "${id_of_user}" = 'sysmaint' ]; then
+        if [ "$directory_prefix_parent" = '/home/user' ]; then
+          die 1 "Directory check result: Parent directory doesn't exist: '${directory_prefix_parent}'
+The home folder for Linux user account 'user' doesn't exist.
+You need to boot into a user session at least once.
+By logging into account 'user' for the first time, the home folder will be created.
+Reboot into sysmaint session and rerun this installer."
+        fi
+      fi
       die 1 "Directory check result: Parent directory doesn't exist: '${directory_prefix_parent}'"
     fi
     ## Not possible to check if parent dir is writable because if the prefix
     ## is set to '~/', the parent '/home' is not writable.
 
     log info "Creating directory: '${directory_prefix}'"
-    run_as_target_user mkdir --parents -- "${directory_prefix}" ||
+    root_cmd_loglevel=info run_as_target_user mkdir --parents -- "${directory_prefix}" ||
       die 1 "Directory check result: Failed to create directory: '${directory_prefix}'"
     test_file -w "${directory_prefix}" ||
       die 1 "Directory check result: Directory isn't writable: '${directory_prefix}'"
@@ -4552,10 +4561,6 @@ run_installer() {
   ## Parse script name for wanted values.
   parse_name
   set_variables
-  ## If account 'sysmaint' is in use and the user hasn't configured their own directory
-  ## prefix and target user, default to target account 'user'.
-  ## Conditionally runs function 'set_target_user_account'.
-  adjust_default_for_sysmaint_maybe
   ## Parse command-line options.
   ## Uses function 'test_file' which in turn uses 'root_cmd'.
   parse_opt "${@}"
