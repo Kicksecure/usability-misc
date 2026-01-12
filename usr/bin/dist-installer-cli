@@ -4345,24 +4345,24 @@ parse_opt() {
     ## Only accept an absolute path.
     if [ "${directory_prefix}" = "${directory_prefix#/}" ]; then
       log error "Invalid directory prefix: '${directory_prefix}'"
-      die 1 "Directory prefix cannot be a relative path, must be an absolute path."
+      die 1 "Directory check: Directory prefix cannot be a relative path, must be an absolute path."
     fi
 
     ## Test if parent directory exists.
     directory_prefix_parent="$(dirname -- "${directory_prefix}")"
     if ! test_file -d "${directory_prefix_parent}"; then
-      die 1 "Directory doesn't exist: '${directory_prefix_parent}'"
+      die 1 "Directory check: Parent directory doesn't exist: '${directory_prefix_parent}'"
     fi
     ## Not possible to check if parent dir is writable because if the prefix
     ## is set to '~/', the parent '/home' is not writable.
 
     log info "Creating directory: '${directory_prefix}'"
     run_as_target_user mkdir --parents -- "${directory_prefix}" ||
-      die 1 "Failed to created directory: '${directory_prefix}'"
+      die 1 "Directory check: Failed to create directory: '${directory_prefix}'"
     test_file -w "${directory_prefix}" ||
-      die 1 "Directory isn't writable: '${directory_prefix}'"
+      die 1 "Directory check: Directory isn't writable: '${directory_prefix}'"
     test_file -r "${directory_prefix}" ||
-      die 1 "Directory isn't readable: '${directory_prefix}'"
+      die 1 "Directory check: Directory isn't readable: '${directory_prefix}'"
 
     log_dir_main="${directory_prefix}/logs"
 
