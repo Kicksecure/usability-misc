@@ -4096,7 +4096,7 @@ adjust_default_for_sysmaint_maybe() {
   if getent passwd sysmaint >/dev/null; then
     log info "Account 'sysmaint' exists: 'Yes'"
 
-    if [ "$(id -un)" = 'sysmaint' ]; then
+    if [ "$(id --user --name)" = 'sysmaint' ]; then
       log info "Running under account 'sysmaint': 'Yes', adjusting behavior."
 
       set_target_user_account 'user'
