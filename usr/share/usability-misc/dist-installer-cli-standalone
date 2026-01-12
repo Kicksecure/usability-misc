@@ -61,7 +61,7 @@ declare version me start_time dialog_title license adrelanos_signify \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
   dist_installer_cli_was_sourced can_boot_virtualbox_guest_vms APTGETOPT \
-  APTGETOPT_SERIALIZED
+  APTGETOPT_SERIALIZED id_of_user
 
 if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
@@ -1014,7 +1014,7 @@ get_os(){
     ## Debian 'testing' '/etc/os-release' does not contain VERSION_ID.
     return 0
   fi
-  log info "Debian 'testing' or 'unstable' detection: 'no', not detected, ok."
+  log info "Debian 'testing' or 'unstable' detection: 'no', not detected"
 
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
@@ -1421,10 +1421,11 @@ __log_level_num() {
 
 ## Logging mechanism with easy customization of message format as well as
 ## standardization on how the messages are delivered.
+## usage: log_type message
 ## usage: log [info|notice|warn|error|debug|bug|echo|null] "X occurred."
-## Variable to define by calling script: log_level
+## Variable to define by calling script (caller_level_num): log_level
 log() {
-  : "${log_level:=notice}"
+  local log_level="${log_level:-notice}"
 
   ## Avoid clogging output if log() is working alright.
   disable_xtrace
@@ -1496,14 +1497,17 @@ log() {
       ;;
   esac
 
+  true "${FUNCNAME[0]}: INFO: log_level: $log_level | log_type: $log_type"
   caller_level_num="$(__log_level_num "${log_level}")"
+  true "${FUNCNAME[0]}: INFO: log_level: $log_level | caller_level_num: $caller_level_num"
   msg_level_num="$(__log_level_num "${log_type}")"
+  true "${FUNCNAME[0]}: INFO: log_type: $log_type | msg_level_num: $msg_level_num"
 
   if (( msg_level_num <= caller_level_num )); then
     should_print=1
   fi
 
-  if (( should_print == 1 )); then
+  if [ "$should_print" = 1 ]; then
     stecho "${log_full}" >&2
   fi
 
@@ -3078,10 +3082,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
 
 
 add_user_to_vbox_group() {
-  local id_of_user
-
-  id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
-  if id -nG "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
+  if id --name --groups "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
     log info "Linux Group Configuration: Account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
@@ -5298,35 +5299,18 @@ set_target_user_account() {
   target_user="${1:-}"
 
   if ! id --user -- "${target_user}" >/dev/null; then
-    die 1 "target_user '${target_user}' does not exist!"
+    die 1 "Account check result: target_user '${target_user}' does not exist! Consider using the '--user=insert-user-name-here' option to adjust."
   fi
 
   if [ "${sucmd}" != 'sudo' ]; then
     log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under account 'sysmaint' is untested."
   fi
 
-  ## 'getent' may fail if the account doesn't exist, however we ignore it for now.
-  ## The reason is because if this is run as a user account `sysmaint` on a
-  ## system with no account 'user', this will fail, but the account may have passed
-  ## their own '--user' and '--directory-prefix' flags which will fix it.
-  user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)" || true
-}
-
-
-adjust_default_for_sysmaint_maybe() {
-  if getent passwd sysmaint >/dev/null; then
-    log info "Account 'sysmaint' exists: 'Yes'"
-
-    if [ "$(id -un)" = 'sysmaint' ]; then
-      log info "Running under account 'sysmaint': 'Yes', adjusting behavior."
-
-      set_target_user_account 'user'
-      directory_prefix="${user_home_dir}/dist-installer-cli-download"
-    else
-      log info "Running under account 'sysmaint': 'No'"
-    fi
-  else
-    log info "Account 'sysmaint' exists: 'No'"
+  ## 'getent' may fail if the account doesn't exist, however we made sure the account exists above.
+  if ! user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)"; then
+    ## If booting into sysmaint session, account 'user' might exist, but the home folder will only
+    ## be created after booting at least once into user session to login into account 'user'.
+    log info "Account check result: Unable to determine user home directory for target user '${target_user}'. Ignoring, because the user might work around this using the '--directory-prefix' option and because there is a separate directory check."
   fi
 }
 
@@ -5392,6 +5376,11 @@ parse_name() {
 }
 
 
+set_variables() {
+  id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
+}
+
+
 copy_thru_barrier() {
   local source dest source_basename dest_realpath dest_file
 
@@ -5418,99 +5407,127 @@ parse_opt() {
     begin_optparse "${1:-}" "${2:-}" || break
     ## SC2154: Variable ${opt} gets set in file: /usr/libexec/helper-scripts/parse_opt.sh
     case "${opt}" in
+      ## -P, --directory-prefix
       P|directory-prefix)
         get_arg
         directory_prefix="${arg}"
         ;;
+      ## -o, --onion
       o|onion)
         onion=1
         ;;
+      ## -s, --socks-proxy
       s|socks-proxy)
         get_arg
         socks_proxy="${arg}"
         ;;
+      ## -l, --log-level
       l|log-level)
         get_arg
         log_level="${arg}"
         ;;
+      ## -g, --guest
       g|guest)
         get_arg
         guest="${arg}"
         ;;
+      ## -u, --guest-version
       u|guest-version)
         get_arg
         guest_version="${arg}"
         ;;
+      ## -i, --interface
       i|interface)
         get_arg
         interface="${arg}"
         ;;
+      ## -m, --hypervisor
       m|hypervisor)
         get_arg
         hypervisor="${arg}"
         ;;
+      ## --oracle-repo
       oracle-repo)
         oracle_repo=1
         ;;
+      ## --mirror
       mirror)
         get_arg
         mirror="${arg}"
         ;;
+      ## --import-only
       import-only)
         get_arg
         import_only="${arg}"
         ;;
+      ## --allow-errors
       allow-errors)
         allow_errors=1
         ;;
+      ## --redownload
       redownload)
         redownload=1
         ;;
+      ## --destroy-existing-guest
       destroy-existing-guest)
         destroy_existing_guest=1
         ;;
+      ## -n, --non-interactive
       n|non-interactive)
         non_interactive=1
         ;;
+      ## -k, --no-boot
       k|no-boot)
         no_boot=1
         ;;
+      ## --no-import
       no-import)
         no_import=1
         ;;
+      ## -D, --dev
       D|dev)
         dev=1
         ;;
+      ## --noupdate
       noupdate)
         noupdate=1
         ;;
+      ## --noupgrade
       noupgrade)
         noupgrade=1
         ;;
+      ## --testers
       testers)
         testers=1
         ;;
+      ## -t, --getopt
       t|getopt)
         getopt=1
         ;;
+      ## --ci
       ci)
         ci=1
         ;;
+      ## -d, --dry-run
       d|dry-run)
         dry_run=1
         ;;
+      ## --virtualbox-only
       virtualbox-only)
         virtualbox_only=1
         hypervisor=virtualbox
         guest=none
         ;;
+      ## --user
       user)
         get_arg
         set_target_user_account "${arg}"
         ;;
+      ## -V, --version
       V|version)
         getversion=1
         ;;
+      ## -h, --help
       h|help)
         usage 0
         ;;
@@ -5560,30 +5577,61 @@ parse_opt() {
 
   [ -n "${socks_proxy}" ] && is_addr_port "${socks_proxy}"
 
+  ## Difficult to move to its own function and run from function 'run_installer':
+  ## - Should have '--log-level' already set for 'log info' to be functional.
+  ## - Should run before directory check.
+  if getent passwd sysmaint >/dev/null; then
+    log info "Account check result: Account 'sysmaint' exists: 'Yes'"
+
+    if [ "${id_of_user}" = 'sysmaint' ]; then
+      log info "Account check result: Running under account 'sysmaint': 'Yes'"
+      if [ "${target_user}" = "" ]; then
+        log info "Account check result: '--user=user' option in use: 'No' - Therefore adjusting to default '--user=user' option."
+        set_target_user_account 'user'
+      else
+        log info "Account check result: '--user=user' option in use: 'Yes' - Therefore using target_user '${target_user}'."
+      fi
+      directory_prefix="${user_home_dir}/dist-installer-cli-download"
+    else
+      log info "Running under account 'sysmaint': 'No'"
+    fi
+  else
+    log info "Account 'sysmaint' exists: 'No'"
+  fi
+
   if [ -n "${directory_prefix}" ]; then
     ## Remove trailing slash from directory.
     directory_prefix="${directory_prefix%*/}"
     ## Only accept an absolute path.
     if [ "${directory_prefix}" = "${directory_prefix#/}" ]; then
-      log error "Invalid directory prefix: '${directory_prefix}'"
-      die 1 "Directory prefix cannot be a relative path, must be an absolute path."
+      log error "Directory check result: Invalid directory prefix: '${directory_prefix}'"
+      die 1 "Directory check result: Directory prefix cannot be a relative path, must be an absolute path."
     fi
 
-    ## Test if parent directory exists.
+    ## Test if the parent directory exists.
     directory_prefix_parent="$(dirname -- "${directory_prefix}")"
     if ! test_file -d "${directory_prefix_parent}"; then
-      die 1 "Directory doesn't exist: '${directory_prefix_parent}'"
+      if [ "${id_of_user}" = 'sysmaint' ]; then
+        if [ "$directory_prefix_parent" = '/home/user' ]; then
+          die 1 "Directory check result: Parent directory doesn't exist: '${directory_prefix_parent}'
+The home folder for Linux user account 'user' doesn't exist.
+You need to boot into a user session at least once.
+By logging into account 'user' for the first time, the home folder will be created.
+Reboot into sysmaint session and rerun this installer."
+        fi
+      fi
+      die 1 "Directory check result: Parent directory doesn't exist: '${directory_prefix_parent}'"
     fi
     ## Not possible to check if parent dir is writable because if the prefix
     ## is set to '~/', the parent '/home' is not writable.
 
     log info "Creating directory: '${directory_prefix}'"
-    run_as_target_user mkdir -p -- "${directory_prefix}" ||
-      die 1 "Failed to created directory: '${directory_prefix}'"
+    root_cmd_loglevel=info run_as_target_user mkdir --parents -- "${directory_prefix}" ||
+      die 1 "Directory check result: Failed to create directory: '${directory_prefix}'"
     test_file -w "${directory_prefix}" ||
-      die 1 "Directory isn't writable: '${directory_prefix}'"
+      die 1 "Directory check result: Directory isn't writable: '${directory_prefix}'"
     test_file -r "${directory_prefix}" ||
-      die 1 "Directory isn't readable: '${directory_prefix}'"
+      die 1 "Directory check result: Directory isn't readable: '${directory_prefix}'"
 
     log_dir_main="${directory_prefix}/logs"
 
@@ -5602,7 +5650,7 @@ parse_opt() {
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
-    run_as_target_user mkdir -p -- "${log_dir_cur}"
+    run_as_target_user mkdir --parents -- "${log_dir_cur}"
     copy_thru_barrier "${0}" "${log_dir_cur}";
     run_as_target_user touch -- "${log_file_user}"
   fi
@@ -5737,10 +5785,7 @@ run_installer() {
   set_trap
   ## Parse script name for wanted values.
   parse_name
-  ## If account 'sysmaint' is in use and the user hasn't configured their own directory
-  ## prefix and target user, default to target account 'user'.
-  ## Runs function 'set_target_user_account'.
-  adjust_default_for_sysmaint_maybe
+  set_variables
   ## Parse command-line options.
   ## Uses function 'test_file' which in turn uses 'root_cmd'.
   parse_opt "${@}"
