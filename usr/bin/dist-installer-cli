@@ -4077,7 +4077,7 @@ set_target_user_account() {
   target_user="${1:-}"
 
   if ! id --user -- "${target_user}" >/dev/null; then
-    die 1 "target_user '${target_user}' does not exist!"
+    die 1 "target_user '${target_user}' does not exist! Consider using the '--user=insert-user-name-here' option to adjust."
   fi
 
   if [ "${sucmd}" != 'sudo' ]; then
