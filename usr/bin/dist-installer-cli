@@ -4348,7 +4348,7 @@ parse_opt() {
       die 1 "Directory check result: Directory prefix cannot be a relative path, must be an absolute path."
     fi
 
-    ## Test if parent directory exists.
+    ## Test if the parent directory exists.
     directory_prefix_parent="$(dirname -- "${directory_prefix}")"
     if ! test_file -d "${directory_prefix_parent}"; then
       die 1 "Directory check result: Parent directory doesn't exist: '${directory_prefix_parent}'"
