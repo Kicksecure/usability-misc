@@ -1857,9 +1857,6 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
 
 
 add_user_to_vbox_group() {
-  local id_of_user
-
-  id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
   if id --name --groups "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
     log info "Linux Group Configuration: Account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
@@ -4097,7 +4094,7 @@ adjust_default_for_sysmaint_maybe() {
   if getent passwd sysmaint >/dev/null; then
     log info "Account check result: Account 'sysmaint' exists: 'Yes'"
 
-    if [ "$(id --user --name)" = 'sysmaint' ]; then
+    if [ "${id_of_user}" = 'sysmaint' ]; then
       log info "Account check result: Running under account 'sysmaint': 'Yes'"
       if [ "${target_user}" = "" ]; then
         log info "Account check result: '--user=user' option in use: 'No' - Therefore adjusting to default '--user=user' option."
@@ -4173,6 +4170,11 @@ parse_name() {
   interface="$(printf '%s' "${me}" | cut -d "-" -f2)"
   log info "Assigned guest and interface according to script name: '${me}'"
   return 0
+}
+
+
+set_variables() {
+  id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
 }
 
 
@@ -4549,6 +4551,7 @@ run_installer() {
   set_trap
   ## Parse script name for wanted values.
   parse_name
+  set_variables
   ## If account 'sysmaint' is in use and the user hasn't configured their own directory
   ## prefix and target user, default to target account 'user'.
   ## Conditionally runs function 'set_target_user_account'.
