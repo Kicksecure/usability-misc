@@ -1860,7 +1860,7 @@ add_user_to_vbox_group() {
   local id_of_user
 
   id_of_user="$(id --name --user)" || die 1 "${underline}Linux user ID check:${nounderline} Failed to run: 'id --name --user'"
-  if id -nG "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
+  if id --name --groups "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
     log info "Linux Group Configuration: Account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
