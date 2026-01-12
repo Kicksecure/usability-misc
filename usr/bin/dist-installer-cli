@@ -4357,7 +4357,7 @@ parse_opt() {
     ## is set to '~/', the parent '/home' is not writable.
 
     log info "Creating directory: '${directory_prefix}'"
-    run_as_target_user mkdir -p -- "${directory_prefix}" ||
+    run_as_target_user mkdir --parents -- "${directory_prefix}" ||
       die 1 "Failed to created directory: '${directory_prefix}'"
     test_file -w "${directory_prefix}" ||
       die 1 "Directory isn't writable: '${directory_prefix}'"
@@ -4381,7 +4381,7 @@ parse_opt() {
 
     ## If the commands below fail, it should have failed earlier for the
     ## parent directory permissions, not below.
-    run_as_target_user mkdir -p -- "${log_dir_cur}"
+    run_as_target_user mkdir --parents -- "${log_dir_cur}"
     copy_thru_barrier "${0}" "${log_dir_cur}";
     run_as_target_user touch -- "${log_file_user}"
   fi
