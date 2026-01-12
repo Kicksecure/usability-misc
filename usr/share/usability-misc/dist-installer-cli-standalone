@@ -1014,7 +1014,7 @@ get_os(){
     ## Debian 'testing' '/etc/os-release' does not contain VERSION_ID.
     return 0
   fi
-  log info "Debian 'testing' or 'unstable' detection: 'no', not detected"
+  log info "Debian 'testing' or 'unstable' detection: 'no', not detected, ok."
 
   ## This at last so the user can hopefully post his system info from the
   ## logs before the error below.
