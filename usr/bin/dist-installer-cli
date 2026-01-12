@@ -4197,99 +4197,127 @@ parse_opt() {
     begin_optparse "${1:-}" "${2:-}" || break
     ## SC2154: Variable ${opt} gets set in file: /usr/libexec/helper-scripts/parse_opt.sh
     case "${opt}" in
+      ## -P, --directory-prefix
       P|directory-prefix)
         get_arg
         directory_prefix="${arg}"
         ;;
+      ## -o, --onion
       o|onion)
         onion=1
         ;;
+      ## -s, --socks-proxy
       s|socks-proxy)
         get_arg
         socks_proxy="${arg}"
         ;;
+      ## -l, --log-level
       l|log-level)
         get_arg
         log_level="${arg}"
         ;;
+      ## -g, --guest
       g|guest)
         get_arg
         guest="${arg}"
         ;;
+      ## -u, --guest-version
       u|guest-version)
         get_arg
         guest_version="${arg}"
         ;;
+      ## -i, --interface
       i|interface)
         get_arg
         interface="${arg}"
         ;;
+      ## -m, --hypervisor
       m|hypervisor)
         get_arg
         hypervisor="${arg}"
         ;;
+      ## --oracle-repo
       oracle-repo)
         oracle_repo=1
         ;;
+      ## --mirror
       mirror)
         get_arg
         mirror="${arg}"
         ;;
+      ## --import-only
       import-only)
         get_arg
         import_only="${arg}"
         ;;
+      ## --allow-errors
       allow-errors)
         allow_errors=1
         ;;
+      ## --redownload
       redownload)
         redownload=1
         ;;
+      ## --destroy-existing-guest
       destroy-existing-guest)
         destroy_existing_guest=1
         ;;
+      ## -n, --non-interactive
       n|non-interactive)
         non_interactive=1
         ;;
+      ## -k, --no-boot
       k|no-boot)
         no_boot=1
         ;;
+      ## --no-import
       no-import)
         no_import=1
         ;;
+      ## -D, --dev
       D|dev)
         dev=1
         ;;
+      ## --noupdate
       noupdate)
         noupdate=1
         ;;
+      ## --noupgrade
       noupgrade)
         noupgrade=1
         ;;
+      ## --testers
       testers)
         testers=1
         ;;
+      ## -t, --getopt
       t|getopt)
         getopt=1
         ;;
+      ## --ci
       ci)
         ci=1
         ;;
+      ## -d, --dry-run
       d|dry-run)
         dry_run=1
         ;;
+      ## --virtualbox-only
       virtualbox-only)
         virtualbox_only=1
         hypervisor=virtualbox
         guest=none
         ;;
+      ## --user
       user)
         get_arg
         set_target_user_account "${arg}"
         ;;
+      ## -V, --version
       V|version)
         getversion=1
         ;;
+      ## -h, --help
       h|help)
         usage 0
         ;;
