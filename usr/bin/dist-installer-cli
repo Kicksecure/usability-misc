@@ -60,7 +60,7 @@ declare version me start_time dialog_title license adrelanos_signify \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
   dist_installer_cli_was_sourced can_boot_virtualbox_guest_vms APTGETOPT \
-  APTGETOPT_SERIALIZED
+  APTGETOPT_SERIALIZED id_of_user
 
 if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
   ## Script was sourced.
