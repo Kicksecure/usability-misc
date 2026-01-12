@@ -1,3 +1,111 @@
+commit 87a747c4ab007fe6db7cea2ce666774cf3a24361
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 06:35:08 2026 -0500
+
+    build
+
+commit d8fbc6f6141b9ef66c25b4f62b40b843329866f4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 06:33:35 2026 -0500
+
+    `dist-installer-cli`: point out if folder `/home/user` does not exist likely due to never having logged in under account `user`
+
+commit ff13d1d6563e52b5f0ee64ce5c562712af0d4654
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:40:31 2026 -0500
+
+    fix
+
+commit 66f11235fe831eecc5c3ed9e90f7cefb58919d5e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:40:11 2026 -0500
+
+    refactoring
+
+commit e874801c3374dcabb50db45734b54078bfee5dc5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:36:48 2026 -0500
+
+    long option names
+
+commit c2e1f7659c77930af21946cdfd292d32a1282271
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:32:49 2026 -0500
+
+    improve
+
+commit d8d26fe651a33036ab0fd63eb52b1e4b0e1c695c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:22:52 2026 -0500
+
+    comment
+
+commit ac75d5429da9950383d241b0f1fd486efdc1b5b6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:20:57 2026 -0500
+
+    output
+
+commit a07603d3b9aec5204ea27e81fea50d5ddccae172
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:19:48 2026 -0500
+
+    `dist-installer-cli`: fix: honor `--user=user` option in sysmaint session
+
+commit ecdc0a126e30bf5f9b5d640dd05eee4079ec9799
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:09:49 2026 -0500
+
+    comments
+
+commit df04432884db0b37a3d15e37abc3ced6b462a8d0
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:06:49 2026 -0500
+
+    long option names
+
+commit 2e3676e1adda67e51e1ce231c839db9dac957a89
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 05:04:00 2026 -0500
+
+    output
+
+commit e3b867c0024f3ef55dca9ec05b05ed76331bd531
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 04:59:28 2026 -0500
+
+    output
+
+commit 993fe2488e32641bf80fe70c285bacbec853c42a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 04:58:22 2026 -0500
+
+    comment
+
+commit ae7aa7ddc94ceab3df77960b02b46ac6c3209b49
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 04:56:52 2026 -0500
+
+    output
+
+commit f82ae63bb6a857bc8164397d915eaed655856fb9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 04:53:39 2026 -0500
+
+    output
+
+commit 0821f187a55d4e10e3e0a7d43082e799d6d62f2c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jan 12 04:50:51 2026 -0500
+
+    long option names
+
+commit 2382e9d0f08fac90c7aba61db900245ce73ed26b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jan 11 16:42:12 2026 +0000
+
+    bumped changelog version
+
 commit 901d575b5bde316dbdb5d66b14ba883749525c79
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Jan 11 11:12:18 2026 -0500
