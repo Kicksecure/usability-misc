@@ -4077,7 +4077,7 @@ set_target_user_account() {
   target_user="${1:-}"
 
   if ! id --user -- "${target_user}" >/dev/null; then
-    die 1 "target_user '${target_user}' does not exist! Consider using the '--user=insert-user-name-here' option to adjust."
+    die 1 "Account check result: target_user '${target_user}' does not exist! Consider using the '--user=insert-user-name-here' option to adjust."
   fi
 
   if [ "${sucmd}" != 'sudo' ]; then
@@ -4094,12 +4094,16 @@ set_target_user_account() {
 
 adjust_default_for_sysmaint_maybe() {
   if getent passwd sysmaint >/dev/null; then
-    log info "Account 'sysmaint' exists: 'Yes'"
+    log info "Account check result: Account 'sysmaint' exists: 'Yes'"
 
     if [ "$(id --user --name)" = 'sysmaint' ]; then
-      log info "Running under account 'sysmaint': 'Yes', adjusting behavior."
-
-      set_target_user_account 'user'
+      log info "Account check result: Running under account 'sysmaint': 'Yes'"
+      if [ "${target_user}" = "" ]; then
+        log info "Account check result: '--user=user' option in use: 'No' - Therefore adjusting to default '--user=user' option."
+        set_target_user_account 'user'
+      else
+        log info "Account check result: '--user=user' option in use: 'Yes' - Therefore using target_user '${target_user}'."
+      fi
       directory_prefix="${user_home_dir}/dist-installer-cli-download"
     else
       log info "Running under account 'sysmaint': 'No'"
