@@ -4084,11 +4084,12 @@ set_target_user_account() {
     log warn "Privilege escalation utilities other than 'sudo' for installing to an alternate user account or running under account 'sysmaint' is untested."
   fi
 
-  ## 'getent' may fail if the account doesn't exist, however we ignore it for now.
-  ## The reason is because if this is run as a user account `sysmaint` on a
-  ## system with no account 'user', this will fail, but the account may have passed
-  ## their own '--user' and '--directory-prefix' flags which will fix it.
-  user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)" || true
+  ## 'getent' may fail if the account doesn't exist, however we made sure the account exists above.
+  if ! user_home_dir="$(getent passwd "${target_user}" | cut -d':' -f6)"; then
+    ## If booting into sysmaint session, account 'user' might exist, but the home folder will only
+    ## be created after booting at least once into user session to login into account 'user'.
+    log info "Account check result: Unable to determine user home directory for target user '${target_user}'. Ignoring, because the user might work around this using the '--directory-prefix' option and because there is a separate directory check."
+  fi
 }
 
 
