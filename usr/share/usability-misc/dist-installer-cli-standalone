@@ -1408,6 +1408,7 @@ xtrace_reenable_maybe() {
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
+    question)  printf '%s' 0 ;;
     warn)      printf '%s' 1 ;;
     notice)    printf '%s' 2 ;;
     info)      printf '%s' 3 ;;
@@ -1449,6 +1450,9 @@ log() {
     bug)
       log_color="${yellow}"
       ;;
+    question)
+      log_color="${blue}"
+      ;;
     error)
       log_color="${red}"
       ;;
@@ -1480,13 +1484,16 @@ log() {
   esac
   ## uniform log format
   log_color="${bold}${log_color}"
-  log_source_script="${0##*/}: "
-  log_level_colorized="[${log_color}${log_type_up}${nocolor}]: "
+  log_source_script="${0##*/}"
+  if [ -n "${who_ami-}" ]; then
+    log_who_ami_maybe="(${who_ami-}) "
+  fi
+  log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
-  log_full="${log_source_script}${log_level_colorized}${log_content}"
+  log_full="${log_source_script} ${log_who_ami_maybe-}${log_level_colorized}: ${log_content}"
   case "${log_type}" in
     bug|error)
       stecho "${log_full}" >&2
