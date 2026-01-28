@@ -1,3 +1,21 @@
+commit b35c4fd347a39701d417fefa417b9aef1f68c017
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jan 28 07:01:01 2026 -0500
+
+    update link
+
+commit 5cd25f1267f3d144811522ba6a6a482a936e967e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jan 28 06:59:46 2026 -0500
+
+    shutdown speed fix: `run orca-kill-at-shutdown.service` only if file `/usr/bin/orca` exists
+
+commit 0bc49ce03de226ce93f0b679e3f1967d57716b37
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jan 22 11:01:50 2026 +0000
+
+    bumped changelog version
+
 commit 96c0d37854574e402b0d2aeb041ecb42ea7849b2
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jan 22 05:55:50 2026 -0500
