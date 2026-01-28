@@ -5,7 +5,7 @@
 
 [Unit]
 Description=sends signal sigterm to the orca screenreader at shutdown
-Documentation=https://www.whonix.org/wiki/orca
+Documentation=https://www.kicksecure.com/wiki/orca
 ConditionPathExists=/usr/bin/orca
 
 [Service]
