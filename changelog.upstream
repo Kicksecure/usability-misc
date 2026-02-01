@@ -1,3 +1,21 @@
+commit 66cb61e2dfb937409a4bdcf9edbe3f74bc8813d5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 09:59:07 2026 -0500
+
+    build
+
+commit 7adaf9995d5770ed6ff7df91e4c4fea7aa28b2b6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 09:58:19 2026 -0500
+
+    skip strings.bsh unit test
+
+commit 942b8206b77e1811dfbc6c200202d4b16cc975aa
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 14:03:02 2026 +0000
+
+    bumped changelog version
+
 commit 9c8b2afa2e386a8faed7bc5f521edb31130a9162
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Feb 1 08:32:04 2026 -0500
