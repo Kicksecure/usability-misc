@@ -74,6 +74,8 @@ else
   set -o errtrace
   set -o nounset
   set -o pipefail
+  ## Skip 'strings.bsh' unit tests.
+  SKIP_UNIT_TESTS=true
 fi
 
 set_globals() {
