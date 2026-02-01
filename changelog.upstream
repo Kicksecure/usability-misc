@@ -1,3 +1,21 @@
+commit b1d452d1767115ecee8afded3c5a0495b0b9f88e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 13:09:15 2026 -0500
+
+    build
+
+commit c04931a1709132bd0171a88731c25be40ef5a065
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 12:25:02 2026 -0500
+
+    fix `/etc/dkms/framework.conf.d/30_usability-misc.conf` for non-English locale
+
+commit ee058798e3e2024b1db3731fa9322e74d8069429
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 15:11:05 2026 +0000
+
+    bumped changelog version
+
 commit af6c332e54b8a7f6fecadd5e117f92f49d0127cb
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Feb 1 10:10:37 2026 -0500
