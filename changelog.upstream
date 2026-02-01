@@ -1,3 +1,15 @@
+commit af6c332e54b8a7f6fecadd5e117f92f49d0127cb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 10:10:37 2026 -0500
+
+    update signing key
+
+commit fe7b4d5674b7a3a95cc3925137e348f9929a1a4a
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Feb 1 15:06:05 2026 +0000
+
+    bumped changelog version
+
 commit 66cb61e2dfb937409a4bdcf9edbe3f74bc8813d5
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Feb 1 09:59:07 2026 -0500
