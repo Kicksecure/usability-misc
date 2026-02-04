@@ -79,6 +79,10 @@ declare version me start_time dialog_title license adrelanos_signify \
 ## to /usr/libexec/helper-scripts/check_runtime.bsh regardless of where the
 ## functions are executed. The caller MUST pass BASH_SOURCE themselves.
 
+## Some functions are duplicated in:
+## - genmkfile/usr/share/genmkfile/make-helper-one.bsh
+## - helper-scripts/usr/libexec/helper-scripts/strings.bsh
+
 was_executed() {
   local caller_bash_source_zero="${1}"
   if [[ "${caller_bash_source_zero}" == "${0}" ]] \
@@ -470,7 +474,28 @@ fi
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-# shellcheck source=./check_runtime.bsh
+## Code duplication. Copied from
+## helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh.
+##
+## Because check_runtime.bsh cannot be sourced here (this will be run when
+## derivative-maker is used, and the build host may not have helper-scripts
+## installed).
+was_executed() {
+  local caller_bash_source_zero="${1}"
+  if [[ "${caller_bash_source_zero}" == "${0}" ]] \
+    || [[ "${caller_bash_source_zero}" == "$(command -v "${0}")" ]]; then
+    return 0
+  fi
+  return 1
+}
+should_run_unit_tests() {
+  local caller_bash_source_zero="${1}"
+  if was_executed "${caller_bash_source_zero}" \
+    && ! [ "${SKIP_UNIT_TESTS-}" = 'true' ]; then
+    return 0
+  fi
+  return 1
+}
 
 br_add() {
   local in out
