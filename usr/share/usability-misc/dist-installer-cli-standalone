@@ -60,17 +60,61 @@ declare version me start_time dialog_title license adrelanos_signify \
   transfer_proxy_suffix proxy curl_transfer_proxy curl_opt_ssl \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
-  dist_installer_cli_was_sourced can_boot_virtualbox_guest_vms APTGETOPT \
-  APTGETOPT_SERIALIZED id_of_user
+  can_boot_virtualbox_guest_vms APTGETOPT APTGETOPT_SERIALIZED id_of_user \
+  dist_installer_cli_was_sourced
 
-if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
-  ## Script was sourced.
-  ## This is useful for other programs / scripts to be able to `source` the
-  ## functions of this script for code reuse. dist-installer-gui will do this.
-  dist_installer_cli_was_sourced="true"
+# shellcheck source=./check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/check_runtime.bsh
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## WARNING: Do NOT attempt to calculate the runtime once and store the result
+## in a global variable. If an executable sources this library and another
+## library sourced by the same executable sources this library again, the
+## variable will get overwritten by the second sourcing and cause breakage.
+##
+## WARNING 2: Do NOT use BASH_SOURCE in this script. It will always evaluate
+## to /usr/libexec/helper-scripts/check_runtime.bsh regardless of where the
+## functions are executed. The caller MUST pass BASH_SOURCE themselves.
+
+was_executed() {
+  local caller_bash_source_zero="${1}"
+  if [[ "${caller_bash_source_zero}" == "${0}" ]] \
+    || [[ "${caller_bash_source_zero}" == "$(command -v "${0}")" ]]; then
+    return 0
+  fi
+  return 1
+}
+
+was_sourced() {
+  local caller_bash_source_zero="${1}"
+  if [[ "${caller_bash_source_zero}" != "${0}" ]] \
+    && [[ "${caller_bash_source_zero}" != "$(command -v "${0}")" ]]; then
+    return 0
+  fi
+  return 1
+}
+
+should_run_unit_tests() {
+  local caller_bash_source_zero="${1}"
+  if was_executed "${caller_bash_source_zero}" \
+    && ! [ "${SKIP_UNIT_TESTS-}" = 'true' ]; then
+    return 0
+  fi
+  return 1
+}
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/check_runtime.bsh
+
+if was_executed "${BASH_SOURCE[0]}"; then
+  dist_installer_cli_was_sourced='false'
 else
+  dist_installer_cli_was_sourced='true'
+fi
+
+if [ "${dist_installer_cli_was_sourced}" = 'false' ]; then
   ## Script was executed.
-  dist_installer_cli_was_sourced="false"
   set -o errexit
   set -o errtrace
   set -o nounset
@@ -219,20 +263,13 @@ fi
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-## Not possible because 'dist-installer-cli' includes this script verbatim in full.
-# if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-#   true "$0: START"
-#   set -o errexit
-#   set -o nounset
-#   set -o errtrace
-#   set -o pipefail
-# fi
+# shellcheck source=./check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
   local color_yes_or_no
 
-  get_colors_sourced=1
+  get_colors_was_run=1
 
   draw="" ## Intentionally not implemented, see below
 
@@ -263,20 +300,20 @@ get_colors() {
   [[ -v color_yes_or_no ]] || color_yes_or_no="yes"
 
   if test "${color_yes_or_no}" = "no"; then
-      nocolor=""; reset=""
-      bold=""; nobold=""
-      underline=""; nounderline=""
-      under=""; eunder=""
-      stout=""; estout=""
-      blink=""
-      italic=""; eitalic=""
-      red=""; green=""; yellow=""; blue=""; magenta=""; cyan=""; white=""
-      default=""
-      alt=""; ealt=""
-      hide=""; show=""
-      save=""; load=""
-      eed=""; eel=""; ebl=""; ewl=""
-      back=""
+    nocolor=""; reset=""
+    bold=""; nobold=""
+    underline=""; nounderline=""
+    under=""; eunder=""
+    stout=""; estout=""
+    blink=""
+    italic=""; eitalic=""
+    red=""; green=""; yellow=""; blue=""; magenta=""; cyan=""; white=""
+    default=""
+    alt=""; ealt=""
+    hide=""; show=""
+    save=""; load=""
+    eed=""; eel=""; ebl=""; ewl=""
+    back=""
     return 0
   fi
 
@@ -335,6 +372,12 @@ get_colors_test() {
   ## This function is only meant for manual visual verification.
   ## It prints one feature per line, resetting after each line so styles
   ## does not leak into the next output.
+
+  true "$0: START"
+  set -o errexit
+  set -o nounset
+  set -o errtrace
+  set -o pipefail
 
   printf '%s\n' "$0: test mode"
 
@@ -407,16 +450,17 @@ get_colors_test() {
   ## Drawing characters capability is intentionally unsupported in this
   ## modern implementation; kept for compatibility (usually empty).
   printf '%s\n' "draw: ${draw:-}"
+
+  true "$0: END"
 }
 
-if test "${get_colors_sourced:-}" != "1"; then
+if test "${get_colors_was_run:-}" != "1"; then
   get_colors
 fi
 
-# if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-#   get_colors_test
-#   true "$0: END"
-# fi
+if should_run_unit_tests "${BASH_SOURCE[0]}"; then
+  get_colors_test
+fi
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.sh
@@ -425,6 +469,8 @@ fi
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
+
+# shellcheck source=./check_runtime.bsh
 
 br_add() {
   local in out
@@ -752,10 +798,8 @@ strings_bsh_error_trap() {
 
 ## Useful in case this script is copied verbatim into another script such as
 ## in package 'usability-misc' file 'dist-installer-cli-standalone'.
-if ! [ "${SKIP_UNIT_TESTS-}" = "true" ]; then
-  ## TODO
-  #string_bsh_tests
-  true
+if should_run_unit_tests "${BASH_SOURCE[0]}"; then
+  string_bsh_tests
 fi
 
 #trim_collapse_split " aaa  bbb ccc ddd "
@@ -5969,7 +6013,7 @@ run_installer() {
 }
 
 
-if [ "$dist_installer_cli_was_sourced" = "true" ]; then
+if [ "${dist_installer_cli_was_sourced}" = 'true' ]; then
   true "INFO: Not running the install script because it was sourced by another script."
 else
   true "INFO: Running the install script because it was executed."

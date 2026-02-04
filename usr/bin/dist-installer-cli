@@ -59,17 +59,20 @@ declare version me start_time dialog_title license adrelanos_signify \
   transfer_proxy_suffix proxy curl_transfer_proxy curl_opt_ssl \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
-  dist_installer_cli_was_sourced can_boot_virtualbox_guest_vms APTGETOPT \
-  APTGETOPT_SERIALIZED id_of_user
+  can_boot_virtualbox_guest_vms APTGETOPT APTGETOPT_SERIALIZED id_of_user \
+  dist_installer_cli_was_sourced
 
-if [[ -n "${BASH_SOURCE[0]-}" && "${BASH_SOURCE[0]}" != "${0}" ]]; then
-  ## Script was sourced.
-  ## This is useful for other programs / scripts to be able to `source` the
-  ## functions of this script for code reuse. dist-installer-gui will do this.
-  dist_installer_cli_was_sourced="true"
+# shellcheck source=./check_runtime.bsh
+source /usr/libexec/helper-scripts/check_runtime.bsh
+
+if was_executed "${BASH_SOURCE[0]}"; then
+  dist_installer_cli_was_sourced='false'
 else
+  dist_installer_cli_was_sourced='true'
+fi
+
+if [ "${dist_installer_cli_was_sourced}" = 'false' ]; then
   ## Script was executed.
-  dist_installer_cli_was_sourced="false"
   set -o errexit
   set -o errtrace
   set -o nounset
@@ -4596,7 +4599,7 @@ run_installer() {
 }
 
 
-if [ "$dist_installer_cli_was_sourced" = "true" ]; then
+if [ "${dist_installer_cli_was_sourced}" = 'true' ]; then
   true "INFO: Not running the install script because it was sourced by another script."
 else
   true "INFO: Running the install script because it was executed."
