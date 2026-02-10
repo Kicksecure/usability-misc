@@ -2,6 +2,7 @@
 ## See the file COPYING for copying conditions.
 
 ## imported from desktop-config-dist
+/etc/zsh/zshenv.dist
 /etc/zsh/zshrc.dist
 /etc/zsh/zprofile.dist
 /usr/bin/flameshot.dist
