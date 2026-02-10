@@ -1,3 +1,28 @@
+commit 11f1ef3277b1d6ce1cc8a0e4049936b92200b15e
+Merge: 821dc59 1c727e3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Feb 10 07:10:55 2026 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 1c727e3f35d629fcacc6e5589c90aa3b4914649e
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Mon Feb 9 21:34:34 2026 -0600
+
+    Suppress the zsh-newuser-install wizard
+
+commit 7f79543b61271ec6246dee3461fca2f4d3721e1e
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun Feb 8 17:09:40 2026 -0600
+
+    Add a missing copyright declaration
+
+commit 821dc59e3566456f70350293db906310938169bb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Feb 4 10:31:38 2026 +0000
+
+    bumped changelog version
+
 commit 198e3be2a5e6833e33e33036a3feaeeb252d3363
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Feb 4 05:28:26 2026 -0500
