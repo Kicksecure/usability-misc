@@ -2185,7 +2185,7 @@ update_sources() {
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if printf '%s' "$update_output" | grep --ignore-case -- "Error:" >/dev/null ; then
       log error "${underline}Package List Update:${nounderline} Exit code was '0' but 'Error:' found in output."
-      if printf '%s' "$update_output" | grep --ignore-case -- "GPG signature verification error: Signing key not" >/dev/null; then
+      if printf '%s' "$update_output" | grep --ignore-case -- "OpenPGP signature verification error: Signing key not" >/dev/null; then
         log warn "${underline}Package List Update:${nounderline} Signing key not found. Skipping due to 'rpm --import' failing to import keys, but '--assumeyes' being used will import keys."
         return 0
       fi
