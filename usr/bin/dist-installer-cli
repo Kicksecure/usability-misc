@@ -60,7 +60,7 @@ declare version me start_time dialog_title license adrelanos_signify \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
   can_boot_virtualbox_guest_vms APTGETOPT APTGETOPT_SERIALIZED id_of_user \
-  dist_installer_cli_was_sourced
+  dist_installer_cli_was_sourced dkms_mok_path
 
 # shellcheck source=./check_runtime.bsh
 source /usr/libexec/helper-scripts/check_runtime.bsh
@@ -273,6 +273,14 @@ get_specifics() {
       *)
         ;;
     esac
+  fi
+}
+
+get_mok_path() {
+  ## dkms_mok_path is set in set_default, however Ubuntu uses a different path
+  ## than Debian.
+  if [ "${ubuntu_derivative_detected}" = '1' ]; then
+    dkms_mok_path="/var/lib/shim-signed/mok/MOK.der"
   fi
 }
 
@@ -564,7 +572,7 @@ secure_boot_test() {
       ## Added "|| true" to handle the non-zero exit code.
       ## Redirection '2>&1' not necessary yet but that could be considered a minor bug in mokutil to write to stdout instead
       ## of writing to stderr.
-      secure_boot_mokutil_dkms_test_key="$(root_cmd mokutil --test-key "/var/lib/dkms/mok.pub" 2>&1)" || true
+      secure_boot_mokutil_dkms_test_key="$(root_cmd mokutil --test-key "${dkms_mok_path}" 2>&1)" || true
       if printf '%s' "$secure_boot_mokutil_dkms_test_key" | grep --ignore-case --fixed-strings -- "already enrolled" >/dev/null ; then
         secure_boot_dkms_key_enrolled=true
       fi
@@ -4072,6 +4080,7 @@ set_default() {
   can_boot_virtualbox_guest_vms="true"
   ## 'vboxmanage' locale needs to be "C" (default, English) so output can be grepped.
   vboxmanage_locale_english=( 'env' 'LC_ALL=C.UTF-8' 'LANG=C.UTF-8' 'LANGUAGE=C' 'vboxmanage' )
+  dkms_mok_path="/var/lib/dkms/mok.pub"
 }
 
 
@@ -4576,6 +4585,7 @@ run_installer() {
 
   get_os
   get_distro
+  get_mok_path
   get_installer_version
   check_not_qubes_template
   get_system_stat
