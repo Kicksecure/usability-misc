@@ -1,3 +1,28 @@
+commit 93d532546230518297f6c73c6440241970cebedf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Feb 16 05:21:49 2026 -0500
+
+    build
+
+commit d609302e6d15b51499e68c89145cec285b9eeed4
+Merge: d15c228 2cc7594
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Feb 16 05:21:23 2026 -0500
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 2cc7594336f46dfc7b982975e4b88a417a32e294
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun Feb 15 23:57:51 2026 -0600
+
+    Adjust where dist-installer-cli looks for the DKMS MOK key on Ubuntu
+
+commit d15c22873fd3117a1d1c6490dbca1aa6d7ddc7a5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Feb 14 12:44:34 2026 +0000
+
+    bumped changelog version
+
 commit 08ec4830d0f959437d1b26cd8b79e472a35cd74e
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Feb 14 07:22:51 2026 -0500
