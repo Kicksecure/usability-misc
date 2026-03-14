@@ -244,13 +244,15 @@ get_specifics() {
       distro_codename_ubuntu="noble"
     fi
     case "${distro_codename_ubuntu}" in
-      noble|plucky|questing)
+      noble|plucky|questing|resolute)
         use_deb822_sources='yes'
         ;;
       *)
         use_deb822_sources='no'
         ;;
     esac
+    log info "Install VirtualBox from Oracle repository because at the time of writing Ubuntu's VirtualBox package is not reliable when used with HWE kernels."
+    oracle_repo=1
   elif [ "${debian_derivative_detected}" = "1" ]; then
     if [ "${kali_derivative_detected}" = "1" ]; then
       distro_codename_debian="forky"
@@ -4590,13 +4592,13 @@ run_installer() {
   check_not_qubes_template
   get_system_stat
   need_reboot_check_first
+  secure_boot_test
+  dkms_signing_key_enrollment
   get_host_virtualizer_pkgs
   need_reboot_check_second
   get_independent_host_pkgs
   kernel_modules_check
   nested_virtualization_test
-  secure_boot_test
-  dkms_signing_key_enrollment
   kernel_modules_load
   kernel_modules_signed_only
   get_transfer_cmd
