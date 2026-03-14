@@ -1,3 +1,28 @@
+commit fc300235c49280df507552a920cbb6cdf0b58aa3
+Merge: c545a84 8a5a411
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 14 07:24:46 2026 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 8a5a411d7fcdecfbffebd4651a77114e642cb613
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Wed Mar 11 20:32:24 2026 -0400
+
+    build
+
+commit 3380db6e3e21c0147968b1fe43a715ca3a71b537
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Wed Mar 11 20:31:50 2026 -0400
+
+    Use deb822 sources on Ubuntu 26.04 (Resolute), use Oracle's VirtualBox packages on Ubuntu, move Secure Boot check earlier
+
+commit c545a843ef77c38afbc63dd232af70d9d3a485f5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Feb 27 14:34:02 2026 +0000
+
+    bumped changelog version
+
 commit 718751fcb0eef7bab26200d52542ae5556d1d220
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Feb 27 09:30:59 2026 -0500
