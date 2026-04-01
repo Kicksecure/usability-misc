@@ -2216,20 +2216,24 @@ need_reboot_check_second() {
   ##   a standalone binary at /usr/bin/needs-restarting.
   ##   https://github.com/rpm-software-management/dnf5/issues/2562
   ## Therefore this can only run after install_package_fedora_common.
-  local needs_restarting_exit_code
+  local needs_restarting_exit_code=0
   if [ -x /usr/bin/needs-restarting ]; then
     ## Fedora 38-42: standalone binary provided by dnf-utils / dnf-plugins-core.
-    root_cmd /usr/bin/needs-restarting --reboothint && return 0
-    needs_restarting_exit_code="$?"
+    root_cmd /usr/bin/needs-restarting --reboothint || needs_restarting_exit_code="$?"
   elif has dnf && dnf needs-restarting --help >/dev/null 2>&1; then
     ## Fedora 43+ (dnf5): needs-restarting is a dnf5 plugin.
     ## 'dnf needs-restarting --reboothint' does not require root.
     ## Running via sudo breaks dnf5 due to missing DBUS_SESSION_BUS_ADDRESS.
     ## https://github.com/rpm-software-management/dnf5/issues/2562
-    dnf needs-restarting --reboothint && return 0
-    needs_restarting_exit_code="$?"
+    dnf needs-restarting --reboothint || needs_restarting_exit_code="$?"
   else
     log info "Reboot Check Result: needs-restarting command not available, skipping."
+    return 0
+  fi
+
+  ## Exit code 0 means no reboot required.
+  if [ "$needs_restarting_exit_code" = "0" ]; then
+    log info "Reboot Check Result: needs-restarting reports no reboot required, good."
     return 0
   fi
 
