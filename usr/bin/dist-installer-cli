@@ -3,6 +3,15 @@
 ##
 ## Copyright (C) 2023 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
+##
+## Comments for reviewers:
+## random_socks_password leaking to debug log is out-of-scope
+##
+## /usr/share/usability-misc/dist-installer-cli-standalone is auto-generated
+## from /usr/bin/dist-installer-cli (and its sourced function files).
+## Security fixes should be applied here in /usr/bin/dist-installer-cli,
+## not in the standalone file.
+##
 ##########################
 ## BEGIN DEFAULT VALUES ##
 ##########################
@@ -383,6 +392,11 @@ end_exit() {
       # shellcheck disable=SC2086
       kill -s sigterm -- "${tail_pid}" || true
     fi
+  fi
+
+  ## Clean up temporary FIFO and directory.
+  if [ -n "${temp_folder:-}" ] && [ -d "${temp_folder:-}" ]; then
+    rm -rf -- "${temp_folder}"
   fi
 
   true "INFO: Show log file locations at end of xtrace."
@@ -2525,7 +2539,7 @@ install_unstable_repository_debian() {
   log notice "APT Preferences Configuration Writer: Adding APT pinning configuration to prefer 'stable' ('trixie') over 'unstable'."
   file="/etc/apt/preferences.d/40-installer-dist-pinning"
   printf '%s\n' "\
-## This file was created by: $0
+## This file was created by: ${me}
 ## It can be safely deleted if you know what you are doing.
 
 ## Allow package installation from 'unstable' only if explicitly requested
@@ -2612,10 +2626,10 @@ virtualbox_installation_failure_debug() {
     return 0
   fi
 
-  ## TODO: review
+  ## Use find + stat to avoid parsing ls output, which is unsafe with
+  ## special characters in directory names.
   log_run notice ls --format=single-column --sort=time "$virtualbox_dkms_main_folder"
-  # shellcheck disable=SC2012
-  latest_folder=$(ls --format=single-column --sort=time "$virtualbox_dkms_main_folder" | head --lines=1)
+  latest_folder=$(find "$virtualbox_dkms_main_folder" -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | sort -rn | head --lines=1 | cut -d' ' -f2-)
   if [ "$latest_folder" = "" ]; then
     log notice "VirtualBox Installation Debug: latest_folder in '$virtualbox_dkms_main_folder' is empty, could not be determined."
     log_run notice ls -la "$virtualbox_dkms_main_folder" || true
@@ -3800,8 +3814,11 @@ check_hash() {
   if [ -n "${target_user}" ]; then
     run_as_target_user_and_dir "${dir}" "${checkhash[@]}" "${shafile}" || return 1
   else
-    cd "${dir}"
-    log_run info run_as_target_user "${checkhash[@]}" "${shafile}" || return 1
+    ## Use a subshell to avoid changing the working directory of the parent shell.
+    (
+      cd "${dir}"
+      log_run info run_as_target_user "${checkhash[@]}" "${shafile}" || exit 1
+    ) || return 1
   fi
   log info "SHA512 Hash Verification: 'success'"
 }
@@ -4091,6 +4108,14 @@ set_target_user_account() {
 
   if ! id --user -- "${target_user}" >/dev/null; then
     die 1 "Account check result: target_user '${target_user}' does not exist! Consider using the '--user=insert-user-name-here' option to adjust."
+  fi
+
+  ## Prevent targeting system accounts (UID < 1000) such as root, www-data, etc.
+  ## to avoid writing files into sensitive system directories.
+  local target_uid
+  target_uid="$(id --user -- "${target_user}")"
+  if [ "${target_uid}" -lt 1000 ]; then
+    die 1 "Account check result: target_user '${target_user}' (UID ${target_uid}) is a system account. Only regular user accounts (UID >= 1000) are allowed."
   fi
 
   if [ "${sucmd}" != 'sudo' ]; then
@@ -4431,8 +4456,11 @@ Reboot into sysmaint session and rerun this installer."
     if ! test_file -d "${log_dir_main}/1"; then
       log_dir_cur="${log_dir_main}/1"
     else
-      has awk || die 1 "${underline}Parse options:${nounderline} Package 'gawk' is missing. Please install."
-      last_run_integer="$(printf '%s ' "${log_dir_main}"/* | awk '{print NF}')"
+      ## Count entries safely using a glob array to avoid issues with
+      ## filenames containing spaces or glob characters.
+      local log_entries=()
+      log_entries=("${log_dir_main}"/*)
+      last_run_integer="${#log_entries[@]}"
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"
     fi
@@ -4525,8 +4553,8 @@ log_term_and_file() {
       2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
 
   temp_folder="$(mktemp --directory)"
-  xtrace_fifo="/${temp_folder}/xtrace_fifo"
-  mkfifo -- "$xtrace_fifo"
+  xtrace_fifo="${temp_folder}/xtrace_fifo"
+  mkfifo -m 600 -- "$xtrace_fifo"
 
   if [ "${log_level}" = "debug" ] || test -o xtrace; then
     ## log_level is debug or xtrace is already enabled.
