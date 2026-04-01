@@ -710,16 +710,38 @@ need_reboot_check_second() {
     return 0
   fi
 
-  ## Fedora 38: Part of dnf-utils. Not installed by default (on CI).
-  ## Fedora 39: Part of dnf-plugins-core. Not installed by default (on CI).
-  ## Therefore this can only run after install_package_fedora_common.
-  if root_cmd /usr/bin/needs-restarting --reboothint ; then
-    true "INFO: No reboot required."
+  if [ "${ci}" = "1" ]; then
+    true "INFO: Ignore need_reboot_check_second because running on CI."
     return 0
   fi
 
-  if [ "${ci}" = "1" ]; then
-    true "INFO: Ignore need_reboot_check_second because running on CI."
+  ## Fedora 38: Part of dnf-utils. Not installed by default (on CI).
+  ## Fedora 39: Part of dnf-plugins-core. Not installed by default (on CI).
+  ## Fedora 43+: needs-restarting is a dnf5 plugin subcommand, no longer
+  ##   a standalone binary at /usr/bin/needs-restarting.
+  ##   https://github.com/rpm-software-management/dnf5/issues/2562
+  ## Therefore this can only run after install_package_fedora_common.
+  local needs_restarting_exit_code
+  if [ -x /usr/bin/needs-restarting ]; then
+    ## Fedora 38-42: standalone binary provided by dnf-utils / dnf-plugins-core.
+    root_cmd /usr/bin/needs-restarting --reboothint && return 0
+    needs_restarting_exit_code="$?"
+  elif has dnf && dnf needs-restarting --help >/dev/null 2>&1; then
+    ## Fedora 43+ (dnf5): needs-restarting is a dnf5 plugin.
+    ## 'dnf needs-restarting --reboothint' does not require root.
+    ## Running via sudo breaks dnf5 due to missing DBUS_SESSION_BUS_ADDRESS.
+    ## https://github.com/rpm-software-management/dnf5/issues/2562
+    dnf needs-restarting --reboothint && return 0
+    needs_restarting_exit_code="$?"
+  else
+    log info "Reboot Check Result: needs-restarting command not available, skipping."
+    return 0
+  fi
+
+  ## Exit code 1 means reboot required. Other exit codes indicate errors
+  ## (e.g. dnf5 D-Bus failures), which should not block installation.
+  if [ "$needs_restarting_exit_code" != "1" ]; then
+    log warn "Reboot Check Result: needs-restarting exited with unexpected code $needs_restarting_exit_code, ignoring."
     return 0
   fi
 
