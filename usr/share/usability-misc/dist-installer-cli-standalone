@@ -3270,7 +3270,13 @@ install_package_fedora_common() {
     return 0
   fi
 
-  install_pkg torsocks dnf-plugins-core procps-ng
+  ## Fedora 38-42: dnf-plugins-core provides needs-restarting as /usr/bin/needs-restarting.
+  ## Fedora 43+ (dnf5): dnf5-plugins provides 'dnf needs-restarting' subcommand.
+  local dnf_plugins_package="dnf-plugins-core"
+  if dnf5 --version >/dev/null 2>&1; then
+    dnf_plugins_package="dnf5-plugins"
+  fi
+  install_pkg torsocks "$dnf_plugins_package" procps-ng
 
   ## Conflicting packages requires '--allowerasing'.
   if "${pkg_mngr_check_installed[@]}" lsb_release >/dev/null 2>&1 ||

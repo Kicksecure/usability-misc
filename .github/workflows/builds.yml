@@ -40,6 +40,7 @@ jobs:
                 include:
                     - image: fedora:41
                     - image: fedora:42
+                    - image: fedora:43
                     #- image: fedora:latest
                     #- image: fedora:rawhide
                     ## Debian bullseye: EOL
