@@ -73,6 +73,13 @@ format <guest-interface-installer>.
 
         Skip the importation of the guest. By default, if the guest hasn't been imported, it will be.
 
+`--no-reboot-check`
+
+        Skip the host system reboot requirement check. By default, the installer
+        verifies that no pending reboot is required before proceeding. Use this
+        option to bypass the check when the reboot detection is unreliable, such
+        as on systems where needs-restarting reports false positives.
+
 `--import-only`=<vm>
 
         Import only a specific Virtual Machine when the guest is Whonix.

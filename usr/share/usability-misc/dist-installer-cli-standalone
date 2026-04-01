@@ -13,7 +13,7 @@ declare version me start_time dialog_title license adrelanos_signify \
   hulahoop_signify oracle_pgp user_home_dir directory_prefix guest \
   hypervisor interface oracle_repo log_level guest_version socks_proxy onion \
   non_interactive dev noupdate noupgrade dry_run getversion getopt ci no_import \
-  no_boot redownload import_only destroy_existing_guest testers allow_errors \
+  no_boot no_reboot_check redownload import_only destroy_existing_guest testers allow_errors \
   mirror virtualbox_only target_user last_exit guest_pretty xtrace sucmd \
   url_version_domain run_background background_pid  \
   debian_derivative_detected ubuntu_derivative_detected \
@@ -2189,6 +2189,11 @@ need_reboot_check_first() {
     return 0
   fi
 
+  if [ "${no_reboot_check}" = "1" ]; then
+    log warn "Reboot Check Result: File /var/run/reboot-required exists but skipping due to --no-reboot-check."
+    return 0
+  fi
+
   ## Building for an old kernel might result in missing kernel headers for that kernel
   ## As a result, VirtualBox would fail to start.
   die 1 "${underline}Reboot Check Result:${nounderline} Your system reports that a reboot is required.
@@ -2207,6 +2212,11 @@ need_reboot_check_second() {
 
   if [ "${ci}" = "1" ]; then
     true "INFO: Ignore need_reboot_check_second because running on CI."
+    return 0
+  fi
+
+  if [ "${no_reboot_check}" = "1" ]; then
+    log warn "Reboot Check Result: Skipping Fedora reboot check due to --no-reboot-check."
     return 0
   fi
 
@@ -5526,6 +5536,7 @@ Developer options:
  --import-only=<vm>  Select specific VM to import. Only if guest is Whonix.
                        Options: workstation, gateway.
  --no-import         Skip guest import. Default behavior is to import.
+ --no-reboot-check   Skip the host system reboot requirement check.
  --destroy-existing-guest Deletes any existing virtual machine(s) and re-imports them.
                        Warning: This action poses a risk of data loss as it involves
                        a complete reinstallation of the VM(s). Proceed with caution.
@@ -5581,6 +5592,7 @@ set_default() {
   ci=""
   no_import=""
   no_boot=""
+  no_reboot_check=""
   redownload=""
   import_only=""
   destroy_existing_guest=""
@@ -5654,6 +5666,7 @@ print_getopt() {
   ci=${ci}
   no_import=${no_import}
   no_boot=${no_boot}
+  no_reboot_check=${no_reboot_check}
   redownload=${redownload}
   import_only=${import_only}
   destroy_existing_guest=${destroy_existing_guest}
@@ -5801,6 +5814,10 @@ parse_opt() {
       ## --no-import
       no-import)
         no_import=1
+        ;;
+      ## --no-reboot-check
+      no-reboot-check)
+        no_reboot_check=1
         ;;
       ## -D, --dev
       D|dev)
