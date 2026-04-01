@@ -5524,7 +5524,6 @@ User Options:
  -h, --help          Show this help message and exit.
 
 Developer options:
- --no-show-errors    Suppress error messages.
  --allow-errors      Continue execution despite errors. Dirty mode. Use with caution.
  --mirror=<number>   Choose a download mirror by index. Defaults to mirror 0 for
                        clearnet and mirror 0 for onion if unspecified.
@@ -5673,7 +5672,8 @@ print_getopt() {
   testers=${testers}
   allow_errors=${allow_errors}
   mirror=${mirror}
-  virtualbox_only=${virtualbox_only}"
+  virtualbox_only=${virtualbox_only}
+  target_user=${target_user}"
 }
 
 ## Parse script name.

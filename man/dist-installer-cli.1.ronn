@@ -123,10 +123,6 @@ format <guest-interface-installer>.
 
         Enable dirty mode, where the program continues despite errors.
 
-`--no-show-errors`
-
-        Suppress error messages.
-
 `--ci`
 
         Enable CI mode for testing within Continuous Integration (CI) environments.
@@ -138,6 +134,19 @@ format <guest-interface-installer>.
 `-D`, `--dev`
 
         Activate development mode, which sets the default download version to an empty image.
+
+`--noupdate`
+
+        Skip package manager list update. For development only.
+
+`--noupgrade`
+
+        Ignore pending upgrades. For development only.
+
+`--user`=<username>
+
+        Specify the user account to install the distribution VM under.
+        Useful when running as a different user (e.g. sysmaint).
 
 `-d`, `--dry-run`
 
