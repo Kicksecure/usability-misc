@@ -199,11 +199,11 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
 source /usr/libexec/helper-scripts/wc-test.sh
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-source /usr/libexec/helper-scripts/get_colors.sh
-
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.sh
 source /usr/libexec/helper-scripts/strings.bsh
+
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+source /usr/libexec/helper-scripts/get_colors.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
 source /usr/libexec/helper-scripts/package_installed_check.sh
