@@ -1,3 +1,52 @@
+commit 54aa988e34e25ef85ff81847f01964f6832da582
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Apr 8 10:30:28 2026 -0400
+
+    fix
+
+commit 041cf000e096d06684318f2b38e6b60ea4c1d868
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Apr 8 10:30:09 2026 -0400
+
+    fix
+
+commit 3f50018ae8d74ec8517feb991773ac4da90c34f9
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Apr 8 10:21:53 2026 -0400
+
+    build
+
+commit 2acb5334f6ee56f55dab5953ef836627f7c79314
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Apr 8 10:21:08 2026 -0400
+
+    end-of-options
+
+commit eeb9b62c613f18e7390bc36ba96593407b3edaaa
+Merge: ee5159e eedccfb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Apr 8 10:20:17 2026 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit eedccfbb95d936363706f13c4ecef475562d94fe
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Tue Apr 7 22:34:04 2026 -0400
+
+    check-user-slice-on-shutdown: Give the user slice a few more seconds to shut down
+
+commit a23d7c7f31650c1dbd7e2fcd87531c07f9189d3d
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun Apr 5 14:23:49 2026 -0400
+
+    Security and robustness improvements for dist-installer-cli (mostly taken from Claude Code)
+
+commit ee5159ecad37f1e69f80dd284c7d2e53f6dcd26e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Mar 14 12:10:42 2026 +0000
+
+    bumped changelog version
+
 commit fc300235c49280df507552a920cbb6cdf0b58aa3
 Merge: c545a84 8a5a411
 Author: Patrick Schleizer <adrelanos@whonix.org>
