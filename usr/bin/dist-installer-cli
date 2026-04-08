@@ -3812,7 +3812,7 @@ check_hash() {
     ## 'set -e' will propagate the `return 1` from within the subshell
     ## properly.
     (
-      cd "${dir}"
+      cd -- "${dir}"
       log_run info run_as_target_user "${checkhash[@]}" "${shafile}" || return 1
     )
   fi
