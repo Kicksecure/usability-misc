@@ -61,9 +61,9 @@ declare version me start_time dialog_title license adrelanos_signify \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
   can_boot_virtualbox_guest_vms APTGETOPT APTGETOPT_SERIALIZED id_of_user \
-  dist_installer_cli_was_sourced dkms_mok_path
+  dist_installer_cli_was_sourced dkms_mok_path temp_folder
 
-# shellcheck source=./check_runtime.bsh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
@@ -467,7 +467,7 @@ if should_run_unit_tests "${BASH_SOURCE[0]}"; then
 fi
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_colors.sh
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.sh
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.bsh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
@@ -1878,6 +1878,11 @@ end_exit() {
       # shellcheck disable=SC2086
       kill -s sigterm -- "${tail_pid}" || true
     fi
+  fi
+
+  ## Clean up temporary FIFO and directory.
+  if [ -n "${temp_folder:-}" ] && [ -d "${temp_folder:-}" ]; then
+    rm -rf -- "${temp_folder}"
   fi
 
   true "INFO: Show log file locations at end of xtrace."
@@ -4020,7 +4025,7 @@ install_unstable_repository_debian() {
   log notice "APT Preferences Configuration Writer: Adding APT pinning configuration to prefer 'stable' ('trixie') over 'unstable'."
   file="/etc/apt/preferences.d/40-installer-dist-pinning"
   printf '%s\n' "\
-## This file was created by: $0
+## This file was created by: ${me}
 ## It can be safely deleted if you know what you are doing.
 
 ## Allow package installation from 'unstable' only if explicitly requested
@@ -4107,10 +4112,11 @@ virtualbox_installation_failure_debug() {
     return 0
   fi
 
-  ## TODO: review
+  ## Use find to avoid parsing ls output, which may be unsafe with special
+  ## characters in directory names.
   log_run notice ls --format=single-column --sort=time "$virtualbox_dkms_main_folder"
   # shellcheck disable=SC2012
-  latest_folder=$(ls --format=single-column --sort=time "$virtualbox_dkms_main_folder" | head --lines=1)
+  latest_folder=$(find "$virtualbox_dkms_main_folder" -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | sort -rn | head --lines=1 | cut -d' ' -f2-) || true
   if [ "$latest_folder" = "" ]; then
     log notice "VirtualBox Installation Debug: latest_folder in '$virtualbox_dkms_main_folder' is empty, could not be determined."
     log_run notice ls -la "$virtualbox_dkms_main_folder" || true
@@ -5295,8 +5301,15 @@ check_hash() {
   if [ -n "${target_user}" ]; then
     run_as_target_user_and_dir "${dir}" "${checkhash[@]}" "${shafile}" || return 1
   else
-    cd "${dir}"
-    log_run info run_as_target_user "${checkhash[@]}" "${shafile}" || return 1
+    ## Use a subshell to avoid changing the working directory of the parent
+    ## shell.
+    ##
+    ## 'set -e' will propagate the `return 1` from within the subshell
+    ## properly.
+    (
+      cd "${dir}"
+      log_run info run_as_target_user "${checkhash[@]}" "${shafile}" || return 1
+    )
   fi
   log info "SHA512 Hash Verification: 'success'"
 }
@@ -5926,8 +5939,13 @@ Reboot into sysmaint session and rerun this installer."
     if ! test_file -d "${log_dir_main}/1"; then
       log_dir_cur="${log_dir_main}/1"
     else
-      has awk || die 1 "${underline}Parse options:${nounderline} Package 'gawk' is missing. Please install."
-      last_run_integer="$(printf '%s ' "${log_dir_main}"/* | awk '{print NF}')"
+      local log_entries
+      log_entries=( "${log_dir_main}"/* )
+      last_run_integer="$(printf '%s\0' "${log_entries[@]}" | sort -zrn | tr '\0' '\n' | head --lines=1)" || true
+      if [ -z "${last_run_integer}" ] \
+        || ! is_whole_number "${last_run_integer}"; then
+        last_run_integer='1'
+      fi
       cur_run_integer=$((last_run_integer+1))
       log_dir_cur="${log_dir_main}/${cur_run_integer}"
     fi
@@ -5987,7 +6005,7 @@ Reboot into sysmaint session and rerun this installer."
 ## Bash supports process substitution and saving xtrace to a file, which is a
 ## simpler way to log to file and console.
 log_term_and_file() {
-  local temp_folder xtrace_fifo tty_output
+  local xtrace_fifo tty_output
 
   tty_output=''
   ## global console_write_command
@@ -6021,7 +6039,7 @@ log_term_and_file() {
 
   temp_folder="$(mktemp --directory)"
   xtrace_fifo="/${temp_folder}/xtrace_fifo"
-  mkfifo -- "$xtrace_fifo"
+  mkfifo -m 600 -- "$xtrace_fifo"
 
   if [ "${log_level}" = "debug" ] || test -o xtrace; then
     ## log_level is debug or xtrace is already enabled.
