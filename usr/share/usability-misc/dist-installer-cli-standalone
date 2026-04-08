@@ -5301,15 +5301,9 @@ check_hash() {
   if [ -n "${target_user}" ]; then
     run_as_target_user_and_dir "${dir}" "${checkhash[@]}" "${shafile}" || return 1
   else
-    ## Use a subshell to avoid changing the working directory of the parent
-    ## shell.
-    ##
-    ## 'set -e' will propagate the `return 1` from within the subshell
-    ## properly.
-    (
-      cd -- "${dir}"
+      pushd -- "${dir}" >/dev/null
       log_run info run_as_target_user "${checkhash[@]}" "${shafile}" || return 1
-    )
+      popd >/dev/null
   fi
   log info "SHA512 Hash Verification: 'success'"
 }
