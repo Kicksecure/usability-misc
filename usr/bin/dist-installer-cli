@@ -60,18 +60,25 @@ declare version me start_time dialog_title license adrelanos_signify \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
   can_boot_virtualbox_guest_vms APTGETOPT APTGETOPT_SERIALIZED id_of_user \
-  dist_installer_cli_was_sourced dkms_mok_path temp_folder
+  dkms_mok_path temp_folder
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 source /usr/libexec/helper-scripts/check_runtime.bsh
 
-if was_executed "${BASH_SOURCE[0]}"; then
-  dist_installer_cli_was_sourced='false'
-else
-  dist_installer_cli_was_sourced='true'
-fi
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
+source /usr/libexec/helper-scripts/wc-test.sh
 
-if [ "${dist_installer_cli_was_sourced}" = 'false' ]; then
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.bsh
+source /usr/libexec/helper-scripts/strings.bsh
+
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+source /usr/libexec/helper-scripts/get_colors.sh
+
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
+source /usr/libexec/helper-scripts/package_installed_check.sh
+
+
+if was_executed "${BASH_SOURCE[0]}"; then
   ## Script was executed.
   set -o errexit
   set -o errtrace
@@ -195,18 +202,6 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 =Rv7/
 -----END PGP PUBLIC KEY BLOCK-----"
 }
-
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
-source /usr/libexec/helper-scripts/wc-test.sh
-
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.bsh
-source /usr/libexec/helper-scripts/strings.bsh
-
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-source /usr/libexec/helper-scripts/get_colors.sh
-
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
-source /usr/libexec/helper-scripts/package_installed_check.sh
 
 ########################
 ## END DEFAULT VALUES ##
@@ -4623,9 +4618,9 @@ run_installer() {
 }
 
 
-if [ "${dist_installer_cli_was_sourced}" = 'true' ]; then
-  true "INFO: Not running the install script because it was sourced by another script."
-else
+if was_executed "${BASH_SOURCE[0]}"; then
   true "INFO: Running the install script because it was executed."
   run_installer "${@}"
+else
+  true "INFO: Not running the install script because it was sourced by another script."
 fi
