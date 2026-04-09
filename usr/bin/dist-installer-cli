@@ -1643,6 +1643,26 @@ get_pattern_sources_deb822_debian() {
     fi
   done < "${file}"
 
+  ## Check the last stanza in case the file does not end with an empty line.
+  match_hit='yes'
+  if [ -n "${types_pattern}" ] \
+    && ! [[ "${current_types}" =~ ${types_pattern} ]]; then
+    match_hit='no'
+  elif [ -n "${uris_pattern}" ] \
+    && ! [[ "${current_uris}" =~ ${uris_pattern} ]]; then
+    match_hit='no'
+  elif [ -n "${suites_pattern}" ] \
+    && ! [[ "${current_suites}" =~ ${suites_pattern} ]]; then
+    match_hit='no'
+  elif [ -n "${components_pattern}" ] \
+    && ! [[ "${current_components}" =~ ${components_pattern} ]]; then
+    match_hit='no'
+  fi
+
+  if [ "${match_hit}" = 'yes' ]; then
+    return 0
+  fi
+
   return 1
 }
 
@@ -1931,7 +1951,7 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
 
 
 add_user_to_vbox_group() {
-  if id --name --groups "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
+  if id --name --groups "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}" >/dev/null; then
     log info "Linux Group Configuration: Account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
