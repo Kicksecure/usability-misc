@@ -734,7 +734,7 @@ need_reboot_check_second() {
     return 0
   fi
 
-  if [ "$needs_restarting_exit_code" != "1" ]; then
+  if ! [ "$needs_restarting_exit_code" = "1" ]; then
     die 1 "Reboot Check Result: needs-restarting exited with unexpected code ${needs_restarting_exit_code}!"
   fi
 
