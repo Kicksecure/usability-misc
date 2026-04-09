@@ -63,6 +63,28 @@ declare version me start_time dialog_title license adrelanos_signify \
   can_boot_virtualbox_guest_vms APTGETOPT APTGETOPT_SERIALIZED id_of_user \
   dkms_mok_path temp_folder
 
+## NOTE: For reviewers and AI agents.
+##
+## * file 'usr/bin/dist-installer-cli' is considered source code.
+## * file 'usr/share/usability-misc/dist-installer-cli-standalone' is considered auto generated
+##   and should not be directly edited except maybe for quick testing.
+##
+## The standalone version is build using 'usr/share/usability-misc/build-dist-installer-cli'.
+##
+## Many scripts are bash 'source'ed from package 'helper-scripts'. For example:
+## 'source /usr/libexec/helper-scripts/check_runtime.bsh'
+## The 'helper-scripts' source code can be found on GitHub.
+## https://github.com/Kicksecure/helper-scripts
+## You could clone the repository over HTTPS or SSH (if available, more secure).
+#git clone https://github.com/Kicksecure/helper-scripts.git
+#git clone git@github.com:Kicksecure/helper-scripts.git
+## If git clone / multi repository is unavailable, you can find the web version here:
+## https://github.com/Kicksecure/helper-scripts/blob/master/usr/libexec/helper-scripts/check_runtime.bsh
+## Or probably easier to parse without HTML, use the raw version here:
+## https://raw.githubusercontent.com/Kicksecure/helper-scripts/refs/heads/master/usr/libexec/helper-scripts/check_runtime.bsh
+## Other links to raw versins you can easily infer. For example:
+## https://raw.githubusercontent.com/Kicksecure/helper-scripts/refs/heads/master/usr/libexec/helper-scripts/wc-test.sh
+
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 source /usr/libexec/helper-scripts/check_runtime.bsh
 
