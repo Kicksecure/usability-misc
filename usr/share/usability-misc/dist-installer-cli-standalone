@@ -111,6 +111,16 @@ should_run_unit_tests() {
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/check_runtime.bsh
 
+if was_executed "${BASH_SOURCE[0]}"; then
+  ## Script was executed.
+  set -o errexit
+  set -o errtrace
+  set -o nounset
+  set -o pipefail
+  ## Skip 'strings.bsh' unit tests.
+  SKIP_UNIT_TESTS=true
+fi
+
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/wc-test.sh
 #!/bin/bash
@@ -788,16 +798,6 @@ pkg_installed() {
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.sh
 
-
-if was_executed "${BASH_SOURCE[0]}"; then
-  ## Script was executed.
-  set -o errexit
-  set -o errtrace
-  set -o nounset
-  set -o pipefail
-  ## Skip 'strings.bsh' unit tests.
-  SKIP_UNIT_TESTS=true
-fi
 
 set_globals() {
   local all_args
@@ -2212,7 +2212,7 @@ need_reboot_check_second() {
   elif has dnf && dnf needs-restarting --help >/dev/null 2>&1; then
     ## Running via sudo breaks dnf5 due to missing DBUS_SESSION_BUS_ADDRESS.
     ## https://github.com/rpm-software-management/dnf5/issues/2562
-    dnf needs-restarting || needs_restarting_exit_code="$?"
+    log_run notice dnf needs-restarting || needs_restarting_exit_code="$?"
   else
     die 1 "Reboot Check Result: needs-restarting command not available!"
   fi
@@ -2222,7 +2222,7 @@ need_reboot_check_second() {
     return 0
   fi
 
-  if [ "$needs_restarting_exit_code" != "1" ]; then
+  if ! [ "$needs_restarting_exit_code" = "1" ]; then
     die 1 "Reboot Check Result: needs-restarting exited with unexpected code ${needs_restarting_exit_code}!"
   fi
 
@@ -5618,6 +5618,17 @@ set_target_user_account() {
     ## be created after booting at least once into user session to login into account 'user'.
     log info "Account check result: Unable to determine user home directory for target user '${target_user}'. Ignoring, because the user might work around this using the '--directory-prefix' option and because there is a separate directory check."
   fi
+
+  ## Prevent targeting system accounts (UID < 1000) such as root, www-data, etc.
+  ## to avoid writing files into sensitive system directories? -> No.
+  ## The feature that allows installing things into another user account can
+  ## only be used if the calling user has the ability to escalate to root, and
+  ## there may be legitimate reasons to install into a "system user" (IIRC,
+  ## some Linux distros use UID 999 as the UID for live session users on their
+  ## live ISOs).
+  ## Hardcoding UID 1000 is also bad. If this were to be implemented, we would
+  ## need to read the real UID_MIN (and probably also UID_MAX) values from
+  ## /etc/login.defs.
 }
 
 
