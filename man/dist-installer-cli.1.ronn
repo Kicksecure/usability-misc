@@ -132,6 +132,19 @@ format <guest-interface-installer>.
 
         Activate development mode, which sets the default download version to an empty image.
 
+`--noupgrade`
+
+        Skip package manager list update. For development only.
+
+`--noupgrade`
+
+        Ignore pending upgrades. For development only.
+
+`--user`=<username>
+
+        Specify the user to install the distribution VM under.
+        Useful when running as a different user (e.g. sysmaint).
+
 `-d`, `--dry-run`
 
         Simulate a run without executing impactful actions.
