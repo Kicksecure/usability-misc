@@ -1178,8 +1178,9 @@ vm_delete_maybe() {
             die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'gateway', but it already exists and '--destroy-existing-guest' option was not set."
           elif [ "${workstation_exists}" = "1" ] && [ "${import_only}" = "workstation" ] ; then
             die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
+          elif [ "${import_only}" = "both" ] && [ "${gateway_exists}" = "1" ] && [ "${workstation_exists}" = "1" ]; then
+            die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'both', but both VMs already exist and '--destroy-existing-guest' option was not set."
           fi
-        ## FIXME: Shouldn't import_only=both be handled here?
         else
           log info "Existing VM Check: Neither '--destroy-existing-guest' nor '--import-only' option was set, ok."
         fi
