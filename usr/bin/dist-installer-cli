@@ -65,6 +65,16 @@ declare version me start_time dialog_title license adrelanos_signify \
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 source /usr/libexec/helper-scripts/check_runtime.bsh
 
+if was_executed "${BASH_SOURCE[0]}"; then
+  ## Script was executed.
+  set -o errexit
+  set -o errtrace
+  set -o nounset
+  set -o pipefail
+  ## Skip 'strings.bsh' unit tests.
+  SKIP_UNIT_TESTS=true
+fi
+
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
 source /usr/libexec/helper-scripts/wc-test.sh
 
@@ -77,16 +87,6 @@ source /usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
 source /usr/libexec/helper-scripts/package_installed_check.sh
 
-
-if was_executed "${BASH_SOURCE[0]}"; then
-  ## Script was executed.
-  set -o errexit
-  set -o errtrace
-  set -o nounset
-  set -o pipefail
-  ## Skip 'strings.bsh' unit tests.
-  SKIP_UNIT_TESTS=true
-fi
 
 set_globals() {
   local all_args
