@@ -712,10 +712,30 @@ need_reboot_check_second() {
 
   ## Fedora 38: Part of dnf-utils. Not installed by default (on CI).
   ## Fedora 39: Part of dnf-plugins-core. Not installed by default (on CI).
-  ## Therefore this can only run after install_package_fedora_common.
-  if root_cmd /usr/bin/needs-restarting --reboothint ; then
+  ## Fedora 43: needs-restarting is a dnf5 plugin subcommand, no longer
+  ##  a standalone binary at /usr/bin/needs-restarting. Part of dnf5-plugins.
+  ##  Installed by default (on CI).
+  ## Therefore this can only run after install_package_fedora_common, until
+  ## Fedora 42 is end-of-life.
+  local needs_restarting_exit_code
+  needs_restarting_exit_code=0
+  if has needs-restarting; then
+    root_cmd /usr/bin/needs-restarting --reboothint || needs_restarting_exit_code="$?"
+  elif has dnf && dnf needs-restarting --help >/dev/null 2>&1; then
+    ## Running via sudo breaks dnf5 due to missing DBUS_SESSION_BUS_ADDRESS.
+    ## https://github.com/rpm-software-management/dnf5/issues/2562
+    dnf needs-restarting || needs_restarting_exit_code="$?"
+  else
+    die 1 "Reboot Check Result: needs-restarting command not available!"
+  fi
+
+  if [ "$needs_restarting_exit_code" = "0" ]; then
     true "INFO: No reboot required."
     return 0
+  fi
+
+  if [ "$needs_restarting_exit_code" != "1" ]; then
+    die 1 "Reboot Check Result: needs-restarting exited with unexpected code ${needs_restarting_exit_code}!"
   fi
 
   if [ "${ci}" = "1" ]; then
@@ -756,7 +776,7 @@ update_sources() {
     true "INFO: Exit code is zero but that does not guarantee in case of dnf that there is no error."
     if printf '%s' "$update_output" | grep --ignore-case -- "Error:" >/dev/null ; then
       log error "${underline}Package List Update:${nounderline} Exit code was '0' but 'Error:' found in output."
-      if printf '%s' "$update_output" | grep --ignore-case -- "OpenPGP signature verification error: Signing key not" >/dev/null; then
+      if printf '%s' "$update_output" | grep --ignore-case -- "signature verification error: Signing key not" >/dev/null; then
         log warn "${underline}Package List Update:${nounderline} Signing key not found. Skipping due to 'rpm --import' failing to import keys, but '--assumeyes' being used will import keys."
         return 0
       fi
@@ -1749,7 +1769,12 @@ install_package_fedora_common() {
     return 0
   fi
 
-  install_pkg torsocks dnf-plugins-core procps-ng
+  local dnf_plugins_package
+  dnf_plugins_package='dnf-plugins-core'
+  if has dnf5; then
+    dnf_plugins_package='dnf5-plugins'
+  fi
+  install_pkg torsocks "$dnf_plugins_package" procps-ng
 
   ## Conflicting packages requires '--allowerasing'.
   if "${pkg_mngr_check_installed[@]}" lsb_release >/dev/null 2>&1 ||
@@ -4135,7 +4160,8 @@ print_getopt() {
   testers=${testers}
   allow_errors=${allow_errors}
   mirror=${mirror}
-  virtualbox_only=${virtualbox_only}"
+  virtualbox_only=${virtualbox_only}
+  target_user=${target_user}"
 }
 
 ## Parse script name.

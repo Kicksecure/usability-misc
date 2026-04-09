@@ -16,7 +16,8 @@ _dist_installer_cli()
             --no-import | --no-boot | --redownload | \
             --destroy-existing-guest | --dev | --ci | --dry-run | \
             --getopt | --no-show-errors | --allow-errors | --testers | \
-            --virtualbox-only | --oracle-repo | --version | --help )
+            --noupdate | --noupgrade | --virtualbox-only | --oracle-repo | \
+            --version | --help )
             return
             ;;
         --directory-prefix )
@@ -44,7 +45,11 @@ _dist_installer_cli()
             return
             ;;
         --mirror )
-            COMPREPLY=($(compgen -W "0 1 2 3 4 5" -- "$cur"))
+            COMPREPLY=($(compgen -W "0 1 2" -- "$cur"))
+            return
+            ;;
+        --user )
+            COMPREPLY=($(compgen -u -- "$cur"))
             return
             ;;
     esac
