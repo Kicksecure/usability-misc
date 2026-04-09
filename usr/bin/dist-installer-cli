@@ -72,7 +72,9 @@ declare version me start_time dialog_title license adrelanos_signify \
 ## The standalone version is build using 'usr/share/usability-misc/build-dist-installer-cli'.
 ##
 ## Many scripts are bash 'source'ed from package 'helper-scripts'. For example:
-## 'source /usr/libexec/helper-scripts/check_runtime.bsh'
+## Imagine _source_ without underlines due to build-dist-installer-cli limitations proper writing
+## is not possible.
+## '_source_ /usr/libexec/helper-scripts/check_runtime.bsh'
 ## The 'helper-scripts' source code can be found on GitHub.
 ## https://github.com/Kicksecure/helper-scripts
 ## You could clone the repository over HTTPS or SSH (if available, more secure).
