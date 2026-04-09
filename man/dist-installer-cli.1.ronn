@@ -62,7 +62,7 @@ format <guest-interface-installer>.
 `-l`, `--log-level`=<level>
 
         Define the logging level. Options: debug, info, notice (default), warn, error.
-        Log messages below the specified level are displayed.
+        Log messages at or above the specified level are displayed.
 
 `-k`, `--no-boot`
 
@@ -115,10 +115,6 @@ format <guest-interface-installer>.
 `--allow-errors`
 
         Enable dirty mode, where the program continues despite errors.
-
-`--no-show-errors`
-
-        Suppress error messages.
 
 `--ci`
 

@@ -1917,7 +1917,8 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
     #install_pkg torsocks
   #fi
 
-  install_signify signify-openbsd torsocks
+  install_signify signify-openbsd
+  install_pkg torsocks
 }
 
 
@@ -4039,7 +4040,6 @@ User Options:
  -h, --help          Show this help message and exit.
 
 Developer options:
- --no-show-errors    Suppress error messages.
  --allow-errors      Continue execution despite errors. Dirty mode. Use with caution.
  --mirror=<number>   Choose a download mirror by index. Defaults to mirror 0 for
                        clearnet and mirror 0 for onion if unspecified.
@@ -4497,7 +4497,7 @@ Reboot into sysmaint session and rerun this installer."
     else
       local log_entries
       log_entries=( "${log_dir_main}"/* )
-      last_run_integer="$(printf '%s\0' "${log_entries[@]}" | sort -zrn | tr '\0' '\n' | head --lines=1)" || true
+      last_run_integer="$(printf '%s\n' "${log_entries[@]##*/}" | sort -rn | head --lines=1)" || true
       if [ -z "${last_run_integer}" ] \
         || ! is_whole_number "${last_run_integer}"; then
         last_run_integer='1'
