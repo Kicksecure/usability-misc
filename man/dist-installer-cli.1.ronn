@@ -132,7 +132,7 @@ format <guest-interface-installer>.
 
         Activate development mode, which sets the default download version to an empty image.
 
-`--noupgrade`
+`--noupdate`
 
         Skip package manager list update. For development only.
 

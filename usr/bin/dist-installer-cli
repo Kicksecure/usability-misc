@@ -1356,7 +1356,7 @@ import_guest() {
   fi
 
   if [ "${no_import}" = "1" ]; then
-    log notice "VM Import: Not importing guest via '--import-only' option."
+    log notice "VM Import: Not importing guest via '--no-import' option."
     end_installer
   fi
 
@@ -3670,8 +3670,8 @@ get_download_links() {
       ;;
     *)
       ## Variables need to be set for --virtualbox-only.
-      site_clearnet="${site_onion_kicksecure}"
-      site_onion="${site_clearnet_kicksecure}"
+      site_clearnet="${site_clearnet_kicksecure}"
+      site_onion="${site_onion_kicksecure}"
       ;;
   esac
 
@@ -4594,7 +4594,7 @@ log_term_and_file() {
       2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
 
   temp_folder="$(mktemp --directory)"
-  xtrace_fifo="/${temp_folder}/xtrace_fifo"
+  xtrace_fifo="${temp_folder}/xtrace_fifo"
   mkfifo -m 600 -- "$xtrace_fifo"
 
   if [ "${log_level}" = "debug" ] || test -o xtrace; then
