@@ -4130,6 +4130,17 @@ set_target_user_account() {
     ## be created after booting at least once into user session to login into account 'user'.
     log info "Account check result: Unable to determine user home directory for target user '${target_user}'. Ignoring, because the user might work around this using the '--directory-prefix' option and because there is a separate directory check."
   fi
+
+  ## Prevent targeting system accounts (UID < 1000) such as root, www-data, etc.
+  ## to avoid writing files into sensitive system directories? -> No.
+  ## The feature that allows installing things into another user account can
+  ## only be used if the calling user has the ability to escalate to root, and
+  ## there may be legitimate reasons to install into a "system user" (IIRC,
+  ## some Linux distros use UID 999 as the UID for live session users on their
+  ## live ISOs).
+  ## Hardcoding UID 1000 is also bad. If this were to be implemented, we would
+  ## need to read the real UID_MIN (and probably also UID_MAX) values from
+  ## /etc/login.defs.
 }
 
 
