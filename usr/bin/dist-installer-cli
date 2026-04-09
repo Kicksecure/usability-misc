@@ -984,6 +984,13 @@ test_pkg() {
 
 
 check_vm_running_general() {
+  if [ "${virtualbox_only}" = "1" ]; then
+    return 0
+  fi
+  if [ "${hypervisor}" = "kvm" ]; then
+    return 0
+  fi
+
   case "${guest}" in
     whonix)
         check_vm_running_virtualbox "${guest_full_vm_name_gateway}"
@@ -3847,7 +3854,7 @@ check_hash() {
 
   shafile="${1}"
   dir="$(dirname -- "${shafile}")"
-  log info "Checking SHA512 checksum: '${shafile}"
+  log info "Checking SHA512 checksum: '${shafile}'"
   ## $checkhash needs to be executed on the same folder as the compared file.
   log info "Changing to directory: '${dir}'"
   if [ -n "${target_user}" ]; then
@@ -4050,7 +4057,7 @@ Developer options:
                          2 [HU] quantum-mirror.hu
  --redownload        Re-download the guest image, even if previously successful.
  --import-only=<vm>  Select specific VM to import. Only if guest is Whonix.
-                       Options: workstation, gateway.
+                       Options: workstation, gateway, both.
  --no-import         Skip guest import. Default behavior is to import.
  --destroy-existing-guest Deletes any existing virtual machine(s) and re-imports them.
                        Warning: This action poses a risk of data loss as it involves
