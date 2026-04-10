@@ -3,6 +3,7 @@ name: docker build
 on:
     push:
         paths:
+            - 'usr/share/usability-misc/build-dist-installer-cli'
             - 'usr/share/usability-misc/dist-installer-cli-standalone'
             - '.github/workflows/builds.yml'
 
@@ -197,3 +198,6 @@ jobs:
 
             - name: Run Installer ShellCheck
               run: shellcheck usr/share/usability-misc/dist-installer-cli-standalone
+
+            - name: Run build-dist-installer-cli
+              run: usr/share/usability-misc/build-dist-installer-cli
