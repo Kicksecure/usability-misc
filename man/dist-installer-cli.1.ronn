@@ -116,10 +116,6 @@ format <guest-interface-installer>.
 
         Enable dirty mode, where the program continues despite errors.
 
-`--no-show-errors`
-
-        Suppress error messages.
-
 `--ci`
 
         Enable CI mode for testing within Continuous Integration (CI) environments.

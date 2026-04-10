@@ -15,7 +15,7 @@ _dist_installer_cli()
         --guest-version | --socks-proxy | --onion | --non-interactive | \
             --no-import | --no-boot | --redownload | \
             --destroy-existing-guest | --dev | --ci | --dry-run | \
-            --getopt | --no-show-errors | --allow-errors | --testers | \
+            --getopt | --allow-errors | --testers | \
             --noupdate | --noupgrade | --virtualbox-only | --oracle-repo | \
             --version | --help )
             return
