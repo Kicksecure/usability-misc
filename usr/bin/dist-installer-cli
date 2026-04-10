@@ -2958,7 +2958,7 @@ get_checkhash_cmd() {
     #has digest && checkhash=( 'digest' '-a' 'sha512' '-c' ) && break
     ## TODO: How to make openssl check the file without workarounds?
     #has openssl && checkhash=( 'openssl' 'dgst' '-sha512' '-r' ) && break
-    [ -z "${checkhash[0]}" ] && {
+    [ -z "${checkhash[0]:-}" ] && {
       die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
     }
   done
