@@ -3548,7 +3548,6 @@ install_repositories_for_virtualbox_on_debian() {
   fi
 
   unstable_found=""
-  unstable_found_with_contrib=""
   unstable_clearnet="deb.debian.org"
   unstable_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
   unstable_clearnet_uri_base="${unstable_clearnet}/debian/"
@@ -3638,7 +3637,6 @@ install_repositories_for_virtualbox_on_debian() {
   kicksecure_suites_debsource="${distro_codename_kicksecure_use}"
 
   kali_found=""
-  kali_found_with_contrib=""
   kali_clearnet="http.kali.org"
   #kali_onion="" ## non-existing
   kali_clearnet_uri_base="${kali_clearnet}/"
