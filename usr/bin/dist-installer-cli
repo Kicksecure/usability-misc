@@ -1603,7 +1603,7 @@ get_pattern_sources_deb822_debian() {
 
   ## Add an extra blank line at the end of the file so that the loop processes
   ## all stanzas in the file.
-  file_contents="$(cat "${file}")"$'\n'
+  file_contents="$(cat -- "${file}")"$'\n'
 
   while read -r line; do
     if [[ "${line}" =~ ^\s*# ]]; then
