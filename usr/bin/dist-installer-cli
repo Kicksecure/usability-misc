@@ -1825,7 +1825,11 @@ install_package_debian_common() {
     mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
   else
     APTGETOPT_SERIALIZED=()
-    APTGETOPT=()
+    if [[ -v APTGETOPT ]]; then
+      true "INFO: APTGETOPT already set, keeping it."
+    else
+      APTGETOPT=()
+    fi
   fi
   # shellcheck disable=SC2145
   log info "APTGETOPT_SERIALIZED: '${APTGETOPT_SERIALIZED[@]}'"
