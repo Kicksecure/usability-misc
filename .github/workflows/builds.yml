@@ -200,5 +200,8 @@ jobs:
             - name: Run Installer ShellCheck
               run: shellcheck usr/share/usability-misc/dist-installer-cli-standalone
 
+            - name: test
+              run: ls -la "usr/share/usability-misc/build-dist-installer-cli"
+
             - name: Run build-dist-installer-cli
-              run: sudo -u user -- timeout --kill-after=5 5 bash -c "usr/share/usability-misc/build-dist-installer-cli"
+              run: sudo -u user -- timeout --kill-after=5 5 bash -x -c "usr/share/usability-misc/build-dist-installer-cli"
