@@ -72,7 +72,7 @@ The guest and interface can also be set by renaming the script following the for
 .IP "" 4
 .nf
     Define the logging level\. Options: debug, info, notice (default), warn, error\.
-    Log messages below the specified level are displayed\.
+    Log messages at or above the specified level are displayed\.
 .fi
 .IP "" 0
 .P
@@ -158,13 +158,6 @@ The guest and interface can also be set by renaming the script following the for
 .fi
 .IP "" 0
 .P
-\fB\-\-no\-show\-errors\fR
-.IP "" 4
-.nf
-    Suppress error messages\.
-.fi
-.IP "" 0
-.P
 \fB\-\-ci\fR
 .IP "" 4
 .nf
@@ -186,7 +179,7 @@ The guest and interface can also be set by renaming the script following the for
 .fi
 .IP "" 0
 .P
-\fB\-\-noupgrade\fR
+\fB\-\-noupdate\fR
 .IP "" 4
 .nf
     Skip package manager list update\. For development only\.

@@ -1,5 +1,4 @@
 #!/bin/bash
-## vim:sw=2:sts=2:ts=2:et:spell:
 
 ## Copyright (C) 2023 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
@@ -984,6 +983,11 @@ test_pkg() {
 
 
 check_vm_running_general() {
+  if [ "${virtualbox_only}" = '1' ] \
+    || [ "${hypervisor}" != 'virtualbox' ]; then
+    return 0
+  fi
+
   case "${guest}" in
     whonix)
         check_vm_running_virtualbox "${guest_full_vm_name_gateway}"
@@ -1178,8 +1182,11 @@ vm_delete_maybe() {
             die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'gateway', but it already exists and '--destroy-existing-guest' option was not set."
           elif [ "${workstation_exists}" = "1" ] && [ "${import_only}" = "workstation" ] ; then
             die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'workstation', but it already exists and '--destroy-existing-guest' option was not set."
+          elif [ "${import_only}" = 'both' ]; then
+            if [ "${gateway_exists}" = "1" ] || [ "${workstation_exists}" = "1" ]; then
+              die 1 "${underline}Existing VM Check Result:${nounderline} '--import-only' option was set to 'both', but one of the VMs already exists and '--destroy-existing-guest' option was not set."
+            fi
           fi
-        ## FIXME: Shouldn't import_only=both be handled here?
         else
           log info "Existing VM Check: Neither '--destroy-existing-guest' nor '--import-only' option was set, ok."
         fi
@@ -1356,7 +1363,7 @@ import_guest() {
   fi
 
   if [ "${no_import}" = "1" ]; then
-    log notice "VM Import: Not importing guest via '--import-only' option."
+    log notice "VM Import: Not importing guest via '--no-import' option."
     end_installer
   fi
 
@@ -1579,7 +1586,7 @@ get_pattern_sources_debian() {
 get_pattern_sources_deb822_debian() {
   local file types_pattern uris_pattern suites_pattern components_pattern \
     current_types current_uris current_suites current_components match_hit \
-    line
+    line file_contents
 
   file="${1:-}"
   types_pattern="${2:-}"
@@ -1591,6 +1598,10 @@ get_pattern_sources_deb822_debian() {
   current_uris=""
   current_suites=""
   current_components=""
+
+  ## Add an extra blank line at the end of the file so that the loop processes
+  ## all stanzas in the file.
+  file_contents="$(cat "${file}")"$'\n'
 
   while read -r line; do
     if [[ "${line}" =~ ^\s*# ]]; then
@@ -1633,7 +1644,7 @@ get_pattern_sources_deb822_debian() {
     elif [[ "${line}" =~ ^Components: ]]; then
       current_components="$(cut -d' ' -f2- <<< "${line}")"
     fi
-  done < "${file}"
+  done <<< "${file_contents}"
 
   return 1
 }
@@ -1917,12 +1928,13 @@ If that doesn't resolve the issue, consider reaching out to your operating syste
     #install_pkg torsocks
   #fi
 
-  install_signify signify-openbsd torsocks
+  install_signify signify-openbsd
+  install_pkg torsocks
 }
 
 
 add_user_to_vbox_group() {
-  if id --name --groups "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}\$" >/dev/null; then
+  if id --name --groups "${id_of_user}" | grep -w -- "${virtualbox_linux_user_group}" >/dev/null; then
     log info "Linux Group Configuration: Account '${id_of_user}' is already a member of the Linux group 'vboxusers'."
     return 0
   fi
@@ -3670,8 +3682,8 @@ get_download_links() {
       ;;
     *)
       ## Variables need to be set for --virtualbox-only.
-      site_clearnet="${site_onion_kicksecure}"
-      site_onion="${site_clearnet_kicksecure}"
+      site_clearnet="${site_clearnet_kicksecure}"
+      site_onion="${site_onion_kicksecure}"
       ;;
   esac
 
@@ -3845,7 +3857,7 @@ check_hash() {
 
   shafile="${1}"
   dir="$(dirname -- "${shafile}")"
-  log info "Checking SHA512 checksum: '${shafile}"
+  log info "Checking SHA512 checksum: '${shafile}'"
   ## $checkhash needs to be executed on the same folder as the compared file.
   log info "Changing to directory: '${dir}'"
   if [ -n "${target_user}" ]; then
@@ -4039,7 +4051,6 @@ User Options:
  -h, --help          Show this help message and exit.
 
 Developer options:
- --no-show-errors    Suppress error messages.
  --allow-errors      Continue execution despite errors. Dirty mode. Use with caution.
  --mirror=<number>   Choose a download mirror by index. Defaults to mirror 0 for
                        clearnet and mirror 0 for onion if unspecified.
@@ -4049,7 +4060,7 @@ Developer options:
                          2 [HU] quantum-mirror.hu
  --redownload        Re-download the guest image, even if previously successful.
  --import-only=<vm>  Select specific VM to import. Only if guest is Whonix.
-                       Options: workstation, gateway.
+                       Options: workstation, gateway, both.
  --no-import         Skip guest import. Default behavior is to import.
  --destroy-existing-guest Deletes any existing virtual machine(s) and re-imports them.
                        Warning: This action poses a risk of data loss as it involves
@@ -4497,7 +4508,7 @@ Reboot into sysmaint session and rerun this installer."
     else
       local log_entries
       log_entries=( "${log_dir_main}"/* )
-      last_run_integer="$(printf '%s\0' "${log_entries[@]}" | sort -zrn | tr '\0' '\n' | head --lines=1)" || true
+      last_run_integer="$(printf '%s\n' "${log_entries[@]##*/}" | sort -rn | head --lines=1)" || true
       if [ -z "${last_run_integer}" ] \
         || ! is_whole_number "${last_run_integer}"; then
         last_run_integer='1'
@@ -4594,7 +4605,7 @@ log_term_and_file() {
       2> >(run_as_target_user tee -a -- "${log_file_debug}" >&2)
 
   temp_folder="$(mktemp --directory)"
-  xtrace_fifo="/${temp_folder}/xtrace_fifo"
+  xtrace_fifo="${temp_folder}/xtrace_fifo"
   mkfifo -m 600 -- "$xtrace_fifo"
 
   if [ "${log_level}" = "debug" ] || test -o xtrace; then

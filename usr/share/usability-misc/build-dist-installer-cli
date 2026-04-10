@@ -55,6 +55,7 @@ helper_path="/usr/libexec/helper-scripts/"
 
 if ! test -d "$helper_path" ; then
   echo "$0: ERROR: directory helper_path '$helper_path' does not exist!" >&2
+  exit 1
 fi
 
 cp -- "${template}" "${target}"
