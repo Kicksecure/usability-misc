@@ -2475,8 +2475,10 @@ test_pkg() {
 
 
 check_vm_running_general() {
-  if [ "${virtualbox_only}" = '1' ] \
-    || [ "${hypervisor}" != 'virtualbox' ]; then
+  if [ "${virtualbox_only}" = '1' ]; then
+    return 0
+  fi
+  if ! [ "${hypervisor}" = 'virtualbox' ]; then
     return 0
   fi
 
@@ -3091,9 +3093,10 @@ get_pattern_sources_deb822_debian() {
   current_suites=""
   current_components=""
 
+  file_contents="$(cat -- "${file}")"
   ## Add an extra blank line at the end of the file so that the loop processes
   ## all stanzas in the file.
-  file_contents="$(cat "${file}")"$'\n'
+  file_contents+=$'\n'
 
   while read -r line; do
     if [[ "${line}" =~ ^\s*# ]]; then
