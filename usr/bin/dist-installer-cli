@@ -1825,9 +1825,7 @@ install_package_debian_common() {
     mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
   else
     APTGETOPT_SERIALIZED=()
-    if [[ -v APTGETOPT ]]; then
-      APTGETOPT=()
-    fi
+    APTGETOPT=()
   fi
   # shellcheck disable=SC2145
   log info "APTGETOPT_SERIALIZED: '${APTGETOPT_SERIALIZED[@]}'"
@@ -2981,6 +2979,9 @@ get_transfer_cmd() {
     #transfer_utility=rsync
   #fi
   transfer_utility=rsync
+  transfer_proxy_prefix=()
+  transfer_proxy_suffix=()
+  curl_transfer_proxy=()
 
   case "${transfer_utility}" in
     rsync)
