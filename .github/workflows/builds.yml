@@ -36,7 +36,8 @@ jobs:
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         runs-on: ubuntu-24.04
         strategy:
-            fail-fast: false
+            #fail-fast: false
+            fail-fast: true
             matrix:
                 include:
                     - image: fedora:41
@@ -194,10 +195,10 @@ jobs:
             ## When `source`d the script should exit in less than a second because it should not perform actual work.
             ## If it was running longer that would mean that it can no longer be `source`d without actually running.
             - name: Run Bash to test 'source'ing the script
-              run: sudo -u user -- timeout 5 bash -c "set -x && source usr/share/usability-misc/dist-installer-cli-standalone"
+              run: sudo -u user -- timeout --kill-after=5 5 bash -c "set -x && source usr/share/usability-misc/dist-installer-cli-standalone"
 
             - name: Run Installer ShellCheck
               run: shellcheck usr/share/usability-misc/dist-installer-cli-standalone
 
             - name: Run build-dist-installer-cli
-              run: usr/share/usability-misc/build-dist-installer-cli
+              run: sudo -u user -- timeout --kill-after=5 5 bash -c "usr/share/usability-misc/build-dist-installer-cli"
