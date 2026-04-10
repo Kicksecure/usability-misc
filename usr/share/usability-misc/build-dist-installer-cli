@@ -1,25 +1,24 @@
 #!/bin/bash
 
 #set -x
-
-true "$0: START"
-
-MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$MYDIR"
-cd ..
-cd ..
-cd ..
-
 set -o errexit
 set -o nounset
 set -o errtrace
 set -o pipefail
 
+true "$0: START"
+
+MYDIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" && pwd )"
+cd -- "$MYDIR"
+cd -- ..
+cd -- ..
+cd -- ..
+
 ## For future use in case of issues.
 ## Building dist-installer-cli is not crucial and a workaround to skip it might unbreak the build process.
 ## https://forums.whonix.org/t/derivative-maker-missing-usr-libexec-helper-scripts-get-colors-sh/20142
 if [ "${dist_build_skip_installer_dist_standalone:-}" = "true" ]; then
-  echo "$0: INFO: Skipping to build dist-installer-cli because dist_build_skip_installer_dist_standalone=true, ok."
+  printf '%s\n' "$0: INFO: Skipping to build dist-installer-cli because dist_build_skip_installer_dist_standalone=true, ok."
   exit 0
 fi
 
@@ -40,7 +39,7 @@ base_name_target="${target##*/}"
 #   ## derivative-maker source code version.
 #   helper_path="../helper-scripts/usr/libexec/helper-scripts/"
 # else
-#   echo "$0: ERROR: helper_path neither available in
+#   printf '%s\n' "$0: ERROR: helper_path neither available in
 # - /usr/libexec/helper-scripts/
 # nor in
 # ../helper-scripts/usr/libexec/helper-scripts/" >&2
@@ -54,7 +53,7 @@ base_name_target="${target##*/}"
 helper_path="/usr/libexec/helper-scripts/"
 
 if ! test -d "$helper_path" ; then
-  echo "$0: ERROR: directory helper_path '$helper_path' does not exist!" >&2
+  printf '%s\n' "$0: ERROR: directory helper_path '$helper_path' does not exist!" >&2
   exit 1
 fi
 
@@ -67,7 +66,7 @@ awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
       exit 1
     }
     print "##### BEGIN pasted by "origin " from file "$2
-    system("cat "$2)
+    system("cat -- "$2)
     print "##### END pasted by "origin " from file "$2
     next
   }
@@ -84,12 +83,13 @@ sed -i \
 ## INSTEAD MODIFY ../../bin/dist-installer-cli and the functions sourced!\\
 ##########################\\
 " \
+  -- \
   "${target}"
 
-echo "$0: INFO: BUILD: SUCCESS"
-echo "$0: INFO: Running shellcheck..."
+printf '%s\n' "$0: INFO: BUILD: SUCCESS"
+printf '%s\n' "$0: INFO: Running shellcheck..."
 
 shellcheck "${target}"
 
-echo "$0: INFO: shellcheck: SUCCESS"
-echo "$0: INFO: END: OK"
+printf '%s\n' "$0: INFO: shellcheck: SUCCESS"
+printf '%s\n' "$0: INFO: END: OK"
