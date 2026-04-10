@@ -2998,9 +2998,6 @@ get_transfer_cmd() {
     #transfer_utility=rsync
   #fi
   transfer_utility=rsync
-  transfer_proxy_prefix=()
-  transfer_proxy_suffix=()
-  curl_transfer_proxy=()
 
   case "${transfer_utility}" in
     rsync)
@@ -3282,6 +3279,9 @@ set_transfer_proxy() {
       transfer_proxy_suffix=()
       transfer_proxy_prefix=( 'torsocks' '--isolate' '--address' "${proxy_addr}" '--port' "${proxy_port}" )
       ;;
+    *)
+      die 1 "set_transfer_proxy: unsupported transfer_utility: '${transfer_utility}'"
+      ;;
   esac
 }
 
@@ -3294,6 +3294,12 @@ torify_conn_maybe() {
   if [ ! "${onion}" = "1" ]; then
     if [ -z "${socks_proxy:-}" ]; then
       log notice "Not torifying connection: Due to '--onion' option not being requested (and 'socks_proxy' is unset)."
+      ## Proxy variables are intentionally initialized here (not in get_transfer_cmd)
+      ## so that nounset catches any code path that bypasses torify_conn_maybe.
+      ## The only other place these are set is set_transfer_proxy (tor path).
+      transfer_proxy_prefix=()
+      transfer_proxy_suffix=()
+      curl_transfer_proxy=()
       return 0
     fi
   fi
