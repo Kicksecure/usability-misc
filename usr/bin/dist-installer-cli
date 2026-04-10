@@ -2983,9 +2983,6 @@ get_transfer_cmd() {
     #transfer_utility=rsync
   #fi
   transfer_utility=rsync
-  transfer_proxy_prefix=()
-  transfer_proxy_suffix=()
-  curl_transfer_proxy=()
 
   case "${transfer_utility}" in
     rsync)
@@ -3008,6 +3005,9 @@ get_transfer_cmd() {
   transfer_size_large_file="3G"
   case ${transfer_utility} in
     curl)
+      transfer_proxy_prefix=()
+      transfer_proxy_suffix=()
+      curl_transfer_proxy=()
       ## Maximum time in seconds that we allow the whole operation to take.
       ## The option works, but because rsync doesn't support it, we are using the timeout
       ## utility from coreutils.
@@ -3030,6 +3030,9 @@ get_transfer_cmd() {
       transfer_speed_optimization_opt=()
       ;;
     rsync*)
+      transfer_proxy_prefix=()
+      transfer_proxy_suffix=()
+      curl_transfer_proxy=()
       ## Rsync does not have an option to set the maximum time for the operation.
       ## The option works, but because rsync doesn't support it, we are using the timeout
       ## utility from coreutils.
@@ -3266,6 +3269,9 @@ set_transfer_proxy() {
     rsync*)
       transfer_proxy_suffix=()
       transfer_proxy_prefix=( 'torsocks' '--isolate' '--address' "${proxy_addr}" '--port' "${proxy_port}" )
+      ;;
+    *)
+      log bug "set_transfer_proxy: unsupported transfer_utility: '${transfer_utility}'"
       ;;
   esac
 }
