@@ -983,8 +983,10 @@ test_pkg() {
 
 
 check_vm_running_general() {
-  if [ "${virtualbox_only}" = '1' ] \
-    || [ "${hypervisor}" != 'virtualbox' ]; then
+  if [ "${virtualbox_only}" = '1' ]; then
+    return 0
+  fi
+  if ! [ "${hypervisor}" = 'virtualbox' ]; then
     return 0
   fi
 
