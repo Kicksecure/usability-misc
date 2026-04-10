@@ -1,3 +1,76 @@
+commit c19f2cd6b659edce6848e5000f5ebcfb4a436af8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:50:02 2026 -0400
+
+    CI
+
+commit 95c43cae405b826e754d8d64a3cf2f145625cab8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:46:19 2026 -0400
+
+    improve build script
+
+commit 8fffbdcd74f24fe91d4caeda3524d167778ef3e8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:42:40 2026 -0400
+
+    build
+
+commit 6460c534049dd53cabd6ba38d45a5ab172247706
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:42:28 2026 -0400
+
+    improve build script
+
+commit 8f33541bfcd26d883ab5105f581a0d098f1034d3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:39:26 2026 -0400
+
+    build
+
+commit 4ac3dc0fbb6983bc724c3d81e180958a650a4c1d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:34:52 2026 -0400
+
+    refactoring
+
+commit 17f7ea60d395adae364a4b2885cafba9955baf4d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:31:43 2026 -0400
+
+    end-of-options
+
+commit 1ea2753d8fd93227f85cc5753c9b9a53b2dcdde5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:29:54 2026 -0400
+
+    refactoring
+
+commit ae58288e2166d5bf65f39dc339be411d5e7733f2
+Merge: 24676c1 4c71b99
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 04:28:49 2026 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 4c71b99669e2a076bb499d90bb3f3df0aadf21d8
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Fri Apr 10 00:57:45 2026 -0400
+
+    Fix bugs and improve VM import handling (mostly from Claude Code)
+
+commit 1352eb50e1b270ea82061feeb76a3da63bb28d87
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Thu Apr 9 22:46:41 2026 -0400
+
+    Remove last bits of --no-show-errors from dist-installer-cli, remove vim modeline
+
+commit 24676c177c33cc694e5702283ad1da17c67a5932
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 9 11:58:55 2026 +0000
+
+    bumped changelog version
+
 commit 9211d8affb42e87476508a0d072ff86af68b27f0
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Apr 9 07:34:29 2026 -0400
