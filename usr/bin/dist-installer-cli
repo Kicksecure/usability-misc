@@ -1840,6 +1840,8 @@ install_package_debian_common() {
   else
     APTGETOPT_SERIALIZED=()
     if [[ -v APTGETOPT ]]; then
+      true "INFO: APTGETOPT already set, keeping it."
+    else
       APTGETOPT=()
     fi
   fi
@@ -2071,6 +2073,7 @@ install_repositories_for_virtualbox_on_debian() {
   fi
 
   unstable_found=""
+  unstable_found_with_contrib=""
   unstable_clearnet="deb.debian.org"
   unstable_onion="2s4yqjx5ul6okpp3f2gaunr2syex5jgbfpfvhxxbbjwnrsvbk5v3qbid.onion"
   unstable_clearnet_uri_base="${unstable_clearnet}/debian/"
@@ -2160,6 +2163,7 @@ install_repositories_for_virtualbox_on_debian() {
   kicksecure_suites_debsource="${distro_codename_kicksecure_use}"
 
   kali_found=""
+  kali_found_with_contrib=""
   kali_clearnet="http.kali.org"
   #kali_onion="" ## non-existing
   kali_clearnet_uri_base="${kali_clearnet}/"
@@ -2973,7 +2977,7 @@ get_checkhash_cmd() {
     #has digest && checkhash=( 'digest' '-a' 'sha512' '-c' ) && break
     ## TODO: How to make openssl check the file without workarounds?
     #has openssl && checkhash=( 'openssl' 'dgst' '-sha512' '-r' ) && break
-    [ -z "${checkhash[0]}" ] && {
+    [ -z "${checkhash[0]:-}" ] && {
       die 1 "${underline}get_checkhash_cmd:${nounderline} Failed to find program that checks SHA512 hash sum."
     }
   done
@@ -2994,6 +2998,9 @@ get_transfer_cmd() {
     #transfer_utility=rsync
   #fi
   transfer_utility=rsync
+  transfer_proxy_prefix=()
+  transfer_proxy_suffix=()
+  curl_transfer_proxy=()
 
   case "${transfer_utility}" in
     rsync)
