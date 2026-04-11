@@ -1,3 +1,195 @@
+commit 8bf1734d6532f1b59fa628f5be6c2d2ba10ff0e9
+Merge: a5b7917 67bab94
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Apr 11 04:27:57 2026 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit 67bab947cd82434d7d184708b250d27ba8b9558f
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Fri Apr 10 18:16:36 2026 -0400
+
+    Remove Emacs modelines
+
+commit a955118c8b629345eb0e6fba43757b97bc9e13cb
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Fri Apr 10 18:05:31 2026 -0400
+
+    Remove Vim modelines
+
+commit a5b7917415235ded9c0b3284dfbeca4b908827b1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 13:33:22 2026 -0400
+
+    CI
+
+commit e364479ce6139d8c69050c85b5c228c471c5df73
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 13:17:22 2026 -0400
+
+    CI
+
+commit ac234433e12eef6bc37732cb23406cebe992b581
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 13:10:37 2026 -0400
+
+    build
+
+commit 5daf7736bf5c4e4b84056b9b1ec590cffb1c075e
+Merge: 9d86171 bcdfaeb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 13:10:06 2026 -0400
+
+    Merge remote-tracking branch 'assisted-by-ai/claude/fix-unbound-variable-2mSBE'
+
+commit bcdfaeb09566b22056d16a6acb3a3c794a3466f9
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 13:23:10 2026 +0000
+
+    comment: explain why proxy vars are initialized in torify_conn_maybe
+    
+    Prevent future refactors from moving these to get_transfer_cmd(),
+    which would silently mask bugs instead of letting nounset catch them.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit ddac3c0b6196aee691494a1984b0f1bd484d0be4
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 12:00:43 2026 +0000
+
+    fix: let nounset guard proxy vars, only init on explicit code paths
+    
+    Remove proxy var initialization from get_transfer_cmd() case branches.
+    Instead, set them only where the decision is actually made:
+    - torify_conn_maybe() early return: explicitly empty (clearnet, no proxy)
+    - set_transfer_proxy(): real proxy values (tor path)
+    
+    Any other unexpected code path will now hit nounset rather than
+    silently proceeding without a proxy.
+    
+    Also use die instead of log bug in set_transfer_proxy() catch-all.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit 69f8fa6d4cf4ad9b85e5293a95e572745c980406
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 11:54:23 2026 +0000
+
+    fix: move proxy var init into per-utility case branches, add catch-all
+    
+    Move transfer_proxy_prefix, transfer_proxy_suffix, curl_transfer_proxy
+    initialization from a blanket assignment into each case branch of
+    get_transfer_cmd(). This way, adding a new transfer_utility without
+    handling proxy vars will fail loudly instead of silently proceeding
+    with empty arrays.
+    
+    Also add a catch-all to set_transfer_proxy() for unsupported utilities.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit 9d86171a4e824f771f026e2c2d2d7ea67c6a39b4
+Merge: cdc3e03 e362801
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 07:53:38 2026 -0400
+
+    Merge remote-tracking branch 'github-kicksecure/master'
+
+commit e362801056c48af3565ecc60b6a104829cea92e0
+Merge: cdc3e03 86b05e7
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 07:35:52 2026 -0400
+
+    Merge pull request #22 from assisted-by-ai/claude/fix-unbound-variable-2mSBE
+    
+    Add documentation and initialize tracking variables in dist-installer-cli
+
+commit 86b05e78354d771409ee7801444baed50fd5906a
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 11:05:24 2026 +0000
+
+    fix: preserve pre-set APTGETOPT while still initializing when unset
+    
+    The previous commit unconditionally set APTGETOPT=(), which would
+    clobber any value passed in from the environment. Restore the
+    [[ -v APTGETOPT ]] guard but add an else branch to initialize it
+    when not already set, preventing the unbound variable error.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit 13951bd556bdc552c554118524489fe1010967e1
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 11:01:55 2026 +0000
+
+    update agent notes with unbound variable patterns
+    
+    Document the common patterns that lead to unbound variable errors
+    in this script, to help prevent regressions.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit ccac9ae946ac7e52c3bfeb401472d596f679218a
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 10:59:56 2026 +0000
+
+    fix: use safe expansion for unset checkhash array in error path
+    
+    checkhash[0] would trigger unbound variable before the die message
+    could be shown when no hash utility was found.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit e584ce0325b226a7c0f161c61146bca853e3902f
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 10:57:37 2026 +0000
+
+    fix: initialize more unbound variables in dist-installer-cli
+    
+    - transfer_proxy_prefix, transfer_proxy_suffix, curl_transfer_proxy:
+      only set inside set_transfer_proxy() (tor path) but referenced
+      unconditionally at lines building download commands. Initialize
+      to empty arrays in get_transfer_cmd().
+    
+    - APTGETOPT: only initialized when already set ([[ -v APTGETOPT ]]),
+      leaving it unbound in a fresh run. Initialize unconditionally.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit a399d22ecce1e7359cfd18fabe90e26e630c438e
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 10:34:11 2026 +0000
+
+    revert standalone edit, add AGENTS.md with per-script notes
+    
+    dist-installer-cli-standalone is autogenerated and must not be edited
+    directly. Reverted that change, and added AGENTS.md + agents/ folder
+    to document this for future reference.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit 8e2e54e9ae174c567e430b52b4d20a40c19841a9
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 10 10:30:32 2026 +0000
+
+    fix: initialize unstable_found_with_contrib and kali_found_with_contrib variables
+    
+    Both variables were only set conditionally inside if-blocks but never
+    initialized, causing "unbound variable" errors under set -o nounset
+    when the conditions were not met.
+    
+    https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
+
+commit cdc3e03885357629682f9da432e1fc8e0d32d10d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 05:42:57 2026 -0400
+
+    CI
+
+commit a51130199dd1618377d914217cad95abb8293d74
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 10 09:23:05 2026 +0000
+
+    bumped changelog version
+
 commit c19f2cd6b659edce6848e5000f5ebcfb4a436af8
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Apr 10 04:50:02 2026 -0400
