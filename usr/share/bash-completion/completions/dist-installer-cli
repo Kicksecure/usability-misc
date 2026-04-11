@@ -1,4 +1,4 @@
-# dist-installer-cli(8) completion                           -*- shell-script -*-
+# dist-installer-cli(8) completion
 
 ## Copyright (C) 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
@@ -66,5 +66,3 @@ _dist_installer_cli()
                 kicksecure-cli-installer-cli kicksecure-lxqt-installer-cli \
                 whonix-cli-installer-cli whonix-lxqt-installer-cli \
                 virtualbox-installer-cli
-
-# ex: filetype=sh
