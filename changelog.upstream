@@ -1,3 +1,15 @@
+commit 57423f09fccbb8ac418850f037e12cd2da65fb8d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Apr 16 08:20:13 2026 -0400
+
+    build
+
+commit e73938d1694b581453537ad1f31c33fc9eb703fe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Apr 12 14:04:28 2026 +0000
+
+    bumped changelog version
+
 commit d1f1f61d7085f22bdf6ac3247abf435c976f1be1
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Apr 12 10:00:01 2026 -0400
@@ -59,10 +71,10 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 13:23:10 2026 +0000
 
     comment: explain why proxy vars are initialized in torify_conn_maybe
-    
+
     Prevent future refactors from moving these to get_transfer_cmd(),
     which would silently mask bugs instead of letting nounset catch them.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit ddac3c0b6196aee691494a1984b0f1bd484d0be4
@@ -70,17 +82,17 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 12:00:43 2026 +0000
 
     fix: let nounset guard proxy vars, only init on explicit code paths
-    
+
     Remove proxy var initialization from get_transfer_cmd() case branches.
     Instead, set them only where the decision is actually made:
     - torify_conn_maybe() early return: explicitly empty (clearnet, no proxy)
     - set_transfer_proxy(): real proxy values (tor path)
-    
+
     Any other unexpected code path will now hit nounset rather than
     silently proceeding without a proxy.
-    
+
     Also use die instead of log bug in set_transfer_proxy() catch-all.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit 69f8fa6d4cf4ad9b85e5293a95e572745c980406
@@ -88,15 +100,15 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 11:54:23 2026 +0000
 
     fix: move proxy var init into per-utility case branches, add catch-all
-    
+
     Move transfer_proxy_prefix, transfer_proxy_suffix, curl_transfer_proxy
     initialization from a blanket assignment into each case branch of
     get_transfer_cmd(). This way, adding a new transfer_utility without
     handling proxy vars will fail loudly instead of silently proceeding
     with empty arrays.
-    
+
     Also add a catch-all to set_transfer_proxy() for unsupported utilities.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit 9d86171a4e824f771f026e2c2d2d7ea67c6a39b4
@@ -112,7 +124,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Apr 10 07:35:52 2026 -0400
 
     Merge pull request #22 from assisted-by-ai/claude/fix-unbound-variable-2mSBE
-    
+
     Add documentation and initialize tracking variables in dist-installer-cli
 
 commit 86b05e78354d771409ee7801444baed50fd5906a
@@ -120,12 +132,12 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 11:05:24 2026 +0000
 
     fix: preserve pre-set APTGETOPT while still initializing when unset
-    
+
     The previous commit unconditionally set APTGETOPT=(), which would
     clobber any value passed in from the environment. Restore the
     [[ -v APTGETOPT ]] guard but add an else branch to initialize it
     when not already set, preventing the unbound variable error.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit 13951bd556bdc552c554118524489fe1010967e1
@@ -133,10 +145,10 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 11:01:55 2026 +0000
 
     update agent notes with unbound variable patterns
-    
+
     Document the common patterns that lead to unbound variable errors
     in this script, to help prevent regressions.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit ccac9ae946ac7e52c3bfeb401472d596f679218a
@@ -144,10 +156,10 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 10:59:56 2026 +0000
 
     fix: use safe expansion for unset checkhash array in error path
-    
+
     checkhash[0] would trigger unbound variable before the die message
     could be shown when no hash utility was found.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit e584ce0325b226a7c0f161c61146bca853e3902f
@@ -155,15 +167,15 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 10:57:37 2026 +0000
 
     fix: initialize more unbound variables in dist-installer-cli
-    
+
     - transfer_proxy_prefix, transfer_proxy_suffix, curl_transfer_proxy:
       only set inside set_transfer_proxy() (tor path) but referenced
       unconditionally at lines building download commands. Initialize
       to empty arrays in get_transfer_cmd().
-    
+
     - APTGETOPT: only initialized when already set ([[ -v APTGETOPT ]]),
       leaving it unbound in a fresh run. Initialize unconditionally.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit a399d22ecce1e7359cfd18fabe90e26e630c438e
@@ -171,11 +183,11 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 10:34:11 2026 +0000
 
     revert standalone edit, add AGENTS.md with per-script notes
-    
+
     dist-installer-cli-standalone is autogenerated and must not be edited
     directly. Reverted that change, and added AGENTS.md + agents/ folder
     to document this for future reference.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit 8e2e54e9ae174c567e430b52b4d20a40c19841a9
@@ -183,11 +195,11 @@ Author: Claude <noreply@anthropic.com>
 Date:   Fri Apr 10 10:30:32 2026 +0000
 
     fix: initialize unstable_found_with_contrib and kali_found_with_contrib variables
-    
+
     Both variables were only set conditionally inside if-blocks but never
     initialized, causing "unbound variable" errors under set -o nounset
     when the conditions were not met.
-    
+
     https://claude.ai/code/session_013vJmdeyi4SngCwtYQnpJ7z
 
 commit cdc3e03885357629682f9da432e1fc8e0d32d10d
@@ -348,7 +360,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Apr 9 05:41:12 2026 -0400
 
     Merge pull request #20 from assisted-by-ai/master
-    
+
     ci
 
 commit 7ca87f67260ca74831bc48ddbadce119a25e3e88
@@ -357,7 +369,7 @@ Author: assisted-by-ai (Bot Account) <server@kicksecure.com>
 Date:   Thu Apr 9 05:40:05 2026 -0400
 
     Merge pull request #2 from assisted-by-ai/claude/fix-ci-nodejs-deprecation
-    
+
     ci: update actions to Node.js 24
 
 commit 8ed92be4304c1c3402d6c6f3ffa7ab2461a53dba
@@ -365,13 +377,13 @@ Author: Claude <noreply@anthropic.com>
 Date:   Thu Apr 9 07:43:00 2026 +0000
 
     ci: update actions to Node.js 24 to fix deprecation warnings
-    
+
     - actions/checkout v4 → v5
     - dorny/paths-filter v3 → v4
-    
+
     Node.js 20 actions will be forced to Node.js 24 starting June 2, 2026,
     and removed from runners September 16, 2026.
-    
+
     https://claude.ai/code/session_01EZcsmvQWmaAJDM6KXL1RoT
 
 commit 832f02d85628278ffa9b6cb95374fbaead8a3a12
@@ -1107,7 +1119,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Dec 28 08:27:53 2025 -0500
 
     `dist-installer-cli`: implement `torS0X` stream isolation
-    
+
     https://spec.torproject.org/socks-extensions.html
 
 commit 83185f906528ffed80246337c5ac5af184017327
@@ -1344,7 +1356,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Dec 19 03:22:25 2025 -0500
 
     check-user-slice-on-shutdown: use `systemd-cgls` with option `--full`
-    
+
     fixes https://github.com/Kicksecure/usability-misc/issues/16
 
 commit 8d5a87b21fe0ca283f3e4740afcf53f2f6f44e1d
@@ -1383,7 +1395,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Dec 10 06:02:11 2025 -0500
 
     disable `orca-kill-at-shutdown.service` by default
-    
+
     because might slow down shutdown
 
 commit b27fc15850189ef82e03af7885e37cd1eeeb51f9
@@ -1883,9 +1895,9 @@ Date:   Fri Oct 31 10:28:12 2025 -0400
 
     Enable systemd-journald audit transport.
     Required by helper-scripts `apparmor-info` and `apparmor-watch`.
-    
+
     `deb-systemd-helper enable systemd-journald-audit.socket`
-    
+
     Debian no longer enables systemd-journald-audit.socket by default.
     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1038993
 
@@ -3288,7 +3300,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed May 21 07:22:00 2025 -0400
 
     test that `wc` is functional
-    
+
     https://github.com/Kicksecure/security-misc/pull/305#issuecomment-2892378246
 
 commit d612f508fe44834e0dd9596e824fe029018f1fec
@@ -3398,7 +3410,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Apr 24 01:19:05 2025 -0400
 
     dist-installer-cli: do not hide xtrace when started with bash -x (xtrace)
-    
+
     It is therefore no longer required to get xtrace from debug file.
 
 commit f58d6c6bdf7b5b4537d5396a2d2cf43937a8af62
@@ -3685,7 +3697,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Mar 8 09:03:28 2025 -0500
 
     Merge pull request #15 from ben-grande/oracle-tar
-    
+
     Fix VirtualBox downgrade
 
 commit a2159ade19465a8900c23397ebdc7fac50ae4101
@@ -4015,7 +4027,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jan 30 12:25:48 2025 -0500
 
     install fasttrack keyring only if needed
-    
+
     because it fails on testing and unstable, where the package is unavailable
 
 commit 45d73609ca7748a0259a0303ca71bdec7f123d52
@@ -4097,7 +4109,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jan 30 11:29:32 2025 -0500
 
     Merge pull request #14 from ben-grande/stprint
-    
+
     Use printf instead of echo for the Linux installer
 
 commit 75b6eaf4e144aba7339fa725b40bd95ccb3bd27e
@@ -4486,7 +4498,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Sep 9 14:20:22 2024 -0400
 
     set `thunar` as default file manager for `xdg-mime`
-    
+
     https://forums.whonix.org/t/is-catfish-the-new-default-in-the-qubes-domain-open-file-manager-quick-widget-for-whonix/20233
 
 commit ce867a7cbcdecb9fcaf2ee85d563c5f39a3b343e
@@ -4514,7 +4526,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Aug 20 05:43:47 2024 -0400
 
     Merge pull request #12 from nyxnor/ci-shellcheck-but-smart
-    
+
     Fix shellcheck warnings
 
 commit 72a2fdbf14796a16fa64d4643b3d82c74d0bfd49
@@ -4542,7 +4554,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Aug 18 11:19:17 2024 -0400
 
     Merge pull request #11 from nyxnor/ci-shellcheck
-    
+
     Fix shellcheck and CI warnings
 
 commit 027b61f68375ddfa46795431e78d76e329ac88d8
@@ -4586,7 +4598,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Jul 31 04:14:30 2024 -0400
 
     fix `kali_domain_debsource: unbound variable`
-    
+
     https://forums.kicksecure.com/t/followed-wiki-but-get-error-for-whonix-install/454/4
 
 commit e5dc920edb19911194f8fab2c7ec2cde2a764a5a
@@ -4690,9 +4702,9 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jul 26 06:56:34 2024 -0400
 
     disable /usr/share/usability-misc/check-dist-installer-cli sanity test for now
-    
+
     because it breaks the build process. Run from elsewhere instead.
-    
+
     https://forums.whonix.org/t/derivative-maker-missing-usr-libexec-helper-scripts-get-colors-sh/20142
 
 commit 07d5835a124c985a5e7eb413d65635093f0480a5
@@ -4718,7 +4730,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jul 26 06:34:31 2024 -0400
 
     allow skipping to build dist-installer-cli
-    
+
     by setting `dist_build_skip_installer_dist_standalone=true`
 
 commit a2747e630807814626449b990c9528da38245d5a
@@ -4726,7 +4738,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jul 26 05:57:21 2024 -0400
 
     user helper-scripts from derivative-maker source folder,
-    
+
     in case helper-scripts is not installed locally
 
 commit 050fa939eadcfdf6dbe95e7b2c88a410fb6ab1a9
@@ -4740,9 +4752,9 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jul 26 05:47:48 2024 -0400
 
     Revert "Builds-Depends: helper-scripts"
-    
+
     Not easily possible because then the build chroot would also need helper-scripts being installed.
-    
+
     This reverts commit 0782a1ce4b51965ca0159dc445c3ca7308aef5fa.
 
 commit 7c6fd0e7fa2bea160543dbefd9906c209e038af1
@@ -4756,7 +4768,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jul 26 05:36:39 2024 -0400
 
     Builds-Depends: helper-scripts
-    
+
     because required to build dist-installer-cli-standalone
 
 commit 789d3bf2a1b99f62609a7e464c8e5c0c7248d1c5
@@ -5298,7 +5310,7 @@ Author: nyxnor <nyxnor@protonmail.com>
 Date:   Mon May 13 15:08:27 2024 +0000
 
     Kali without torsocks
-    
+
     https://pkg.kali.org/news/583693/torsocks-240-1-removed-from-kali-rolling/
 
 commit 6914e4ee59ffdefe659e4177589ee6482153ade1
@@ -5342,7 +5354,7 @@ Author: nyxnor <nyxnor@protonmail.com>
 Date:   Mon May 13 12:22:50 2024 +0000
 
     Test if GHA supports runner Ubuntu Latest
-    
+
     Setting to version 24.04 made it to the queue
 
 commit 3f7fa111229d73165fb70ca85dc212001f19a115
@@ -5477,7 +5489,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Jan 16 07:47:55 2024 -0500
 
     fix detection of how many packages require upgrading
-    
+
     https://forums.whonix.org/t/debian-12-whonix-xfce-installer-cli-reports-packages-can-be-upgraded-although-already-upgraded-non-english-language-bug/18210
 
 commit bd7ed1647350dd38500ff98d2439075c934f493a
@@ -6074,7 +6086,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Dec 31 10:40:13 2023 -0500
 
     fix: localize and properly initialize dialog_box variable
-    
+
     This fixes the the interactive license check if neither dialog nor whiptail
     are installed.
 
@@ -6089,7 +6101,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Dec 29 16:21:22 2023 -0500
 
     update for new sha512sums link format
-    
+
     https://forums.whonix.org/t/whonix-linux-installer-development-discussion/15917/161
 
 commit 7a0600c5921d7d525102048744877a5ab9308c61
@@ -6103,7 +6115,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Dec 18 07:45:37 2023 -0500
 
     no longer install apt-transport-https
-    
+
     because it is a dummy transitional package,
     its functionality was merged into apt
 
@@ -6118,7 +6130,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Dec 16 14:05:37 2023 -0500
 
     virtualization test: hide CPU brand by default
-    
+
     for better privacy
 
 commit 11531de02eabd3be83a13bbb72e5e8b0a21190ca
@@ -6156,7 +6168,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 11:37:42 2023 -0500
 
     unconditionally enabling additional repositories without checking if VirtualBox is already installed
-    
+
     to ensure that upgrades are installed
 
 commit ed305c6a549151206cb6e66ebd8513ae2f82d82e
@@ -6207,9 +6219,9 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 11:11:58 2023 -0500
 
     run check_upgrades_simulation after determination that fasttrack needs to be or is enabled
-    
+
     because apt may not fetch upgrades from fasttrack by default
-    
+
     this is the case for package virtualbox-guest-additions-iso
 
 commit 49a7e097ed142f3353f9ff7c67e15b546e21b94a
@@ -6247,10 +6259,10 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 10:32:57 2023 -0500
 
     CI: skip testing Fedora with --onion
-    
+
     because Fedora onion does not run the Tor systemd unit
     does not come with systemd installed by default
-    
+
     to unbreak the CI until this issue can be resolved
 
 commit 57d4f1c516bb680be70db30509d9bbddd233cd14
@@ -6288,7 +6300,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Dec 7 10:09:29 2023 -0500
 
     add support to install_pkg for passing additional arguments to package install command
-    
+
     required to pass `--target-release=bookworm-fasttrack`
 
 commit 297aacc05f95d1230441e111a196a50508cc5a90
@@ -6297,7 +6309,7 @@ Date:   Thu Dec 7 09:48:16 2023 -0500
 
     fix, use `apt-get --target-release=bookworm-fasttrack`
     when installing from Debian fasttrack
-    
+
     virtualbox-guest-additions-iso is available from Debian stable and fasttrack.
     Debian stable version however is outdated.
     If not using APT with option '--target-release=bookworm-fasttrack' then
@@ -6333,15 +6345,15 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Dec 5 02:45:45 2023 -0500
 
     Install also the virtualbox-guest-additions-iso package if available.
-    
+
     - It is available from Debian fasttrack and Ubuntu.
     - Unavailable from Oracle repository.
-    
+
     virtualbox-guest-additions-iso is Freedom Software:
     https://www.kicksecure.com/wiki/Dev/VirtualBox#VirtualBox_Guest_Additions_ISO_Freedom_vs_Non-Freedom
-    
+
     Provides file: `/usr/share/virtualbox/VBoxGuestAdditions.iso`
-    
+
     Useful to easily install matching version of VirtualBox guest additions in custom VirtualBox VMs.
 
 commit c61e1f83ae518be8879e72cc6f07cf85a1e6cb78
@@ -6363,7 +6375,7 @@ Date:   Tue Dec 5 02:12:49 2023 -0500
     fix:
     - prohibit downloading VM images in Qubes Template
     - do not start VirtualBox in Qubes Template
-    
+
     Downloading non-Qubes VM images in Qubes Template makes no sense. Not even for development purposes.
     Installing VirtualBox inside Qubes however makes sense for development purposes.
     For example, this permits building non-Qubes VM images inside Qubes VMs.
@@ -6418,7 +6430,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Nov 26 23:30:23 2023 -0500
 
     Revert "add new usability helper scripts for Qubes VM backups"
-    
+
     This reverts commit 61f2444188c3628135e0dbbc9dd7ec11fbef0091.
 
 commit 61f2444188c3628135e0dbbc9dd7ec11fbef0091
@@ -6426,7 +6438,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Nov 26 23:22:37 2023 -0500
 
     add new usability helper scripts for Qubes VM backups
-    
+
     qubes-mount-dev-xvdi
     qubes-unmount-dev-xvdi
 
@@ -6441,9 +6453,9 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Nov 25 02:18:58 2023 -0500
 
     fix, /dev/vboxdrv is not a file, it's a device
-    
+
     hence test -f does not work
-    
+
     using test -e instead works
 
 commit 5ccf886ffc43f843b5d8a284cf94dfa1e3f0a49a
@@ -6667,7 +6679,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Nov 9 19:02:24 2023 -0500
 
     check if upgrades are available
-    
+
     https://forums.whonix.org/t/whonix-linux-installer-development-discussion/15917/149
 
 commit a73596c54433e8b73e5aead2ade51c58a0006df5
@@ -6903,7 +6915,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Nov 4 19:47:16 2023 -0400
 
     fix
-    
+
     Invalid workflow file
     The workflow is not valid. .github/workflows/builds.yml (Line: 94, Col: 15): 'run' is already defined
 
@@ -6997,7 +7009,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Oct 15 08:56:44 2023 -0400
 
     set variable if credential caching is enabled
-    
+
     so it can be read by dist-installer-gui
 
 commit 56f463c367f0abe17badf4740d48a303c9365354
@@ -7131,7 +7143,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Oct 11 10:56:04 2023 -0400
 
     `Depends:` `seahorse`
-    
+
     provides `/usr/libexec/seahorse/ssh-askpass`
     used by `gsudoedit`
 
@@ -7200,7 +7212,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Sep 6 08:11:12 2023 -0400
 
     install VirtualBox from bullseye-fasttrack instead from Kicksecure repository
-    
+
     because VirtualBox is now available from bullseye-fasttrack repository
 
 commit 72eb6079b4c6044b2335c6a36750b97c5fa0eb65
@@ -7364,7 +7376,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Aug 26 16:06:47 2023 -0400
 
     try to start VMs before trying to start VirtualBox Manager
-    
+
     because if it fails, it is less confusing to avoid starting VirtualBox Manager
 
 commit e76c5c17f0809c8577a4f1ad3292207535236289
@@ -7396,9 +7408,9 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Aug 26 15:00:53 2023 -0400
 
     fix launching VirtualBox Manager into the background
-    
+
     instead of foreground
-    
+
     to free the terminal
 
 commit 2f241433544d37cff9d118780fe1ce63b675ad60
@@ -7418,7 +7430,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Aug 24 10:38:17 2023 -0400
 
     if using `--dev` and if enabling Kicksecure repository, use Kicksecure developers repository
-    
+
     instead of Kicksecure stable repository
 
 commit 94b0d9297f617b499d9c83ea868015271111b07b
@@ -8412,7 +8424,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Thu Jul 27 18:07:05 2023 +0000
 
     Merge remote-tracking branch 'kicksecure/master'
-    
+
     * kicksecure/master:
       comment
       comment
@@ -8481,7 +8493,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Tue Jul 25 20:39:28 2023 +0000
 
     Merge remote-tracking branch 'kicksecure/master'
-    
+
     * kicksecure/master:
       bumped changelog version
       fix integrity checks
@@ -8512,7 +8524,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Tue Jul 25 14:13:06 2023 +0000
 
     Revert "Better log_run output catch"
-    
+
     This reverts commit d31afaf2eb8a12915a9e5e0eda29724fdf5788a1.
 
 commit d31afaf2eb8a12915a9e5e0eda29724fdf5788a1
@@ -8672,9 +8684,9 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Jul 23 09:23:22 2023 -0400
 
     update hardcoded testing-only simulated version number
-    
+
     of empty hard drive test-only release
-    
+
     because of XFCE -> Xfce change
 
 commit 0e9855ea58cff68a8e5328f6f2388c5fd05e1a67
@@ -8750,7 +8762,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Mon Jul 3 15:20:56 2023 +0000
 
     Merge remote-tracking branch 'kicksecure/master'
-    
+
     * kicksecure/master:
       bumped changelog version
       fix
@@ -8804,7 +8816,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Jun 29 06:51:24 2023 -0400
 
     Merge pull request #9 from nyxnor/scurl-improvements
-    
+
     improve scurl-download to behave like wget
 
 commit 2bebb8ca59a04029f6364d26d29a6dbb06a0945e
@@ -8993,7 +9005,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Tue Jun 13 08:56:22 2023 +0000
 
     remove usr/share/usability-misc/tbb-foxyproxy/foxyproxy.xml
-    
+
     https://forums.whonix.org/t/new-version-of-tbb-no-longer-accepts-foxyproxy-plugin/2565/57
 
 commit 3658edbd0283a4707a2e74a03a3c102cc020e69d
@@ -9232,11 +9244,11 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat May 13 12:37:32 2023 +0000
 
     avoid re-adding user to vboxusers group
-    
+
     if already done
-    
+
     to avoid writing to /etc/passwd
-    
+
     to avoid a sudo command
 
 commit 7a3e29ccdcdb8f8a1f90f7651f0383f17db7c98b
@@ -9372,7 +9384,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Wed May 10 23:34:42 2023 +0000
 
     Merge remote-tracking branch 'kicksecure/master'
-    
+
     * kicksecure/master:
       bumped changelog version
       output
@@ -9438,7 +9450,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed May 10 23:04:34 2023 +0000
 
     initialize guest_pretty variable
-    
+
     otherwise the variable could be missing (unbound) and break the error handler itself
 
 commit ff88d7f0ec48e57521d417280a81bacba1fcc8c4
@@ -9676,7 +9688,7 @@ Author: nyxnor <nyxnor@protonmail.com>
 Date:   Thu Mar 30 14:53:06 2023 +0000
 
     Remove extraneous parentheses from CI
-    
+
     please build
 
 commit 67318a9be9e4d7d2eea122c1b296cb33c0874a97
@@ -9690,7 +9702,7 @@ Author: nyxnor <nyxnor@protonmail.com>
 Date:   Thu Mar 30 14:49:55 2023 +0000
 
     Trigger build with message
-    
+
     please build
 
 commit a5977ced5cb51458634c9abbb22b04a82a2b5f33
@@ -9738,7 +9750,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Mon Mar 27 17:15:19 2023 +0000
 
     Fix not_as_root stopping the script
-    
+
     Tests return exit code and 'set -e' stops the script.
 
 commit e92e692c743dd5e74de8244e20ff943dbd200176
@@ -9746,7 +9758,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Mon Mar 27 17:09:54 2023 +0000
 
     Block calling the script as root
-    
+
     Didn't break, it was just insecure.
 
 commit d52e002b6d10b3d9a12d640e37dbe3b568574475
@@ -9784,7 +9796,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Tue Mar 21 18:10:46 2023 +0000
 
     Merge remote-tracking branch 'kicksecure/master'
-    
+
     * kicksecure/master:
       bumped changelog version
       output
@@ -9842,7 +9854,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Sat Mar 18 21:44:29 2023 +0000
 
     Merge remote-tracking branch 'kicksecure/master'
-    
+
     * kicksecure/master: (34 commits)
       bumped changelog version
       fix, install ca-certificates
@@ -10107,7 +10119,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Mon Jan 16 15:55:24 2023 +0000
 
     Merge branch 'master' into installer
-    
+
     * master:
       fix fasttrack onion insertion
 
@@ -10117,7 +10129,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Mon Jan 16 15:53:53 2023 +0000
 
     Merge remote-tracking branch 'kicksecure/master' into installer
-    
+
     * kicksecure/master: (115 commits)
       bumped changelog version
       shellcheck
@@ -11603,7 +11615,7 @@ Author: grass <grass@danwin1210.de>
 Date:   Fri Nov 18 15:05:39 2022 +0000
 
     remove symlinks
-    
+
     will be added later by the debian packaging mechanism
 
 commit 915e5433178029fb55c7f3a502c8118e9077b735
@@ -12015,7 +12027,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Sep 11 17:56:37 2021 -0400
 
     port to APT `signed-by`
-    
+
     https://forums.whonix.org/t/apt-repository-signing-keys-per-apt-sources-list-signed-by/12302
 
 commit 61f6f50bb7c11ca179af33dde7465f8e6ab53682
@@ -12035,7 +12047,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Sep 6 09:45:48 2021 -0400
 
     remove /etc/lightdm/lightdm.conf.d/autologin.conf (comments only)
-    
+
     since it might interfere with autologin
 
 commit 106bd72083486dff90d33bb215ef70be7c13fb1b
@@ -12229,7 +12241,7 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Thu Mar 11 14:18:38 2021 -0500
 
     stop using apt-key since deprecated
-    
+
     https://forums.whonix.org/t/apt-2-2-changes/11240/1
 
 commit 18e1de88a029c556c8a19076f8bd024760f1545d
@@ -12267,11 +12279,11 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat Feb 6 04:54:43 2021 -0500
 
     add preset disabled by default systemd unit `orca-kill-at-shutdown.service`
-    
+
     sends signal sigterm to the orca screenreader at shutdown
-    
+
     https://www.whonix.org/wiki/orca
-    
+
     supposed to be enabled through `easyorca` (part of `setup-dist`
 
 commit 27caf4ce57ad211ec61bd70fa1357c405896e520
@@ -12327,7 +12339,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Dec 25 07:27:33 2020 -0500
 
     update description
-    
+
     no longer does anything related to auditd
 
 commit 176efa94e4e31107230eed540314a22f8f398888
@@ -12407,7 +12419,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sun Oct 11 12:23:49 2020 -0400
 
     remove hardened-malloc-disable
-    
+
     http://forums.whonix.org/t/hardened-malloc-hardened-memory-allocator/7474/116
 
 commit df9a02db0ccc8e88aab5ee869b68bfb3bc48ed3b
@@ -12453,7 +12465,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Oct 8 16:07:04 2020 +0000
 
     Merge pull request #8 from madaidan/master
-    
+
     Add hardened-malloc-disable
 
 commit b66b74e5e3cfe8eac580f888384f3440422eada9
@@ -12545,7 +12557,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Tue Apr 7 20:34:02 2020 +0000
 
     skip etc/default/grub.d/30_screen_resolution.cfg in Qubes
-    
+
     since might cause issues, see: https://phabricator.whonix.org/T353
 
 commit bb9b5f75b5151ffe21fd990387146a00e4de6bd5
@@ -12734,7 +12746,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Feb 13 09:32:41 2020 -0500
 
     add dpkg-noninteractive man page
-    
+
     https://github.com/freedomofpress/securedrop-workstation/issues/428
 
 commit 9e4db712667b39b9d865e10aeb03ab35ce45d019
@@ -12748,7 +12760,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Feb 13 08:34:24 2020 -0500
 
     add new usability wrapper /usr/bin/dpkg-noninteractive
-    
+
     https://github.com/freedomofpress/securedrop-workstation/issues/428
 
 commit 63f96f9f142b92e088fefd1dc7a32d31e6c5ac5c
@@ -12756,20 +12768,20 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Feb 13 06:14:45 2020 -0500
 
     speed up "apt update"
-    
+
     add /etc/apt/apt.conf.d/30usability-misc
-    
+
     Acquire::Languages none;
     Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;
-    
+
     It's roughly 140 KB vs 43 MB. Seconds vs real delay.
-    
+
     I wonder if this should become the default for Whonix and Kicksecure.
-    
+
     We'd loose translations something. I don't even know where - since I always use English as default language - to be on par with the defaults that users will use. Probably translations for `apt-cache show pkg-name` or so. But only for those who change the system language for APT. Dunno if anyone is doing that actually. If that's a problem, it would be better to have instructions how to reactivate this for desired languages only.
-    
+
     We might also loose default `apt-file list pkg-name` but those who want that can (and probably have to use anyhow) `sudo apt-file update`.
-    
+
     https://forums.whonix.org/t/speeding-up-apt-update-with-acquire-languages-none-and-contents-deb-defaultenabled-false-its-so-much-faster/8894
 
 commit bd68a636e96fed2183468fa2dff11aa41077506e
@@ -12843,7 +12855,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Oct 21 15:13:22 2019 +0000
 
     disable sudo default lecture
-    
+
     https://forums.whonix.org/t/disable-or-change-sudo-lecture-at-frist-run-we-trust-you-have-received-the-usual-lecture-from-the-local-system-administrator-it-usually-boils-down-to-these-three-things/8323
 
 commit a94d5c36ca3aad1dea115a798caa298cc9aa0469
@@ -12875,11 +12887,11 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Sep 16 13:26:08 2019 +0000
 
     No need to set SUDO_EDITOR. Better set VISUAL.
-    
+
     sudoedit will honor VISUAL.
-    
+
     Sets mousepad as the default editor for VISUAL if environment variable VISUAL is unset and if mousepad is installed.
-    
+
     https://forums.whonix.org/t/use-sudoedit-in-whonix-documentation/7599
 
 commit 4eb64c1e0ae3b7392d53b9071e53a63f790d79bd
@@ -12935,7 +12947,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Sep 12 14:00:42 2019 +0000
 
     support setting apt sources line through sources_list_build_remote_derivative
-    
+
     environment variable
 
 commit 1986474f382727eefef9a977bcca03f8f21c7143
@@ -12991,12 +13003,12 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sun Aug 11 06:16:39 2019 +0000
 
     xfce4-terminal:
-    
+
     * Disables automatic scroll on output when manually scrolled up to make
     reading output such as "sudo journalctl -f" easier.  Automatic scroll on
     output still happening in default when not manually scrolling up beforehand
     first.
-    
+
     * Enables unlimited scrollback by default to avoid output from being
     truncated.
 
@@ -13127,7 +13139,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Jun 26 11:03:12 2019 +0000
 
     Merge pull request #7 from madaidan/patch-1
-    
+
     Set mousepad as the default editor for sudoedit
 
 commit a2da74427132a195162dc442b617edc02bfbaf54
@@ -13183,7 +13195,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon May 27 17:20:29 2019 -0400
 
     fix etc/.skel -> etc/skel/Downloads
-    
+
     https://forums.whonix.org/t/bug-not-all-files-form-etc-skel-are-copied-to-home-user/6778
 
 commit e6f8f20c1c314e2b3f06435b117e59efafe20389
@@ -13221,9 +13233,9 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon May 13 10:31:02 2019 +0000
 
     remove creation of user "user"
-    
+
     conflicts with Whonix host live boot
-    
+
     https://forums.whonix.org/t/whonix-desktop-installer-with-calamares-field-report
 
 commit 788372c344b37e53d15efca65093352690f3bbbb
@@ -13249,9 +13261,9 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Tue May 7 12:52:57 2019 -0400
 
     implement upgrade-nonroot
-    
+
     based on suggestion by xariv
-    
+
     https://forums.whonix.org/t/non-root-apt-updates/7337
 
 commit be153716e02642cbe5cb12de3951259fc873820a
@@ -13283,7 +13295,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Apr 5 09:50:16 2019 -0400
 
     change comment to workaround lintian false positive
-    
+
     W: usability-misc: uses-dpkg-database-directly postinst (line 47)
 
 commit d552395cf20fcd9aeb2463159ba86e7e30513e5b
@@ -13327,18 +13339,18 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Mar 1 14:32:42 2019 +0000
 
     add improved legal protections clauses
-    
+
     The license for software created by Whonix is the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version with additional terms applicable per GNU GPL version 3 section 7.
-    
+
     The additional terms are based on the Doom 3 license which is Debian refers to as `GPL-3+-with-id-software-additional-terms`, which is Debian DFSG [1] (The Debian Free Software Guidelines) approved and which is therefore suitable for Debian `main`. Whonix made applied minimal changes to it:
-    
+
     * Rewrite `The Doom 3 BFG Edition GPL Source Code` to the more common `this program` which is used throughout the GPL.
     * Added a "trump clause" [2], in other words, any conflicts or disputes between the additional terms and the GPLv3 shall be resolved in favor of the GPLv3 by adding `Notwithstanding any other provision of this License` (as mentioned in GPL FAQ [3]) at the beginning of the additional terms.
-    
+
     [1] https://www.debian.org/social_contract#guidelines
     [2] https://www.fsf.org/news/canonical-updated-licensing-terms
     [3] https://www.gnu.org/licenses/gpl-faq.html#v3Notwithstanding
-    
+
     For more considerations, see also:
     https://www.whonix.org/wiki/Dev/Licensing
 
@@ -13353,7 +13365,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Tue Nov 13 04:19:18 2018 -0500
 
     fix Whonix-Gateway XFCE / CLI keyboard layout bug
-    
+
     workaround for:
     console-setup.sh[407]: /bin/setupcon: 866: /bin/setupcon: cannot open /tmp/tmpkbd.5RvhtP: No such file
     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=846256#44
@@ -13411,7 +13423,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Feb 17 17:55:12 2018 +0000
 
     add etc/lightdm/lightdm.conf.d/autologin.conf
-    
+
     out commented by default
 
 commit c25a5074e14b586e3040fc82e9ecc51d9fd9a99c
@@ -13581,7 +13593,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Feb 10 15:47:52 2017 +0000
 
     remove faketime from Build-Depends:
-    
+
     since no longer used for reproducible builds
 
 commit 43b70b5c5e4080b87b19ad867c157690a52e1fce
@@ -13601,7 +13613,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Jan 20 15:29:36 2017 +0100
 
     apt-get-noninteractive drop --yes
-    
+
     can be easily manually entered and better to have a look before dist-upgrade'ing
 
 commit 1557c65a347fdb1991003b1b895d6be60a1a87eb
@@ -13615,9 +13627,9 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Jan 18 09:52:53 2017 +0000
 
     remove auditd configuration folder parsing /etc/audit/rules.d/ by default workaround
-    
+
     since this is now a Debian stretch default feature
-    
+
     https://phabricator.whonix.org/T538
 
 commit 4372ce94f42be2cb280d04497fa288ac756b5a3a
@@ -13637,7 +13649,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Tue Jan 17 10:49:28 2017 +0100
 
     disable sudo --non-interactive -u user mkdir "/home/user/Downloads" / Pictures
-    
+
     because broken in stretch
 
 commit feae83d4dce609772d0a45b2f06aab30d8778cad
@@ -13737,7 +13749,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Oct 10 18:00:42 2016 +0000
 
     Merge pull request #5 from HulaHoopWhonix/patch-5
-    
+
     Freenet Message System
 
 commit 2f8b093c098de381fe3609f85cfc0820eb77ee51
@@ -13751,7 +13763,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Tue Aug 30 21:14:59 2016 +0000
 
     sudo --non-interactive
-    
+
     https://phabricator.whonix.org/T549
 
 commit 6b9ac496a4b3fa4690388804a94092054ad5b145
@@ -13759,7 +13771,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Aug 4 23:01:07 2016 +0000
 
     update README.md and debian/control
-    
+
     https://phabricator.whonix.org/T535
 
 commit 9c1daa4251eb4de74f8967928bbbddbaba3ac7e6
@@ -13767,7 +13779,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Aug 4 22:58:51 2016 +0000
 
     postinst: Make systemd drop-in config snippets take effect.
-    
+
     https://phabricator.whonix.org/T535
 
 commit 28204e16a51de662e3ef13141994fd2c2b5aa7f7
@@ -13775,7 +13787,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Thu Aug 4 22:49:41 2016 +0000
 
     auditd: process configuration folder /etc/audit/rules.d/ by default
-    
+
     https://phabricator.whonix.org/T535
 
 commit cbb44f0225d3a6312f73ec6244b57abaa161ef07
@@ -13801,7 +13813,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Apr 18 15:39:55 2016 +0200
 
     Revert "Update control"
-    
+
     This reverts commit 5f9ee2ce81f312fe19cfb3eccfdaf5743d6dd904.
 
 commit 33645ed933f4f8bfc97d70016e970d9c9c6d87df
@@ -13827,9 +13839,9 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Apr 2 18:22:40 2016 +0000
 
     implemented Whonix website and source code backup utility
-    
+
     /usr/bin/whonix-dev-backup
-    
+
     https://phabricator.whonix.org/T159
 
 commit 9312d64c321d21a98a5637f5b823a407c89d8a63
@@ -13851,7 +13863,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Apr 2 14:37:45 2016 +0000
 
     Merge pull request #4 from HulaHoopWhonix/patch-4
-    
+
     Added more WebUI rules
 
 commit 04cf32d46ce3c3850f09689d6dad97a7f6c61d37
@@ -13873,7 +13885,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Mon Mar 28 15:22:59 2016 +0200
 
     Merge pull request #3 from HulaHoopWhonix/patch-3
-    
+
     Update control
 
 commit 5f9ee2ce81f312fe19cfb3eccfdaf5743d6dd904
@@ -13888,7 +13900,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Mar 23 14:19:04 2016 +0100
 
     Merge pull request #2 from HulaHoopWhonix/patch-2
-    
+
     Update control
 
 commit 1c1e731cad9ff654c63ecf7061f2b1c187d98465
@@ -13897,7 +13909,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Wed Mar 23 14:18:40 2016 +0100
 
     Merge pull request #1 from HulaHoopWhonix/patch-1
-    
+
     Create foxyproxy.xml
 
 commit 3d32b71e880f4e812bd331bc4a19a118fe096eac
@@ -13935,9 +13947,9 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Mar 11 00:54:59 2016 +0000
 
     added /sbin/iptables-save-deterministic wrapper
-    
+
     that makes the output of iptables-save deterministic
-    
+
     useful to diffing effects by firewall script changes
 
 commit 1f919d82cf118bb648a29f7f09de5414c6998d0e
@@ -13951,14 +13963,14 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Sat Jan 9 16:41:50 2016 +0000
 
     Fix
-    
+
     Configured openvpn systemd service to start as user tunnel. Otherwise openvpn
     would initially start as root, connect and then drop to and continue to connect
     as user tunnel. This would not work, because the VPN_FIREWALL allows only user
     tunnel to connect to external destinations. Added (and out commented by
     default) sudoers exception to allow user tunnel to run openvpn as root so it
     can delete/add the tun device.
-    
+
     https://phabricator.whonix.org/T460
 
 commit f946e06b06e73c0f251ae39def4114c1e7082776
@@ -13972,7 +13984,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Fri Jan 8 22:18:21 2016 +0000
 
     systemd openvpn@openvpn.service.d/50_unpriv.conf: fix, removed 'User=tunnel'
-    
+
     Not working, because we need root to create the tun device. Also not required,
     because we suggest to use openvpn.conf to drop to user 'tunnel'.
     (Which has the firewall exception.)
@@ -14030,7 +14042,7 @@ Author: Patrick Schleizer <adrelanos@riseup.net>
 Date:   Tue Dec 29 22:10:18 2015 +0100
 
     simplify running OpenVPN as unprivileged user
-    
+
     https://phabricator.whonix.org/T460
 
 commit e497554da897e8c5200b80aa682d56900b2707c7
