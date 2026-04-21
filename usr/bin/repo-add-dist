@@ -13,6 +13,12 @@ set -e
 set -o pipefail
 set -o nounset
 
+## Code duplication. Copied from helper-scripts/usr/libexec/helper-scripts/strings.bsh.
+check_variable_name() {
+  ## Ensures a string is a valid Bash variable name.
+  [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
+}
+
 root_check() {
    if [ "$(id -u)" != "0" ]; then
       echo "ERROR: This must be run as root (sudo)!"
@@ -27,6 +33,7 @@ set_default_variable() {
   var_name="$1"
   var_content="$2"
 
+  check_variable_name "${var_name}" || return 1
   if [ -z "${!var_name:-}" ]; then
     echo "INFO: Variable '$var_name' is already set? No. - Setting:
                 $var_name='$var_content'"
