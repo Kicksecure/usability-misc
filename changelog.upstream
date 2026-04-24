@@ -1,8 +1,39 @@
+commit 576159722399a96c17b02bba0454abbd141a2b88
+Merge: 4dba3f9 d4cdca6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 24 06:15:39 2026 -0400
+
+    Merge remote-tracking branch 'github-kicksecure/master'
+
+commit 4dba3f933293ac6366c4a1800fd5b059cc94aefb
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 24 10:10:18 2026 +0000
+
+    bumped changelog version
+
 commit 1de570b9b3a903159f0412ae51a944483490b793
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Apr 24 06:09:04 2026 -0400
 
     build
+
+commit d4cdca63c6b12aa397e46a317e16988d7fb0d1b9
+Merge: c6d83e2 cca05df
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Apr 24 05:00:25 2026 -0400
+
+    Merge pull request #23 from assisted-by-ai/claude/add-ci-timeout-LQIf0
+
+    ci: cap every job at 10 minutes
+
+commit cca05df24431c8de0b7cc020774fdeb1d2f560cd
+Author: Claude <noreply@anthropic.com>
+Date:   Fri Apr 24 08:50:32 2026 +0000
+
+    ci: cap every job at 10 minutes
+
+    Add timeout-minutes: 10 to all jobs so runaway CI steps fail fast
+    instead of consuming the default 360-minute budget.
 
 commit c6d83e2de003b346f8e2a2a366914164d62c9df0
 Author: Patrick Schleizer <adrelanos@whonix.org>
