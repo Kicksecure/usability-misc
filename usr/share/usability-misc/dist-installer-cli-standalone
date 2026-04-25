@@ -293,6 +293,7 @@ check_is_alpha_numeric() {
   fi
 
   varname="$1"
+  check_variable_name "${varname}" || return 1
   value="${!varname}"
 
   if ! [[ "$value" =~ ^[0-9a-zA-Z_-]+$ ]]; then
@@ -316,6 +317,7 @@ validate_safe_filename() {
   local varname value reason re
 
   varname="$1"
+  check_variable_name "${varname}" || return 1
   value="${!varname}"
 
   if [[ -z "$value" ]]; then
@@ -364,6 +366,7 @@ check_is_not_empty_and_only_one_line() {
   fi
 
   varname="$1"
+  check_variable_name "${varname}" || return 1
   value="${!varname}"
 
   ## Trim leading/trailing spaces while preserving newlines.
@@ -483,6 +486,11 @@ gpg_bash_lib_function_displaytime() {
   printf '%s\n' ''
 }
 
+check_variable_name() {
+  ## Ensures a string is a valid Bash variable name.
+  [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
+}
+
 run_test() {
   local test_id function_name expected_exit_code var_name
   local -a input_parts
@@ -502,6 +510,7 @@ run_test() {
   input_value="${input_parts[*]}"
 
   # Assign without eval (works for simple variable names like testvar/a/etc.)
+  check_variable_name "$var_name" || return 1
   printf -v "$var_name" '%s' "$input_value"
 
   printf '%s\n' "$0: Running test $test_id: $function_name ($var_name)"
@@ -1233,7 +1242,32 @@ get_os(){
   ## Source: pfetch: https://github.com/dylanaraps/pfetch/blob/master/pfetch
   os="$(uname -s)"
   kernel="$(uname -r)"
-  arch="$(uname -m)"
+  ## Prefer 'dpkg --print-architecture' over 'uname -m' so that detection
+  ## stays correct when running inside a foreign-architecture chroot under
+  ## qemu-user-static (e.g. an amd64 chroot on an arm64 host for building
+  ## VirtualBox VMs targeting Mac M1/M2). 'uname -m' in that case still
+  ## reports the host kernel's architecture ('aarch64'), while
+  ## 'dpkg --print-architecture' correctly reports 'amd64'.
+  ## Map Debian architecture names to the uname-style names that downstream
+  ## checks expect.
+  arch=""
+  if has dpkg; then
+    case "$(dpkg --print-architecture)" in
+      amd64) arch="x86_64" ;;
+      i386)  arch="i686" ;;
+      arm64) arch="aarch64" ;;
+      armhf) arch="armv7l" ;;
+      armel) arch="armv6l" ;;
+      ppc64el) arch="ppc64le" ;;
+      riscv64) arch="riscv64" ;;
+      s390x) arch="s390x" ;;
+      "") arch="" ;;
+      *) arch="" ;;
+    esac
+  fi
+  if [ -z "${arch}" ]; then
+    arch="$(uname -m)"
+  fi
 
   distro=""
   distro_version=""
