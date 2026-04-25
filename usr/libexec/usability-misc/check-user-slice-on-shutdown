@@ -35,6 +35,8 @@ while (( counter < 10 )); do
   printf '%s\n' "$systemd_cgls_output" >&2
   printf '%s\n' "$0: --------------------------------------------------" >&2
   printf '%s\n' "$0: WARNING: 'user.slice' was not empty yet. (number of lines: '$number_of_lines')" >&2
+
+  (( counter++ )) || true
 done
 
 printf '%s\n' "$0: ERROR: 'user.slice' not empty after 10 seconds!" >&2
