@@ -32,7 +32,9 @@ fi
 
 autoload -Uz compinit
 zmodload zsh/complist
-compinit
+## -i: skip insecure fpath entries instead of prompting interactively, which
+## on a non-interactive shell would silently bypass the security check.
+compinit -i
 #_comp_options+=(globdots)		# Include hidden files.
 # End of lines added by compinstall
 

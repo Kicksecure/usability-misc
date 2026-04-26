@@ -10,8 +10,8 @@
 
 if [ -d /etc/zprofile.d ]; then
   for i in /etc/zprofile.d/*.zsh; do
-    if [ -r $i ]; then
-      . $i
+    if [ -r "$i" ]; then
+      . "$i"
     fi
   done
   unset i

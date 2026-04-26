@@ -16,8 +16,13 @@
 
 if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
 then
-	export PATH="/usr/local/bin:/usr/bin:/bin:/usr/games"
+	export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/games"
 fi
+
+## Deduplicate PATH entries any time PATH is assigned to. $path is an array
+## tied to $PATH; -U keeps only the first occurrence of each entry so user
+## prepends do not accumulate duplicates across reloads.
+typeset -U PATH path
 
 ## Kicksecure addition - silence the zsh-newuser-install wizard since we
 ## provide a functional zsh configuration out of the box.

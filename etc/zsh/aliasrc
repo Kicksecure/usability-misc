@@ -2,8 +2,11 @@
 
 # enable color support of ls, less and man, and also add handy aliases
 if command -v dircolors >/dev/null; then
-    test -r ~/.dircolors &&
-      eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    if [ -r ~/.dircolors ]; then
+      eval "$(dircolors -b ~/.dircolors)"
+    else
+      eval "$(dircolors -b)"
+    fi
     export LS_COLORS="$LS_COLORS:ow=30;44:" # fix ls color for folders with 777 permissions
 # Colorize commands when possible.
     alias ls="ls -h --color=auto --group-directories-first"
