@@ -1,5 +1,8 @@
 #!/usr/bin/env zsh
 
+## When printing things with 'print -P', always escape % so a crafted ref name
+## cannot inject prompt escapes.
+
 # the host has the symbol %M, but not inserted because whonix always
 # sets the host as "host"
 _git_prompt_info() {
@@ -14,8 +17,7 @@ _git_prompt_info() {
       ref=${$(command git rev-parse HEAD 2>/dev/null)[1][1,7]} || \
       return
   fi
-  ## Escape % so a crafted ref name cannot inject prompt escapes via print -P.
-  ref=${ref//\%/%%}
+  ref="${ref//\%/%%}"
   case "$TERM" in
     *-256color|xterm-kitty) branchcolor=$'\e[38;5;31m'   ;;
     *-88color|rxvt-unicode) branchcolor=$'\e[38;5;22m'   ;;
@@ -26,7 +28,7 @@ print -Pn '(%%{$branchcolor%%}%20>...>$ref%<<%%{\e[00m%%})'
 
 _get_dist_prompt() {
   test -z "${dist_prompt}" && return
-  local dp=${dist_prompt//\%/%%}
+  local dp="${dist_prompt//\%/%%}"
   dist_prompt_color=$'\e[00;35m'
   print -Pn '%%{\e[00m%%}%%{$dist_prompt_color%%}%20>...>$dp%<<%%{\e[00m%%} '
 }
@@ -66,9 +68,7 @@ _set_title() {
     *install*)
       hash -r ;;
   esac
-  ## Escape % so a pasted command like "%n" cannot expand as a prompt escape
-  ## when inserted into the print -P format string below.
-  cmd=${cmd//\%/%%}
+  cmd="${cmd//\%/%%}"
   print -Pn '\e]1;%l@%m${cmd:+*}\a'
   print -Pn '\e]2;%n@%m:%~'
   if [ -n "$cmd" ]; then
@@ -90,8 +90,7 @@ case $TERM in
     }
     preexec() {
       _set_title "$@"
-      ## Escape % so a command like "%n" cannot inject prompt escapes.
-      local cmd=${1//\%/%%}
+      local cmd="${1//\%/%%}"
       print -n "\ek"
       print -Pnr '%10>..>$cmd' | tr '\0-\037' '?'
       if [ "$STY" -o "$TMUX" ]; then
