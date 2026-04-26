@@ -32,7 +32,9 @@ setopt promptsubst
 setopt printexitvalue
 
 # https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/safe-paste/safe-paste.plugin.zsh
-set zle_bracketed_paste  # Explicitly restore this zsh default
+## zle_bracketed_paste is a paste-injection mitigation. 'set' is the wrong
+## builtin here (it sets positional parameters); 'setopt' actually enables it.
+setopt zle_bracketed_paste
 autoload -Uz bracketed-paste-magic
 zle -N bracketed-paste bracketed-paste-magic
 
