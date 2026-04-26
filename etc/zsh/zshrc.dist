@@ -9,9 +9,6 @@
 ## base dir
 zsh_custom_dir="/etc/zsh"
 
-## Use root path from /etc/profile so programs in /sbin are highlighted in green
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
 ## history
 HISTFILE=~/.histfile
 HISTSIZE=1000
