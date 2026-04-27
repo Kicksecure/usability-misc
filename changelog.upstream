@@ -1,3 +1,77 @@
+commit 012eb836e526bb75c65d0b06e2dac26afbc50778
+Merge: 8a26366 d6072cf
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Apr 26 04:50:38 2026 -0400
+
+    Merge remote-tracking branch 'ArrayBolt3/arraybolt3/trixie'
+
+commit d6072cf9aa97313684626e315411412864197d8d
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sat Apr 25 23:39:08 2026 -0400
+
+    Modified and squashed commit of the following:
+
+    commit c67824a7eb9573f830a823dbb7b33997e7fc6e48
+    Author: Claude <noreply@anthropic.com>
+    Date:   Fri Apr 24 09:51:10 2026 +0000
+
+        zsh: harden /etc/zsh against prompt injection and fix bracketed-paste setopt
+
+        - zshrc_prompt: escape % in git ref, $dist_prompt, and preexec $1 before
+          feeding them to `print -P`. With PROMPT_SUBST set, a crafted git branch
+          name or pasted command containing prompt escape metacharacters could
+          otherwise be interpreted as prompt escapes when rendered.
+        - zshrc.dist: `set zle_bracketed_paste` sets positional parameters, not
+          the option. Use `setopt zle_bracketed_paste` so the paste-injection
+          mitigation is actually enabled if a parent env has disabled it.
+        - zshrc_completions: use `compinit -i` so insecure fpath entries are
+          skipped instead of triggering an interactive prompt that can be
+          bypassed in non-interactive shells.
+        - zprofile.dist: quote `"$i"` when sourcing /etc/zprofile.d entries.
+        - aliasrc: replace `test && A || B` idiom with if/else so a syntax
+          error in the first eval doesn't silently fall through to the second.
+
+    (zshrc.dist was changed so that `zle_bracketed_paste` handling is
+    correct; using setopt was not the correct solution here.)
+
+commit 55c2586de04f5ab59c3179b94594d5a318978992
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sat Apr 25 23:05:18 2026 -0400
+
+    Squashed commit of the following:
+
+    commit 59dc09abfa56ab45164426d827419d196b43b785
+    Author: Claude <noreply@anthropic.com>
+    Date:   Fri Apr 24 09:38:14 2026 +0000
+
+        zsh: consolidate PATH setup in zshenv
+
+        Per the zsh manual, zshenv is the file for setting the command search
+        path. The previous layout split PATH across two files:
+
+          - zshenv set a minimal fallback (no sbin dirs)
+          - zshrc unconditionally reassigned PATH for interactive shells
+
+        This clobbered any PATH set by the user's ~/.zshenv / ~/.zprofile in
+        interactive shells, and left non-interactive shells with a weaker PATH
+        than interactive ones.
+
+        Move the full PATH into zshenv's existing fallback (still guarded so
+        users can override), drop the zshrc assignment, and add
+        `typeset -U PATH path` to keep entries deduplicated across reloads.
+
+        Drop /bin and /sbin from the fallback: on usrmerged Debian (12+,
+        which Kicksecure targets) these are symlinks to /usr/bin and /usr/sbin,
+        so listing both is redundant. typeset -U dedups by string, not by
+        resolved path, so the legacy entries have to be removed explicitly.
+        Matches the direction of Debian bug #1041362.
+
+commit 8a263665c52c4d3a6020698a4481500515847935
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat Apr 25 09:29:17 2026 +0000
+
+    bumped changelog version
+
 commit b259d0598f26f14c58200b9f3add921023748e42
 Merge: c6a52be a155ecd
 Author: Patrick Schleizer <adrelanos@whonix.org>
