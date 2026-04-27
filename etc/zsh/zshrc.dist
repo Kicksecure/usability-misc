@@ -32,11 +32,17 @@ setopt promptsubst
 setopt printexitvalue
 
 # https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/safe-paste/safe-paste.plugin.zsh
-## zle_bracketed_paste is a paste-injection mitigation. 'set' is the wrong
-## builtin here (it sets positional parameters); 'setopt' actually enables it.
-setopt zle_bracketed_paste
+set zle_bracketed_paste  # Explicitly restore this zsh default
 autoload -Uz bracketed-paste-magic
 zle -N bracketed-paste bracketed-paste-magic
+if [ -z "${zle_bracketed_paste[1]}" ] \
+  || [ -z "${zle_bracketed_paste[2]}" ]; then
+  ## Yes, ZSH uses elements 1 and 2 for this, not 0 and 1.
+  ## Values are the output of `printf '%q\n' "${zle_bracketed_paste[X]}"`
+  ## where X equaled either 1 or 2.
+  zle_bracketed_paste[1]=$'\033'\[\?2004h
+  zle_bracketed_paste[2]=$'\033'\[\?2004l
+fi
 
 ## base for any shell
 source ${zsh_custom_dir}/shrc
