@@ -425,6 +425,11 @@ is_whole_number() {
   [[ "$1" =~ ^[0-9]+$ ]]
 }
 
+## same results as is_whole_number, but also allows negative numbers
+is_integer(){
+  printf '%d' "${1}" >/dev/null 2>&1 || return 1
+}
+
 ## NOTE: Duplicated in package 'uwt' file 'curl.anondist'.
 ## Input is trusted. The caller is expected to pass a valid whole number.
 ## /dev/random is used intentionally instead of /dev/urandom.
@@ -445,6 +450,10 @@ gpg_bash_lib_function_displaytime() {
   ## Modified by Patrick Schleizer.
   local T Y D H M S sep
   T="${1-0}"
+
+  if ! is_whole_number "${T}"; then
+    T=0
+  fi
 
   Y=$((T/60/60/24/365))
   D=$((T/60/60/24%365))
@@ -1184,12 +1193,6 @@ run_as_target_user_and_dir() {
 ## See the file COPYING for copying conditions.
 
 
-## Check if variable is integer
-is_integer(){
-  printf %d "${1}" >/dev/null 2>&1 || return 1
-}
-
-
 ## Checks if the target is valid.
 ## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
 ## this is not perfect but it is better than nothing
@@ -1925,6 +1928,9 @@ log_run() {
 ## Variable to define outside: start_time
 # shellcheck disable=SC2154
 get_elapsed_time() {
+  if ! is_integer "${start_time}"; then
+    start_time=0
+  fi
   printf '%s\n' "$(($(date +%s) - start_time))"
 }
 
