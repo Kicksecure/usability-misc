@@ -189,12 +189,12 @@ fi
 ## installed).
 ## Literal code duplication is bad.
 ## Confuses shellcheck for dist-installer-cli-standalone.
-if test -f "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/check_runtime.bsh"; then
+if test -f "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/check_runtime.bsh; then
   ## Use 'source_encoded' to avoid
   ## /usr/share/usability-misc/build-dist-installer-cli
   ## from in-lining the source code.
   source_encoded=source
-  "$source_encoded" "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/check_runtime.bsh"
+  "$source_encoded" "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/check_runtime.bsh
 fi
 
 ## NOTE: br_add and br_add_to_file are not HTML sanitization functions.
@@ -657,7 +657,7 @@ fi
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/check_runtime.bsh"
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -1071,8 +1071,8 @@ capitalize_first_char(){
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/get_colors.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/log_run_die.sh"
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
 
 ## Block running as root.
 not_as_root(){
@@ -1091,8 +1091,8 @@ ${underline}Non-Root Check:${nounderline} Running as root.
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/get_colors.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/log_run_die.sh"
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
@@ -1226,9 +1226,9 @@ run_as_target_user_and_dir() {
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/get_colors.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/log_run_die.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/strings.bsh"
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/strings.bsh
 
 ## Checks if the target is valid.
 ## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
@@ -1276,9 +1276,9 @@ is_addr_port(){
 
 ## TODO: how to handle installer specific code?
 
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/has.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/log_run_die.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/ip_syntax.sh"
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/has.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/ip_syntax.sh
 
 ## Get host os and other necessary information.
 get_os(){
@@ -1616,8 +1616,8 @@ check_not_qubes_template() {
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/ip_syntax.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/log_run_die.sh"
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/ip_syntax.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
 
 ## ------------------- ##
 ## Usage of parse_opt.sh
@@ -1775,8 +1775,8 @@ range_arg(){
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/get_colors.sh"
-source "${HELPER_SCRIPTS_PATH:-}/usr/libexec/helper-scripts/strings.bsh"
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/strings.bsh
 
 if ! command -v stecho &>/dev/null ; then
   ## Fallback to 'printf' in case 'stecho' is unavailable.
