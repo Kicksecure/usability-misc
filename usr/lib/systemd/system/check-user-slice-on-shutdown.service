@@ -3,6 +3,7 @@
 
 [Unit]
 Description=displays information about user processes that become hung during shutdown
+ConditionPathExists=/run/qubes-service/debug-kicksecure
 
 [Service]
 Type=oneshot
