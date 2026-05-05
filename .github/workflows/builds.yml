@@ -6,6 +6,10 @@ on:
             - 'usr/share/usability-misc/dist-installer-cli-standalone'
             - '.github/workflows/builds.yml'
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
     changes:
         runs-on: ubuntu-22.04
