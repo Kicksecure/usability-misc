@@ -17,6 +17,8 @@ jobs:
             installer: ${{ steps.filter.outputs.installer }}
         steps:
             - uses: actions/checkout@v5
+              with:
+                  persist-credentials: false
             - uses: dorny/paths-filter@v4
               id: filter
               with:
@@ -47,7 +49,7 @@ jobs:
                     #- image: fedora:latest
                     #- image: fedora:rawhide
                     ## Debian bullseye: EOL
-                    ## E: The repository '\''https://deb.debian.org/debian bullseye-backports Release'\'' does not have a Release file.
+                    ## E: The repository 'https://deb.debian.org/debian bullseye-backports Release' does not have a Release file.
                     #- image: debian:oldoldstable
                     - image: debian:oldstable
                     - image: debian:stable
@@ -62,6 +64,8 @@ jobs:
 
         steps:
             - uses: actions/checkout@v5
+              with:
+                  persist-credentials: false
             - name: System Basic Packages
               run: |
                   if command -v apt-get; then
