@@ -31,25 +31,8 @@ base_name_target="${target##*/}"
 
 ## debian/control 'Builds-Depends: helper-scripts' is not easily possible,
 ## because then the build chroot would also need helper-scripts being installed.
-# if test -d /usr/libexec/helper-scripts/ ; then
-#   ## System version.
-#   ## Stable. Or not. Depending on repository setting stable, stable-proposed-updates, testers, or developers.
-#   helper_path="/usr/libexec/helper-scripts/"
-# elif test -d "../helper-scripts/usr/libexec/helper-scripts/" ; then
-#   ## derivative-maker source code version.
-#   helper_path="../helper-scripts/usr/libexec/helper-scripts/"
-# else
-#   printf '%s\n' "$0: ERROR: helper_path neither available in
-# - /usr/libexec/helper-scripts/
-# nor in
-# ../helper-scripts/usr/libexec/helper-scripts/" >&2
-#   exit 1
-# fi
-
-## Use source code version for now to avoid using different version depending on repository setting.
-## TODO: does not work
-#helper_path="../helper-scripts/usr/libexec/helper-scripts/"
-
+## Use system-installed helper-scripts. Operator is expected to have helper-scripts
+## installed when running this build script.
 helper_path="/usr/libexec/helper-scripts/"
 
 if ! test -d "$helper_path" ; then
@@ -57,24 +40,67 @@ if ! test -d "$helper_path" ; then
   exit 1
 fi
 
-cp -- "${template}" "${target}"
+## Recursively inline every 'source ...helper-scripts/<name>' line so
+## the resulting standalone has no source lines pointing at files
+## that the standalone's runtime environment will not have.
+##
+## Two source-line forms are handled:
+##   source /usr/libexec/helper-scripts/<name>
+##   source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/<name>
+## helper-scripts uses the second form for its own internal sources
+## (so a non-installed dev checkout can override the path), so a
+## non-recursive single-pass inliner would leave nested source lines
+## pointing at /usr/libexec/helper-scripts in the produced standalone.
+python3 - "$template" "$target" "$helper_path" "${0##*/}" <<'PY'
+import re, sys, os
 
-awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
-  $0 ~ helper {
-    if (system("test -f "$2) != 0) {
-      print origin ": error: sourced file does not exist: "$2 > "/dev/stderr"
-      exit 1
-    }
-    print "##### BEGIN pasted by "origin " from file "$2
-    system("cat -- "$2)
-    print "##### END pasted by "origin " from file "$2
-    next
-  }
-  1
-' "${template}" | tee -- "${target}" >/dev/null
+template, target, helper_path, origin = sys.argv[1:5]
 
+source_pat = re.compile(
+    r'^[ \t]*source[ \t]+'
+    r'(?:"\$\{HELPER_SCRIPTS_PATH:-\}")?'
+    r'/usr/libexec/helper-scripts/(\S+)\s*$'
+)
+
+def expand(text, depth=0):
+    if depth > 16:
+        sys.stderr.write(f"{origin}: error: source recursion too deep ({depth})\n")
+        sys.exit(1)
+    out = []
+    for line in text.splitlines():
+        m = source_pat.match(line)
+        if not m:
+            out.append(line)
+            continue
+        inner_path = os.path.join(helper_path, m.group(1))
+        if not os.path.isfile(inner_path):
+            sys.stderr.write(f"{origin}: error: sourced file does not exist: {inner_path}\n")
+            sys.exit(1)
+        with open(inner_path) as f:
+            inner_text = f.read()
+        out.append(f"##### BEGIN pasted by {origin} from file {inner_path}")
+        out.append(expand(inner_text, depth + 1))
+        out.append(f"##### END pasted by {origin} from file {inner_path}")
+    return "\n".join(out)
+
+with open(template) as f:
+    content = f.read()
+expanded = expand(content)
+if not expanded.endswith("\n"):
+    expanded += "\n"
+with open(target, "w") as f:
+    f.write(expanded)
+PY
+
+## Defense-in-depth: strip any remaining source-helper-scripts lines
+## (matches both plain and ${HELPER_SCRIPTS_PATH:-}-prefixed forms).
+## In a healthy build the recursive Python inliner above leaves none,
+## but if a future helper-script gains a source line that does not
+## match the inliner's regex, the standalone must not ship a source
+## statement that will fail at runtime - delete it.
 sed -i \
-  -e '\,^source /usr/libexec/helper-scripts/,d' \
+  -e '\,^[[:space:]]*source[[:space:]]\+/usr/libexec/helper-scripts/,d' \
+  -e '\,^[[:space:]]*source[[:space:]]\+"\${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/,d' \
   -e "6i\\
 ##########################\\
 ## NOTE:\\
