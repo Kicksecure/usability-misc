@@ -94,7 +94,7 @@ declare version me start_time dialog_title license adrelanos_signify \
 ## https://raw.githubusercontent.com/Kicksecure/helper-scripts/refs/heads/master/usr/libexec/helper-scripts/wc-test.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -139,7 +139,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 if was_executed "${BASH_SOURCE[0]}"; then
   ## Script was executed.
@@ -152,7 +152,7 @@ if was_executed "${BASH_SOURCE[0]}"; then
 fi
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/wc-test.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/wc-test.sh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -167,10 +167,10 @@ zsh: illegal hardware instruction (core dumped) wc -l
 https://github.com/rspamd/rspamd/issues/5137" >&2
   exit 1
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/wc-test.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/wc-test.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -358,22 +358,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -667,17 +654,17 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -722,7 +709,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -920,10 +907,10 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
 #!/bin/sh
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -958,7 +945,7 @@ pkg_installed() {
    true "$0: INFO: $package_name is not installed, ok."
    return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
 
 
 set_globals() {
@@ -1085,7 +1072,7 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 ################
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -1119,9 +1106,9 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -1131,22 +1118,22 @@ modprobe_remove() {
 capitalize_first_char(){
   printf '%s' "${1:-}" | awk '{$1=toupper(substr($1,0,1))substr($1,2)}1'
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -1191,7 +1178,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -1389,22 +1376,22 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -1449,7 +1436,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -1647,9 +1634,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -1837,22 +1824,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -2146,9 +2120,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -2213,9 +2187,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -2249,7 +2223,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -2365,19 +2339,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -2479,7 +2441,7 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 
 ## Block running as root.
 not_as_root(){
@@ -2490,22 +2452,22 @@ ${underline}Non-Root Check:${nounderline} Running as root.
   - Please run as normal user."
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/root_cmd.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/root_cmd.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/root_cmd.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -2550,7 +2512,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -2748,22 +2710,22 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -2808,7 +2770,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -3006,9 +2968,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -3196,22 +3158,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -3505,9 +3454,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -3572,9 +3521,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -3608,7 +3557,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -3724,19 +3673,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -3838,7 +3775,7 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
@@ -3964,22 +3901,22 @@ run_as_target_user_and_dir() {
   shift
   ROOT_CMD_TARGET_USER="${target_user}" ROOT_CMD_TARGET_DIR="${target_dir}" root_cmd "${@}"
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/root_cmd.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/root_cmd.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -4024,7 +3961,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -4222,22 +4159,22 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -4282,7 +4219,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -4480,9 +4417,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -4670,22 +4607,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -4979,9 +4903,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -5046,9 +4970,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -5082,7 +5006,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -5198,19 +5122,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -5312,8 +5224,8 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -5501,22 +5413,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -5810,7 +5709,7 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 
 ## Checks if the target is valid.
 ## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
@@ -5848,9 +5747,9 @@ is_addr_port(){
     fi
   done
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_os.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_os.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_os.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -5858,7 +5757,7 @@ is_addr_port(){
 
 ## TODO: how to handle installer specific code?
 
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -5892,22 +5791,22 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -5952,7 +5851,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -6150,9 +6049,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -6340,22 +6239,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -6649,9 +6535,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -6716,9 +6602,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -6752,7 +6638,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -6868,19 +6754,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -6982,21 +6856,21 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -7041,7 +6915,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -7239,22 +7113,22 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -7299,7 +7173,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -7497,9 +7371,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -7687,22 +7561,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -7996,9 +7857,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -8063,9 +7924,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -8099,7 +7960,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -8215,19 +8076,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -8329,8 +8178,8 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -8518,22 +8367,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -8827,7 +8663,7 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 
 ## Checks if the target is valid.
 ## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
@@ -8865,7 +8701,7 @@ is_addr_port(){
     fi
   done
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 
 ## Get host os and other necessary information.
 get_os(){
@@ -9068,7 +8904,7 @@ get_distro() {
 
   die 0 "${underline}Distribution Test Result:${nounderline} Fedora on CI does not run the Tor systemd service. Skipped on CI to avoid breaking the CI testing."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_os.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_os.sh
 
 get_specifics() {
   distro_codename_real="$(lsb_release --short --codename)"
@@ -9197,26 +9033,26 @@ check_not_qubes_template() {
 ##########################
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/parse_opt.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/parse_opt.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/parse_opt.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -9261,7 +9097,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -9459,22 +9295,22 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -9519,7 +9355,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -9717,9 +9553,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -9907,22 +9743,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -10216,9 +10039,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -10283,9 +10106,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -10319,7 +10142,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -10435,19 +10258,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -10549,8 +10360,8 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -10738,22 +10549,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -11047,7 +10845,7 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 
 ## Checks if the target is valid.
 ## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
@@ -11085,22 +10883,22 @@ is_addr_port(){
     fi
   done
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -11145,7 +10943,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -11343,9 +11141,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -11533,22 +11331,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -11842,9 +11627,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -11909,9 +11694,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -11945,7 +11730,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -12061,19 +11846,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -12175,7 +11948,7 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 
 ## ------------------- ##
 ## Usage of parse_opt.sh
@@ -12316,7 +12089,7 @@ range_arg(){
     fi
   fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/parse_opt.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/parse_opt.sh
 
 ########################
 ## END OPTION PARSING ##
@@ -12327,21 +12100,21 @@ range_arg(){
 ###################
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -12386,7 +12159,7 @@ should_run_unit_tests() {
   fi
   return 1
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -12584,9 +12357,9 @@ fi
 if should_run_unit_tests "${BASH_SOURCE[0]}"; then
   get_colors_test
 fi
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/get_colors.sh
 # shellcheck source=/usr/libexec/helper-scripts/strings.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -12774,22 +12547,9 @@ $reason" >&2
 }
 
 check_valid_linux_user_account_name() {
-  ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX:
-  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
-  ## i.e. start with a lowercase letter or underscore, then any
-  ## mix of lowercase letters, digits, underscore and dash. We
-  ## intentionally do NOT allow uppercase here (Codex P2 catch on
-  ## helper-scripts#1 strings.bsh:194): on default Debian /
-  ## Kicksecure configurations, an uppercase name passes a sloppy
-  ## pre-check and then still fails when adduser actually tries
-  ## to create the account, turning this validator into a
-  ## false-positive gate. Match upstream behaviour exactly so the
-  ## pre-check rejects the same set adduser itself rejects.
-  ##
-  ## Args: $1 = candidate name.
-  ## Return: 0 if valid, 1 if not. Prints nothing on its own;
-  ## callers print their own diagnostic on rejection.
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
   [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
@@ -13083,9 +12843,9 @@ fi
 #trim_collapse_split " aaa  bbb ccc ddd "
 #flavor_meta_packages_to_install='kicksecure-baremetal-gui-lxqt kicksecure-baremetal-server'
 #trim_collapse_split "$flavor_meta_packages_to_install"
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/strings.bsh
 # shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 #!/bin/bash
 
 ## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -13150,9 +12910,9 @@ output_cmd_set() {
       #output_cmd=( printf '%s\n' )
    fi
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 #!/bin/bash
 
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
@@ -13186,7 +12946,7 @@ modprobe_remove() {
   modprobe --remove "${1}" || return 1
   return 0
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -13302,19 +13062,7 @@ log() {
   fi
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
-  if has sanitize-string; then
-    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
-    ## value, or sanitize-string itself buggy on some unusual input)
-    ## without aborting the caller's script under errexit. Falling back
-    ## to the unsanitised content is strictly better than killing the
-    ## caller before its own error handler runs - log() is meant to
-    ## be a fail-soft observability hook, not an additional crash path.
-    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
-    local sanitized_log_content
-    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
-      log_content="${sanitized_log_content}"
-    fi
-  fi
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
   ## send bugs and error to stdout and stderr
@@ -13416,7 +13164,7 @@ get_elapsed_time() {
 log_time() {
   log info "Time elapsed: $(get_elapsed_time)s."
 }
-##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
+##### END pasted by build-dist-installer-cli from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 
 ## Standalone-mode fallbacks for the helper-scripts external commands
 ## that log_run_die.sh's log() calls. In a normal Whonix install both

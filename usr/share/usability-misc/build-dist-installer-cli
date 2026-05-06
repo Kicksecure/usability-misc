@@ -31,75 +31,59 @@ target="${toplevel}/usr/share/usability-misc/dist-installer-cli-standalone"
 template="${toplevel}/usr/bin/dist-installer-cli"
 base_name_target="${target##*/}"
 
-## debian/control 'Builds-Depends: helper-scripts' is not easily possible,
+## debian/control 'Build-Depends: helper-scripts' is not easily possible
 ## because then the build chroot would also need helper-scripts being installed.
-## Use system-installed helper-scripts. Operator is expected to have helper-scripts
-## installed when running this build script.
-helper_path="/usr/libexec/helper-scripts/"
+## Use the system-installed copy.
+helper_path="${HELPER_PATH:-/usr/libexec/helper-scripts/}"
 
 if ! test -d "${helper_path}" ; then
   printf '%s\n' "${0}: ERROR: directory helper_path '${helper_path}' does not exist!" >&2
   exit 1
 fi
 
-## Recursively inline every 'source ...helper-scripts/<name>' line so
-## the resulting standalone has no source lines pointing at files
-## that the standalone's runtime environment will not have.
+## Recursively inline 'source ...helper-scripts/<name>' lines so the
+## standalone has no source statements pointing at files the
+## standalone's runtime environment will not have.
 ##
 ## Two source-line forms are handled:
 ##   source /usr/libexec/helper-scripts/<name>
 ##   source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/<name>
-## helper-scripts uses the second form for its own internal sources
-## (so a non-installed dev checkout can override the path), so a
-## non-recursive single-pass inliner would leave nested source lines
-## pointing at /usr/libexec/helper-scripts in the produced standalone.
-python3 - "${template}" "${target}" "${helper_path}" "${0##*/}" <<'PY'
-import re, sys, os
+## helper-scripts uses the second form for its own internal sources,
+## so a single-pass inliner leaves nested source lines intact - hence
+## the iterate-until-fixed-point loop. Bounded at 16 levels so a
+## hypothetical cycle in helper-scripts surfaces as a hard error
+## rather than spinning.
 
-template, target, helper_path, origin = sys.argv[1:5]
+cp --remove-destination -- "${template}" "${target}"
 
-source_pat = re.compile(
-    r'^[ \t]*source[ \t]+'
-    r'(?:"\$\{HELPER_SCRIPTS_PATH:-\}")?'
-    r'/usr/libexec/helper-scripts/(\S+)\s*$'
-)
+max_iters=16
+iter=0
+while grep -qE '^[[:space:]]*source[[:space:]]+("\$\{HELPER_SCRIPTS_PATH:-\}")?/usr/libexec/helper-scripts/' "${target}"; do
+  iter=$(( iter + 1 ))
+  if [ "${iter}" -gt "${max_iters}" ]; then
+    printf '%s\n' "${0}: ERROR: source recursion exceeds ${max_iters} levels" >&2
+    exit 1
+  fi
+  awk -v origin="${0##*/}" -v hp="${helper_path}" '
+    /^[[:space:]]*source[[:space:]]+("\$\{HELPER_SCRIPTS_PATH:-\}")?\/usr\/libexec\/helper-scripts\// {
+      ## Extract the basename after /usr/libexec/helper-scripts/.
+      sub(/^.*\/usr\/libexec\/helper-scripts\//, "")
+      sub(/[[:space:]].*$/, "")
+      file = hp $0
+      if (system("test -f " file) != 0) {
+        print origin ": error: sourced file does not exist: " file > "/dev/stderr"
+        exit 1
+      }
+      print "##### BEGIN pasted by " origin " from file " file
+      system("cat -- " file)
+      print "##### END pasted by " origin " from file " file
+      next
+    }
+    1
+  ' "${target}" > "${target}.tmp"
+  mv -- "${target}.tmp" "${target}"
+done
 
-def expand(text, depth=0):
-    if depth > 16:
-        sys.stderr.write(f"{origin}: error: source recursion too deep ({depth})\n")
-        sys.exit(1)
-    out = []
-    for line in text.splitlines():
-        m = source_pat.match(line)
-        if not m:
-            out.append(line)
-            continue
-        inner_path = os.path.join(helper_path, m.group(1))
-        if not os.path.isfile(inner_path):
-            sys.stderr.write(f"{origin}: error: sourced file does not exist: {inner_path}\n")
-            sys.exit(1)
-        with open(inner_path) as f:
-            inner_text = f.read()
-        out.append(f"##### BEGIN pasted by {origin} from file {inner_path}")
-        out.append(expand(inner_text, depth + 1))
-        out.append(f"##### END pasted by {origin} from file {inner_path}")
-    return "\n".join(out)
-
-with open(template) as f:
-    content = f.read()
-expanded = expand(content)
-if not expanded.endswith("\n"):
-    expanded += "\n"
-with open(target, "w") as f:
-    f.write(expanded)
-PY
-
-## Defense-in-depth: strip any remaining source-helper-scripts lines
-## (matches both plain and ${HELPER_SCRIPTS_PATH:-}-prefixed forms).
-## In a healthy build the recursive Python inliner above leaves none,
-## but if a future helper-script gains a source line that does not
-## match the inliner's regex, the standalone must not ship a source
-## statement that will fail at runtime - delete it.
 sed -i \
   -e '\,^[[:space:]]*source[[:space:]]\+/usr/libexec/helper-scripts/,d' \
   -e '\,^[[:space:]]*source[[:space:]]\+"\${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/,d' \
@@ -111,13 +95,14 @@ sed -i \
 ## INSTEAD MODIFY ../../bin/dist-installer-cli and the functions sourced!\\
 ##########################\\
 " \
-  -- \
-  "${target}"
+  -- "${target}"
 
 printf '%s\n' "${0}: INFO: BUILD: SUCCESS"
-printf '%s\n' "${0}: INFO: Running shellcheck..."
-
-shellcheck "${target}"
-
-printf '%s\n' "${0}: INFO: shellcheck: SUCCESS"
+if command -v shellcheck >/dev/null 2>&1; then
+  printf '%s\n' "${0}: INFO: Running shellcheck..."
+  shellcheck "${target}"
+  printf '%s\n' "${0}: INFO: shellcheck: SUCCESS"
+else
+  printf '%s\n' "${0}: INFO: shellcheck not installed; skipping."
+fi
 printf '%s\n' "${0}: INFO: END: OK"
