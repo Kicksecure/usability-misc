@@ -59,12 +59,11 @@ fi
 
 cp -- "${template}" "${target}"
 
-## TODO
-# search='"${HELPER_SCRIPTS_PATH:-}"'
-# replace=''
-# str_replace "${search}" "${replace}" "${target}"
+search='"${HELPER_SCRIPTS_PATH:-}"'
+replace=''
+str_replace "${search}" "${replace}" "${target}"
 
-awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
+awk -i inplace -v origin="${0##*/}" -v helper="source ${helper_path}" '
   $0 ~ helper {
     if (system("test -f "$2) != 0) {
       print origin ": error: sourced file does not exist: "$2 > "/dev/stderr"
@@ -76,7 +75,7 @@ awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
     next
   }
   1
-' "${template}" | tee -- "${target}" >/dev/null
+' "${target}"
 
 sed -i \
   -e '\,^source /usr/libexec/helper-scripts/,d' \
