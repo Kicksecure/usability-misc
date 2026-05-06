@@ -359,12 +359,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -1828,12 +1838,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -2231,6 +2251,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -2318,7 +2366,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
@@ -3139,12 +3197,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -3542,6 +3610,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -3629,7 +3725,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
@@ -4565,12 +4671,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -4968,6 +5084,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -5055,7 +5199,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
@@ -5348,12 +5502,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -6177,12 +6341,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -6580,6 +6754,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -6667,7 +6869,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
@@ -7476,12 +7688,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -7879,6 +8101,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -7966,7 +8216,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
@@ -8259,12 +8519,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -9638,12 +9908,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -10041,6 +10321,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -10128,7 +10436,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
@@ -10421,12 +10739,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -11206,12 +11534,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -11609,6 +11947,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -11696,7 +12062,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
@@ -12399,12 +12775,22 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates a Linux user account name per /etc/adduser.conf's
-  ## default SYS_NAME_REGEX.
+  ## default SYS_NAME_REGEX:
+  ##   SYS_NAME_REGEX="^[a-z_][-a-z0-9_]*$"
+  ## i.e. start with a lowercase letter or underscore, then any
+  ## mix of lowercase letters, digits, underscore and dash. We
+  ## intentionally do NOT allow uppercase here (Codex P2 catch on
+  ## helper-scripts#1 strings.bsh:194): on default Debian /
+  ## Kicksecure configurations, an uppercase name passes a sloppy
+  ## pre-check and then still fails when adduser actually tries
+  ## to create the account, turning this validator into a
+  ## false-positive gate. Match upstream behaviour exactly so the
+  ## pre-check rejects the same set adduser itself rejects.
   ##
   ## Args: $1 = candidate name.
   ## Return: 0 if valid, 1 if not. Prints nothing on its own;
   ## callers print their own diagnostic on rejection.
-  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]]
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -12802,6 +13188,34 @@ modprobe_remove() {
 }
 ##### END pasted by regen-standalone from file /tmp/work/helper-scripts/usr/libexec/helper-scripts/has.sh
 
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
 __log_level_num() {
   case "${1:-notice}" in
     bug|error) printf '%s' 0 ;;
@@ -12889,7 +13303,17 @@ log() {
   log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
   log_content="${*}"
   if has sanitize-string; then
-    log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+    ## Tolerate sanitize-string failure (e.g. a malformed LOG_MAX_LEN
+    ## value, or sanitize-string itself buggy on some unusual input)
+    ## without aborting the caller's script under errexit. Falling back
+    ## to the unsanitised content is strictly better than killing the
+    ## caller before its own error handler runs - log() is meant to
+    ## be a fail-soft observability hook, not an additional crash path.
+    ## Caught by Codex P2 on helper-scripts#1 log_run_die.sh:102.
+    local sanitized_log_content
+    if sanitized_log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}" 2>/dev/null)"; then
+      log_content="${sanitized_log_content}"
+    fi
   fi
   ## error logs are the minimum and should always be printed, even if
   ## failing to assign a correct log type
