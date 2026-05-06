@@ -97,6 +97,10 @@ sed -i \
 " \
   -- "${target}"
 
+## Standalone is invoked directly by callers (sudo -u user -- ./...);
+## ensure +x even if cp's umask interaction stripped it.
+chmod +x -- "${target}"
+
 printf '%s\n' "${0}: INFO: BUILD: SUCCESS"
 if command -v shellcheck >/dev/null 2>&1; then
   printf '%s\n' "${0}: INFO: Running shellcheck..."
