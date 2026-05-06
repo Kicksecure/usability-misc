@@ -207,15 +207,16 @@ jobs:
               run: sudo -u user -- timeout --kill-after=5 5 bash -c "set -x && source usr/share/usability-misc/dist-installer-cli-standalone"
 
             - name: Run Installer ShellCheck
-              ## SC2317 (unreachable) and SC2034 (unused) fire false-positives
-              ## on the standalone because helper-scripts functions get
-              ## inlined verbatim and shellcheck cannot trace the indirect
-              ## callsites (e.g. log_run is called via bash dispatch) or
-              ## the inlined helpers' export-via-source semantics. Exclude
-              ## both checks for the standalone specifically; the source
+              ## SC2317 (unreachable), SC2034 (unused), SC2218 (function only
+              ## defined later), SC2329 (function never invoked) all fire
+              ## false-positives on the standalone because helper-scripts
+              ## functions get inlined verbatim - shellcheck cannot trace
+              ## the indirect callsites (e.g. log_run dispatched by name)
+              ## or the inlined-helpers' function-resolution-order. Exclude
+              ## these checks for the standalone specifically; the source
               ## template (usr/bin/dist-installer-cli) and the helper-scripts
-              ## sources are linted normally elsewhere.
-              run: shellcheck --exclude=SC2317,SC2034 -- usr/share/usability-misc/dist-installer-cli-standalone
+              ## sources are linted normally elsewhere with full context.
+              run: shellcheck --exclude=SC2034,SC2218,SC2317,SC2329 -- usr/share/usability-misc/dist-installer-cli-standalone
 
             ## Requires helper-scripts.
             # - name: Run build-dist-installer-cli
