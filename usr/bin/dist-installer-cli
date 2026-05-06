@@ -1588,6 +1588,11 @@ start_virtualbox_gui() {
 
 
 virtualbox_start_failed() {
+  if [ "${ci}" = "1" ]; then
+    true "INFO: Ignore virtualbox_start_failed because running on CI."
+    return 0
+  fi
+
   local likely_cause
   likely_cause=""
   if [ "$user_warned_potential_startup_issue" = "true" ]; then
