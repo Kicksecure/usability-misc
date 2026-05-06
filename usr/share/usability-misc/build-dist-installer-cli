@@ -63,18 +63,29 @@ search='"${HELPER_SCRIPTS_PATH:-}"'
 replace=''
 str_replace "${search}" "${replace}" "${target}"
 
-awk -i inplace -v origin="${0##*/}" -v helper="source ${helper_path}" '
-  $0 ~ helper {
-    if (system("test -f "$2) != 0) {
-      print origin ": error: sourced file does not exist: "$2 > "/dev/stderr"
+gawk -i inplace -v origin="${0##*/}" -v helper="source ${helper_path}" '
+  index($0, helper) {
+    src = $2
+
+    if ((getline line < src) < 0) {
+      print origin ": error: sourced file does not exist or is not readable: " src > "/dev/stderr"
       exit 1
     }
-    print "##### BEGIN pasted by "origin " from file "$2
-    system("cat -- "$2)
-    print "##### END pasted by "origin " from file "$2
+
+    print "##### BEGIN pasted by " origin " from file " src
+    print line
+
+    while ((getline line < src) > 0) {
+      print line
+    }
+
+    close(src)
+
+    print "##### END pasted by " origin " from file " src
     next
   }
-  1
+
+  { print }
 ' "${target}"
 
 sed -i \
