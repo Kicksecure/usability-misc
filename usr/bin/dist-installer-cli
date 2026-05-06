@@ -388,6 +388,36 @@ source /usr/libexec/helper-scripts/parse_opt.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 source /usr/libexec/helper-scripts/log_run_die.sh
 
+## Standalone-mode fallbacks for the helper-scripts external commands
+## that log_run_die.sh's log() calls. In a normal Whonix install both
+## `stecho` and `sanitize-string` come from the helper-scripts package
+## and are on PATH; the standalone runs on plain Debian/Fedora/Ubuntu/
+## Mint/Kali images without helper-scripts installed, so we provide
+## minimal bash-function shims when the binary isn't present.
+##
+## stecho       prints its args verbatim plus a newline (the upstream
+##              binary does the same, with extra unicode-trojan-source
+##              guards which the controlled CLI context here does not
+##              need).
+## sanitize-string  passes stdin through unchanged (the binary
+##                  trims to a length cap; CLI runs in a maintainer-
+##                  controlled terminal context where the cap is
+##                  unnecessary).
+##
+## See agents/bash-style-guide.md and TODO-dist-installer-cli-fallbacks.md
+## for context.
+if ! has stecho; then
+  stecho() {
+    printf '%s\n' "$*"
+  }
+fi
+if ! has sanitize-string; then
+  sanitize-string() {
+    cat
+  }
+fi
+
+
 ## Wrapper to end the exit trap.
 end_exit() {
   ## Reset exit trap.
@@ -1558,6 +1588,11 @@ start_virtualbox_gui() {
 
 
 virtualbox_start_failed() {
+  if [ "${ci}" = "1" ]; then
+    true "INFO: Ignore virtualbox_start_failed because running on CI."
+    return 0
+  fi
+
   local likely_cause
   likely_cause=""
   if [ "$user_warned_potential_startup_issue" = "true" ]; then
