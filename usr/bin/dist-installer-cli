@@ -87,7 +87,7 @@ declare version me start_time dialog_title license adrelanos_signify \
 ## https://raw.githubusercontent.com/Kicksecure/helper-scripts/refs/heads/master/usr/libexec/helper-scripts/wc-test.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/check_runtime.bsh
-source /usr/libexec/helper-scripts/check_runtime.bsh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/check_runtime.bsh
 
 if was_executed "${BASH_SOURCE[0]}"; then
   ## Script was executed.
@@ -100,16 +100,16 @@ if was_executed "${BASH_SOURCE[0]}"; then
 fi
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
-source /usr/libexec/helper-scripts/wc-test.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/wc-test.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/strings.bsh
-source /usr/libexec/helper-scripts/strings.bsh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/strings.bsh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_colors.sh
-source /usr/libexec/helper-scripts/get_colors.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/package_installed_check.sh
-source /usr/libexec/helper-scripts/package_installed_check.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/package_installed_check.sh
 
 
 set_globals() {
@@ -236,17 +236,17 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 ################
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/has.sh
-source /usr/libexec/helper-scripts/has.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/has.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
-source /usr/libexec/helper-scripts/capitalize_first_char.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/capitalize_first_char.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/not_as_root.sh
-source /usr/libexec/helper-scripts/not_as_root.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/not_as_root.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/root_cmd.sh
-source /usr/libexec/helper-scripts/root_cmd.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/root_cmd.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/ip_syntax.sh
-source /usr/libexec/helper-scripts/ip_syntax.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/ip_syntax.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/get_os.sh
-source /usr/libexec/helper-scripts/get_os.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_os.sh
 
 get_specifics() {
   distro_codename_real="$(lsb_release --short --codename)"
@@ -375,7 +375,7 @@ check_not_qubes_template() {
 ##########################
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/parse_opt.sh
-source /usr/libexec/helper-scripts/parse_opt.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/parse_opt.sh
 
 ########################
 ## END OPTION PARSING ##
@@ -386,7 +386,7 @@ source /usr/libexec/helper-scripts/parse_opt.sh
 ###################
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
-source /usr/libexec/helper-scripts/log_run_die.sh
+source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
 
 ## Standalone-mode fallbacks for the helper-scripts external commands
 ## that log_run_die.sh's log() calls. In a normal Whonix install both
