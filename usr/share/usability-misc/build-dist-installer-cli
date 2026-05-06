@@ -59,6 +59,11 @@ fi
 
 cp -- "${template}" "${target}"
 
+## TODO
+# search='"${HELPER_SCRIPTS_PATH:-}"'
+# replace=''
+# str_replace "${search}" "${replace}" "${target}"
+
 awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
   $0 ~ helper {
     if (system("test -f "$2) != 0) {
