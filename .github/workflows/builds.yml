@@ -6,6 +6,9 @@ on:
             - 'usr/share/usability-misc/dist-installer-cli-standalone'
             - '.github/workflows/builds.yml'
 
+permissions:
+  contents: read
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
