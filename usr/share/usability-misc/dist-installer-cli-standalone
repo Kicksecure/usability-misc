@@ -357,6 +357,13 @@ $reason" >&2
   return 1
 }
 
+check_valid_linux_user_account_name() {
+  ## Validates per /etc/adduser.conf SYS_NAME_REGEX
+  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
+  ## Return: 0 valid, 1 invalid. Prints nothing.
+  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
+}
+
 check_is_not_empty_and_only_one_line() {
   local varname value number_of_lines trimmed_value lines
 
@@ -657,7 +664,7 @@ fi
 ## See the file COPYING for copying conditions.
 
 # shellcheck source=./check_runtime.bsh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/check_runtime.bsh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/check_runtime.bsh
 
 # shellcheck disable=SC2034
 get_colors() {
@@ -1030,10 +1037,13 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 ## spamming '>/dev/null' throughout this function. This also guards
 ## against aliases and functions.
 ## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
-has(){
-  local _cmd
-  _cmd="$(command -v "${1}")" 2>/dev/null || return 1
-  [ -x "${_cmd}" ] || return 1
+has() {
+  local _cmd _name
+
+  for _name in "$@"; do
+    _cmd="$(command -v "${_name}")" 2>/dev/null || return 1
+    [ -x "${_cmd}" ] || return 1
+  done
 }
 
 lsmod_deterministic() {
@@ -1071,8 +1081,304 @@ capitalize_first_char(){
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/get_colors.sh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/log_run_die.sh
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+# shellcheck source=/usr/libexec/helper-scripts/get_colors.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/get_colors.sh
+# shellcheck source=/usr/libexec/helper-scripts/strings.bsh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/strings.bsh
+# shellcheck source=/usr/libexec/helper-scripts/xtrace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/xtrace.bsh
+#!/bin/bash
+
+## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## AI-Assisted
+
+## Suspend/restore bash xtrace (set -x) around blocks that must not be
+## echoed to logs - secret handling, noisy third-party output, etc.
+## Single-level globals; nested xtrace_off/xtrace_restore calls are not
+## supported. For function-scoped silencing, prefer 'local -; set +x'
+## inside the function (see benchmark.bsh / trace.bsh for examples).
+##
+## Usage:
+##   xtrace_off
+##   export SECRET="..."           # not traced
+##   xtrace_restore                # xtrace is back to whatever it was
+##
+## To use this in other scripts:
+##   source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/xtrace.bsh
+##
+## Optional:
+##   trap "xtrace_restore" RETURN
+
+xtrace_off() {
+   true "INFO: ${FUNCNAME[0]} called by FUNCNAME: ${FUNCNAME[1]}"
+   if test -o xtrace; then
+      helper_xtrace_prev_state=on
+   else
+      helper_xtrace_prev_state=off
+   fi
+   set +x
+}
+
+xtrace_restore() {
+   ## Read and unset the saved state BEFORE the 'set -x' below so the
+   ## 'unset' does not itself print a trace line after xtrace is
+   ## re-enabled.
+   local _should_restore="${helper_xtrace_prev_state:-off}"
+   unset helper_xtrace_prev_state
+   if [ "$_should_restore" = "on" ]; then
+      set -x
+   fi
+   true "INFO: ${FUNCNAME[0]} called by FUNCNAME: ${FUNCNAME[1]}"
+}
+
+## Picks 'true' (no-op) when xtrace is on, 'echo' when xtrace is off.
+## Lets a script print user-visible status lines without doubling them
+## up with xtrace traces of those same printf calls when -x is on.
+##
+## Usage:
+##   output_cmd_set
+##   $output_cmd "INFO: starting build"
+output_cmd_set() {
+   if [ -o xtrace ]; then
+      output_cmd="true"
+      ## TODO
+      #output_cmd=( true )
+   else
+      output_cmd="echo"
+      ## TODO
+      #output_cmd=( printf '%s\n' )
+   fi
+}
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/xtrace.bsh
+# shellcheck source=/usr/libexec/helper-scripts/has.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/has.sh
+
+## Suspend xtrace ('set -x') around blocks whose stdout we want to
+## capture into a variable WITHOUT the xtrace traces of the inner
+## commands polluting that capture. Use sparingly - prefer
+## 'local -; set +x' inside a function (per agents/bash-style-guide.md).
+##
+## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
+## the top of the function so xtrace is restored to its prior state
+## on every exit path (return, die, fall-through).
+##
+## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
+## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
+## working when the standalone is generated against this fork.
+disable_xtrace() {
+  if test "${xtrace:-}" = "1"; then
+    xtrace_was_on=true
+    set +o xtrace
+  else
+    xtrace_was_on=false
+  fi
+}
+
+xtrace_reenable_maybe() {
+  trap '' RETURN
+  if [ "${xtrace_was_on:-}" = "true" ]; then
+    set -o xtrace
+  fi
+}
+
+__log_level_num() {
+  case "${1:-notice}" in
+    bug|error) printf '%s' 0 ;;
+    question)  printf '%s' 0 ;;
+    warn)      printf '%s' 1 ;;
+    notice)    printf '%s' 2 ;;
+    info)      printf '%s' 3 ;;
+    debug)     printf '%s' 4 ;;
+    echo)      printf '%s' 5 ;;
+    null)      printf '%s' 6 ;;
+    *)         printf '%s' 2 ;; ## unknown -> treat as notice
+  esac
+  return 0
+}
+
+## Logging mechanism with easy customization of message format as well as
+## standardization on how the messages are delivered.
+## usage: log_type message
+## usage: log [info|notice|warn|error|debug|bug|echo|null] "X occurred."
+## Variable to define by calling script (caller_level_num): log_level
+log() {
+  local log_level="${log_level:-notice}"
+
+  ## Suppress xtrace for this function; local - saves and restores shell
+  ## options automatically on every exit path (return, die, fall-through).
+  local -
+  set +x
+
+  local log_type log_type_up log_color log_source_script log_level_colorized log_content log_full
+  local should_print=0
+  local caller_level_num msg_level_num
+
+  log_type="${1:-notice}"
+
+  if (( $# > 0 )); then
+    shift || true
+  fi
+
+  ## capitalize log level
+  log_type_up="${log_type^^}"
+
+  ## set formatting based on log level
+  case "${log_type}" in
+    bug)
+      log_color="${yellow}"
+      ;;
+    question)
+      log_color="${blue}"
+      ;;
+    error)
+      log_color="${red}"
+      ;;
+    warn)
+      log_color="${magenta}"
+      ;;
+    info)
+      log_color="${cyan}"
+      ;;
+    debug)
+      log_color="${cyan}"
+      ;;
+    notice)
+      log_color="${green}"
+      ;;
+    echo)
+      log_color=""
+      ;;
+    null)
+      log_color=""
+      ;;
+    *)
+      ## Avoid recursion into log() on unsupported type; print directly.
+      #log bug "Unsupported log type specified: '${log_type}'"
+      stecho "${0##*/}: [${red}BUG${nocolor}]: Unsupported log type specified: '${log_type}'" >&2
+      die 1 "Please report this bug."
+      return 0
+      ;;
+  esac
+  ## uniform log format
+  log_color="${bold}${log_color}"
+  log_source_script="${0##*/}"
+  if [ -n "${who_ami-}" ]; then
+    log_who_ami_maybe="(${who_ami-}) "
+  fi
+  log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
+  log_content="${*}"
+  log_content="$(printf '%s' "${log_content}" | sanitize-string -- "${LOG_MAX_LEN:-nolimit}")"
+  ## error logs are the minimum and should always be printed, even if
+  ## failing to assign a correct log type
+  ## send bugs and error to stdout and stderr
+  log_full="${log_source_script} ${log_who_ami_maybe-}${log_level_colorized}: ${log_content}"
+  case "${log_type}" in
+    bug|error)
+      stecho "${log_full}" >&2
+      return 0
+      ;;
+    null)
+      return 0
+      ;;
+  esac
+
+  true "${FUNCNAME[0]}: INFO: log_level: $log_level | log_type: $log_type"
+  caller_level_num="$(__log_level_num "${log_level}")"
+  true "${FUNCNAME[0]}: INFO: log_level: $log_level | caller_level_num: $caller_level_num"
+  msg_level_num="$(__log_level_num "${log_type}")"
+  true "${FUNCNAME[0]}: INFO: log_type: $log_type | msg_level_num: $msg_level_num"
+
+  if (( msg_level_num <= caller_level_num )); then
+    should_print=1
+  fi
+
+  if [ "$should_print" = 1 ]; then
+    stecho "${log_full}" >&2
+  fi
+
+  return 0
+}
+
+
+## For one liners 'log error; die'
+## 'log' should not handle exits, because then it would not be possible
+## to log consecutive errors on multiple lines, making die more suitable
+## usage: die # "msg"
+## where '#' is the exit code.
+die() {
+  log error "${2}"
+  if test "${allow_errors:-}" = "1"; then
+    log warn "Skipping termination because of with code '${1}' due to 'allow_errors' setting."
+    return 0
+  fi
+  log error "Aborting."
+  exit "${1}"
+}
+
+
+## Exit with an error if any of the listed commands are not available.
+## usage: die_if_not_has cmd1 [cmd2 ...]
+die_if_not_has() {
+  local cmd
+
+  for cmd in "$@"; do
+    has "${cmd}" || die 1 "Required command not found: '${cmd}'"
+  done
+}
+
+
+## Wrapper to log command before running to avoid duplication of code
+log_run() {
+  local level command_without_extraneous_spaces_temp command_without_extraneous_spaces
+  level="${1}"
+  shift || true
+
+  printf -v command_without_extraneous_spaces_temp '%q ' "${@}"
+  command_without_extraneous_spaces="$(printf "%s\n" "${command_without_extraneous_spaces_temp}")"
+  if test "${dry_run:-}" = "1"; then
+    log "${level}" "Skipping command (dry-run): $ ${command_without_extraneous_spaces}"
+    return 0
+  fi
+
+  ## TODO: Still an issue? CI expects no output from root_cmd() which calls log_run().
+
+  if test "${run_background:-}" = "1"; then
+    log "${level}" "Background command starting: $ ${command_without_extraneous_spaces} &"
+    "${@}" &
+    background_pid="$!"
+    disown "${background_pid}" || true
+  else
+    log "${level}" "Command executing: $ ${command_without_extraneous_spaces}"
+    "${@}" || return 1
+  fi
+}
+
+
+## Useful to get runtime mid run to log easily
+## Variable to define outside: start_time
+# shellcheck disable=SC2154
+get_elapsed_time() {
+  if ! is_integer "${start_time}"; then
+    start_time=0
+  fi
+  printf '%s\n' "$(($(date +%s) - start_time))"
+}
+
+
+## Log elapsed time, the name explains itself.
+log_time() {
+  log info "Time elapsed: $(get_elapsed_time)s."
+}
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/log_run_die.sh
 
 ## Block running as root.
 not_as_root(){
@@ -1091,8 +1397,8 @@ ${underline}Non-Root Check:${nounderline} Running as root.
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/get_colors.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/log_run_die.sh
 
 ## Wrapper that supports su, sudo, doas
 root_cmd(){
@@ -1226,9 +1532,9 @@ run_as_target_user_and_dir() {
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/strings.bsh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/get_colors.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/log_run_die.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/strings.bsh
 
 ## Checks if the target is valid.
 ## Address range from 0.0.0.0 to 255.255.255.255. Port ranges from 0 to 65535
@@ -1276,9 +1582,9 @@ is_addr_port(){
 
 ## TODO: how to handle installer specific code?
 
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/has.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/ip_syntax.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/has.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/log_run_die.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/ip_syntax.sh
 
 ## Get host os and other necessary information.
 get_os(){
@@ -1616,8 +1922,8 @@ check_not_qubes_template() {
 ## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/ip_syntax.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/log_run_die.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/ip_syntax.sh
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/log_run_die.sh
 
 ## ------------------- ##
 ## Usage of parse_opt.sh
@@ -1769,221 +2075,37 @@ range_arg(){
 ###################
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
-##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/log_run_die.sh
-#!/bin/bash
+##### SKIP duplicate source import from file /usr/libexec/helper-scripts/log_run_die.sh
 
-## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
-## See the file COPYING for copying conditions.
-
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/get_colors.sh
-source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/strings.bsh
-
-if ! command -v stecho &>/dev/null ; then
-  ## Fallback to 'printf' in case 'stecho' is unavailable.
+## Standalone-mode fallbacks for the helper-scripts external commands
+## that log_run_die.sh's log() calls. In a normal Whonix install both
+## `stecho` and `sanitize-string` come from the helper-scripts package
+## and are on PATH; the standalone runs on plain Debian/Fedora/Ubuntu/
+## Mint/Kali images without helper-scripts installed, so we provide
+## minimal bash-function shims when the binary isn't present.
+##
+## stecho       prints its args verbatim plus a newline (the upstream
+##              binary does the same, with extra unicode-trojan-source
+##              guards which the controlled CLI context here does not
+##              need).
+## sanitize-string  passes stdin through unchanged (the binary
+##                  trims to a length cap; CLI runs in a maintainer-
+##                  controlled terminal context where the cap is
+##                  unnecessary).
+##
+## See agents/bash-style-guide.md and TODO-dist-installer-cli-fallbacks.md
+## for context.
+if ! has stecho; then
   stecho() {
-    printf "%s\n" "$*"
+    printf '%s\n' "$*"
+  }
+fi
+if ! has sanitize-string; then
+  sanitize-string() {
+    cat
   }
 fi
 
-disable_xtrace() {
-  if test "${xtrace:-}" = "1"; then
-    xtrace_was_on=true
-    set +o xtrace
-  else
-    xtrace_was_on=false
-  fi
-}
-
-xtrace_reenable_maybe() {
-  trap '' RETURN
-  if [ "${xtrace_was_on:-}" = "true" ]; then
-    set -o xtrace
-  fi
-}
-
-__log_level_num() {
-  case "${1:-notice}" in
-    bug|error) printf '%s' 0 ;;
-    question)  printf '%s' 0 ;;
-    warn)      printf '%s' 1 ;;
-    notice)    printf '%s' 2 ;;
-    info)      printf '%s' 3 ;;
-    debug)     printf '%s' 4 ;;
-    echo)      printf '%s' 5 ;;
-    null)      printf '%s' 6 ;;
-    *)         printf '%s' 2 ;; ## unknown -> treat as notice
-  esac
-  return 0
-}
-
-## Logging mechanism with easy customization of message format as well as
-## standardization on how the messages are delivered.
-## usage: log_type message
-## usage: log [info|notice|warn|error|debug|bug|echo|null] "X occurred."
-## Variable to define by calling script (caller_level_num): log_level
-log() {
-  local log_level="${log_level:-notice}"
-
-  ## Avoid clogging output if log() is working alright.
-  disable_xtrace
-  trap 'xtrace_reenable_maybe' RETURN
-
-  local log_type log_type_up log_color log_source_script log_level_colorized log_content log_full
-  local should_print=0
-  local caller_level_num msg_level_num
-
-  log_type="${1:-notice}"
-
-  if (( $# > 0 )); then
-    shift || true
-  fi
-
-  ## capitalize log level
-  log_type_up="${log_type^^}"
-
-  ## set formatting based on log level
-  case "${log_type}" in
-    bug)
-      log_color="${yellow}"
-      ;;
-    question)
-      log_color="${blue}"
-      ;;
-    error)
-      log_color="${red}"
-      ;;
-    warn)
-      log_color="${magenta}"
-      ;;
-    info)
-      log_color="${cyan}"
-      ;;
-    debug)
-      log_color="${cyan}"
-      ;;
-    notice)
-      log_color="${green}"
-      ;;
-    echo)
-      log_color=""
-      ;;
-    null)
-      log_color=""
-      ;;
-    *)
-      ## Avoid recursion into log() on unsupported type; print directly.
-      #log bug "Unsupported log type specified: '${log_type}'"
-      stecho "${0##*/}: [${red}BUG${nocolor}]: Unsupported log type specified: '${log_type}'" >&2
-      die 1 "Please report this bug."
-      return 0
-      ;;
-  esac
-  ## uniform log format
-  log_color="${bold}${log_color}"
-  log_source_script="${0##*/}"
-  if [ -n "${who_ami-}" ]; then
-    log_who_ami_maybe="(${who_ami-}) "
-  fi
-  log_level_colorized="[${log_color}${log_type_up}${nocolor}]"
-  log_content="${*}"
-  ## error logs are the minimum and should always be printed, even if
-  ## failing to assign a correct log type
-  ## send bugs and error to stdout and stderr
-  log_full="${log_source_script} ${log_who_ami_maybe-}${log_level_colorized}: ${log_content}"
-  case "${log_type}" in
-    bug|error)
-      stecho "${log_full}" >&2
-      return 0
-      ;;
-    null)
-      return 0
-      ;;
-  esac
-
-  true "${FUNCNAME[0]}: INFO: log_level: $log_level | log_type: $log_type"
-  caller_level_num="$(__log_level_num "${log_level}")"
-  true "${FUNCNAME[0]}: INFO: log_level: $log_level | caller_level_num: $caller_level_num"
-  msg_level_num="$(__log_level_num "${log_type}")"
-  true "${FUNCNAME[0]}: INFO: log_type: $log_type | msg_level_num: $msg_level_num"
-
-  if (( msg_level_num <= caller_level_num )); then
-    should_print=1
-  fi
-
-  if [ "$should_print" = 1 ]; then
-    stecho "${log_full}" >&2
-  fi
-
-  return 0
-}
-
-
-## For one liners 'log error; die'
-## 'log' should not handle exits, because then it would not be possible
-## to log consecutive errors on multiple lines, making die more suitable
-## usage: die # "msg"
-## where '#' is the exit code.
-die() {
-  log error "${2}"
-  if test "${allow_errors:-}" = "1"; then
-    log warn "Skipping termination because of with code '${1}' due to 'allow_errors' setting."
-    return 0
-  fi
-  case "${1}" in
-    106|107)
-      true
-      ;;
-    *)
-      log error "Aborting."
-      ;;
-  esac
-  exit "${1}"
-}
-
-
-## Wrapper to log command before running to avoid duplication of code
-log_run() {
-  local level command_without_extraneous_spaces_temp command_without_extraneous_spaces
-  level="${1}"
-  shift || true
-
-  printf -v command_without_extraneous_spaces_temp '%q ' "${@}"
-  command_without_extraneous_spaces="$(printf "%s\n" "${command_without_extraneous_spaces_temp}")"
-  if test "${dry_run:-}" = "1"; then
-    log "${level}" "Skipping command (dry-run): $ ${command_without_extraneous_spaces}"
-    return 0
-  fi
-
-  ## TODO: Still an issue? CI expects no output from root_cmd() which calls log_run().
-
-  if test "${run_background:-}" = "1"; then
-    log "${level}" "Background command starting: $ ${command_without_extraneous_spaces} &"
-    "${@}" &
-    background_pid="$!"
-    disown "${background_pid}" || true
-  else
-    log "${level}" "Command executing: $ ${command_without_extraneous_spaces}"
-    "${@}" || return 1
-  fi
-}
-
-
-## Useful to get runtime mid run to log easily
-## Variable to define outside: start_time
-# shellcheck disable=SC2154
-get_elapsed_time() {
-  if ! is_integer "${start_time}"; then
-    start_time=0
-  fi
-  printf '%s\n' "$(($(date +%s) - start_time))"
-}
-
-
-## Log elapsed time, the name explains itself.
-log_time() {
-  log info "Time elapsed: $(get_elapsed_time)s."
-}
-##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/log_run_die.sh
 
 ## Wrapper to end the exit trap.
 end_exit() {
@@ -3155,6 +3277,11 @@ start_virtualbox_gui() {
 
 
 virtualbox_start_failed() {
+  if [ "${ci}" = "1" ]; then
+    true "INFO: Ignore virtualbox_start_failed because running on CI."
+    return 0
+  fi
+
   local likely_cause
   likely_cause=""
   if [ "$user_warned_potential_startup_issue" = "true" ]; then

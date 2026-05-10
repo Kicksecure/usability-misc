@@ -46,10 +46,7 @@ base_name_target="${target##*/}"
 #   exit 1
 # fi
 
-## Use source code version for now to avoid using different version depending on repository setting.
-## TODO: does not work
-#helper_path="../helper-scripts/usr/libexec/helper-scripts/"
-
+## Use system version for now.
 helper_path="/usr/libexec/helper-scripts/"
 
 if ! test -d "$helper_path" ; then
@@ -57,24 +54,96 @@ if ! test -d "$helper_path" ; then
   exit 1
 fi
 
+canonical_helper_dir="/usr/libexec/helper-scripts/"
+helper_dir="${helper_path%/}/"
+
+declare -A pasted_helper_files
+
+extract_helper_source() {
+  local line="$1"
+  local path
+  local rel
+
+  ## Supported:
+  ##   source /usr/libexec/helper-scripts/foo.bsh
+  ##   source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/foo.bsh
+  if [[ ! "$line" =~ ^[[:space:]]*source[[:space:]]+([^[:space:];#]+) ]]; then
+    return 1
+  fi
+
+  path="${BASH_REMATCH[1]}"
+
+  ## Remove quotes.
+  path="${path//\"/}"
+  path="${path//\'/}"
+
+  ## Remove optional variable prefix used by helper-scripts.
+  path="${path//\$\{HELPER_SCRIPTS_PATH:-\}/}"
+  path="${path//\$HELPER_SCRIPTS_PATH/}"
+
+  ## Only inline helper-scripts imports.
+  if [[ "$path" == "$canonical_helper_dir"* ]]; then
+    rel="${path#"$canonical_helper_dir"}"
+    printf '%s\n' "${helper_dir}${rel}"
+    return 0
+  fi
+
+  if [[ "$path" == "$helper_dir"* ]]; then
+    printf '%s\n' "$path"
+    return 0
+  fi
+
+  return 1
+}
+
+paste_helper_file() {
+  local file="$1"
+
+  if [[ -n "${pasted_helper_files[$file]+x}" ]]; then
+    printf '##### SKIP duplicate source import from file %s\n' "$file"
+    return 0
+  fi
+
+  pasted_helper_files["$file"]=1
+
+  if ! test -f "$file" ; then
+    printf '%s\n' "${0##*/}: ERROR: sourced file does not exist: $file" >&2
+    exit 1
+  fi
+
+  printf '##### BEGIN pasted by %s from file %s\n' "${0##*/}" "$file"
+  process_file "$file"
+  printf '##### END pasted by %s from file %s\n' "${0##*/}" "$file"
+}
+
+process_file() {
+  local file="$1"
+  local line=""
+  local source_file
+
+  while IFS= read -r line || test -n "$line"; do
+    if source_file="$(extract_helper_source "$line")"; then
+      paste_helper_file "$source_file"
+      continue
+    fi
+
+    printf '%s\n' "$line"
+  done < "$file"
+}
+
 cp -- "${template}" "${target}"
 
-awk -v origin="${0##*/}" -v helper="source ${helper_path}" '
-  $0 ~ helper {
-    if (system("test -f "$2) != 0) {
-      print origin ": error: sourced file does not exist: "$2 > "/dev/stderr"
-      exit 1
-    }
-    print "##### BEGIN pasted by "origin " from file "$2
-    system("cat -- "$2)
-    print "##### END pasted by "origin " from file "$2
-    next
-  }
-  1
-' "${template}" | tee -- "${target}" >/dev/null
+tmp_target="$(mktemp "${target}.tmp.XXXXXXXXXX")"
+trap 'rm -f -- "$tmp_target"' EXIT
+
+process_file "$target" > "$tmp_target"
+
+chmod --reference="$target" "$tmp_target"
+mv -- "$tmp_target" "$target"
+
+trap - EXIT
 
 sed -i \
-  -e '\,^source /usr/libexec/helper-scripts/,d' \
   -e "6i\\
 ##########################\\
 ## NOTE:\\
