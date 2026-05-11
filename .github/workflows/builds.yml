@@ -219,7 +219,10 @@ jobs:
               ## these checks for the standalone specifically; the source
               ## template (usr/bin/dist-installer-cli) and the helper-scripts
               ## sources are linted normally elsewhere with full context.
-              run: shellcheck --exclude=SC2034,SC2218,SC2317,SC2329 -- usr/share/usability-misc/dist-installer-cli-standalone
+              uses: org-ai-assisted/developer-meta-files/.github/actions/shellcheck@master
+              with:
+                paths: 'usr/share/usability-misc/dist-installer-cli-standalone'
+                excludes: 'SC2034,SC2218,SC2317,SC2329'
 
             ## Requires helper-scripts.
             # - name: Run build-dist-installer-cli
