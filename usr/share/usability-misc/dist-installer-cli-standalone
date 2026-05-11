@@ -215,7 +215,6 @@ br_add() {
     in="$(cat)"
   fi
 
-  ## Replace each newline with "<br />\n"
   out="${in//$'\n'/'<br />'$'\n'}"
   printf '%s\n' "$out"
 }
@@ -359,9 +358,8 @@ $reason" >&2
 
 check_valid_linux_user_account_name() {
   ## Validates per /etc/adduser.conf SYS_NAME_REGEX
-  ## (^[a-z_][-a-z0-9_]*$). Args: $1 = candidate.
   ## Return: 0 valid, 1 invalid. Prints nothing.
-  [[ "${1:-}" =~ ^[a-z_][-a-z0-9_]*$ ]]
+  [[ "${1:-}" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*\$?$ ]]
 }
 
 check_is_not_empty_and_only_one_line() {
@@ -385,7 +383,6 @@ check_is_not_empty_and_only_one_line() {
     return 1
   fi
 
-  ## Count the number of lines using mapfile.
   mapfile -t lines <<<"$value"
   number_of_lines="${#lines[@]}"
 
@@ -418,29 +415,28 @@ trim_collapse_split() {
   printf '%s\n' "$formatted_list"
 }
 
-## Render an arbitrary string in a shell-readable, log-injection-safe
-## form. Wraps bash's 'printf %q' under LC_ALL=C so the output is
-## guaranteed pure-ASCII printable regardless of caller locale:
+## Print a string quoted to prevent special characters in the string from being
+## interpreted by the shell. The output is guaranteed pure-ASCII printable
+## regardless of caller locale:
 ##
-##   - Bytes > 0x7E (incl. valid UTF-8 multibyte sequences such as
-##     U+202E RIGHT-TO-LEFT OVERRIDE) are octal-escaped (\NNN).
-##   - Control bytes (NUL, ESC, BEL, DEL, ...) are escaped via
-##     bash $'...' literals.
+##   - Bytes > 0x7E (incl. valid UTF-8 multibyte sequences such as U+202E
+##     RIGHT-TO-LEFT OVERRIDE) are octal-escaped (\NNN).
+##   - Control bytes (NUL, ESC, BEL, DEL, ...) are escaped via bash $'...'
+##     literals.
 ##   - Newlines are rendered as literal '\n', not real LF.
 ##
-## LC_ALL=C is REQUIRED. Without it, printf %q under a UTF-8 locale
-## (the default on Debian / Ubuntu / GitHub Actions runners) passes
-## valid UTF-8 multibyte sequences through unchanged because it
-## considers them "printable" - which would let trojan codepoints
-## like U+202E survive the quote and forge log lines, terminal
-## escapes, or fake CI annotations like '::error::'.
+## LC_ALL=C is REQUIRED. Without it, printf %q under a UTF-8 locale (the
+## default on Debian / Ubuntu / GitHub Actions runners) passes valid UTF-8
+## multibyte sequences through unchanged because it considers them "printable"
+## - which would let trojan codepoints like U+202E survive the quote and
+## obfuscate text printed in proximity to attacker-controlled text or attempt
+## to exploit Unicode parsers.
 ##
-## Use this whenever logging an untrusted-origin string (filename,
-## archive entry, network input, etc.) so a malicious value cannot
-## inject content into the log stream or the terminal renderer.
+## Use this whenever logging an untrusted-origin string (filename, archive
+## entry, network input, etc.).
 ##
 ## Example:
-##   log error "target does not exist: $(string_quote_safe "$path")"
+##   log error "target '$(string_quote_safe "$path")' does not exist"
 ##
 ## Tested by ./unicode-testscript on the trojan-source corpus.
 string_quote_safe() {
@@ -668,6 +664,9 @@ fi
 
 # shellcheck disable=SC2034
 get_colors() {
+  local -
+  set +x
+
   local color_yes_or_no
 
   get_colors_was_run=1
@@ -1104,7 +1103,9 @@ capitalize_first_char(){
 ## Suspend/restore bash xtrace (set -x) around blocks that must not be
 ## echoed to logs - secret handling, noisy third-party output, etc.
 ## Single-level globals; nested xtrace_off/xtrace_restore calls are not
-## supported. For function-scoped silencing, prefer 'local -; set +x'
+## supported. For function-scoped silencing, prefer:
+##   local -
+##   set +x
 ## inside the function (see benchmark.bsh / trace.bsh for examples).
 ##
 ## Usage:
@@ -1119,7 +1120,7 @@ capitalize_first_char(){
 ##   trap "xtrace_restore" RETURN
 
 xtrace_off() {
-   true "INFO: ${FUNCNAME[0]} called by FUNCNAME: ${FUNCNAME[1]}"
+   true "INFO: ${FUNCNAME[0]} called by FUNCNAME: ${FUNCNAME[1]:-}"
    if test -o xtrace; then
       helper_xtrace_prev_state=on
    else
@@ -1137,7 +1138,7 @@ xtrace_restore() {
    if [ "$_should_restore" = "on" ]; then
       set -x
    fi
-   true "INFO: ${FUNCNAME[0]} called by FUNCNAME: ${FUNCNAME[1]}"
+   true "INFO: ${FUNCNAME[0]} called by FUNCNAME: ${FUNCNAME[1]:-}"
 }
 
 ## Picks 'true' (no-op) when xtrace is on, 'echo' when xtrace is off.
@@ -1161,6 +1162,144 @@ output_cmd_set() {
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/xtrace.bsh
 # shellcheck source=/usr/libexec/helper-scripts/has.sh
 ##### SKIP duplicate source import from file /usr/libexec/helper-scripts/has.sh
+# shellcheck source=/usr/libexec/helper-scripts/trace.bsh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/trace.bsh
+#!/bin/bash
+
+## Copyright (C) 2012 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## AI-Assisted
+
+## Diagnostic backtrace helpers for error handlers. Both functions
+## write their result to stdout (newline-separated) so the caller can
+## capture into a local variable:
+##
+##   local trace
+##   trace="$(function_trace)"
+##   printf 'shell stack:\n%s\n' "$trace"
+##
+##   local ptrace
+##   ptrace="$(process_backtrace)"
+##   printf 'process stack:\n%s\n' "$ptrace"
+##
+## To use these in other scripts:
+##   source "${HELPER_SCRIPTS_PATH:-}"/usr/libexec/helper-scripts/trace.bsh
+
+## Walks the bash call stack via the 'caller' builtin and prints
+## "<source-file> (line number: <line>)" for each frame, deepest call
+## first. Returns no output if there are no frames (e.g. called from
+## an interactive shell).
+##
+## 'caller' reports the stack of the function that invoked us, so
+## moving this definition into a sourced lib does NOT change what gets
+## reported - the frames are still the caller's, not this lib's.
+function_trace() {
+   local -
+   set +x
+   local frame temp one two result
+   result=""
+   frame=0
+   while caller >/dev/null 2>&1 "$frame"; do
+      temp="$(caller "$frame")" || true
+      read -r one two _ <<< "$temp"
+      if [ -z "$result" ]; then
+         result="$two (line number: $one)"
+      else
+         result="$result
+$two (line number: $one)"
+      fi
+      frame=$(( frame + 1 ))
+   done
+   ## tac flips deepest-frame-first into outermost-first, matching the
+   ## order most readers expect from a "trace" report.
+   printf '%s\n' "$result" | tac
+}
+
+## Walks /proc/<pid>/{cmdline,status} from $$ up to PID 1 and prints a
+## numbered list of the cmdlines along the way. Useful when a script
+## fails inside nested invocations (cron -> wrapper -> tool -> child)
+## and the user needs to see which parent kicked it off.
+##
+## Original implementation by Gian Paolo Ghilardi, GPL-2.0-only:
+## http://stackoverflow.com/a/1438241/2605155
+## Modifications by Patrick Schleizer.
+process_backtrace() {
+   local -
+   set +x
+   local trace cp cmdline pp loop_counter who_ami ps_p_output
+   loop_counter=0
+   who_ami="$(whoami)" || true
+   trace=""
+   cp="$$"   ## PID of the script itself
+   while true ; do
+      loop_counter=$(( loop_counter + 1 ))
+      if [ "$loop_counter" -ge 20 ]; then
+         printf '%s\n' "process_backtrace ERROR: who_ami: $who_ami | loop counter >= 20, aborting" >&2
+         break
+      fi
+      if [ -z "${cp:-}" ]; then
+         printf '%s\n' "process_backtrace ERROR: who_ami: $who_ami | empty pid" >&2
+         break
+      fi
+      if [ "$cp" = "1" ]; then
+         ## reached init [PID 1] -> end of trace
+         trace="$trace : init\n"
+         break
+      fi
+      if [ "$cp" = "0" ] || ! [[ "$cp" =~ ^[0-9]+$ ]]; then
+         ## PPid=0 is what /proc/<pid>/status reports for kernel
+         ## threads or for processes whose parent has been reaped;
+         ## treat it as "end of trace" rather than try to read
+         ## /proc/0/* (which does not exist).
+         break
+      fi
+      ## Reset per-iteration state so a missing /proc/<cp>/{cmdline,status}
+      ## (e.g. a parent that died mid-trace) does not carry the previous
+      ## iteration's values into this one and mis-attribute the cmdline
+      ## to the wrong PID.
+      cmdline=""
+      pp=""
+      if test -f "/proc/$cp/cmdline" ; then
+         ## NUL is the argv separator on /proc/<pid>/cmdline; flatten
+         ## to spaces. CR/LF can appear inside an argv element when a
+         ## script was invoked with a multi-line "bash -c '<script>'"
+         ## or similar; flatten those too so the trailing
+         ## "tac | grep --line-number" does not mis-number this entry
+         ## across embedded newlines.
+         cmdline="$(tr '\000\n\r' '   ' < "/proc/$cp/cmdline")" || true
+      else
+         ps_p_output="$(ps --no-headers -p "$cp")" || true
+         printf '%s\n' "process_backtrace ERROR: /proc/$cp/cmdline missing | ps: $ps_p_output" >&2
+      fi
+      if test -f "/proc/$cp/status" ; then
+         pp="$(grep -- PPid "/proc/$cp/status" | awk '{ print $2; }')" || true
+      else
+         ps_p_output="$(ps --no-headers -p "$cp")" || true
+         printf '%s\n' "process_backtrace ERROR: /proc/$cp/status missing | ps: $ps_p_output" >&2
+      fi
+      trace="$trace : $cmdline\n"
+      cp="$pp"
+   done
+   ## tac to print init-first; grep --line-number renumbers from 1.
+   printf '%b' "$trace" | tac | grep --line-number -- ":" || true
+}
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/trace.bsh
+
+if ! has stecho sanitize-string; then
+  printf '%s\n' "$0: ERROR: stecho and/or sanitize-string missing."
+  printf '%s\n' "$0: INFO: function_trace:"
+  function_trace
+  printf '%s\n' "$0: INFO: process_backtrace:"
+  process_backtrace
+  ## Use 'return 1' rather than 'exit 1'.
+  ## Callers are expected to run under errexit.
+  ## The non-zero return from 'source' then trips errexit and the
+  ## caller's ERR trap fires - that is what does proper cleanup.
+  printf '%s\n' "$0: ERROR: Therefore, return 1."
+  return 1
+fi
+
 
 ## Suspend xtrace ('set -x') around blocks whose stdout we want to
 ## capture into a variable WITHOUT the xtrace traces of the inner
@@ -1170,10 +1309,6 @@ output_cmd_set() {
 ## Pair: disable_xtrace then 'trap xtrace_reenable_maybe RETURN' at
 ## the top of the function so xtrace is restored to its prior state
 ## on every exit path (return, die, fall-through).
-##
-## Mirrors Kicksecure/helper-scripts/log_run_die.sh's definitions so
-## test_run_as_target_user (in root_cmd.sh, which uses these) keeps
-## working when the standalone is generated against this fork.
 disable_xtrace() {
   if test "${xtrace:-}" = "1"; then
     xtrace_was_on=true
@@ -1213,8 +1348,7 @@ __log_level_num() {
 log() {
   local log_level="${log_level:-notice}"
 
-  ## Suppress xtrace for this function; local - saves and restores shell
-  ## options automatically on every exit path (return, die, fall-through).
+  ## Avoid clogging output if log() is working alright.
   local -
   set +x
 
@@ -1328,11 +1462,18 @@ die() {
 ## Exit with an error if any of the listed commands are not available.
 ## usage: die_if_not_has cmd1 [cmd2 ...]
 die_if_not_has() {
-  local cmd
+  local cmd any_missing
 
+  any_missing='false'
   for cmd in "$@"; do
-    has "${cmd}" || die 1 "Required command not found: '${cmd}'"
+    if ! has "${cmd}"; then
+      log error "Required command not found: '${cmd}'"
+      any_missing='true'
+    fi
   done
+  if [ "${any_missing}" = 'true' ]; then
+    die 1 "Required commands are missing!"
+  fi
 }
 
 
@@ -1344,6 +1485,8 @@ log_run() {
 
   printf -v command_without_extraneous_spaces_temp '%q ' "${@}"
   command_without_extraneous_spaces="$(printf "%s\n" "${command_without_extraneous_spaces_temp}")"
+
+  ## TODO: rename variable to 'dry_run_skip_commands'. Potential footgun if used from other scripts.
   if test "${dry_run:-}" = "1"; then
     log "${level}" "Skipping command (dry-run): $ ${command_without_extraneous_spaces}"
     return 0
@@ -1358,6 +1501,7 @@ log_run() {
     disown "${background_pid}" || true
   else
     log "${level}" "Command executing: $ ${command_without_extraneous_spaces}"
+    ## TODO: '|| return 1' needed?
     "${@}" || return 1
   fi
 }
