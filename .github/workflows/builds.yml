@@ -14,32 +14,16 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    changes:
-        runs-on: ubuntu-22.04
-        timeout-minutes: 10
-        permissions:
-            pull-requests: read
-        outputs:
-            builds: ${{ steps.filter.outputs.builds }}
-            installer: ${{ steps.filter.outputs.installer }}
-        steps:
-            - uses: actions/checkout@v5
-              with:
-                  persist-credentials: false
-            - uses: dorny/paths-filter@v4
-              id: filter
-              with:
-                filters: |
-                    installer:
-                        - 'usr/share/usability-misc/dist-installer-cli-standalone'
-                    builds:
-                        - '.github/workflows/builds.yml'
+    ## No 'changes:' job: the workflow's own 'on.push.paths:' filter
+    ## already gates execution to commits that touch the installer
+    ## standalone OR this workflow file. A separate dorny/paths-filter
+    ## job to re-check the same paths was redundant - and was the root
+    ## cause of the long-running 'startup_failure' on this workflow
+    ## (the repo's Actions allowlist permits github-owned + verified
+    ## creators but blocked dorny/paths-filter, which made the workflow
+    ## refuse to start before any job ran).
 
     build:
-        needs: changes
-        # if: ${{ (needs.changes.outputs.installer == 'true') }}
-        # if: ${{ (needs.changes.outputs.builds == 'true') }}
-        if: ${{ (needs.changes.outputs.installer == 'true' || needs.changes.outputs.builds == 'true') }}
         ## Github takes too long to set the current latest image, this is
         ## why we set it manually.
         ##  https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
