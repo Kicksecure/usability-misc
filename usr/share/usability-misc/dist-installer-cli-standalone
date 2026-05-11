@@ -151,6 +151,61 @@ if was_executed "${BASH_SOURCE[0]}"; then
   SKIP_UNIT_TESTS=true
 fi
 
+# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/has.sh
+##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
+#!/bin/bash
+
+## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## This is just a simple wrapper around 'command -v' to avoid
+## spamming '>/dev/null' throughout this function. This also guards
+## against aliases and functions.
+## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
+has() {
+  local _cmd _name
+
+  for _name in "$@"; do
+    _cmd="$(command -v "${_name}")" 2>/dev/null || return 1
+    [ -x "${_cmd}" ] || return 1
+  done
+}
+
+is_type_file() {
+  local _name
+
+  for _name in "$@"; do
+    if ! [ "$(type -t "${_name}")" = "file" ]; then
+      return 1
+    fi
+  done
+}
+
+type_exists() {
+  local _name
+
+  for _name in "$@"; do
+    [ "$(type -t "${_name}")" ] || return 1
+  done
+}
+
+lsmod_deterministic() {
+  lsmod | awk 'NR>1 {print $1}' | LC_ALL='C' sort
+}
+
+kernel_module_loaded_check() {
+  lsmod_deterministic | grep --line-regexp --fixed-strings -- "${1}" >/dev/null
+}
+
+modprobe_remove() {
+  if ! kernel_module_loaded_check "${1}"; then
+    return 0
+  fi
+  modprobe --remove "${1}" || return 1
+  return 0
+}
+##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
+
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/wc-test.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/wc-test.sh
 #!/bin/bash
@@ -902,6 +957,40 @@ pkg_installed() {
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/package_installed_check.sh
 
 
+## {{{ stecho sanitize-string fallbacks
+
+## Standalone-mode fallbacks for the helper-scripts external commands
+## that log_run_die.sh's log() calls. In a normal Whonix install both
+## `stecho` and `sanitize-string` come from the helper-scripts package
+## and are on PATH; the standalone runs on plain Debian/Fedora/Ubuntu/
+## Mint/Kali images without helper-scripts installed, so we provide
+## minimal bash-function shims when the binary isn't present.
+##
+## stecho       prints its args verbatim plus a newline (the upstream
+##              binary does the same, with extra unicode-trojan-source
+##              guards which the controlled CLI context here does not
+##              need).
+## sanitize-string  passes stdin through unchanged (the binary
+##                  trims to a length cap; CLI runs in a maintainer-
+##                  controlled terminal context where the cap is
+##                  unnecessary).
+##
+## See agents/bash-style-guide.md and TODO-dist-installer-cli-fallbacks.md
+## for context.
+if ! has stecho; then
+  stecho() {
+    printf '%s\n' "$*"
+  }
+fi
+if ! has sanitize-string; then
+  sanitize-string() {
+    cat
+  }
+fi
+
+## }}}
+
+
 set_globals() {
   local all_args
   ## Version is commit based: https://github.com/Whonix/usability-misc
@@ -1025,52 +1114,6 @@ Y3B83Y34PxuSIq2kokIGo8JhqfqPB/ohtTLHg/o9RhP8xmfvALRD
 ## BEGIN MISC ##
 ################
 
-# shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/has.sh
-##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
-#!/bin/bash
-
-## Copyright (C) 2025 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
-## See the file COPYING for copying conditions.
-
-## This is just a simple wrapper around 'command -v' to avoid
-## spamming '>/dev/null' throughout this function. This also guards
-## against aliases and functions.
-## https://github.com/dylanaraps/pfetch/blob/pfetch#L53
-has() {
-  local _cmd _name
-
-  for _name in "$@"; do
-    _cmd="$(command -v "${_name}")" 2>/dev/null || return 1
-    [ -x "${_cmd}" ] || return 1
-  done
-}
-
-is_type_file() {
-  local _name
-
-  for _name in "$@"; do
-    if ! [ "$(type -t "${_name}")" = "file" ]; then
-      return 1
-    fi
-  done
-}
-
-lsmod_deterministic() {
-  lsmod | awk 'NR>1 {print $1}' | LC_ALL='C' sort
-}
-
-kernel_module_loaded_check() {
-  lsmod_deterministic | grep --line-regexp --fixed-strings -- "${1}" >/dev/null
-}
-
-modprobe_remove() {
-  if ! kernel_module_loaded_check "${1}"; then
-    return 0
-  fi
-  modprobe --remove "${1}" || return 1
-  return 0
-}
-##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/has.sh
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/capitalize_first_char.sh
 ##### BEGIN pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/capitalize_first_char.sh
 #!/bin/bash
@@ -1296,7 +1339,7 @@ process_backtrace() {
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/trace.bsh
 
-if ! is_type_file stecho sanitize-string; then
+if ! type_exists stecho sanitize-string; then
   printf '%s\n' "$0: ERROR: stecho and/or sanitize-string missing."
   printf '%s\n' "$0: INFO: function_trace:"
   function_trace
@@ -1943,6 +1986,7 @@ get_distro() {
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/get_os.sh
 
+
 get_specifics() {
   distro_codename_real="$(lsb_release --short --codename)"
   distro_codename_common_use="${distro_codename_real}"
@@ -2230,35 +2274,6 @@ range_arg(){
 
 # shellcheck source=../../../helper-scripts/usr/libexec/helper-scripts/log_run_die.sh
 ##### SKIP duplicate source import from file /usr/libexec/helper-scripts/log_run_die.sh
-
-## Standalone-mode fallbacks for the helper-scripts external commands
-## that log_run_die.sh's log() calls. In a normal Whonix install both
-## `stecho` and `sanitize-string` come from the helper-scripts package
-## and are on PATH; the standalone runs on plain Debian/Fedora/Ubuntu/
-## Mint/Kali images without helper-scripts installed, so we provide
-## minimal bash-function shims when the binary isn't present.
-##
-## stecho       prints its args verbatim plus a newline (the upstream
-##              binary does the same, with extra unicode-trojan-source
-##              guards which the controlled CLI context here does not
-##              need).
-## sanitize-string  passes stdin through unchanged (the binary
-##                  trims to a length cap; CLI runs in a maintainer-
-##                  controlled terminal context where the cap is
-##                  unnecessary).
-##
-## See agents/bash-style-guide.md and TODO-dist-installer-cli-fallbacks.md
-## for context.
-if ! has stecho; then
-  stecho() {
-    printf '%s\n' "$*"
-  }
-fi
-if ! has sanitize-string; then
-  sanitize-string() {
-    cat
-  }
-fi
 
 
 ## Wrapper to end the exit trap.
