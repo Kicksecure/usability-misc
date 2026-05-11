@@ -1045,6 +1045,16 @@ has() {
   done
 }
 
+is_type_file() {
+  local _name
+
+  for _name in "$@"; do
+    if ! [ "$(type -t "${_name}")" = "file" ]; then
+      return 1
+    fi
+  done
+}
+
 lsmod_deterministic() {
   lsmod | awk 'NR>1 {print $1}' | LC_ALL='C' sort
 }
@@ -1286,7 +1296,7 @@ process_backtrace() {
 }
 ##### END pasted by build-dist-installer-cli from file /usr/libexec/helper-scripts/trace.bsh
 
-if ! has stecho sanitize-string; then
+if ! is_type_file stecho sanitize-string; then
   printf '%s\n' "$0: ERROR: stecho and/or sanitize-string missing."
   printf '%s\n' "$0: INFO: function_trace:"
   function_trace
