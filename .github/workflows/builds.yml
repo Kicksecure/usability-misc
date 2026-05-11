@@ -5,6 +5,7 @@ on:
         paths:
             - 'usr/share/usability-misc/dist-installer-cli-standalone'
             - '.github/workflows/builds.yml'
+    workflow_dispatch:
 
 permissions:
   contents: read
