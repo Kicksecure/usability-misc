@@ -1,3 +1,98 @@
+commit 9d2ebd4de2c8cf8ca82cd50194180b452f672287
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 11 16:08:55 2026 -0400
+
+    build
+
+commit b84d78ea6c8d4f2e3dbdc27101f7cdebdd083cc4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 11 16:08:51 2026 -0400
+
+    fix
+
+commit bef55f144af1ab9d31c679118ca38cd1e3f93867
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 11 15:55:39 2026 -0400
+
+    build
+
+commit 78dcc9b2c8ea335e7f0635ee48884445b784863e
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 11 15:38:57 2026 -0400
+
+    build
+
+commit f01e70f728f14eee145629da2cc83431a6caa138
+Merge: de2f81b 00d6652
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 11 15:16:05 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/org-ai-assisted/master'
+
+commit 00d66525db936f8eb1e26de3e4bd513382d8ae53
+Author: assisted-by-ai (Bot Account) <228987186+assisted-by-ai@users.noreply.github.com>
+Date:   Mon May 11 04:42:44 2026 -0400
+
+    builds.yml: SHA-pin actions/checkout (W-004) (#9)
+
+    Last floating-ref org-wide; pin to the SHA dmf/helper-scripts/kloak/security-misc/whonix-firewall all use.
+
+commit 1db5a2c6ff615e61e99c6425226a3c291e13010e
+Author: assisted-by-ai (Bot Account) <228987186+assisted-by-ai@users.noreply.github.com>
+Date:   Sun May 10 20:41:36 2026 -0400
+
+    builds.yml: drop dorny/paths-filter (blocked by allowlist -> startup_failure) (#8)
+
+    Root cause of long-running startup_failure: dorny/paths-filter@v4 blocked by the repo's Actions allowlist despite verified_allowed=True (possibly an allowlist-sync issue at GitHub). The changes: job that ran dorny was redundant - the workflow's own on.push.paths: filter already gates execution. Dropping the job eliminates the dependency.
+
+commit 1e973be16cb437bd7031cd90ce2343e761d7344a
+Author: assisted-by-ai (Bot Account) <228987186+assisted-by-ai@users.noreply.github.com>
+Date:   Sun May 10 20:19:14 2026 -0400
+
+    builds.yml: use shellcheck composite for installer-standalone (#7)
+
+    Composite migration; same excludes preserved.
+
+commit de2f81b24de510ddec6a5cf597157576ebc6d16d
+Merge: 44573a4 244cb66
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 10 14:48:30 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/org-ai-assisted/master'
+
+commit 244cb66fc9dc44d7d6e5c918c21f22df2a18c27b
+Author: assisted-by-ai (Bot Account) <228987186+assisted-by-ai@users.noreply.github.com>
+Date:   Sun May 10 14:11:40 2026 -0400
+
+    restore: re-apply session work (rebased away) (#6)
+
+    Re-applies session work lost during rebase: adds a top-level
+    'permissions: contents: read' block to .github/workflows/builds.yml.
+    Job-level permissions (changes job pull-requests: read) remain
+    unchanged.
+
+    Co-authored-by: claude-code <claude-code@anthropic.com>
+
+commit 44573a42f14ce1a6ae52fcbf8297af53bb055ce8
+Merge: 37b2f28 862a126
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 10 12:48:30 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/ArrayBolt3/arraybolt3/trixie'
+
+commit 862a126b4ba9882c5fd05a00dfc110423b41bbbf
+Merge: fb6e46c 37b2f28
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sat May 9 22:13:11 2026 -0400
+
+    Merge branch 'master' into arraybolt3/trixie
+
+commit 37b2f28d9e4f33d25e6fd68f99e3d59e394b8c0d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu May 7 18:45:06 2026 +0000
+
+    bumped changelog version
+
 commit fcb414c3d5f714c5cdc615d91de0de2a8a4be323
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed May 6 15:09:35 2026 -0400
@@ -333,6 +428,19 @@ Date:   Tue May 5 16:27:30 2026 -0400
     heading, Reference section with URL to the canonical bash style guide
     in developer-meta-files, and Per-script notes section.
 
+commit fb6e46ccb550a1f0cc32c05bce0f565d58f7f82a
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun May 3 11:24:07 2026 -0400
+
+    Enable check-user-slice-on-shutdown.service when a debug-kicksecure qvm-service is enabled, remove a redundant preset line
+
+commit b2ff76bf992a22fd0aa5442fb0b7139841e6c080
+Merge: 1b52cab 456a733
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun May 3 11:19:13 2026 -0400
+
+    Merge branch 'master' into arraybolt3/trixie
+
 commit 456a73329ea20a60e26095fa9e9f28947fcb4225
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat May 2 08:50:12 2026 +0000
@@ -356,6 +464,12 @@ Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri May 1 05:22:07 2026 -0400
 
     build
+
+commit 1b52cabaaa5e3e73b1a90f540ba694b0fcb50576
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Thu Apr 30 23:16:10 2026 -0400
+
+    Explicitly declare zle_bracketed_paste as an array if necessary
 
 commit 472cf2db6ba146ed41ff88d07afdd2e7d41b643c
 Author: Patrick Schleizer <adrelanos@whonix.org>
