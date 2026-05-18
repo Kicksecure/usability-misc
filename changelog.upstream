@@ -1,3 +1,57 @@
+commit 81fcb08db8a7603d25712dd8d1f2ed6b070f070a
+Merge: 04e5eca 0c5b686
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 17 16:23:13 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/org-ai-assisted/master'
+
+commit 0c5b686c8f16fd272812f424ec94f75992344f0f
+Merge: 04e5eca ee79f35
+Author: assisted-by-ai (Bot Account) <228987186+assisted-by-ai@users.noreply.github.com>
+Date:   Sun May 17 14:02:49 2026 -0400
+
+    Merge pull request #13 from org-ai-assisted/claude/fix-dependabot-action-UnL7w
+
+    dependabot.yml: drop docker block (sync to new canonical)
+
+commit ee79f35c351fe512fc604b2fc2530ab6f7869e83
+Author: Claude <noreply@anthropic.com>
+Date:   Sun May 17 17:59:42 2026 +0000
+
+    trim file commentary
+
+commit cd25cec308b07507c5ff26c7891f56be43a41af8
+Author: Claude <noreply@anthropic.com>
+Date:   Sun May 17 17:43:21 2026 +0000
+
+    dependabot.yml: drop docker block (sync to new canonical)
+
+    The previous canonical at
+    developer-meta-files/consumer-templates/.github/dependabot.yml
+    carried a docker package-ecosystem block on the documented theory
+    that the block was a "harmless no-op" in repos without a
+    /Dockerfile. That theory was wrong: the dependabot-action errors
+    with `dependency_file_not_found` and aborts the whole job -
+    including the github-actions ecosystem run that shares it - so
+    this repo lost its github-actions Dependabot coverage too.
+
+    Sync to the new canonical, which carries github-actions only.
+
+    See org-ai-assisted/developer-meta-files PR #105 for the
+    canonical change and the docker-bearing-repo opt-out mechanism.
+
+commit 04e5eca141058689b7a24af4d91c4115cbe5c6ec
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 16 06:08:36 2026 -0400
+
+    add .github/dependabot.yml
+
+commit d80909c28387d3fac65f24af7e8a618605da5518
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri May 15 18:42:17 2026 +0000
+
+    bumped changelog version
+
 commit 049789a877eb91ed045e1b604a9de45a350d3838
 Merge: 2697f3e 5a63a76
 Author: Patrick Schleizer <adrelanos@whonix.org>
