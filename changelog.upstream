@@ -1,3 +1,9 @@
+commit 27cfc536f95866136b08fc1eaaf2111766add777
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon May 18 21:36:32 2026 +0000
+
+    bumped changelog version
+
 commit 4ac38ff63724955dda48b1689de8b5f3c89589f1
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon May 18 17:34:09 2026 -0400
@@ -1188,8 +1194,8 @@ Date:   Thu Apr 9 07:43:00 2026 +0000
 
     ci: update actions to Node.js 24 to fix deprecation warnings
 
-    - actions/checkout v4 → v5
-    - dorny/paths-filter v3 → v4
+    - actions/checkout v4 _ v5
+    - dorny/paths-filter v3 _ v4
 
     Node.js 20 actions will be forced to Node.js 24 starting June 2, 2026,
     and removed from runners September 16, 2026.
