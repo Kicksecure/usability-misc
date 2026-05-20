@@ -23,13 +23,13 @@ mkdir --parents -- ~/sources
 cd -- ~/sources
 
 apt-get \
-   "${APTGETOPT[@]}" \
+   "${DIST_APTGETOPT[@]}" \
    $apt_unattended_opts \
    update
 
 for i in $(damngpl --source /var/lib/dpkg/status); do
    apt-get \
-      "${APTGETOPT[@]}" \
+      "${DIST_APTGETOPT[@]}" \
       $apt_unattended_opts \
       --download-only \
       source "$i"
