@@ -1,3 +1,42 @@
+commit 94cc3fb9e4d7767e5e9637d2238190464fd436fa
+Merge: 8478c4b 41bfabe
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 20 17:06:27 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/org-ai-assisted/master'
+
+commit 8478c4b983e579dd1f3814e9298cb4faae406099
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 20 16:57:26 2026 -0400
+
+    genmkfile uch
+
+commit 41bfabec86d6f93e29f76cbc9380865b223d6ab3
+Merge: 27cfc53 e3613ca
+Author: assisted-by-ai (Bot Account) <228987186+assisted-by-ai@users.noreply.github.com>
+Date:   Wed May 20 16:41:03 2026 -0400
+
+    Merge pull request #14 from org-ai-assisted/claude/refactor-apt-variables-MPyww
+
+    Rename APTGETOPT to DIST_APTGETOPT to avoid pbuilder collision
+
+commit e3613cafffecda1cf7f35ce1e9405e34e70cd39b
+Author: Claude <noreply@anthropic.com>
+Date:   Wed May 20 20:28:04 2026 +0000
+
+    Rename APTGETOPT to DIST_APTGETOPT to avoid pbuilder collision
+
+    The APTGETOPT / APTGETOPT_SERIALIZED names collide with pbuilder/cowbuilder's
+    own APTGETOPT array variable. dist-installer-cli (and the auto-generated
+    dist-installer-cli-standalone) and gpl_download_sources consume the
+    DIST_APTGETOPT_SERIALIZED environment variable passed by derivative-maker;
+    rename in lockstep with derivative-maker, genmkfile and developer-meta-files.
+
+    The standalone file is edited directly to mirror the source rename token for
+    token; regenerate via build-dist-installer-cli if desired.
+
+    https://claude.ai/code/session_015NXhWb2m9F7wnHKtkedtKS
+
 commit 27cfc536f95866136b08fc1eaaf2111766add777
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon May 18 21:36:32 2026 +0000
