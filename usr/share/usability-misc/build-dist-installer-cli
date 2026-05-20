@@ -55,6 +55,7 @@ if ! test -d "$helper_path" ; then
 fi
 
 canonical_helper_dir="/usr/libexec/helper-scripts/"
+## TODO: This is a no-op, why do we need this?
 helper_dir="${helper_path%/}/"
 
 declare -A pasted_helper_files
