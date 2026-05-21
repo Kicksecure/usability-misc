@@ -59,7 +59,7 @@ declare version me start_time dialog_title license adrelanos_signify \
   transfer_proxy_suffix proxy curl_transfer_proxy curl_opt_ssl \
   url_guest_file url_origin signify_key signify_signer url_domain \
   url_version download_flag checkhash interface_name \
-  can_boot_virtualbox_guest_vms APTGETOPT APTGETOPT_SERIALIZED id_of_user \
+  can_boot_virtualbox_guest_vms DIST_APTGETOPT DIST_APTGETOPT_SERIALIZED id_of_user \
   dkms_mok_path temp_folder
 
 ## NOTE: For reviewers and AI agents.
@@ -1875,28 +1875,28 @@ install_package_fedora_common() {
 install_package_debian_common() {
   local dpkg_audit_output sources_list_d_file
 
-  if [[ -v APTGETOPT_SERIALIZED ]]; then
+  if [[ -v DIST_APTGETOPT_SERIALIZED ]]; then
     # shellcheck disable=SC2128
-    mapfile -t APTGETOPT <<< "$APTGETOPT_SERIALIZED"
+    mapfile -t DIST_APTGETOPT <<< "$DIST_APTGETOPT_SERIALIZED"
   else
-    APTGETOPT_SERIALIZED=()
-    if [[ -v APTGETOPT ]]; then
-      true "INFO: APTGETOPT already set, keeping it."
+    DIST_APTGETOPT_SERIALIZED=()
+    if [[ -v DIST_APTGETOPT ]]; then
+      true "INFO: DIST_APTGETOPT already set, keeping it."
     else
-      APTGETOPT=()
+      DIST_APTGETOPT=()
     fi
   fi
   # shellcheck disable=SC2145
-  log info "APTGETOPT_SERIALIZED: '${APTGETOPT_SERIALIZED[@]}'"
+  log info "DIST_APTGETOPT_SERIALIZED: '${DIST_APTGETOPT_SERIALIZED[@]}'"
   # shellcheck disable=SC2145
-  log info "APTGETOPT: '${APTGETOPT[@]}'"
+  log info "DIST_APTGETOPT: '${DIST_APTGETOPT[@]}'"
 
   pkg_mngr="apt-get"
-  pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' "${APTGETOPT[@]}" 'install' )
-  pkg_mngr_update=( "${pkg_mngr}" '--yes' '--error-on=any' "${APTGETOPT[@]}" 'update' )
+  pkg_mngr_install=( "${pkg_mngr}" '--yes' '--no-install-recommends' "${DIST_APTGETOPT[@]}" 'install' )
+  pkg_mngr_update=( "${pkg_mngr}" '--yes' '--error-on=any' "${DIST_APTGETOPT[@]}" 'update' )
   pkg_mngr_check_installed=( "check_installed_debian" )
-  pkg_mngr_upgrade_check=( "${pkg_mngr}" '--simulate' "${APTGETOPT[@]}" 'full-upgrade' )
-  pkg_mngr_upgrade_install=( "${pkg_mngr}" "${APTGETOPT[@]}" 'full-upgrade' )
+  pkg_mngr_upgrade_check=( "${pkg_mngr}" '--simulate' "${DIST_APTGETOPT[@]}" 'full-upgrade' )
+  pkg_mngr_upgrade_install=( "${pkg_mngr}" "${DIST_APTGETOPT[@]}" 'full-upgrade' )
 
   # shellcheck disable=SC2145
   log info "pkg_mngr_update: '${pkg_mngr_update[@]}'"
