@@ -1,3 +1,17 @@
+commit f8ef9fa9e0286c7aca1ad6160fa5f6c3b6ae1f34
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 23 16:26:10 2026 -0400
+
+    fix
+
+    https://github.com/assisted-by-ai/usability-misc/pull/5
+
+commit 81d0468cc398c89fac187c6984c8dc7fe552aee5
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 20 22:26:54 2026 +0000
+
+    bumped changelog version
+
 commit 94cc3fb9e4d7767e5e9637d2238190464fd436fa
 Merge: 8478c4b 41bfabe
 Author: Patrick Schleizer <adrelanos@whonix.org>
