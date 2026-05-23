@@ -14,7 +14,7 @@
 #
 # Global Order: zshenv, zprofile, zshrc, zlogin
 
-if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" ]]
+if [[ -z "$PATH" || "$PATH" == "/bin:/usr/bin" || "$PATH" == "/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games" ]]
 then
 	export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/games"
 fi
