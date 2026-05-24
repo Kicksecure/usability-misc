@@ -1,3 +1,44 @@
+commit ea58f93faecb7fab4dfbc7184387c9bcee0dbdb1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 24 14:58:47 2026 -0400
+
+    build
+
+commit e5f9d1b1733ecdb58867b03c3ed627ebfffe71b9
+Merge: 9aed6aa b46c5e8
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 24 14:53:00 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/ArrayBolt3/arraybolt3/trixie'
+
+commit 9aed6aad6666b075e9c5b50dca110553b8c8f4ca
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 24 13:51:20 2026 -0400
+
+    comment
+
+commit 906a4e9f04b60439e60503db6c5de4e5e6213854
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 24 13:46:38 2026 -0400
+
+    `/etc/profile.d/30_path.sh`: prepend `/usr/local/sbin` `/usr/sbin` and `/sbin` to `PATH` environment variable
+
+    No longer using zsh for that. No longer modify PATH in `/etc/zsh/zshenv`.
+
+    Why `/sbin`? See:
+    https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041357
+    https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041357#17
+
+    https://forums.kicksecure.com/t/path-overwritten-by-etc-zsh-zshrc/1677
+
+    https://github.com/assisted-by-ai/usability-misc/pull/5
+
+commit fe921a7bbc67bee33eb8ebdba935ea5ad7959610
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sat May 23 20:28:04 2026 +0000
+
+    bumped changelog version
+
 commit f8ef9fa9e0286c7aca1ad6160fa5f6c3b6ae1f34
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sat May 23 16:26:10 2026 -0400
@@ -5,6 +46,13 @@ Date:   Sat May 23 16:26:10 2026 -0400
     fix
 
     https://github.com/assisted-by-ai/usability-misc/pull/5
+
+commit b46c5e85fb1e6131b07d42a7928b002a589fa147
+Merge: 5e0f10f 81d0468
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Wed May 20 20:05:00 2026 -0400
+
+    Merge branch 'master' into arraybolt3/trixie
 
 commit 81d0468cc398c89fac187c6984c8dc7fe552aee5
 Author: Patrick Schleizer <adrelanos@whonix.org>
@@ -50,6 +98,12 @@ Date:   Wed May 20 20:28:04 2026 +0000
     token; regenerate via build-dist-installer-cli if desired.
 
     https://claude.ai/code/session_015NXhWb2m9F7wnHKtkedtKS
+
+commit 5e0f10fc69e79d25e6671ef1e42cf04de48132b4
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Tue May 19 23:47:38 2026 -0400
+
+    minor tweaks, TODOs
 
 commit 27cfc536f95866136b08fc1eaaf2111766add777
 Author: Patrick Schleizer <adrelanos@whonix.org>
