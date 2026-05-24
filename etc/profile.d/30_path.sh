@@ -13,6 +13,10 @@ if ! [ "$(id -u)" -eq 0 ]; then
   ## Debian as of Debian trixie did not 'usrmerge' '/etc/profile':
   ## still comes with '/bin' and '/sbin'. Therefore also setting it here for
   ## consistency.
+  ##
+  ## Why `/sbin`? See:
+  ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041357
+  ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041357#17
   PATH="/usr/local/sbin:/usr/sbin:/sbin:$PATH"
   export PATH
 fi
