@@ -179,14 +179,16 @@ is_type_file() {
       return 1
     fi
   done
+  return 0
 }
 
 type_exists() {
   local _name
 
   for _name in "$@"; do
-    [ "$(type -t "${_name}")" ] || return 1
+    [ -n "$(type -t "${_name}")" ] || return 1
   done
+  return 0
 }
 
 lsmod_deterministic() {
@@ -3172,17 +3174,14 @@ kernel_module_modprobe_output ('$sucmd modprobe vboxdrv'): '$kernel_module_modpr
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'FAIL'${nobold}${nocolor} - because kernel modules have not been loaded yet.
   - Kernel modules can be loaded in theory, should be loaded by now, but are not.
   - This is a VirtualBox installation issue."
-      if [ "${ci}" != "1" ]; then
-        virtualbox_start_failed
-      fi
+      ## TODO: Should we run end_installer if virtualbox_start_failed returns?
+      virtualbox_start_failed
     else
       log error "${underline}VirtualBox Installation Result:${nounderline} ${red}${bold}'REBOOT REQUIRED'${nobold}${nocolor} - because kernel module loading is disabled on your system:
   - The system administrator might have disabled module loading.
   - Module loading might have been disabled by Kicksecure package security-misc-shared.
   - You can re-run this installer again after reboot."
-      if [ "${ci}" != "1" ]; then
-        virtualbox_start_failed
-      fi
+      virtualbox_start_failed
     fi
   fi
 
@@ -3444,6 +3443,8 @@ start_virtualbox_vm() {
   log notice "Virtual Machine Startup: Starting Virtual Machine(s)..."
   ## 'virtualbox' is called after 'vboxmanage' because it hangs till the app
   ## is closed, while 'vboxmanage startvm' exits after starting the VMs.
+  ## TODO: Should we return 0 before printing the success message if
+  ## virtualbox_start_failed returns?
   case "${guest}" in
     whonix)
       if [ "${gateway_exists}" = "1" ]; then
