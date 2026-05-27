@@ -1,3 +1,22 @@
+commit 1a694225d3d878664e00e5f77bd63a9a9825a9dc
+Merge: d8d383a bdc2b51
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue May 26 07:27:44 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/ArrayBolt3/arraybolt3/trixie'
+
+commit bdc2b51dc323e15416cb13d817e25a75dd39a5a7
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Tue May 26 00:08:57 2026 -0400
+
+    Recognize non-Qubes debug flags in check-user-slice-on-shutdown.service
+
+commit d8d383a6ebdbbd82c533b3dd7afb6d6019f791d2
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 24 19:11:36 2026 +0000
+
+    bumped changelog version
+
 commit ea58f93faecb7fab4dfbc7184387c9bcee0dbdb1
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun May 24 14:58:47 2026 -0400
