@@ -1,3 +1,23 @@
+commit 00fca3994df5deabd87c239b53d1e8b9eec61519
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 31 16:26:18 2026 -0400
+
+    chmod +x
+
+commit 822626602dd953564a326e1db4ea7e8a3ed57cb6
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 31 16:25:16 2026 -0400
+
+    remove `/usr/share/safe-rm/bin` from `PATH` environment variable by default
+
+    https://forums.kicksecure.com/t/path-overwritten-by-etc-zsh-zshrc/1677
+
+commit 7647a4557e8ab95bcceb866aaa7fd7830c6c6198
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed May 27 23:02:12 2026 +0000
+
+    bumped changelog version
+
 commit 1a694225d3d878664e00e5f77bd63a9a9825a9dc
 Merge: d8d383a bdc2b51
 Author: Patrick Schleizer <adrelanos@whonix.org>
