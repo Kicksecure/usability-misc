@@ -17,6 +17,12 @@ if ! [ "$(id -u)" -eq 0 ]; then
   ## Why `/sbin`? See:
   ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041357
   ## https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1041357#17
-  PATH="/usr/local/sbin:/usr/sbin:/sbin:$PATH"
+  ##
+  ## In case we wanted to keep 'safe-rm' in 'PATH'.
+  #PATH="/usr/local/sbin:/usr/sbin:/sbin:$PATH"
+  ## Remove 'safe-rm' from 'PATH'.
+  ## 'str_replace' lacks the regex anchoring needed to remove elements
+  ## from colon-separated variables safely.
+  PATH="$(sed 's#:/usr/share/safe-rm/bin$##; s#^/usr/share/safe-rm/bin:##; s#:/usr/share/safe-rm/bin:#:#' <<< "$PATH")"
   export PATH
 fi
