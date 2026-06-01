@@ -1,3 +1,15 @@
+commit fa95c5e2a187c855a86ab02e7b61def1ab2e6cb4
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jun 1 13:56:34 2026 -0400
+
+    shebang
+
+commit 93ed8782a9e33843e0621153c75feb1110ce2dca
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun May 31 20:34:39 2026 +0000
+
+    bumped changelog version
+
 commit 00fca3994df5deabd87c239b53d1e8b9eec61519
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun May 31 16:26:18 2026 -0400
