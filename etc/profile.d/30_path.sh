@@ -25,6 +25,8 @@ if ! [ "$(id -u)" -eq 0 ]; then
   ## Remove 'safe-rm' from 'PATH'.
   ## 'str_replace' lacks the regex anchoring needed to remove elements
   ## from colon-separated variables safely.
-  PATH="$(sed 's#:/usr/share/safe-rm/bin$##; s#^/usr/share/safe-rm/bin:##; s#:/usr/share/safe-rm/bin:#:#' <<< "$PATH")"
+  ## '<<<' unsupported by 'sh'.
+  #PATH="$(sed 's#:/usr/share/safe-rm/bin$##; s#^/usr/share/safe-rm/bin:##; s#:/usr/share/safe-rm/bin:#:#' <<< "$PATH")"
+  PATH="$(printf '%s\n' "$PATH" | sed 's#:/usr/share/safe-rm/bin$##; s#^/usr/share/safe-rm/bin:##; s#:/usr/share/safe-rm/bin:#:#')"
   export PATH
 fi
