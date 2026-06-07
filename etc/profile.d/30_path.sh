@@ -58,7 +58,7 @@ if ! [ "$(id -u)" -eq 0 ]; then
 
   export PATH
 
-  if [ "$PATH" = "/usr/local/sbin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/bin:/usr/local/games:/usr/games" ]; then
+  if [ "$PATH" = "/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games" ]; then
     true "INFO: Expected default PATH: yes"
   else
     true "INFO: Expected default PATH: no (customized PATH)"
