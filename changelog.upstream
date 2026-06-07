@@ -1,3 +1,15 @@
+commit b8fe00fdb4a9eaaeb54223c91c3e54c5e56e3f7d
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jun 7 12:02:12 2026 -0400
+
+    fix: `/etc/profile.d/30_path.sh`: prepend `/usr/local/sbin` `/usr/sbin` and `/sbin` to `PATH` environment variable
+
+commit 6c670a168a72d943a70ae0b3a7d1b9bcd63c3917
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Mon Jun 1 18:17:25 2026 +0000
+
+    bumped changelog version
+
 commit 87eabc31b4c2e9dfaab9f95cac9e53817072280e
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Mon Jun 1 14:15:38 2026 -0400
