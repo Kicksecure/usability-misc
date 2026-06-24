@@ -1,3 +1,25 @@
+commit b66a391e21eea5540c0d67380134ecce37c5adba
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jun 24 13:44:36 2026 -0400
+
+    build
+
+commit 3231104dedf0502f1d29bcafb041d2fae7a2c75b
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jun 24 13:44:01 2026 -0400
+
+    undo modprobe `options kvm enable_virt_at_load=0`
+
+    https://forums.kicksecure.com/t/recent-versions-of-virtualbox-7-1-18-7-2-8-can-cause-a-system-crash-during-package-upgrades-vms-may-fail-to-start/1683
+
+    https://forums.kicksecure.com/t/vboxdrv-service-fails-to-start/1730
+
+commit e38416cecdad3c6459c81fb0b28f136b17b072d3
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jun 7 19:04:07 2026 +0000
+
+    bumped changelog version
+
 commit 771fa593f3a29e6c3ba711f7244810d78a5f6224
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Jun 7 15:01:04 2026 -0400
