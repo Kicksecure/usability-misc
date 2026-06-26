@@ -1,3 +1,15 @@
+commit 05b83780bf2fb836f68a34db9f6e9de8f95dae10
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 26 06:19:28 2026 -0400
+
+    config-package-dev hide `/etc/profile.d/safe-rm.sh`
+
+commit eb8d31294a4d3dd28954f3fa4eed6304749d2ea1
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Wed Jun 24 18:06:56 2026 +0000
+
+    bumped changelog version
+
 commit b66a391e21eea5540c0d67380134ecce37c5adba
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Wed Jun 24 13:44:36 2026 -0400
