@@ -1,0 +1,19 @@
+## Copyright (C) 2026 - 2026 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
+## See the file COPYING for copying conditions.
+
+## Kicksecure installs package 'safe-rm' primarily as a dependency.
+## File '/etc/profile.d/safe-rm.sh' adds folder '/usr/share/safe-rm/bin' to
+## the 'PATH' environment variable. That folder contains 'rm', which is a
+## symlink to 'safe-rm'. As a result, merely pulling 'safe-rm' as a dependency
+## effectively replaces 'rm' with 'safe-rm'. This is unwanted.
+##
+## Kicksecure's package 'usability-misc' configuration file
+## '/etc/profile.d/30_path.sh' cannot remove '/usr/share/safe-rm/bin' from
+## 'PATH' either, because lexically 'safe-rm.sh' is ordered after '30_path.sh'.
+##
+## To be parsed later, Qubes named a file
+## '/etc/profile.d/zqubes_disable_lesspipe.sh'.
+## Kicksecure avoids more files starting with 'z' so users or other packages
+## who wish to override '30_path.sh' do not need to prepend more and more 'z'
+## letters.
+/etc/profile.d/safe-rm.sh

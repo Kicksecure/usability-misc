@@ -43,7 +43,8 @@ if ! [ "$(id -u)" -eq 0 ]; then
   path_prepend_once /usr/sbin
   path_prepend_once /usr/local/sbin
 
-  true "INFO: Removing /usr/share/safe-rm/bin from PATH."
+  ## Implemented using 'debian/usability-misc.hide' instead.
+  #true "INFO: Removing /usr/share/safe-rm/bin from PATH."
   ## In case we wanted to keep 'safe-rm' in 'PATH'.
   #PATH="/usr/local/sbin:/usr/sbin:/sbin:$PATH"
   ## Remove 'safe-rm' from 'PATH'.
@@ -51,7 +52,7 @@ if ! [ "$(id -u)" -eq 0 ]; then
   ## from colon-separated variables safely.
   ## '<<<' unsupported by 'sh'.
   #PATH="$(sed 's#:/usr/share/safe-rm/bin$##; s#^/usr/share/safe-rm/bin:##; s#:/usr/share/safe-rm/bin:#:#' <<< "$PATH")"
-  PATH="$(printf '%s\n' "$PATH" | sed 's#:/usr/share/safe-rm/bin$##; s#^/usr/share/safe-rm/bin:##; s#:/usr/share/safe-rm/bin:#:#')"
+  #PATH="$(printf '%s\n' "$PATH" | sed 's#:/usr/share/safe-rm/bin$##; s#^/usr/share/safe-rm/bin:##; s#:/usr/share/safe-rm/bin:#:#')"
 
   ## Example PATH:
   ## /usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
