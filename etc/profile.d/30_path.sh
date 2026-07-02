@@ -3,13 +3,25 @@
 ## Copyright (C) 2026 - 2026 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## style-ok: no-strict (sourced-only '/etc/profile.d' fragment; a top-level
+## R-010 strict-mode block would leak 'set -o errexit'/'nounset' into and
+## could kill the interactive login shell).
+
 ## See also:
 ## /etc/profile
 ## /etc/profile.d/safe-rm
 
+## Scope: '/etc/profile.d' is sourced only by login shells (via
+## '/etc/profile'). Non-login shells (GUI terminals, systemd --user
+## services, cron, non-login ssh) do not source it. This is fine because
+## PATH is exported once by the session's top login shell and inherited by
+## all child processes; it is deliberately NOT re-applied for non-login
+## shells. Contexts that never descend from a login shell set their own
+## PATH and are out of scope here.
+
 ## No need to prepend '/usr/local/sbin:/usr/sbin:/sbin' when running as root,
 ## because Debian' default '/etc/profile' already does that.
-if ! [ "$(id -u)" -eq 0 ]; then
+if [ "$(id -u)" -ne 0 ]; then
   ## Example PATH:
   ## /usr/share/safe-rm/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
 
@@ -42,6 +54,10 @@ if ! [ "$(id -u)" -eq 0 ]; then
   path_prepend_once /sbin
   path_prepend_once /usr/sbin
   path_prepend_once /usr/local/sbin
+
+  ## Do not leak the helper into the sourcing login shell's function
+  ## namespace ('/etc/profile' itself models this cleanup with 'unset i').
+  unset -f path_prepend_once
 
   ## Implemented using 'debian/usability-misc.hide' instead.
   #true "INFO: Removing /usr/share/safe-rm/bin from PATH."

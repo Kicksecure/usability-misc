@@ -3,6 +3,10 @@
 ## Copyright (C) 2019 - 2025 ENCRYPTED SUPPORT LLC <adrelanos@whonix.org>
 ## See the file COPYING for copying conditions.
 
+## style-ok: no-strict (sourced-only '/etc/profile.d' fragment, uses top-level
+## 'return'; a top-level R-010 strict-mode block would leak 'set -o errexit'/
+## 'nounset' into and could kill the interactive login shell).
+
 #### meta start
 #### project Kicksecure
 #### category apps
