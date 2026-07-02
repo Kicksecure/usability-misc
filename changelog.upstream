@@ -1,3 +1,39 @@
+commit c8ffae4b50785c1c6e5162c1590e9f18203b8655
+Merge: 9210aef b59977c
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Thu Jul 2 02:30:21 2026 -0400
+
+    Merge remote-tracking branch 'org-ai-assisted/master'
+
+commit b59977cd64b10e4161af1410a4613e6fde297a4a
+Author: claude (dev22 c20093f1-1b30-4397-87b6-9586321c87df) <noreply@anthropic.com>
+Date:   Wed Jul 1 11:45:40 2026 -0400
+
+    30_path.sh: idiomatic root check, no function leak; mark sourced-only
+
+    30_path.sh:
+    - Use '[ "$(id -u)" -ne 0 ]' instead of the double-negated
+      '! [ ... -eq 0 ]' (matches Debian's own /etc/profile).
+    - 'unset -f path_prepend_once' after use so the helper does not leak into
+      the sourcing login shell's function namespace (as /etc/profile unsets
+      'i').
+    - Document that the fragment is login-shell-only by design: PATH is
+      exported once and inherited by child processes, so non-login shells are
+      deliberately not re-processed.
+
+    Both fragments: add a '## style-ok: no-strict' waiver documenting why a
+    sourced-only '/etc/profile.d' fragment must not carry an R-010 strict-mode
+    block (it would leak 'set -o errexit'/'nounset' into the login shell).
+
+    Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_018bezwAzE9uxSX1xrH7okFV
+
+commit 9210aef2718671a0c3e783bc6113de28af46ac52
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Fri Jun 26 18:27:56 2026 +0000
+
+    bumped changelog version
+
 commit 05b83780bf2fb836f68a34db9f6e9de8f95dae10
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Fri Jun 26 06:19:28 2026 -0400
