@@ -4,8 +4,8 @@
 ## See the file COPYING for copying conditions.
 
 ## style-ok: no-strict (sourced-only '/etc/profile.d' fragment; a top-level
-## R-010 strict-mode block would leak 'set -o errexit'/'nounset' into and
-## could kill the interactive login shell).
+## R-010 strict-mode block would leak 'set -o errexit'/'nounset' into, and
+## could kill, the interactive login shell).
 
 ## See also:
 ## /etc/profile
