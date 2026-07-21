@@ -1,3 +1,22 @@
+commit 511f0600d06447e2c972e4e7bd1e81b4ecf55300
+Merge: 8e87dbb 43b9c55
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Tue Jul 21 05:09:42 2026 -0400
+
+    Merge remote-tracking branch 'refs/remotes/ArrayBolt3/arraybolt3/trixie'
+
+commit 43b9c5515b6abb3e14a97b4c839bfbcbb3b59111
+Author: Aaron Rainbolt <arraybolt3@gmail.com>
+Date:   Sun Jul 19 00:12:39 2026 -0400
+
+    Fix askpass GUI
+
+commit 8e87dbba4ce5fe4c6aeeb16b81c8a5c38e22b306
+Author: Patrick Schleizer <adrelanos@whonix.org>
+Date:   Sun Jul 12 17:44:20 2026 +0000
+
+    bumped changelog version
+
 commit ae0b07f76208dd2abc8e75b37e6660d4823993ee
 Author: Patrick Schleizer <adrelanos@whonix.org>
 Date:   Sun Jul 12 12:47:31 2026 -0400
