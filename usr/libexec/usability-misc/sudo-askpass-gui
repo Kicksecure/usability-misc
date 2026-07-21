@@ -32,5 +32,7 @@ set -e
 ## https://askubuntu.com/questions/314395/proper-way-to-let-user-enter-password-for-a-bash-script-using-only-the-gui-with
 
 yad \
-  --password \
-  --title="Authentication required"
+  --title='askpass' \
+  --text='Authentication required. Enter your password:' \
+  --entry \
+  --hide-text
